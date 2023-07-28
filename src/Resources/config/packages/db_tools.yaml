@@ -1,0 +1,18 @@
+db_tools:
+  # Where to put generated backups
+  # storage_directory: '%kernel.project_dir%/var/private/db_tools'
+
+  # When to delete old backups
+  # (Use reltive date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+  # backup_expiration_age: '3 months ago'
+
+  # Exluded tables
+  # List here  tables (per connection) you don't want in your backups
+  # excluded_tables:
+  #   - default: ['table1', 'table2']
+
+  # Specify here path to binary if the system can't find it by himself
+  # driver:
+  #   - pgsql: 'usr/bin/pg_dump',
+  #   - pdo_pgsql: 'usr/bin/pg_dump',
+  #   - pdo_mysql: 'usr/bin/mysqldump'

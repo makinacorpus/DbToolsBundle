@@ -1,0 +1,33 @@
+services:
+    # Commands
+    db_tools.command.check:
+      class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
+      arguments:
+        - '%doctrine.default_connection%'
+        - '@db_tools.backupper.factory.registry'
+      tags: ['console.command']
+    db_tools.command.backup:
+      class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
+      arguments:
+        - '%doctrine.default_connection%'
+        - '%db_tools.excluded_tables%'
+        - '@db_tools.backupper.factory.registry'
+        - '@db_tools.storage'
+      tags: ['console.command']
+
+    # Utilities
+    db_tools.storage:
+      class: MakinaCorpus\DbToolsBundle\DbToolsStorage
+      arguments: ['%db_tools.storage_directory%', '%db_tools.backup_expiration_age%']
+
+    # Backuppers
+    db_tools.backupper.factory.registry:
+      class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry
+      arguments: ['@doctrine', '%db_tools.backupper.binaries%']
+    db_tools.backupper.factory.pgsql:
+      class: MakinaCorpus\DbToolsBundle\Backupper\PgSQL\BackupperFactory
+      tags: ['db_tools.backupper.factory']
+    db_tools.backupper.factory.mysql:
+      class: MakinaCorpus\DbToolsBundle\Backupper\MySQL\BackupperFactory
+      tags: ['db_tools.backupper.factory']
+
