@@ -23,8 +23,7 @@ final class DbToolsConfiguration implements ConfigurationInterface
                 ->scalarNode('backup_expiration_age')->defaultValue('3 months ago')->end()
                 ->arrayNode('excluded_tables')
                     ->useAttributeAsKey('connection')
-                    ->arrayPrototype()
-                    ->end()
+                    ->arrayPrototype()->end()
                 ->end()
                 ->arrayNode('backupper_binaries')
                     ->defaultValue([
@@ -32,17 +31,15 @@ final class DbToolsConfiguration implements ConfigurationInterface
                         'pdo_pgsql' => 'pg_dump',
                         'pdo_mysql' => 'mysqldump'
                     ])
-                    ->scalarPrototype()
-                    ->end()
+                    ->scalarPrototype()->end()
                 ->end()
-                ->arrayNode('importer_binaries')
+                ->arrayNode('restorer_binaries')
                     ->defaultValue([
                         'pgsql' => 'pg_restore',
                         'pdo_pgsql' => 'pg_restore',
-                        'pdo_mysql' => 'mysqlimport'
+                        'pdo_mysql' => 'mysql'
                     ])
-                    ->scalarPrototype()
-                    ->end()
+                    ->scalarPrototype()->end()
                 ->end()
             ->end()
         ;

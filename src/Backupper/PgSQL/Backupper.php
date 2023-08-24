@@ -17,29 +17,33 @@ class Backupper extends AbstractBackupper
     public function startBackup(): self
     {
         $dbParams = $this->connection->getParams();
+        $args = [
+            $this->binary,
+            '-h',
+            $dbParams['host'],
+            '-U',
+            $dbParams['user'],
+            '-p',
+            $dbParams['port'],
+            '-w',
+            '-f',
+            $this->destination,
+            '-F', // format custom (not sql)
+            'c',
+            '-Z', // compression level 0-9
+            '5',
+            '--lock-wait-timeout=120',
+            '--exclude-table-data=' . \implode('|', $this->excludedTables),
+            '--blobs',
+            $dbParams['dbname'],
+        ];
+
+        if ($this->verbose) {
+            $args[] = '-v';
+        }
 
         $this->process = new Process(
-            [
-                $this->binary,
-                '-h',
-                $dbParams['host'],
-                '-U',
-                $dbParams['user'],
-                '-p',
-                $dbParams['port'],
-                '-w',
-                '-f',
-                $this->destination,
-                '-F', // format custom (not sql)
-                'c',
-                '-v',
-                '-Z', // compression level 0-9
-                '5',
-                '--lock-wait-timeout=120',
-                '--exclude-table-data=' . \implode('|', $this->excludedTables),
-                '--blobs',
-                $dbParams['dbname'],
-            ],
+            $args,
             null,
             ['PGPASSWORD' => $dbParams['password']],
             null,

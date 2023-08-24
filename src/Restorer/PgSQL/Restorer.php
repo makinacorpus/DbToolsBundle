@@ -1,37 +1,38 @@
 <?php
 
 
-namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
+namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
-use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
+use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class Backupper extends AbstractBackupper
+class Restorer extends AbstractRestorer
 {
     private ?Process $process = null;
 
     /**
      * {@inheritdoc}
      */
-    public function startBackup(): self
+    public function startRestore(): AbstractRestorer
     {
         $dbParams = $this->connection->getParams();
-
         $args = [
             $this->binary,
             '-h',
             $dbParams['host'],
-            '-u',
+            '-U',
             $dbParams['user'],
-            '-P',
+            '-p',
             $dbParams['port'],
-            '-p' . $dbParams['password'],
-            '-r',
-            $this->destination,
-            ...\array_map(fn ($item) => '--ignore-table ' . $item, $this->excludedTables),
+            '-w',
+            '-d',
             $dbParams['dbname'],
-            '--no-tablespaces',
+            '--no-owner',
+            '-j',
+            2,
+            '--disable-triggers',
+            $this->backupFilename,
         ];
 
         if ($this->verbose) {
@@ -41,10 +42,17 @@ class Backupper extends AbstractBackupper
         $this->process = new Process(
             $args,
             null,
+            ['PGPASSWORD' => $dbParams['password']],
             null,
-            null,
-            600
+            1800
         );
+
+        $this->connection
+            ->executeQuery('DROP SCHEMA public CASCADE;')
+        ;
+        $this->connection
+            ->executeQuery('CREATE SCHEMA public;')
+        ;
 
         $this->process->start();
 
@@ -60,7 +68,7 @@ class Backupper extends AbstractBackupper
 
     public function getExtension(): string
     {
-        return 'sql';
+        return 'dump';
     }
 
     public function getOutput(): string

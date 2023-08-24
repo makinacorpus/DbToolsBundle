@@ -16,7 +16,10 @@ interface BackupperInterface extends \IteratorAggregate
     public function checkBinary(): string;
 
     public function setDestination(string $destination): self;
-    public function getDestination(): string;
+    public function getDestination(): ?string;
+
+    public function setVerbose(bool $verbose): self;
+    public function isVerbose(): bool;
 
     public function setExcludedTables(array $tables);
     public function getExcludedTables(): array;

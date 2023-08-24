@@ -38,7 +38,7 @@ class DbToolsStorage
 
             if (!$onlyExpired || ($lastModified < $expirationDate)) {
                 if ($file !== $preserveFile) {
-                    $list[] = [$age->format('%a  days'), $file];
+                    $list[] = [$age->format('%a days'), $file];
                 }
             }
         }
@@ -66,5 +66,10 @@ class DbToolsStorage
             $now->format('YmdHis'),
             $extension
         );
+    }
+
+    public function getStoragePath(): string
+    {
+        return $this->storagePath;
     }
 }

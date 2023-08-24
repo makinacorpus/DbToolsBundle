@@ -1,27 +1,20 @@
 <?php
 
 
-namespace MakinaCorpus\DbToolsBundle\Backupper;
+namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Process\Process;
 
-abstract class AbstractBackupper implements BackupperInterface
+abstract class AbstractRestorer implements RestorerInterface
 {
-    protected ?string $destination = null;
+    protected ?string $backupFilename = null;
     protected bool $verbose = false;
-    protected array $excludedTables = [];
 
     public function __construct(
         protected string $binary,
         protected Connection $connection,
-    ) {
-        $this->destination = \sprintf(
-            '%s/db-tools-backup-%s.dump',
-            \sys_get_temp_dir(),
-            (new \DateTimeImmutable())->format('YmdHis')
-        );
-    }
+    ) { }
 
     public function checkBinary(): string
     {
@@ -38,23 +31,16 @@ abstract class AbstractBackupper implements BackupperInterface
         return $process->getOutput();
     }
 
-    public function setDestination(string $destination): self
+    public function setBackupFilename(string $filename): self
     {
-        $this->destination = $destination;
+        $this->backupFilename = $filename;
 
         return $this;
     }
 
-    public function getDestination(): ?string
+    public function getBackupFilename(): ?string
     {
-        return $this->destination;
-    }
-
-    public function setExcludedTables(array $excludedTables): self
-    {
-        $this->excludedTables = $excludedTables;
-
-        return $this;
+        return $this->backupFilename;
     }
 
     public function setVerbose(bool $verbose): self
@@ -69,12 +55,7 @@ abstract class AbstractBackupper implements BackupperInterface
         return $this->verbose;
     }
 
-    public function getExcludedTables(): array
-    {
-        return $this->excludedTables;
-    }
-
-    abstract public function startBackup(): self;
+    abstract public function startRestore(): self;
 
     abstract public function checkSuccessful(): void;
 

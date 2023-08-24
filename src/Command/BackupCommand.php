@@ -78,6 +78,7 @@ class BackupCommand extends Command
 
         $this->backupper
             ->setDestination($filename)
+            ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->startBackup()
         ;

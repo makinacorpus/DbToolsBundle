@@ -5,6 +5,7 @@ services:
       arguments:
         - '%doctrine.default_connection%'
         - '@db_tools.backupper.factory.registry'
+        - '@db_tools.restorer.factory.registry'
       tags: ['console.command']
     db_tools.command.backup:
       class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
@@ -12,6 +13,14 @@ services:
         - '%doctrine.default_connection%'
         - '%db_tools.excluded_tables%'
         - '@db_tools.backupper.factory.registry'
+        - '@db_tools.storage'
+      tags: ['console.command']
+    db_tools.command.restore:
+      class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
+      arguments:
+        - '%doctrine.default_connection%'
+        - '%db_tools.excluded_tables%'
+        - '@db_tools.restorer.factory.registry'
         - '@db_tools.storage'
       tags: ['console.command']
 
@@ -30,4 +39,15 @@ services:
     db_tools.backupper.factory.mysql:
       class: MakinaCorpus\DbToolsBundle\Backupper\MySQL\BackupperFactory
       tags: ['db_tools.backupper.factory']
+
+    # Restorers
+    db_tools.restorer.factory.registry:
+      class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry
+      arguments: ['@doctrine', '%db_tools.restorer.binaries%']
+    db_tools.restorer.factory.pgsql:
+      class: MakinaCorpus\DbToolsBundle\Restorer\PgSQL\RestorerFactory
+      tags: ['db_tools.restorer.factory']
+    db_tools.restorer.factory.mysql:
+      class: MakinaCorpus\DbToolsBundle\Restorer\MySQL\RestorerFactory
+      tags: ['db_tools.restorer.factory']
 

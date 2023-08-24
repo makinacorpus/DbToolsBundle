@@ -3,6 +3,7 @@
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -15,7 +16,8 @@ class CheckCommand extends Command
 {
     public function __construct(
         private string $defaultConnectionName,
-        private BackupperFactoryRegistry $backupperFactory,
+        private BackupperFactoryRegistry $backupperFactoryRegistry,
+        private RestorerFactoryRegistry $restorerFactoryRegistry,
     ) {
         parent::__construct();
     }
@@ -41,11 +43,13 @@ class CheckCommand extends Command
 
         $connection = $input->getArgument('connection') ?? $this->defaultConnectionName;
 
-        $backupper = $this->backupperFactory->create($connection);
-
+        $backupper = $this->backupperFactoryRegistry->create($connection);
         $response = $backupper->checkBinary();
-
         $io->success("Backupper binary ok : " . $response);
+
+        $restorer = $this->restorerFactoryRegistry->create($connection);
+        $response = $restorer->checkBinary();
+        $io->success("Restorer binary ok : " . $response);
 
         return Command::SUCCESS;
     }

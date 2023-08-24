@@ -7,7 +7,7 @@ use Doctrine\DBAL\Connection;
 
 interface BackupperFactoryInterface
 {
-    public function create(string $binary,  Connection $connection): BackupperInterface;
+    public function create(string $binary, Connection $connection): BackupperInterface;
 
     /**
      * Check if given DBAL driver is supported by this backupper factory.
