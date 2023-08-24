@@ -19,7 +19,7 @@ final class DbToolsExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/../config'));
         $loader->load('services.yaml');
 
         $container->setParameter('db_tools.storage_directory', $config['storage_directory']);
