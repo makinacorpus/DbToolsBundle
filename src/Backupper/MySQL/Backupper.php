@@ -29,10 +29,14 @@ class Backupper extends AbstractBackupper
             '-p' . $dbParams['password'],
             '-r',
             $this->destination,
-            ...\array_map(fn ($item) => '--ignore-table ' . $item, $this->excludedTables),
             $dbParams['dbname'],
             '--no-tablespaces',
         ];
+
+        foreach ($this->excludedTables as $table) {
+            $args[] = '--ignore-table';
+            $args[] = $dbParams['dbname'] . '.' . $table;
+        }
 
         if ($this->verbose) {
             $args[] = '-v';

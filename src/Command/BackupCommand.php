@@ -50,6 +50,12 @@ class BackupCommand extends Command
                 InputOption::VALUE_NONE,
                 'Should we skip the old backups cleanup step?'
             )
+            ->addOption(
+                'excluded-tables',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Tables to exclude, separate with comma (ex: users,logs). If given, overrides excluded tables parameter from bundle configuration.'
+            )
         ;
     }
 
@@ -58,6 +64,10 @@ class BackupCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
+        }
+
+        if ($excludedTables = $input->getOption('excluded-tables')) {
+            $this->excludedTables[$this->connectionName] = \explode(',', $excludedTables);
         }
 
         $created = $this->doBackup();
