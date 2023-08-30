@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\ProgressIndicator;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
@@ -18,6 +17,7 @@ class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
     private string $connectionName;
+    private $force = false;
 
     public function __construct(
         private AnonymizatorRegistry $anonymizatorRegistry,
@@ -48,6 +48,12 @@ class AnonymizeCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Tables to exclude from anonymization, separate with comma (ex: users,logs).'
             )
+            ->addOption(
+                'force',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not ask for confirmation before restoring database'
+            )
         ;
     }
 
@@ -57,7 +63,20 @@ class AnonymizeCommand extends Command
             throw new \LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
         }
 
+        if ($force = $input->getOption('force')) {
+            $input->setInteractive(false);
+        }
+
         $this->io = new SymfonyStyle($input, $output);
+
+        if ('prod' == $input->getOption('env')) {
+            $this->io->caution("This command cannot be launched in production!");
+        }
+
+        if (!$force && !$this->io->confirm("Are you sure you want to anonymize your database?", false)) {
+            throw new \RuntimeException('Action cancelled');
+        }
+
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
         }
