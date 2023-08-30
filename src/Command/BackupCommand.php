@@ -26,9 +26,9 @@ class BackupCommand extends Command
         private BackupperFactoryRegistry $backupperFactory,
         private DbToolsStorage $storage,
     ) {
-        $this->connectionName = $defaultConnectionName;
-
         parent::__construct();
+
+        $this->connectionName = $defaultConnectionName;
     }
 
     /**

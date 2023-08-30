@@ -28,5 +28,13 @@ class DbToolsPass implements CompilerPassInterface
             }
         }
 
+        if ($container->has('db_tools.anonymization.anonymizator.registry')) {
+            $definition = $container->findDefinition('db_tools.anonymization.anonymizator.registry');
+
+            $taggedServices = $container->findTaggedServiceIds('db_tools.anonymization.anonymizator');
+            foreach ($taggedServices as $id => $tags) {
+                $definition->addMethodCall('addAnonymizator', [new Reference($id)]);
+            }
+        }
     }
 }

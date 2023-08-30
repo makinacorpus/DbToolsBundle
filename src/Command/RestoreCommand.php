@@ -27,9 +27,9 @@ class RestoreCommand extends Command
         private RestorerFactoryRegistry $restorerFactory,
         private DbToolsStorage $storage,
     ) {
-        $this->connectionName = $defaultConnectionName;
-
         parent::__construct();
+
+        $this->connectionName = $defaultConnectionName;
     }
 
     /**

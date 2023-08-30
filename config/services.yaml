@@ -1,5 +1,11 @@
 services:
     # Commands
+    db_tools.command.anonymize:
+      class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
+      arguments:
+        - '@db_tools.anonymization.anonymizator.registry'
+        - '%doctrine.default_connection%'
+      tags: ['console.command']
     db_tools.command.check:
       class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
       arguments:
@@ -51,3 +57,6 @@ services:
       class: MakinaCorpus\DbToolsBundle\Restorer\MySQL\RestorerFactory
       tags: ['db_tools.restorer.factory']
 
+    # Anonymization
+    db_tools.anonymization.anonymizator.registry:
+      class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry

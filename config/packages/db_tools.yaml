@@ -2,17 +2,41 @@ db_tools:
   # Where to put generated backups
   # storage_directory: '%kernel.project_dir%/var/private/db_tools'
 
-  # When to delete old backups
+  # When old backups are considered obsolete
   # (Use reltive date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
-  # backup_expiration_age: '3 months ago'
+  # backup_expiration_age: '6 months ago' # default '3 months ago'
 
-  # Exluded tables
-  # List here  tables (per connection) you don't want in your backups
+  # List here tables (per connection) you don't want in your backups
   # excluded_tables:
   #   - default: ['table1', 'table2']
 
-  # Specify here path to binary if the system can't find it by himself
-  # driver:
-  #   - pgsql: 'usr/bin/pg_dump',
-  #   - pdo_pgsql: 'usr/bin/pg_dump',
-  #   - pdo_mysql: 'usr/bin/mysqldump'
+  # Specify here paths to binaries, only if the system can't find them by himself
+  # backupper_binaries:
+  #   pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+  #   pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+  #   pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+  # restorer_binaries:
+  #   pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+  #   pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+  #   pdo_mysql: 'usr/bin/mysql' # default 'mysql'
+
+  # Anonymization configuration.
+  # anonymization:
+  #   default: # There is one configuration per doctrine connection
+  #     user:
+  #       # Some Anonymizer does not require any option, you can use them like this
+  #       prenom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PrenomAnonymizer
+  #       nom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\NomAnonymizer
+  #       # Some does require options, specify them like this
+  #       age:
+  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+  #         options: {min: 0, max: 99}
+  #       # Some has optionnal options, specify them
+  #       email:
+  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+  #         options: {domain: 'toto.com'}
+  #       # Or not
+  #       email: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+  #       level:
+  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+  #         options: {sample: ['none', 'bad', 'good', 'expert']}
