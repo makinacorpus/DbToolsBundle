@@ -23,6 +23,7 @@ db_tools:
   # Anonymization configuration.
   # anonymization:
   #   default: # There is one configuration per doctrine connection
+  #     # Configuration to anonymize a table named `user`
   #     user:
   #       # Some Anonymizer does not require any option, you can use them like this
   #       prenom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PrenomAnonymizer
@@ -40,3 +41,16 @@ db_tools:
   #       level:
   #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
   #         options: {sample: ['none', 'bad', 'good', 'expert']}
+  #       # Given you have columns `street`, `zip_code`, `city` and `country`,
+  #       # this configuration will fill these column with real, coherent address
+  #       # from a ~300 elements sample.
+  #       address:
+  #         target: table
+  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+  #         options:
+  #           street_address: 'street'
+  #           # secondary_address:
+  #           postal_code: 'zip_code'
+  #           locality: 'city'
+  #           # region:
+  #           country: 'country'
