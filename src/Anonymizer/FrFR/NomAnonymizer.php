@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\Common\EnumAnonymizer;

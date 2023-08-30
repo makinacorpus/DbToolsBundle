@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
 
 use Doctrine\DBAL\Platforms\MySQLPlatform;

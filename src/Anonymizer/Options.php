@@ -17,4 +17,14 @@ class Options
     {
         return $this->options[$name] ?? null;
     }
+
+    public function all(): array
+    {
+        return $this->options;
+    }
+
+    public function count(): int
+    {
+        return \count($this->options);
+    }
 }
