@@ -16,11 +16,10 @@ Roadmap :
 - [ ] Backup encryption
 - [ ] New anonymizers
   - [ ] Common
-    - [ ] Address
     - [ ] Iban
     - [ ] Bic
     - [ ] Phone number
   - [ ] FrFR
     - [ ] Numéro de sécurité sociale
-    - [ ] Numéro de téléphone (Implementation of `Common\PhoneNumberAnonymzer`)
-    - [ ] Adresse (Implementation of `Common\AddressAnonymzer`)
+    - [ ] Numéro de téléphone (Implementation of `Common\PhoneNumberAnonymizer`)
+    - [ ] Adresse (Implementation of `Common\AddressAnonymizer`)
