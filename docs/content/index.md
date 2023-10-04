@@ -4,7 +4,6 @@ layout: home
 hero:
   name: DbToolsBundle
   text: a set of Symfony Console Commands to interact with your database
-  tagline: by Makina Corpus
   image:
     src: ./images/logo.svg
     alt: DbToolsBundle by Makina Corpus

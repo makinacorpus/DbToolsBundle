@@ -1,6 +1,6 @@
 :root {
-   --vp-c-brand: #561fa8;
-   --vp-c-brand-2: #561fa8;
+  --vp-c-brand: #561fa8;
+  --vp-c-brand-2: #561fa8;
   --vp-c-green-light: #a279e0;
   --vp-c-brand-light: #a279e0;
   --vp-c-brand-lighter: #a279e0;
@@ -8,17 +8,4 @@
   --vp-c-brand-darker: #221157;
   --vp-c-text-code: #221157;
   /* --vp-code-line-diff-add-color: rgba(16, 185, 129, 0.14); */
-}
-
-.makina-footer {
-  background-color: var(--vp-c-brand-dark);
-  position: fixed;
-  padding: 0.5rem;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-}
-
-.main img {
-  margin: 1rem auto;
 }
