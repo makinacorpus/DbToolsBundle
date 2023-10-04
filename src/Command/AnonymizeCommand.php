@@ -12,12 +12,11 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry;
 use Symfony\Component\Console\Helper\ProgressIndicator;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
-#[AsCommand(name: 'db-tools:anonymize', description: 'Anonymize database')]
+#[AsCommand(name: 'db-tools:anonymize', description: 'Anonymize database', aliases: ['dbt:a'])]
 class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
     private string $connectionName;
-    private $force = false;
 
     public function __construct(
         private AnonymizatorRegistry $anonymizatorRegistry,

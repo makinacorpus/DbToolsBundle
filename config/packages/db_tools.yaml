@@ -3,7 +3,7 @@ db_tools:
   # storage_directory: '%kernel.project_dir%/var/private/db_tools'
 
   # When old backups are considered obsolete
-  # (Use reltive date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+  # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
   # backup_expiration_age: '6 months ago' # default '3 months ago'
 
   # List here tables (per connection) you don't want in your backups

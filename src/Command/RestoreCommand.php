@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:restore', description: 'Restore database')]
+#[AsCommand(name: 'db-tools:restore', description: 'Restore database', aliases: ['dbt:r'])]
 class RestoreCommand extends Command
 {
     private SymfonyStyle $io;
