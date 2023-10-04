@@ -1,10 +1,8 @@
 # How to build this doc
 
-This doc is built with vitepress.
+This doc is built with [vitepress](https://vitepress.dev/).
 
 You can find more info about vitepress Markdown flavored here: https://vitepress.dev/guide/markdown
-
-Summary is automaticly generate form arborescence in `/src/`.
 
 To build it locally :
 
