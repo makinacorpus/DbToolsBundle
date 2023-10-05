@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;

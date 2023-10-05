@@ -20,33 +20,37 @@ db_tools:
   #   pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
   #   pdo_mysql: 'usr/bin/mysql' # default 'mysql'
 
+  # anonymizer_paths:
+  #   - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+  #   - '%kernel.project_dir%/src/Anonymizer'
+
   # Anonymization configuration.
   # anonymization:
   #   default: # There is one configuration per doctrine connection
   #     # Configuration to anonymize a table named `user`
   #     user:
   #       # Some Anonymizer does not require any option, you can use them like this
-  #       prenom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PrenomAnonymizer
-  #       nom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\NomAnonymizer
+  #       prenom: fr_fr.prenom
+  #       nom: fr_fr.nom
   #       # Some does require options, specify them like this
   #       age:
-  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+  #         anonymizer: integer
   #         options: {min: 0, max: 99}
   #       # Some has optionnal options, specify them
   #       email:
-  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+  #         anonymizer: email
   #         options: {domain: 'toto.com'}
   #       # Or not
-  #       email: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+  #       email: email
   #       level:
-  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+  #         anonymizer: string
   #         options: {sample: ['none', 'bad', 'good', 'expert']}
   #       # Given you have columns `street`, `zip_code`, `city` and `country`,
   #       # this configuration will fill these column with real, coherent address
   #       # from a ~300 elements sample.
   #       address:
   #         target: table
-  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+  #         anonymizer: address
   #         options:
   #           street_address: 'street'
   #           # secondary_address:

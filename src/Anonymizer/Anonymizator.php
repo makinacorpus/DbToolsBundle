@@ -16,22 +16,15 @@ class Anonymizator //extends \IteratorAggregate
     public function __construct(
         private string $connectionName,
         private Connection $connection,
+        private AnonymizerRegistry $anonymizerRegistry
     ) { }
 
     public function addAnonymization(string $table, string $name, array $config): self
     {
-        if (!\class_exists($config['anonymizer'])) {
+        if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
-                'Can not find class "%s", check your configuration.',
+                'Can not find anonymizer "%s", check your configuration.',
                 $config['anonymizer']
-            ));
-        }
-
-        if (!\is_subclass_of($config['anonymizer'], AbstractAnonymizer::class)) {
-            throw new \InvalidArgumentException(\sprintf(
-                '"%s" is not a "%s", check your configuration.',
-                $config['anonymizer'],
-                AbstractAnonymizer::class
             ));
         }
 
@@ -45,13 +38,13 @@ class Anonymizator //extends \IteratorAggregate
             $this->anonymizationConfig[$table] = [];
         }
         $this->anonymizationConfig[$table][$name] = [
-            'class' => $config['anonymizer'],
+            'anonymizer' => $config['anonymizer'],
             'target' => $target,
             'options' => new Options($config['options']),
         ];
 
         if (!isset($this->anonymizers[$config['anonymizer']])) {
-            $this->anonymizers[$config['anonymizer']] = new $config['anonymizer']($this->connection);
+            $this->anonymizers[$config['anonymizer']] = new $anonymizer($this->connection);
         }
 
         return $this;
@@ -94,7 +87,7 @@ class Anonymizator //extends \IteratorAggregate
             ;
 
             foreach ($tableConfig as $config) {
-                $this->anonymizers[$config['class']]->anonymize(
+                $this->anonymizers[$config['anonymizer']]->anonymize(
                     $updateQuery,
                     $config['target'],
                     $config['options']

@@ -4,6 +4,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Helper\Iban;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
  * Anonymize an IBAN/BIC couple.
@@ -18,6 +19,7 @@ use MakinaCorpus\DbToolsBundle\Helper\Iban;
  *  - "sample_size": total number of different IBAN that will be generated, the higher
  *    is this number, the less duplicates you will have in the end.
  */
+#[AsAnonymizer('iban-bic')]
 class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
 {
     /**

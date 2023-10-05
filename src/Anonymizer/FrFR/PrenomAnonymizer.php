@@ -2,8 +2,10 @@
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\Common\EnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
+#[AsAnonymizer('fr_fr.prenom')]
 class PrenomAnonymizer extends EnumAnonymizer
 {
     protected string $type = "string";
