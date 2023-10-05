@@ -19,27 +19,31 @@ class Anonymizator //extends \IteratorAggregate
         private AnonymizerRegistry $anonymizerRegistry
     ) { }
 
-    public function addAnonymization(string $table, string $name, array $config): self
+    public function addAnonymization(string $table, string $targetName, array $config): self
     {
+        if (!isset($config['anonymizer'])) {
+            throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $targetName));
+        }
+
         if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
                 'Can not find anonymizer "%s", check your anonymization configuration for table "%s", key "%s".',
                 $config['anonymizer'],
                 $table,
-                $name
+                $targetName
             ));
         }
 
         $target = match($config['target']) {
             'table' => new Table($table),
-            'column' => new Column($table, $name),
+            'column' => new Column($table, $targetName),
             default => throw new \InvalidArgumentException(\sprintf('Unknown "%s" target, available options are : table, column', $name)),
         };
 
         if (!isset($this->anonymizationConfig[$table])) {
             $this->anonymizationConfig[$table] = [];
         }
-        $this->anonymizationConfig[$table][$name] = [
+        $this->anonymizationConfig[$table][$targetName] = [
             'anonymizer' => $config['anonymizer'],
             'target' => $target,
             'options' => new Options($config['options']),
@@ -88,9 +92,9 @@ class Anonymizator //extends \IteratorAggregate
                 ->update($platfrom->quoteIdentifier($table))
             ;
 
-            foreach ($tableConfig as $name => $config) {
+            foreach ($tableConfig as $targetName => $config) {
                 if (!isset($config['anonymizer'])) {
-                    throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $name));
+                    throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $targetName));
                 }
 
                 $this->anonymizers[$config['anonymizer']]->anonymize(
