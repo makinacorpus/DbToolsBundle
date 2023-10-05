@@ -23,8 +23,10 @@ class Anonymizator //extends \IteratorAggregate
     {
         if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
-                'Can not find anonymizer "%s", check your configuration.',
-                $config['anonymizer']
+                'Can not find anonymizer "%s", check your anonymization configuration for table "%s", key "%s".',
+                $config['anonymizer'],
+                $table,
+                $name
             ));
         }
 
@@ -86,7 +88,11 @@ class Anonymizator //extends \IteratorAggregate
                 ->update($platfrom->quoteIdentifier($table))
             ;
 
-            foreach ($tableConfig as $config) {
+            foreach ($tableConfig as $name => $config) {
+                if (!isset($config['anonymizer'])) {
+                    throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $name));
+                }
+
                 $this->anonymizers[$config['anonymizer']]->anonymize(
                     $updateQuery,
                     $config['target'],

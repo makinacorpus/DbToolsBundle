@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 class AnonymizerRegistry
 {
-    private $anonymizers = null;
+    private array $anonymizers = null;
 
     public function __construct(
         private array $paths

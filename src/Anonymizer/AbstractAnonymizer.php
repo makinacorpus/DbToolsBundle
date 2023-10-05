@@ -20,9 +20,7 @@ abstract class AbstractAnonymizer
 
     public static function getName(): string
     {
-        $class = static::class;
-
-        if ($attribute = (new \ReflectionClass($class))->getAttributes(AsAnonymizer::class)) {
+        if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
             return $attribute[0]->newInstance()->name;
         }
 
