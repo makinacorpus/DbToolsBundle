@@ -30,23 +30,23 @@ db_tools:
   #       nom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\NomAnonymizer
   #       # Some does require options, specify them like this
   #       age:
-  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
   #         options: {min: 0, max: 99}
   #       # Some has optionnal options, specify them
   #       email:
-  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
   #         options: {domain: 'toto.com'}
   #       # Or not
   #       email: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
   #       level:
-  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
   #         options: {sample: ['none', 'bad', 'good', 'expert']}
   #       # Given you have columns `street`, `zip_code`, `city` and `country`,
   #       # this configuration will fill these column with real, coherent address
   #       # from a ~300 elements sample.
   #       address:
   #         target: table
-  #         anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+  #         anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
   #         options:
   #           street_address: 'street'
   #           # secondary_address:

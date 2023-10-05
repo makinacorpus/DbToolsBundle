@@ -1,6 +1,6 @@
 {
     "name": "makinacorpus/db-tools-bundle",
-    "description": "A set of Symfony commands to dump/restore/anonymise database",
+    "description": "A set of Symfony commands to dump/restore/anonymize database",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [

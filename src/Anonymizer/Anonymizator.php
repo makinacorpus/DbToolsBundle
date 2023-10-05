@@ -20,17 +20,17 @@ class Anonymizator //extends \IteratorAggregate
 
     public function addAnonymization(string $table, string $name, array $config): self
     {
-        if (!\class_exists($config['anonymiser'])) {
+        if (!\class_exists($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
                 'Can not find class "%s", check your configuration.',
-                $config['anonymiser']
+                $config['anonymizer']
             ));
         }
 
-        if (!\is_subclass_of($config['anonymiser'], AbstractAnonymizer::class)) {
+        if (!\is_subclass_of($config['anonymizer'], AbstractAnonymizer::class)) {
             throw new \InvalidArgumentException(\sprintf(
                 '"%s" is not a "%s", check your configuration.',
-                $config['anonymiser'],
+                $config['anonymizer'],
                 AbstractAnonymizer::class
             ));
         }
@@ -45,13 +45,13 @@ class Anonymizator //extends \IteratorAggregate
             $this->anonymizationConfig[$table] = [];
         }
         $this->anonymizationConfig[$table][$name] = [
-            'class' => $config['anonymiser'],
+            'class' => $config['anonymizer'],
             'target' => $target,
             'options' => new Options($config['options']),
         ];
 
-        if (!isset($this->anonymizers[$config['anonymiser']])) {
-            $this->anonymizers[$config['anonymiser']] = new $config['anonymiser']($this->connection);
+        if (!isset($this->anonymizers[$config['anonymizer']])) {
+            $this->anonymizers[$config['anonymizer']] = new $config['anonymizer']($this->connection);
         }
 
         return $this;
