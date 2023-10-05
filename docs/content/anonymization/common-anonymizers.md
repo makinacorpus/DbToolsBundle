@@ -37,7 +37,7 @@ db_tools:
     default:
       user:
         email_address:
-          anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
           options: {domain: 'custom-domain.com'}
   #...
 ```
@@ -57,7 +57,7 @@ db_tools:
   anonymization:
     default:
       age:
-        anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+        anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
         options: {min: 10, max: 99}
   #...
 ```
@@ -95,7 +95,7 @@ db_tools:
   anonymization:
     default:
       level:
-        anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+        anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
         options: {sample: ['none', 'bad', 'good', 'expert']}
   #...
 ```
@@ -136,7 +136,7 @@ db_tools:
   anonymization:
    address:
           target: table
-          anonymiser: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
           options:
             street_address: 'street'
             secondary_address: 'street_address_2'

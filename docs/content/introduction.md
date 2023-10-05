@@ -4,7 +4,7 @@
 ![Logo](../images/logo.svg)
 
 The idea of this bundle is to simplify life for Symfony developpers when dealing with database,
-anonymisation and GDPR problematics.
+anonymization and GDPR problematics.
 
 Want to backup your database (and clean old backups)?
 
