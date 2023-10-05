@@ -3,9 +3,6 @@
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
@@ -35,32 +32,13 @@ class EnumAnonymizer extends AbstractAnonymizer
     public function initialize(): self
     {
         $this->validateSample();
-
-        $this->connection
-            ->createSchemaManager()
-            ->createTable(new Table(
-                $this->getSampleTableName(),
-                [new Column('value', $this->getType())]
-            ))
-        ;
-
-        $this->connection->beginTransaction();
-        try{
-            foreach($this->sample as $value) {
-                $this->connection
-                    ->createQueryBuilder()
-                    ->insert($this->getSampleTableName())
-                    ->setValue('value', ':value')
-                    ->setParameter('value', $value)
-                    ->executeQuery()
-                ;
-            }
-
-            $this->connection->commit();
-        } catch (\Exception $e) {
-            $this->connection->rollBack();
-            throw $e;
-        }
+        $this->createSampleTempTable(
+            ['value'],
+            $this->sample,
+            $this->getSampleTableName(),
+            // Also handles types such as ''.
+            $this->type ? [$this->type] : null,
+        );
 
         return $this;
     }
@@ -108,22 +86,13 @@ class EnumAnonymizer extends AbstractAnonymizer
         return $this;
     }
 
-    private function getSampleTableName(): string
+    protected function getSampleTableName(): string
     {
         if ($this->sampleTableName) {
             return $this->sampleTableName;
         }
 
         return $this->sampleTableName = $this->generateTempTableName();
-    }
-
-    private function getType(): Type
-    {
-        if ('' === $this->type) {
-            throw new \InvalidArgumentException("No type given, your implementation of EnumAnomyzer should provide its own type.");
-        }
-
-        return Type::getType($this->type);
     }
 
     protected function validateSample(): self
