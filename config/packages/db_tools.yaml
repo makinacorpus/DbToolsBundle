@@ -20,6 +20,7 @@ db_tools:
   #   pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
   #   pdo_mysql: 'usr/bin/mysql' # default 'mysql'
 
+  # Update this configuration if you want to look for anonymizers in a custom folder
   # anonymizer_paths:
   #   - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
   #   - '%kernel.project_dir%/src/Anonymizer'

@@ -1,4 +1,4 @@
-# Common Anonymizers
+# Core Anonymizers
 
 This page list the common purpose *Anonymizers* provided by the *DbToolsBundle*.
 
@@ -22,7 +22,7 @@ db_tools:
   anonymization:
     default:
       user:
-        email_address: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+        email_address: email
   #...
 ```
 
@@ -37,7 +37,7 @@ db_tools:
     default:
       user:
         email_address:
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+          anonymizer: email
           options: {domain: 'custom-domain.com'}
   #...
 ```
@@ -57,7 +57,7 @@ db_tools:
   anonymization:
     default:
       age:
-        anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+        anonymizer: integer
         options: {min: 10, max: 99}
   #...
 ```
@@ -76,7 +76,7 @@ db_tools:
   #...
   anonymization:
     default:
-      my_dirty_secret: MakinaCorpus\DbToolsBundle\Anonymizer\Common\Md5Anonymizer
+      my_dirty_secret: md5
   #...
 ```
 
@@ -95,7 +95,7 @@ db_tools:
   anonymization:
     default:
       level:
-        anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+        anonymizer: string
         options: {sample: ['none', 'bad', 'good', 'expert']}
   #...
 ```
@@ -136,7 +136,7 @@ db_tools:
   anonymization:
    address:
           target: table
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+          anonymizer: address
           options:
             street_address: 'street'
             secondary_address: 'street_address_2'
