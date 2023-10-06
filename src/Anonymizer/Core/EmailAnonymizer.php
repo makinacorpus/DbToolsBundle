@@ -22,7 +22,7 @@ class EmailAnonymizer extends AbstractAnonymizer
             throw new \InvalidArgumentException("This anonymazier only accepts Target\Column target.");
         }
 
-        $domain = $options->has('domain') ? $options->get('domain') : 'example.com';
+        $domain = $options->get('domain', 'example.com');
 
         $plateform = $this->connection->getDatabasePlatform();
 
