@@ -19,7 +19,7 @@ class Md5Anonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): self
+    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
     {
         if (!$target instanceof Target\Column) {
             throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
@@ -32,7 +32,5 @@ class Md5Anonymizer extends AbstractAnonymizer
             $quotedColumn,
             'MD5(' . $quotedColumn . ')'
         );
-
-        return $this;
     }
 }

@@ -16,7 +16,7 @@ class EmailAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $updateQuery, Target\Target $target, Options $options): self
+    public function anonymize(QueryBuilder $updateQuery, Target\Target $target, Options $options): void
     {
         if (!$target instanceof Target\Column) {
             throw new \InvalidArgumentException("This anonymazier only accepts Target\Column target.");
@@ -36,7 +36,5 @@ class EmailAnonymizer extends AbstractAnonymizer
                 "'" . $domain . "'",
             )
         );
-
-        return $this;
     }
 }

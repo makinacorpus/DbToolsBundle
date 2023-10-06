@@ -16,7 +16,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
-    public function __construct(
+    final public function __construct(
         protected Connection $connection,
     ) {}
 
@@ -37,15 +37,12 @@ abstract class AbstractAnonymizer
      *
      * This method is launch once at the beginning of the anonymization process.
      */
-    public function initialize(): self
-    {
-        return $this;
-    }
+    public function initialize(): void {}
 
     /**
      * Add statement to existing update query to anonymize a specific target.
      */
-    abstract public function anonymize(QueryBuilder $updateQuery, Target $target, Options $options): self;
+    abstract public function anonymize(QueryBuilder $updateQuery, Target $target, Options $options): void;
 
     /**
      * Clean your anonymizer
@@ -55,10 +52,7 @@ abstract class AbstractAnonymizer
      *
      * This method is only launch once at the end of the anonymization process.
      */
-    public function clean(): self
-    {
-        return $this;
-    }
+    public function clean(): void {}
 
     /**
      * Create a temporary table with one or more sample columns, and populate it

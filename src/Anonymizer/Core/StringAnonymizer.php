@@ -28,7 +28,7 @@ class StringAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): self
+    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
     {
         if (!$target instanceof Target\Column) {
             throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
@@ -49,7 +49,13 @@ class StringAnonymizer extends AbstractAnonymizer
         $this->validateSample($target, $sample);
 
         $plateform = $this->connection->getDatabasePlatform();
-        $sampleTable = $this->createTempTable($options->get('sample'));
+
+        $this->createSampleTempTable(
+            ['value'],
+            $sample,
+            $sampleTable = $this->generateTempTableName(),
+            [Type::getType('string')],
+        );
 
         $random = $this->connection
             ->createQueryBuilder()
@@ -66,57 +72,18 @@ class StringAnonymizer extends AbstractAnonymizer
         ;
 
         $query->set($plateform->quoteIdentifier($target->column), \sprintf('(%s)', $random));
-
-        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function clean(): self
+    public function clean(): void
     {
         $tableManager = $this->connection->createSchemaManager();
 
         foreach ($this->tempTables as $table) {
             $tableManager->dropTable($table);
         }
-
-        return $this;
-    }
-
-    private function createTempTable(array $sample): string
-    {
-        $tableName = $this->generateTempTableName();
-
-        $this->connection
-            ->createSchemaManager()
-            ->createTable(new Table(
-                $tableName,
-                [new Column('value', Type::getType('string'))]
-            ))
-        ;
-
-        $this->connection->beginTransaction();
-        try {
-            foreach($sample as $value) {
-                $this->connection
-                    ->createQueryBuilder()
-                    ->insert($tableName)
-                    ->setValue('value', ':value')
-                    ->setParameter('value', $value)
-                    ->executeQuery()
-                ;
-            }
-
-            $this->connection->commit();
-        } catch (\Exception $e) {
-            $this->connection->rollBack();
-            throw $e;
-        }
-
-        $this->tempTables[] = $tableName;
-
-        return $tableName;
     }
 
     private function validateSample(Target\Column $target, $sample): self
