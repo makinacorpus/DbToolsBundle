@@ -1,61 +1,61 @@
 db_tools:
-  # Where to put generated backups
-  # storage_directory: '%kernel.project_dir%/var/private/db_tools'
+    # Where to put generated backups
+    # storage_directory: '%kernel.project_dir%/var/private/db_tools'
 
-  # When old backups are considered obsolete
-  # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
-  # backup_expiration_age: '6 months ago' # default '3 months ago'
+    # When old backups are considered obsolete
+    # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+    # backup_expiration_age: '6 months ago' # default '3 months ago'
 
-  # List here tables (per connection) you don't want in your backups
-  # excluded_tables:
-  #   - default: ['table1', 'table2']
+    # List here tables (per connection) you don't want in your backups
+    # excluded_tables:
+    #   - default: ['table1', 'table2']
 
-  # Specify here paths to binaries, only if the system can't find them by himself
-  # backupper_binaries:
-  #   pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-  #   pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-  #   pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
-  # restorer_binaries:
-  #   pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-  #   pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-  #   pdo_mysql: 'usr/bin/mysql' # default 'mysql'
+    # Specify here paths to binaries, only if the system can't find them by himself
+    # backupper_binaries:
+    #     pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+    #     pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+    #     pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+    # restorer_binaries:
+    #     pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+    #     pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+    #     pdo_mysql: 'usr/bin/mysql' # default 'mysql'
 
-  # Update this configuration if you want to look for anonymizers in a custom folder
-  # anonymizer_paths:
-  #   - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
-  #   - '%kernel.project_dir%/src/Anonymizer'
+    # Update this configuration if you want to look for anonymizers in a custom folder
+    # anonymizer_paths:
+    #     - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+    #     - '%kernel.project_dir%/src/Anonymizer'
 
-  # Anonymization configuration.
-  # anonymization:
-  #   default: # There is one configuration per doctrine connection
-  #     # Configuration to anonymize a table named `user`
-  #     user:
-  #       # Some Anonymizer does not require any option, you can use them like this
-  #       prenom: fr_fr.prenom
-  #       nom: fr_fr.nom
-  #       # Some does require options, specify them like this
-  #       age:
-  #         anonymizer: integer
-  #         options: {min: 0, max: 99}
-  #       # Some has optionnal options, specify them
-  #       email:
-  #         anonymizer: email
-  #         options: {domain: 'toto.com'}
-  #       # Or not
-  #       email: email
-  #       level:
-  #         anonymizer: string
-  #         options: {sample: ['none', 'bad', 'good', 'expert']}
-  #       # Given you have columns `street`, `zip_code`, `city` and `country`,
-  #       # this configuration will fill these column with real, coherent address
-  #       # from a ~300 elements sample.
-  #       address:
-  #         target: table
-  #         anonymizer: address
-  #         options:
-  #           street_address: 'street'
-  #           # secondary_address:
-  #           postal_code: 'zip_code'
-  #           locality: 'city'
-  #           # region:
-  #           country: 'country'
+    # Anonymization configuration.
+    # anonymization:
+    #     default: # There is one configuration per doctrine connection
+    #       # Configuration to anonymize a table named `user`
+    #       user:
+    #           # Some Anonymizer does not require any option, you can use them like this
+    #           prenom: fr_fr.prenom
+    #           nom: fr_fr.nom
+    #           # Some does require options, specify them like this
+    #           age:
+    #               anonymizer: integer
+    #               options: {min: 0, max: 99}
+    #           # Some has optionnal options, specify them
+    #           email:
+    #               anonymizer: email
+    #               options: {domain: 'toto.com'}
+    #           # Or not
+    #           email: email
+    #           level:
+    #               anonymizer: string
+    #               options: {sample: ['none', 'bad', 'good', 'expert']}
+    #           # Given you have columns `street`, `zip_code`, `city` and `country`,
+    #           # this configuration will fill these column with real, coherent address
+    #           # from a ~300 elements sample.
+    #           address:
+    #               target: table
+    #               anonymizer: address
+    #               options:
+    #                   street_address: 'street'
+    #                   # secondary_address:
+    #                   postal_code: 'zip_code'
+    #                   locality: 'city'
+    #                   # region:
+    #                   country: 'country'
