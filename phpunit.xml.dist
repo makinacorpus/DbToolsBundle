@@ -4,6 +4,9 @@
     <ini name="error_reporting" value="-1"/>
   </php>
   <testsuites>
+    <testsuite name="Functional">
+      <directory>./tests/Functional</directory>
+    </testsuite>
     <testsuite name="Unit">
       <directory>./tests/Unit</directory>
     </testsuite>

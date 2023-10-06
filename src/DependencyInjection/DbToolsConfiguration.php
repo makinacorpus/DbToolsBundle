@@ -44,10 +44,7 @@ final class DbToolsConfiguration implements ConfigurationInterface
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('anonymizer_paths')
-                    ->defaultValue([
-                        '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer',
-                        '%kernel.project_dir%/src/Anonymizer'
-                    ])
+                    ->defaultValue([])
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('anonymization')

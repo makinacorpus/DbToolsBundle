@@ -8,6 +8,7 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -35,8 +36,24 @@ final class DbToolsExtension extends Extension
         // Restorer
         $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
 
+        // Validate user-given anonymizer paths.
+        $anonymizerPaths = $config['anonymizer_paths'];
+        foreach ($anonymizerPaths as $userPath) {
+            $resolvedUserPath = $container->getParameterBag()->resolveValue($userPath);
+            if (!\is_dir($resolvedUserPath)) {
+                throw new InvalidArgumentException(\sprintf('"db_tools.anonymizer_paths": path "%s" does not exist', $userPath));
+            }
+        }
+        // Only set the default provided one if the folder exists in order to
+        // prevent "directory does not exists" errors.
+        $defaultDirectory = $container->getParameterBag()->resolveValue('%kernel.project_dir%/src/Anonymizer');
+        if (\is_dir($defaultDirectory)) {
+            $anonymizerPaths[] = '%kernel.project_dir%/src/Anonymizer';
+        }
+        $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymizer';
+
         // Anonymization
-        $container->setParameter('db_tools.anonymization.anonymizer.paths', $config['anonymizer_paths']);
+        $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
 
         if (isset($config['anonymization'])) {
             foreach ($config['anonymization'] as $connection => $connectionConfig) {
