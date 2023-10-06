@@ -12,7 +12,7 @@ class AnonymizerRegistry
 
     public function __construct(
         private array $paths
-    ) { }
+    ) {}
 
     public function addPath(array $paths): void
     {

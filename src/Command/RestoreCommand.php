@@ -153,7 +153,7 @@ class RestoreCommand extends Command
 
         if (\count($backupLists)) {
             $options = \array_map(
-                fn($data) => (string)$data[1],
+                fn ($data) => (string)$data[1],
                 $backupLists
             );
 

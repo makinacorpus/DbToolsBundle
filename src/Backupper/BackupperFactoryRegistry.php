@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
@@ -14,7 +13,7 @@ class BackupperFactoryRegistry
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $backupperBinaries,
-    ) { }
+    ) {}
 
     public function addBackupperFactory(BackupperFactoryInterface $factory): void
     {

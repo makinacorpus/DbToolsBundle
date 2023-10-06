@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Restorer\MySQL;
 
 use Doctrine\DBAL\Connection;

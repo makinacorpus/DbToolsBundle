@@ -17,7 +17,7 @@ class Anonymizator //extends \IteratorAggregate
         private string $connectionName,
         private Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry
-    ) { }
+    ) {}
 
     public function addAnonymization(string $table, string $targetName, array $config): self
     {

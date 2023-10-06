@@ -38,7 +38,6 @@ class AnonymizeCommand extends Command
                 'connection',
                 'c',
                 InputOption::VALUE_OPTIONAL,
-
                 'A doctrine connection name. If not given, use default connection'
             )
             ->addOption(

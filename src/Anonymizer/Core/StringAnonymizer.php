@@ -95,7 +95,7 @@ class StringAnonymizer extends AbstractAnonymizer
         ;
 
         $this->connection->beginTransaction();
-        try{
+        try {
             foreach($sample as $value) {
                 $this->connection
                     ->createQueryBuilder()

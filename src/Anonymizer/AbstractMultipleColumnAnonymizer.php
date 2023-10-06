@@ -18,7 +18,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
      *
      * @return string[]
      */
-    protected abstract function getColumnNames(): array;
+    abstract protected function getColumnNames(): array;
 
     /**
      * Get samples.
@@ -26,7 +26,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
      * @return array<string[]>
      *   Each value must have the exact same number of values that the column count.
      */
-    protected abstract function getSamples(): array;
+    abstract protected function getSamples(): array;
 
     /**
      * Get column types.
@@ -86,11 +86,11 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
         }
 
         $plateform = $this->connection->getDatabasePlatform();
-        $columnOptions = \array_filter($columns, fn($column) => $options->has($column));
+        $columnOptions = \array_filter($columns, fn ($column) => $options->has($column));
 
         $random = $this->connection
             ->createQueryBuilder()
-            ->select(...\array_map(fn($column) => $sampleTableName . '.' . $column, $columnOptions))
+            ->select(...\array_map(fn ($column) => $sampleTableName . '.' . $column, $columnOptions))
             ->from($sampleTableName)
             ->setMaxResults(1)
             ->where(
@@ -108,7 +108,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
                 \implode(
                     ', ',
                     \array_map(
-                        fn($column) => $plateform->quoteIdentifier($options->get($column)),
+                        fn ($column) => $plateform->quoteIdentifier($options->get($column)),
                         $columnOptions
                     )
                 )

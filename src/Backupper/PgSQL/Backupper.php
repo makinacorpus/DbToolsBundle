@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Backupper\PgSQL;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;

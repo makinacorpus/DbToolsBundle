@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;

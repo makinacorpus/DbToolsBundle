@@ -2,12 +2,11 @@
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
-
 class AnonymizatorRegistry
 {
     private array $anonymizator = [];
 
-    public function __construct() { }
+    public function __construct() {}
 
     public function addAnonymizator(Anonymizator $anonymizator): self
     {

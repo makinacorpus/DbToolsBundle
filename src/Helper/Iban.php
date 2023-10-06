@@ -47,7 +47,7 @@ class Iban
 
         $result = '';
         foreach ($format as $piece) {
-            list ($type, $size) = $piece;
+            list($type, $size) = $piece;
             for ($i = 0; $i < $size; ++$i) {
                 $result .= match ($type) {
                     'c' => \rand(0, 1) ? \rand(0, 9) : \chr(\rand($letterMin, $letterMax)),
@@ -81,7 +81,7 @@ class Iban
         // "A" si 10, "B" is 11, ...
         $checkString = \preg_replace_callback(
             '/[A-Z]/',
-            static fn (array $matches) => (string) \ord($matches[0]) - 55, 
+            static fn (array $matches) => (string) \ord($matches[0]) - 55,
             $checkString,
         );
 

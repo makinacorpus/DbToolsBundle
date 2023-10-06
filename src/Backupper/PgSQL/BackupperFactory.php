@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Backupper\PgSQL;
 
 use Doctrine\DBAL\Connection;
@@ -12,8 +11,8 @@ class BackupperFactory implements BackupperFactoryInterface
     /**
      * {@inheritdoc}
      */
-     public function create(string $binary, Connection $connection): BackupperInterface
-     {
+    public function create(string $binary, Connection $connection): BackupperInterface
+    {
         return new Backupper($binary, $connection);
     }
 

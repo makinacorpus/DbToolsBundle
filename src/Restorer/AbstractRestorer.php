@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
@@ -14,7 +13,7 @@ abstract class AbstractRestorer implements RestorerInterface
     public function __construct(
         protected string $binary,
         protected Connection $connection,
-    ) { }
+    ) {}
 
     public function checkBinary(): string
     {

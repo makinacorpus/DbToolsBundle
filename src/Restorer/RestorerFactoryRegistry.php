@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
@@ -14,7 +13,7 @@ class RestorerFactoryRegistry
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $restorerBinaries,
-    ) { }
+    ) {}
 
     public function addRestorerFactory(RestorerFactoryInterface $factory): void
     {

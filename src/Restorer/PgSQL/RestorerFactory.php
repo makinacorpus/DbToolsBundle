@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
 use Doctrine\DBAL\Connection;
@@ -12,8 +11,8 @@ class RestorerFactory implements RestorerFactoryInterface
     /**
      * {@inheritdoc}
      */
-     public function create(string $binary, Connection $connection): RestorerInterface
-     {
+    public function create(string $binary, Connection $connection): RestorerInterface
+    {
         return new Restorer($binary, $connection);
     }
 

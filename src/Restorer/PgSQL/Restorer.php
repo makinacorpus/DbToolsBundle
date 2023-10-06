@@ -1,6 +1,5 @@
 <?php
 
-
 namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
