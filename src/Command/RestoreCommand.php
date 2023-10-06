@@ -49,7 +49,7 @@ class RestoreCommand extends Command
             ->addOption(
                 'filename',
                 null,
-                InputOption::VALUE_NONE,
+                InputOption::VALUE_OPTIONAL,
                 'Skip backup file choice and restore given backup file'
             )
             ->addOption(
