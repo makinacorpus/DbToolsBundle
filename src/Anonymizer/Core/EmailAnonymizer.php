@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
@@ -8,7 +8,9 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
+#[AsAnonymizer('email')]
 class EmailAnonymizer extends AbstractAnonymizer
 {
     /**

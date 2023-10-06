@@ -61,7 +61,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'General concepts', link: '/anonymization/general-concepts' },
-          { text: 'Common Anonymizers', link: '/anonymization/common-anonymizers' },
+          { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
           { text: 'Pack FR_Fr', link: '/anonymization/pack-FR-Fr' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
         ]

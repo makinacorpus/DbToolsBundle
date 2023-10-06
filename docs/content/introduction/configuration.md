@@ -102,11 +102,7 @@ for PostgreSQL:
 
 ```
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends postgresql postgresql-client libpq-dev \
-     -yqq && \
-    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
-    docker-php-ext-install -j$(nproc) pgsql pdo_pgsql pdo && \
-    docker-php-ext-enable pdo_pgsql
+    apt-get install -y --no-install-recommends postgresql-client \
 ```
 
 for MariaDB/MySQL:
@@ -114,9 +110,6 @@ for MariaDB/MySQL:
 ```
 RUN apt-get update && \
     apt-get install -y --no-install-recommends default-mysql-client
-     -yqq && \
-    docker-php-ext-install -j$(nproc) pdo mysqli pdo_mysql && \
-    docker-php-ext-enable pdo_mysql && \
 ```
 :::
 
@@ -138,27 +131,27 @@ db_tools:
       # Configuration to anonymize a table named `user`
       user:
         # Some Anonymizer does not require any option, you can use them like this
-        prenom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PrenomAnonymizer
-        nom: MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\NomAnonymizer
+        prenom: fr_fr.prenom
+        nom: fr_fr.nom
         # Some does require options, specify them like this
         age:
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\IntegerAnonymizer
+          anonymizer: integer
           options: {min: 0, max: 99}
         # Some has optionnal options, specify them
         email:
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+          anonymizer: email
           options: {domain: 'toto.com'}
         # Or not
-        email: MakinaCorpus\DbToolsBundle\Anonymizer\Common\EmailAnonymizer
+        email: email
         level:
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\StringAnonymizer
+          anonymizer: string
           options: {sample: ['none', 'bad', 'good', 'expert']}
         # Given you have columns `street`, `zip_code`, `city` and `country`,
         # this configuration will fill these column with real, coherent address
         # from a ~300 elements sample.
         address:
           target: table
-          anonymizer: MakinaCorpus\DbToolsBundle\Anonymizer\Common\AddressAnonymizer
+          anonymizer: address
           options:
             street_address: 'street'
             # secondary_address:

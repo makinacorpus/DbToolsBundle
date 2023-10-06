@@ -1,6 +1,6 @@
 <?php
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
  * Anonymize a string column with a random value from a custom sample.
@@ -16,6 +17,7 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
  * For performance reason, If you use several time this anonymizer with the same sample,
  * you should consider to implement your own EnumAnonymizer.
  */
+#[AsAnonymizer('string')]
 class StringAnonymizer extends AbstractAnonymizer
 {
     /** @var string[] */

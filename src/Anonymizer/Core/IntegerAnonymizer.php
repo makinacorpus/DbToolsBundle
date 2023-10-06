@@ -1,15 +1,17 @@
 <?php
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
  * Anonyze with a random integer between to bounds.
  */
+#[AsAnonymizer('integer')]
 class IntegerAnonymizer extends AbstractAnonymizer
 {
     /**

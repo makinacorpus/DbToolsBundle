@@ -10,12 +10,22 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Target;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
     public function __construct(
         protected Connection $connection,
     ) { }
+
+    public static function getName(): string
+    {
+        if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
+            return $attribute[0]->newInstance()->name;
+        }
+
+        throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");
+    }
 
     /**
      * Initialize your anonymizer

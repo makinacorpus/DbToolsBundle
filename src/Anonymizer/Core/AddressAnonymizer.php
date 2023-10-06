@@ -1,8 +1,9 @@
 <?php
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
  * Anonymized a complete address.
@@ -19,6 +20,7 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
  *
  * Sample from https://randommer.io/random-address
  */
+#[AsAnonymizer('address')]
 class AddressAnonymizer extends AbstractMultipleColumnAnonymizer
 {
     /**

@@ -36,6 +36,8 @@ final class DbToolsExtension extends Extension
         $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
 
         // Anonymization
+        $container->setParameter('db_tools.anonymization.anonymizer.paths', $config['anonymizer_paths']);
+
         if (isset($config['anonymization'])) {
             foreach ($config['anonymization'] as $connection => $connectionConfig) {
                 $definition = new Definition();
@@ -43,6 +45,7 @@ final class DbToolsExtension extends Extension
                 $definition->setArguments([
                     $connection,
                     new Reference(\sprintf('doctrine.dbal.%s_connection', $connection)),
+                    new Reference('db_tools.anonymization.anonymizer.registry'),
                 ]);
                 $definition->addTag('db_tools.anonymization.anonymizator');
 
