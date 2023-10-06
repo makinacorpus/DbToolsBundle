@@ -21,18 +21,31 @@ class Backupper extends AbstractBackupper
 
         $args = [
             $this->binary,
-            '-h',
-            $dbParams['host'],
-            '-u',
-            $dbParams['user'],
-            '-P',
-            $dbParams['port'],
-            '-p' . $dbParams['password'],
-            '-r',
-            $this->destination,
-            $dbParams['dbname'],
-            '--no-tablespaces',
         ];
+
+        if (isset($dbParams['host'])) {
+            $args[] = '-h';
+            $args[] = $dbParams['host'];
+        }
+
+        if (isset($dbParams['user'])) {
+            $args[] = '-u';
+            $args[] = $dbParams['user'];
+        }
+
+        if (isset($dbParams['port'])) {
+            $args[] = '-P';
+            $args[] = $dbParams['port'];
+        }
+
+        if (isset($dbParams['password'])) {
+            $args[] = '-p' . $dbParams['password'];
+        }
+
+        $args[] = '-r';
+        $args[] = $this->destination;
+        $args[] = $dbParams['dbname'];
+        $args[] = '--no-tablespaces';
 
         foreach ($this->excludedTables as $table) {
             $args[] = '--ignore-table';

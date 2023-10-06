@@ -20,24 +20,32 @@ class Backupper extends AbstractBackupper
         $dbParams = $this->connection->getParams();
         $args = [
             $this->binary,
-            '-h',
-            $dbParams['host'],
-            '-U',
-            $dbParams['user'],
-            '-p',
-            $dbParams['port'],
-            '-w',
-            '-f',
-            $this->destination,
-            '-F', // format custom (not sql)
-            'c',
-            '-Z', // compression level 0-9
-            '5',
-            '--lock-wait-timeout=120',
-            '--exclude-table-data=' . \implode('|', $this->excludedTables),
-            '--blobs',
-            $dbParams['dbname'],
         ];
+
+        if (isset($dbParams['host'])) {
+            $args[] = '-h';
+            $args[] = $dbParams['host'];
+        }
+            if (isset($dbParams['user'])) {
+            $args[] = '-U';
+            $args[] = $dbParams['user'];
+        }
+            if (isset($dbParams['port'])) {
+            $args[] = '-p';
+            $args[] = $dbParams['port'];
+        }
+
+        $args[] = '-w';
+        $args[] = '-f';
+        $args[] = $this->destination;
+        $args[] = '-F'; // format custom (not sql)
+        $args[] = 'c';
+        $args[] = '-Z'; // compression level 0-9
+        $args[] = '5';
+        $args[] = '--lock-wait-timeout=120';
+        $args[] = '--exclude-table-data=' . \implode('|', $this->excludedTables);
+        $args[] = '--blobs';
+        $args[] = $dbParams['dbname'];
 
         if ($this->verbose) {
             $args[] = '-v';
@@ -46,7 +54,7 @@ class Backupper extends AbstractBackupper
         $this->process = new Process(
             $args,
             null,
-            ['PGPASSWORD' => $dbParams['password']],
+            ['PGPASSWORD' => $dbParams['password'] ?? ''],
             null,
             600
         );
