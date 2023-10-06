@@ -16,7 +16,7 @@ class KernelConfigurationTest extends TestCase
         $container = new ContainerBuilder(new ParameterBag($parameters + [
             'kernel.bundles' => $bundles,
             'kernel.cache_dir' => \sys_get_temp_dir(),
-            'kernel.debug'=> false,
+            'kernel.debug' => false,
             'kernel.environment' => 'test',
             'kernel.project_dir' => __DIR__,
             'kernel.root_dir' => \dirname(__DIR__),

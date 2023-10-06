@@ -56,7 +56,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function initialize(): self
+    public function initialize(): void
     {
         $this->createSampleTempTable(
             $this->getColumnNames(),
@@ -64,14 +64,12 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
             $this->getSampleTableName(),
             $this->getColumnTypes(),
         );
-
-        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): self
+    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
     {
         if (!$target instanceof Target\Table) {
             throw new \InvalidArgumentException("This anonymizer only accepts Target\Table target.");
@@ -117,18 +115,14 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
             ),
             \sprintf('(%s)', $random),
         );
-
-        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function clean(): self
+    public function clean(): void
     {
         $this->connection->createSchemaManager()->dropTable($this->getSampleTableName());
-
-        return $this;
     }
 
 }

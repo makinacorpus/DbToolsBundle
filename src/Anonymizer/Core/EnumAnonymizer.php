@@ -31,7 +31,7 @@ class EnumAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function initialize(): self
+    public function initialize(): void
     {
         $this->validateSample();
         $this->createSampleTempTable(
@@ -41,14 +41,12 @@ class EnumAnonymizer extends AbstractAnonymizer
             // Also handles types such as ''.
             $this->type ? [$this->type] : null,
         );
-
-        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): self
+    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
     {
         if (!$target instanceof Target\Column) {
             throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
@@ -71,21 +69,17 @@ class EnumAnonymizer extends AbstractAnonymizer
         ;
 
         $query->set($plateform->quoteIdentifier($target->column), \sprintf('(%s)', $random));
-
-        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function clean(): self
+    public function clean(): void
     {
         $this->connection
             ->createSchemaManager()
             ->dropTable($this->getSampleTableName())
         ;
-
-        return $this;
     }
 
     protected function getSampleTableName(): string
@@ -97,7 +91,7 @@ class EnumAnonymizer extends AbstractAnonymizer
         return $this->sampleTableName = $this->generateTempTableName();
     }
 
-    protected function validateSample(): self
+    protected function validateSample(): void
     {
         /*
          * @todo
@@ -108,7 +102,5 @@ class EnumAnonymizer extends AbstractAnonymizer
         if (\is_null($this->sample) || 0 === \count($this->sample)) {
             throw new \InvalidArgumentException("No sample given, your implementation of EnumAnomyzer should provide its own sample.");
         }
-
-        return $this;
     }
 }
