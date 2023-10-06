@@ -15,9 +15,9 @@ class Options
         return isset($this->options[$name]);
     }
 
-    public function get(string $name): mixed
+    public function get(string $name, mixed $default = null): mixed
     {
-        return $this->options[$name] ?? null;
+        return $this->options[$name] ?? $default;
     }
 
     public function all(): array
