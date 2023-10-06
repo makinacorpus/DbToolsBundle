@@ -62,6 +62,27 @@ db_tools:
   #...
 ```
 
+## FloatAnonymizer
+
+This *Anonymizer* will fill configured column with a random float between two values and a given precision (default 2).
+
+Considering you want to anonymize column `size` of table `user`, from the `default` doctrine connection
+and you want to put in it a random integer between `120`, `300`, with a precision of `4` digits you can
+configure it like this:
+
+```yml
+# config/packages/db_tools.yaml
+
+db_tools:
+  #...
+  anonymization:
+    default:
+      age:
+        anonymizer: float
+        options: {min: 120, max: 300, precision: 4}
+  #...
+```
+
 ## Md5Anonymizer
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
