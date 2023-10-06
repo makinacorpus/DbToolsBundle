@@ -24,7 +24,7 @@ class Anonymizator //extends \IteratorAggregate
     public function addAnonymization(string $table, string $targetName, array $config): self
     {
         if (!isset($config['anonymizer'])) {
-            throw new \InvalidArgumentException(\sprintf('Missing anonymizer for table "%s", key "%s"', $table, $targetName));
+            throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
         }
 
         if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
@@ -96,7 +96,7 @@ class Anonymizator //extends \IteratorAggregate
 
             foreach ($tableConfig as $targetName => $config) {
                 if (!isset($config['anonymizer'])) {
-                    throw new \InvalidArgumentException(\sprintf('Missing anonymizer for table "%s", key "%s"', $table, $targetName));
+                    throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
                 }
 
                 $this->anonymizers[$config['anonymizer']]->anonymize(
