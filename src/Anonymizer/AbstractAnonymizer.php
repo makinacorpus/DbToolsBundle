@@ -16,7 +16,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
-    public function __construct(
+    final public function __construct(
         protected Connection $connection,
     ) {}
 
