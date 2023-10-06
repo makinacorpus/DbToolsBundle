@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
@@ -14,7 +15,7 @@ class RestorerFactoryRegistry
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $restorerBinaries,
-    ) { }
+    ) {}
 
     public function addRestorerFactory(RestorerFactoryInterface $factory): void
     {

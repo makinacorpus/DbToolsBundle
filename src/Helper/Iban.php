@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Helper;
 
 /**
@@ -39,7 +41,7 @@ class Iban
      */
     public static function iban(?string $countryCode = null, string $prefix = '', ?int $length = null): string
     {
-        $countryCode = \strtoupper($countryCode ?? self::randomKey(self::$ibanFormats));
+        $countryCode = \strtoupper($countryCode ?? \array_rand(self::$ibanFormats));
         $format = self::$ibanFormats[$countryCode] ?? [['n', $length ?? 24]];
 
         $letterMin = \ord('A');
@@ -47,7 +49,7 @@ class Iban
 
         $result = '';
         foreach ($format as $piece) {
-            list ($type, $size) = $piece;
+            list($type, $size) = $piece;
             for ($i = 0; $i < $size; ++$i) {
                 $result .= match ($type) {
                     'c' => \rand(0, 1) ? \rand(0, 9) : \chr(\rand($letterMin, $letterMax)),
@@ -81,14 +83,14 @@ class Iban
         // "A" si 10, "B" is 11, ...
         $checkString = \preg_replace_callback(
             '/[A-Z]/',
-            static fn (array $matches) => (string) \ord($matches[0]) - 55, 
+            static fn (array $matches) => (string) (\ord($matches[0]) - 55),
             $checkString,
         );
 
         // Perform mod 97 and subtract from 98.
         $checksum = 98 - self::mod97($checkString);
 
-        return \str_pad($checksum, 2, '0', \STR_PAD_LEFT);
+        return \str_pad((string) $checksum, 2, '0', \STR_PAD_LEFT);
     }
 
     /**
@@ -102,14 +104,6 @@ class Iban
             $rest = ($rest . $part) % 97;
         }
         return $rest;
-    }
-
-    /**
-     * @see https://github.com/FakerPHP/Faker
-     */
-    private static function isValid(string $iban): bool
-    {
-        return self::checksum($iban) === substr($iban, 2, 2);
     }
 
     /**

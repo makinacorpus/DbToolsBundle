@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Attribute;
 
 /**
@@ -10,5 +12,5 @@ class AsAnonymizer
 {
     public function __construct(
         public string $name,
-    ) { }
+    ) {}
 }

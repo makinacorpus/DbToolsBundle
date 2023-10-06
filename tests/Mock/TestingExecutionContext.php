@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Tests\Mock;
 
 use Symfony\Component\Validator\Constraint;
@@ -43,8 +45,7 @@ class TestingExecutionContext implements ExecutionContextInterface
             null,
             null,
             null,
-            new class () implements TranslatorInterface
-            {
+            new class () implements TranslatorInterface {
                 public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
                 {
                     return $id;
@@ -77,30 +78,22 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath)
-    {
-    }
+    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath) {}
 
     /**
      * {@inheritdoc}
      */
-    public function setGroup(?string $group)
-    {
-    }
+    public function setGroup(?string $group) {}
 
     /**
      * {@inheritdoc}
      */
-    public function setConstraint(Constraint $constraint)
-    {
-    }
+    public function setConstraint(Constraint $constraint) {}
 
     /**
      * {@inheritdoc}
      */
-    public function markGroupAsValidated(string $cacheKey, string $groupHash)
-    {
-    }
+    public function markGroupAsValidated(string $cacheKey, string $groupHash) {}
 
     /**
      * {@inheritdoc}
@@ -113,9 +106,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function markConstraintAsValidated(string $cacheKey, string $constraintHash)
-    {
-    }
+    public function markConstraintAsValidated(string $cacheKey, string $constraintHash) {}
 
     /**
      * {@inheritdoc}
@@ -128,9 +119,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function markObjectAsInitialized(string $cacheKey): void
-    {
-    }
+    public function markObjectAsInitialized(string $cacheKey): void {}
 
     /**
      * {@inheritdoc}

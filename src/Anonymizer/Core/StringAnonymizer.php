@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -95,7 +97,7 @@ class StringAnonymizer extends AbstractAnonymizer
         ;
 
         $this->connection->beginTransaction();
-        try{
+        try {
             foreach($sample as $value) {
                 $this->connection
                     ->createQueryBuilder()

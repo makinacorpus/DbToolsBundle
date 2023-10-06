@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Connection;
@@ -16,7 +18,7 @@ abstract class AbstractAnonymizer
 {
     public function __construct(
         protected Connection $connection,
-    ) { }
+    ) {}
 
     public static function getName(): string
     {
@@ -85,7 +87,7 @@ abstract class AbstractAnonymizer
             $type = $types[$index] ?? null;
             if (!$type) {
                 $type = Type::getType('string');
-            } else if (!$type instanceof Type) {
+            } elseif (!$type instanceof Type) {
                 $type = Type::getType($type);
             }
             $tableColumns[] = new Column($name, $type);

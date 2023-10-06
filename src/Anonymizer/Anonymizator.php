@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Connection;
@@ -17,12 +19,12 @@ class Anonymizator //extends \IteratorAggregate
         private string $connectionName,
         private Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry
-    ) { }
+    ) {}
 
     public function addAnonymization(string $table, string $targetName, array $config): self
     {
         if (!isset($config['anonymizer'])) {
-            throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $targetName));
+            throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
         }
 
         if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
@@ -37,7 +39,7 @@ class Anonymizator //extends \IteratorAggregate
         $target = match($config['target']) {
             'table' => new Table($table),
             'column' => new Column($table, $targetName),
-            default => throw new \InvalidArgumentException(\sprintf('Unknown "%s" target, available options are : table, column', $name)),
+            default => throw new \InvalidArgumentException(\sprintf('Unknown "%s" target, available options are: table, column', $targetName)),
         };
 
         if (!isset($this->anonymizationConfig[$table])) {
@@ -94,7 +96,7 @@ class Anonymizator //extends \IteratorAggregate
 
             foreach ($tableConfig as $targetName => $config) {
                 if (!isset($config['anonymizer'])) {
-                    throw new \InvalidArgumentException(\sprintf('Missing anonymizer "%s" for table "%s", key "%s"', $table, $targetName));
+                    throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
                 }
 
                 $this->anonymizers[$config['anonymizer']]->anonymize(

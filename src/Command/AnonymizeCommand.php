@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -38,7 +40,6 @@ class AnonymizeCommand extends Command
                 'connection',
                 'c',
                 InputOption::VALUE_OPTIONAL,
-
                 'A doctrine connection name. If not given, use default connection'
             )
             ->addOption(

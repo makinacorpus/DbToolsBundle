@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
@@ -14,7 +15,7 @@ abstract class AbstractRestorer implements RestorerInterface
     public function __construct(
         protected string $binary,
         protected Connection $connection,
-    ) { }
+    ) {}
 
     public function checkBinary(): string
     {

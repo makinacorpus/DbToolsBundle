@@ -1,65 +1,64 @@
 services:
     # Commands
     db_tools.command.anonymize:
-      class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
-      arguments:
-        - '@db_tools.anonymization.anonymizator.registry'
-        - '%doctrine.default_connection%'
-      tags: ['console.command']
+        class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.registry'
+            - '%doctrine.default_connection%'
+        tags: ['console.command']
     db_tools.command.check:
-      class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
-      arguments:
-        - '%doctrine.default_connection%'
-        - '@db_tools.backupper.factory.registry'
-        - '@db_tools.restorer.factory.registry'
-      tags: ['console.command']
+        class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.backupper.factory.registry'
+            - '@db_tools.restorer.factory.registry'
+        tags: ['console.command']
     db_tools.command.backup:
-      class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
-      arguments:
-        - '%doctrine.default_connection%'
-        - '%db_tools.excluded_tables%'
-        - '@db_tools.backupper.factory.registry'
-        - '@db_tools.storage'
-      tags: ['console.command']
+        class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '%db_tools.excluded_tables%'
+            - '@db_tools.backupper.factory.registry'
+            - '@db_tools.storage'
+        tags: ['console.command']
     db_tools.command.restore:
-      class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
-      arguments:
-        - '%doctrine.default_connection%'
-        - '%db_tools.excluded_tables%'
-        - '@db_tools.restorer.factory.registry'
-        - '@db_tools.storage'
-      tags: ['console.command']
+        class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.restorer.factory.registry'
+            - '@db_tools.storage'
+        tags: ['console.command']
 
     # Utilities
     db_tools.storage:
-      class: MakinaCorpus\DbToolsBundle\DbToolsStorage
-      arguments: ['%db_tools.storage_directory%', '%db_tools.backup_expiration_age%']
+        class: MakinaCorpus\DbToolsBundle\DbToolsStorage
+        arguments: ['%db_tools.storage_directory%', '%db_tools.backup_expiration_age%']
 
     # Backuppers
     db_tools.backupper.factory.registry:
-      class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry
-      arguments: ['@doctrine', '%db_tools.backupper.binaries%']
+        class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry
+        arguments: ['@doctrine', '%db_tools.backupper.binaries%']
     db_tools.backupper.factory.pgsql:
-      class: MakinaCorpus\DbToolsBundle\Backupper\PgSQL\BackupperFactory
-      tags: ['db_tools.backupper.factory']
+        class: MakinaCorpus\DbToolsBundle\Backupper\PgSQL\BackupperFactory
+        tags: ['db_tools.backupper.factory']
     db_tools.backupper.factory.mysql:
-      class: MakinaCorpus\DbToolsBundle\Backupper\MySQL\BackupperFactory
-      tags: ['db_tools.backupper.factory']
+        class: MakinaCorpus\DbToolsBundle\Backupper\MySQL\BackupperFactory
+        tags: ['db_tools.backupper.factory']
 
     # Restorers
     db_tools.restorer.factory.registry:
-      class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry
-      arguments: ['@doctrine', '%db_tools.restorer.binaries%']
+        class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry
+        arguments: ['@doctrine', '%db_tools.restorer.binaries%']
     db_tools.restorer.factory.pgsql:
-      class: MakinaCorpus\DbToolsBundle\Restorer\PgSQL\RestorerFactory
-      tags: ['db_tools.restorer.factory']
+        class: MakinaCorpus\DbToolsBundle\Restorer\PgSQL\RestorerFactory
+        tags: ['db_tools.restorer.factory']
     db_tools.restorer.factory.mysql:
-      class: MakinaCorpus\DbToolsBundle\Restorer\MySQL\RestorerFactory
-      tags: ['db_tools.restorer.factory']
+        class: MakinaCorpus\DbToolsBundle\Restorer\MySQL\RestorerFactory
+        tags: ['db_tools.restorer.factory']
 
     # Anonymization
     db_tools.anonymization.anonymizer.registry:
-      class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry
-      arguments: ['%db_tools.anonymization.anonymizer.paths%']
+        class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry
+        arguments: ['%db_tools.anonymization.anonymizer.paths%']
     db_tools.anonymization.anonymizator.registry:
-      class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry
+        class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry

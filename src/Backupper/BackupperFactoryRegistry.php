@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
@@ -14,7 +15,7 @@ class BackupperFactoryRegistry
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $backupperBinaries,
-    ) { }
+    ) {}
 
     public function addBackupperFactory(BackupperFactoryInterface $factory): void
     {

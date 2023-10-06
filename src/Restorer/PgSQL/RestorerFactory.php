@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
@@ -12,8 +13,8 @@ class RestorerFactory implements RestorerFactoryInterface
     /**
      * {@inheritdoc}
      */
-     public function create(string $binary, Connection $connection): RestorerInterface
-     {
+    public function create(string $binary, Connection $connection): RestorerInterface
+    {
         return new Restorer($binary, $connection);
     }
 

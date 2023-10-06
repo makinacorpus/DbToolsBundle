@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
@@ -23,7 +25,6 @@ class RestoreCommand extends Command
 
     public function __construct(
         string $defaultConnectionName,
-        private array $excludedTables,
         private RestorerFactoryRegistry $restorerFactory,
         private DbToolsStorage $storage,
     ) {
@@ -153,7 +154,7 @@ class RestoreCommand extends Command
 
         if (\count($backupLists)) {
             $options = \array_map(
-                fn($data) => (string)$data[1],
+                fn ($data) => (string)$data[1],
                 $backupLists
             );
 
