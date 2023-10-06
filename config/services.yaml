@@ -25,7 +25,6 @@ services:
         class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
         arguments:
             - '%doctrine.default_connection%'
-            - '%db_tools.excluded_tables%'
             - '@db_tools.restorer.factory.registry'
             - '@db_tools.storage'
         tags: ['console.command']

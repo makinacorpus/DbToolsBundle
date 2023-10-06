@@ -25,8 +25,6 @@ class RestoreCommand extends Command
 
     public function __construct(
         string $defaultConnectionName,
-        /** @phpstan-ignore-next-line */
-        private array $excludedTables,
         private RestorerFactoryRegistry $restorerFactory,
         private DbToolsStorage $storage,
     ) {
