@@ -2,6 +2,7 @@
 /.phpunit.result.cache
 /.php-cs-fixer.cache
 /composer.lock
+/phpstan.neon
 /phpunit.xml
 /vendor/
 

@@ -97,6 +97,12 @@ class EnumAnonymizer extends AbstractAnonymizer
 
     protected function validateSample(): self
     {
+        /*
+         * @todo
+         *   Refactorer cette classe pour utiliser des méthodes plutôt que des
+         *   propriétés protected.
+         */
+        /** @phpstan-ignore-next-line */
         if (\is_null($this->sample) || 0 === \count($this->sample)) {
             throw new \InvalidArgumentException("No sample given, your implementation of EnumAnomyzer should provide its own sample.");
         }

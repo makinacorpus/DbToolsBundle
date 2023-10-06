@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 class AnonymizerRegistry
 {
-    private array $anonymizers = null;
+    private ?array $anonymizers = null;
 
     public function __construct(
         private array $paths
@@ -16,7 +16,7 @@ class AnonymizerRegistry
 
     public function addPath(array $paths): void
     {
-        $this->paths = array_unique(array_merge($this->paths, $paths));
+        $this->paths = \array_unique(\array_merge($this->paths, $paths));
     }
 
     /**
@@ -28,7 +28,7 @@ class AnonymizerRegistry
             return $this->anonymizers;
         }
 
-        if ($this->paths === []) {
+        if (!$this->paths) {
             return [];
         }
 
@@ -36,7 +36,7 @@ class AnonymizerRegistry
         $includedFiles = [];
 
         foreach ($this->paths as $path) {
-            if (! is_dir($path)) {
+            if (! \is_dir($path)) {
                 throw new \LogicException(\sprintf("Given path '%s' is not a directory", $path));
             }
 
@@ -62,14 +62,14 @@ class AnonymizerRegistry
             }
         }
 
-        $declared = get_declared_classes();
+        $declared = \get_declared_classes();
 
         foreach ($declared as $className) {
             if ((new \ReflectionClass($className))->getAttributes(AsAnonymizer::class)) {
                 if (!\is_subclass_of($className, AbstractAnonymizer::class)) {
                     throw new \InvalidArgumentException(\sprintf(
                         '"%s" should extends "%s".',
-                        $config['anonymizer'],
+                        $className,
                         AbstractAnonymizer::class
                     ));
                 }
