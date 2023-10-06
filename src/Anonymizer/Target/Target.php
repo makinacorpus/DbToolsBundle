@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Target;
 
 abstract class Target

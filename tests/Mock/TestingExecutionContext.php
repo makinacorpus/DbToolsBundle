@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Tests\Mock;
 
 use Symfony\Component\Validator\Constraint;

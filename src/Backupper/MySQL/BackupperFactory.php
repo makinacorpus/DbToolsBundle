@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
 
 use Doctrine\DBAL\Connection;

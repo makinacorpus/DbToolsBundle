@@ -15,6 +15,7 @@ return $config->setRules([
             'allow_single_line_empty_anonymous_classes' => true,
         ],
         'single_line_empty_body' => true,
+        'declare_strict_types' => true,
     ])
     ->setFinder($finder)
 ;
