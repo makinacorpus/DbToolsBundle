@@ -20,21 +20,33 @@ class Restorer extends AbstractRestorer
         $dbParams = $this->connection->getParams();
         $args = [
             $this->binary,
-            '-h',
-            $dbParams['host'],
-            '-U',
-            $dbParams['user'],
-            '-p',
-            $dbParams['port'],
-            '-w',
-            '-d',
-            $dbParams['dbname'],
-            '--no-owner',
-            '-j',
-            2,
-            '--disable-triggers',
-            $this->backupFilename,
         ];
+
+
+        if (isset($dbParams['host'])) {
+            $args[] = '-h';
+            $args[] = $dbParams['host'];
+        }
+
+        if (isset($dbParams['user'])) {
+            $args[] = '-U';
+            $args[] = $dbParams['user'];
+        }
+
+        if (isset($dbParams['port'])) {
+            $args[] = '-p';
+            $args[] = $dbParams['port'];
+        }
+
+        $args[] = '-w';
+        $args[] = '--clean';
+        $args[] = '-d';
+        $args[] = $dbParams['dbname'];
+        $args[] = '--no-owner';
+        $args[] = '-j';
+        $args[] = 2;
+        $args[] = '--disable-triggers';
+        $args[] = $this->backupFilename;
 
         if ($this->verbose) {
             $args[] = '-v';
@@ -43,17 +55,10 @@ class Restorer extends AbstractRestorer
         $this->process = new Process(
             $args,
             null,
-            ['PGPASSWORD' => $dbParams['password']],
+            ['PGPASSWORD' => $dbParams['password'] ?? ''],
             null,
             1800
         );
-
-        $this->connection
-            ->executeQuery('DROP SCHEMA public CASCADE;')
-        ;
-        $this->connection
-            ->executeQuery('CREATE SCHEMA public;')
-        ;
 
         $this->process->start();
 

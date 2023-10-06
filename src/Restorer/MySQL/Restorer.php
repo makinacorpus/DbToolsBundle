@@ -22,15 +22,28 @@ class Restorer extends AbstractRestorer
 
         $args = [
             $this->binary,
-            '-h',
-            $dbParams['host'],
-            '-u',
-            $dbParams['user'],
-            '-P',
-            $dbParams['port'],
-            '-p' . $dbParams['password'],
-            $dbParams['dbname'],
         ];
+
+        if (isset($dbParams['host'])) {
+            $args[] = '-h';
+            $args[] = $dbParams['host'];
+        }
+
+        if (isset($dbParams['user'])) {
+            $args[] = '-u';
+            $args[] = $dbParams['user'];
+        }
+
+        if (isset($dbParams['port'])) {
+            $args[] = '-P';
+            $args[] = $dbParams['port'];
+        }
+
+        if (isset($dbParams['password'])) {
+            $args[] = '-p' . $dbParams['password'];
+        }
+
+        $args[] = $dbParams['dbname'];
 
         if ($this->verbose) {
             $args[] = '-v';
