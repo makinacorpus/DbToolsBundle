@@ -77,8 +77,23 @@ class Anonymizator //extends \IteratorAggregate
 
     /**
      * Anonymize database
+     *
+     * @param bool $atOnce
+     *   If set to false, there will be one UPDATE query per anonymizer, if set
+     *   to true a single UPDATE query for anonymizing all at once will be done.
      */
-    public function anonymize(?array $excludedTables = null): \Generator
+    public function anonymize(?array $excludedTables = null, bool $atOnce = true): \Generator
+    {
+        if ($atOnce) {
+            return $this->anonymizeTableAtOnce($excludedTables);
+        }
+        return $this->anonymizeTablePerColumn($excludedTables);
+    }
+
+    /**
+     * Anonymize database
+     */
+    protected function anonymizeTableAtOnce(?array $excludedTables = null): \Generator
     {
         $platfrom = $this->connection->getDatabasePlatform();
 
@@ -87,7 +102,7 @@ class Anonymizator //extends \IteratorAggregate
                 continue;
             }
 
-            yield $table => \array_keys($tableConfig);
+            yield $table => $tableConfig;
 
             $updateQuery = $this->connection
                 ->createQueryBuilder()
@@ -107,6 +122,43 @@ class Anonymizator //extends \IteratorAggregate
             }
 
             $updateQuery->executeQuery();
+        }
+    }
+
+    /**
+     * Anonymize database
+     */
+    protected function anonymizeTablePerColumn(?array $excludedTables = null): \Generator
+    {
+        $platfrom = $this->connection->getDatabasePlatform();
+
+        foreach ($this->anonymizationConfig as $table => $tableConfig) {
+            if ($excludedTables && \in_array($table, $excludedTables)) {
+                continue;
+            }
+
+            foreach ($tableConfig as $targetName => $config) {
+                $config['table'] = $table;
+
+                yield $targetName => $config;
+
+                $updateQuery = $this->connection
+                    ->createQueryBuilder()
+                    ->update($platfrom->quoteIdentifier($table))
+                ;
+
+                if (!isset($config['anonymizer'])) {
+                    throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
+                }
+
+                $this->anonymizers[$config['anonymizer']]->anonymize(
+                    $updateQuery,
+                    $config['target'],
+                    $config['options']
+                );
+
+                $updateQuery->executeQuery();
+            }
         }
     }
 
