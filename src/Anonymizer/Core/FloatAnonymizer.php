@@ -38,7 +38,7 @@ class FloatAnonymizer extends AbstractAnonymizer
         $updateQuery->set(
             $plateform->quoteIdentifier($target->column),
             \sprintf(
-                'FLOOR(%s*(%s-%s+1)+%s)/%s',
+                'FLOOR(%s * (%s - %s + 1) + %s) / %s',
                 $this->getSqlRandomExpression(),
                 $max * $precision,
                 $min * $precision,
