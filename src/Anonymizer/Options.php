@@ -7,7 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 class Options
 {
     public function __construct(
-        private array $options,
+        private array $options = [],
     ) {}
 
     public function has(string $name): bool
