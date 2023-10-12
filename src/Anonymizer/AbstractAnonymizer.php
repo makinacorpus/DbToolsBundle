@@ -129,6 +129,47 @@ abstract class AbstractAnonymizer
         return \uniqid('anonymizer_sample_');
     }
 
+    protected function getSetIfNotNullExpression(string $columnExpression, string $valueExpression): string
+    {
+        $plateform = $this->connection->getDatabasePlatform();
+
+        return match (true) {
+            $plateform instanceof MySQLPlatform => \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression),
+            $plateform instanceof PostgreSQLPlatform => \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression),
+            default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
+        };
+    }
+
+    /**
+     * Generate an SQL text pad left expression.
+     */
+    protected function getSqlTextPadLeftExpression(string $textExpression, int $padSize, string $padString): string
+    {
+        $plateform = $this->connection->getDatabasePlatform();
+
+        // @todo Warning: no proper escaping.
+        return match (true) {
+            $plateform instanceof MySQLPlatform => \sprintf("lpad(%s, %d, '%s')", $textExpression, $padSize, $padString),
+            // We are going to add a forced CAST here so that the user may
+            // give anything, an int, a date, etc... MySQL doesn't need that
+            // because it uses type coercition and does the job implicitely.
+            $plateform instanceof PostgreSQLPlatform => \sprintf("lpad(cast(%s as text), %d, '%s')", $textExpression, $padSize, $padString),
+            default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
+        };
+    }
+
+    /**
+     * Generate an SQL expression that creates a random integer between 0
+     * and the given maximum.
+     */
+    protected function getSqlRandomIntExpression(int $max, int $min = 0): string
+    {
+        return \sprintf("cast(%s * (%d - %d + 1) as int)", $this->getSqlRandomExpression(), $max, $min, $min);
+    }
+
+    /**
+     * Generate a decimal number between 0 and 1.
+     */
     protected function getSqlRandomExpression(): string
     {
         $plateform = $this->connection->getDatabasePlatform();
