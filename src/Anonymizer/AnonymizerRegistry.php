@@ -9,10 +9,15 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 class AnonymizerRegistry
 {
     private ?array $anonymizers = null;
+    private array $paths = [];
 
     public function __construct(
-        private array $paths
-    ) {}
+        ?array $paths = null
+    ) {
+        if (null === $paths) {
+            $this->addPath([__DIR__]);
+        }
+    }
 
     public function addPath(array $paths): void
     {

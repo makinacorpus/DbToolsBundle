@@ -7,9 +7,9 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymizer\Core;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EmailAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Column;
-use MakinaCorpus\DbToolsBundle\Tests\AbstractDatabaseUnitTestCase;
+use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 
-class EmailAnonymizerTest extends AbstractDatabaseUnitTestCase
+class EmailAnonymizerTest extends UnitTestCase
 {
     public function testAnonymizeWithDefaultDomain(): void
     {

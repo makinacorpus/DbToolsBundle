@@ -7,9 +7,9 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymizer\FrFR;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PhoneNumberAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Column;
-use MakinaCorpus\DbToolsBundle\Tests\AbstractDatabaseUnitTestCase;
+use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 
-class PhoneNumberAnonymizerTest extends AbstractDatabaseUnitTestCase
+class PhoneNumberAnonymizerTest extends UnitTestCase
 {
     public function testAnonymize(): void
     {
