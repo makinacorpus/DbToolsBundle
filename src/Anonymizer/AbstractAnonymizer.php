@@ -164,7 +164,7 @@ abstract class AbstractAnonymizer
      */
     protected function getSqlRandomIntExpression(int $max, int $min = 0): string
     {
-        return \sprintf("cast(%s * (%d - %d + 1) as int)", $this->getSqlRandomExpression(), $max, $min, $min);
+        return \sprintf("cast(%s * (%d - %d + 1) as int)", $this->getSqlRandomExpression(), $max, $min);
     }
 
     /**
