@@ -7,7 +7,6 @@ namespace MakinaCorpus\DbToolsBundle\Command;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -49,10 +48,17 @@ class AnonymizeCommand extends Command
                 'When not set, a single UPDATE statement will be issued per table, when set, every target will issue its own UPDATE statement.'
             )
             ->addOption(
-                'excluded-tables',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Tables to exclude from anonymization, separate with comma (ex: users,logs).'
+                'target',
+                't',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Only anonymise the given column or table targets.',
+                [],
+            )
+            ->addOption(
+                'exclude',
+                'x',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+                'Exclude given targets.'
             )
             ->addOption(
                 'force',
@@ -61,23 +67,6 @@ class AnonymizeCommand extends Command
                 'Do not ask for confirmation before restoring database'
             )
         ;
-    }
-
-    private function startTimer(): int|float
-    {
-        return \hrtime(true);
-    }
-
-    private function stopTimer(null|int|float $timer): string
-    {
-        if (null !== $timer) {
-            return \sprintf(
-                "%s %s",
-                Helper::formatTime((\hrtime(true) - $timer) / 1e+9),
-                Helper::formatMemory(\memory_get_usage(true)),
-            );
-        }
-        return 'N/A';
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -104,7 +93,10 @@ class AnonymizeCommand extends Command
             $this->connectionName = $input->getOption('connection');
         }
 
-        $excludedTables = $input->getOption('excluded-tables');
+        // Target identification.
+        $excludedTargets = $input->getOption('exclude');
+        $onlyTargets = $input->getOption('target');
+        $atOnce = !$input->getOption('split-per-column');
 
         $anonymizator = $this->anonymizatorRegistry->get($this->connectionName);
 
@@ -115,62 +107,21 @@ class AnonymizeCommand extends Command
 
         $this->io->section("Anonymization");
 
-        $totalTimer = $this->startTimer();
-
-        if (!$input->getOption('split-per-column')) {
-            $output->writeln("");
-            $total = $anonymizator->count();
-            $count = 0;
-
-            $timer = null;
-            foreach ($anonymizator->anonymize($excludedTables, true) as $tableName => $config) {
-                if ($timer) {
-                    $output->writeln('' . $this->stopTimer($timer));
-                }
-                $timer = $this->startTimer();
-                $count++;
-
-                $output->write(\sprintf( '%d/%d - table "%s" ("%s")...', $count, $total, $tableName, \implode('", "', \array_keys($config))));
-            }
-            if ($count) {
-                $output->writeln('' . $this->stopTimer($timer));
-                $output->writeln("");
-            }
-        } else {
-            $total = $anonymizator->count();
-            $count = 0;
-
-            $timer = null;
-            $previousTable = null;
-            $tableTimer = null;
-            foreach ($anonymizator->anonymize($excludedTables, false) as $targetName => $config) {
-                if ($timer) {
-                    $output->writeln(' ' . $this->stopTimer($timer));
-                }
-                $timer = $this->startTimer();
-
-                $tableName = $config['table'];
-                if ($previousTable !== $tableName) {
-                    if ($tableTimer) {
-                        $output->writeln(\sprintf('  - total for "%s": %s', $previousTable, $this->stopTimer($tableTimer)));
-                    }
-                    $tableTimer = $this->startTimer();
-                    $count++;
-                    $output->writeln(\sprintf('%d/%d - table "%s":', $count, $total, $tableName));
-                    $previousTable = $tableName;
-                }
-                $output->write(\sprintf('  - target/column "%s"."%s"...', $tableName, $targetName, ));
-            }
-            if ($count) {
-                $output->writeln(' ' . $this->stopTimer($timer));
-                $output->writeln("");
-            }
-            if ($previousTable) {
-                $output->writeln(\sprintf('  - total for "%s": %s', $previousTable, $this->stopTimer($tableTimer)));
+        $needsLineFeed = false;
+        foreach ($anonymizator->anonymize($excludedTargets, $onlyTargets, $atOnce) as $message) {
+            if (\str_ends_with($message, '...')) {
+                $output->write($message);
+                $needsLineFeed = true;
+            } else if ($needsLineFeed) {
+                $output->writeln(' [' . $message . ']');
+                $needsLineFeed = false;
+            } else {
+                $output->writeln($message);
             }
         }
-
-        $this->io->text(\sprintf("Total: %s", $this->stopTimer($totalTimer)));
+        if ($needsLineFeed) {
+            $output->writeln("");
+        }
 
         $this->io->newLine();
 
