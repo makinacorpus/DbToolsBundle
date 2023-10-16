@@ -2,6 +2,11 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="vendor/autoload.php" cacheDirectory=".phpunit.cache">
   <php>
     <ini name="error_reporting" value="-1"/>
+    <env name="DBAL_DRIVER" value=""/>
+    <env name="DBAL_HOST" value=""/>
+    <env name="DBAL_PORT" value=""/>
+    <env name="DBAL_USER" value=""/>
+    <env name="DBAL_PASSWORD" value=""/>
   </php>
   <testsuites>
     <testsuite name="Functional">

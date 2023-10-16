@@ -27,6 +27,12 @@ class Anonymizator //extends \IteratorAggregate
             throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
         }
 
+        // Populate defaults.
+        $config += [
+            'target' => 'column',
+            'options' => [],
+        ];
+
         if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
                 'Can not find anonymizer "%s", check your anonymization configuration for table "%s", key "%s".',
@@ -39,7 +45,7 @@ class Anonymizator //extends \IteratorAggregate
         $target = match($config['target']) {
             'table' => new Table($table),
             'column' => new Column($table, $targetName),
-            default => throw new \InvalidArgumentException(\sprintf('Unknown "%s" target, available options are: table, column', $targetName)),
+            default => throw new \InvalidArgumentException(\sprintf('Table "%s", key "%s": target option "%s" is unknown. Available options are: table, column', $table, $targetName, $config['target'])),
         };
 
         if (!isset($this->anonymizationConfig[$table])) {
