@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 abstract class UnitTestCase extends TestCase
 {
     private bool $inialized = false;
-    private ?Connection $connnection = null;
+    private ?Connection $connection = null;
 
     /** @after */
     protected function disconnect(): void
@@ -97,7 +97,7 @@ abstract class UnitTestCase extends TestCase
             $this->inialized = true;
         }
 
-        return $this->connnection ??= $this->createConnection();
+        return $this->connection ??= $this->createConnection();
     }
 
     /**

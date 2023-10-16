@@ -100,13 +100,6 @@ class AnonymizeCommand extends Command
 
         $anonymizator = $this->anonymizatorRegistry->get($this->connectionName);
 
-        $this->io->section("Initialization");
-        $this->io->text("Initializing anonymizers...");
-        $anonymizator->initialize();
-        $this->io->text("Initialization done");
-
-        $this->io->section("Anonymization");
-
         $needsLineFeed = false;
         foreach ($anonymizator->anonymize($excludedTargets, $onlyTargets, $atOnce) as $message) {
             if (\str_ends_with($message, '...')) {
@@ -124,12 +117,6 @@ class AnonymizeCommand extends Command
         }
 
         $this->io->newLine();
-
-        $this->io->section("Cleaning");
-        $this->io->text("Cleaning anonymizers...");
-        $anonymizator->clean();
-        $this->io->text("Cleaning done");
-
         $this->io->success("Database anonymized !");
 
         return Command::SUCCESS;

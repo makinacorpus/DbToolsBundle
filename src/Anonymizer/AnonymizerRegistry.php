@@ -14,9 +14,7 @@ class AnonymizerRegistry
     public function __construct(
         ?array $paths = null
     ) {
-        if (null === $paths) {
-            $this->addPath([__DIR__]);
-        }
+        $this->addPath($paths ?? [__DIR__]);
     }
 
     public function addPath(array $paths): void

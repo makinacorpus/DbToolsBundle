@@ -6,8 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
@@ -19,13 +17,9 @@ class IntegerAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $updateQuery, Target\Target $target, Options $options): void
+    public function anonymize(QueryBuilder $updateQuery): void
     {
-        if (!$target instanceof Target\Column) {
-            throw new \InvalidArgumentException("This anonymazier only accepts Target\Column target.");
-        }
-
-        if (!($options->has('min') && $options->has('max'))) {
+        if (!($this->options->has('min') && $this->options->has('max'))) {
             throw new \InvalidArgumentException("You should provide 2 options (min and max) with this anonymizer");
         }
 
@@ -33,13 +27,13 @@ class IntegerAnonymizer extends AbstractAnonymizer
 
 
         $updateQuery->set(
-            $plateform->quoteIdentifier($target->column),
+            $plateform->quoteIdentifier($this->columnName),
             \sprintf(
                 'FLOOR(%s*(%s-%s+1)+%s)',
                 $this->getSqlRandomExpression(),
-                $options->get('max'),
-                $options->get('min'),
-                $options->get('min')
+                $this->options->get('max'),
+                $this->options->get('min'),
+                $this->options->get('min')
             )
         );
     }

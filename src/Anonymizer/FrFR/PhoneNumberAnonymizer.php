@@ -6,8 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
@@ -34,23 +32,19 @@ class PhoneNumberAnonymizer extends AbstractAnonymizer
     /**
      * {@inheritdoc}
      */
-    public function anonymize(QueryBuilder $updateQuery, Target\Target $target, Options $options): void
+    public function anonymize(QueryBuilder $updateQuery): void
     {
-        if (!$target instanceof Target\Column) {
-            throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
-        }
-
         $plateform = $this->connection->getDatabasePlatform();
 
         $prefixExpression =  $plateform->quoteStringLiteral(
-            match ($options->get('mode', 'mobile')) {
+            match ($this->options->get('mode', 'mobile')) {
                 'mobile' => '063998',
                 'landline' => '026191',
                 default => throw new \InvalidArgumentException('"mode" option can be "mobile", "landline"'),
             }
         );
 
-        $escapedColumnName = $plateform->quoteIdentifier($target->column);
+        $escapedColumnName = $plateform->quoteIdentifier($this->columnName);
 
         $updateQuery->set(
             $escapedColumnName,

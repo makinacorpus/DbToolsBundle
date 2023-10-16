@@ -6,27 +6,27 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
 
 /**
  * Can not be use alone, check FrFR/PrenomAnonymizer for an
  * example on how to extends this Anonymizer for your need.
  */
-class EnumAnonymizer extends AbstractAnonymizer
+abstract class EnumAnonymizer extends AbstractAnonymizer
 {
+    private ?string $sampleTableName = null;
+
     /**
      * Overwrite this argument with your sample.
      */
-    protected array $sample = [];
+    protected function getSampleType(): string
+    {
+        return 'string';
+    }
 
     /**
-     * Overwrite this argument type of the column you want to
-     * anonymize.
+     * Overwrite this argument with your sample.
      */
-    protected string $type = '';
-
-    protected ?string $sampleTableName = null;
+    abstract protected function getSample(): array;
 
     /**
      * @inheritdoc
@@ -36,22 +36,18 @@ class EnumAnonymizer extends AbstractAnonymizer
         $this->validateSample();
         $this->createSampleTempTable(
             ['value'],
-            $this->sample,
+            $this->getSample(),
             $this->getSampleTableName(),
             // Also handles types such as ''.
-            $this->type ? [$this->type] : null,
+            ($type = $this->getSampleType()) ? [$type] : null,
         );
     }
 
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
+    public function anonymize(QueryBuilder $query): void
     {
-        if (!$target instanceof Target\Column) {
-            throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
-        }
-
         $plateform = $this->connection->getDatabasePlatform();
 
         $random = $this->connection
@@ -61,14 +57,14 @@ class EnumAnonymizer extends AbstractAnonymizer
             ->setMaxResults(1)
             ->where(
                 $this->connection->createExpressionBuilder()->notLike(
-                    $plateform->quoteIdentifier($target->table) . '.' . $target->column,
+                    $plateform->quoteIdentifier($this->tableName) . '.' . $plateform->quoteIdentifier($this->columnName),
                     $this->getSampleTableName() . '.value'
                 )
             )
             ->orderBy($this->getSqlRandomExpression())
         ;
 
-        $query->set($plateform->quoteIdentifier($target->column), \sprintf('(%s)', $random));
+        $query->set($plateform->quoteIdentifier($this->columnName), \sprintf('(%s)', $random));
     }
 
     /**
@@ -93,13 +89,15 @@ class EnumAnonymizer extends AbstractAnonymizer
 
     protected function validateSample(): void
     {
+        $sample = $this->getSample();
+
         /*
          * @todo
          *   Refactorer cette classe pour utiliser des méthodes plutôt que des
          *   propriétés protected.
          */
         /** @phpstan-ignore-next-line */
-        if (\is_null($this->sample) || 0 === \count($this->sample)) {
+        if (\is_null($sample) || 0 === \count($sample)) {
             throw new \InvalidArgumentException("No sample given, your implementation of EnumAnomyzer should provide its own sample.");
         }
     }

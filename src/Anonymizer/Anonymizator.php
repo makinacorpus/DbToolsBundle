@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Column;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Table;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 
 class Anonymizator //extends \IteratorAggregate
 {
     private array $anonymizationConfig = [];
-
-    /** @var AbstractAnonymizer[] */
-    private array $anonymizers = [];
 
     public function __construct(
         private string $connectionName,
@@ -22,7 +17,10 @@ class Anonymizator //extends \IteratorAggregate
         private AnonymizerRegistry $anonymizerRegistry
     ) {}
 
-    public function addAnonymization(string $table, string $targetName, array $config): self
+    /**
+     * Add target anonymization configuration.
+     */
+    public function registerAnonymization(string $table, string $targetName, array $config): self
     {
         if (!isset($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
@@ -34,7 +32,7 @@ class Anonymizator //extends \IteratorAggregate
             'options' => [],
         ];
 
-        if (!$anonymizer = $this->anonymizerRegistry->get($config['anonymizer'])) {
+        if (!$this->anonymizerRegistry->get($config['anonymizer'])) {
             throw new \InvalidArgumentException(\sprintf(
                 'Can not find anonymizer "%s", check your anonymization configuration for table "%s", key "%s".',
                 $config['anonymizer'],
@@ -43,36 +41,13 @@ class Anonymizator //extends \IteratorAggregate
             ));
         }
 
-        $target = match($config['target']) {
-            'table' => new Table($table),
-            'column' => new Column($table, $targetName),
-            default => throw new \InvalidArgumentException(\sprintf('Table "%s", key "%s": target option "%s" is unknown. Available options are: table, column', $table, $targetName, $config['target'])),
-        };
-
         if (!isset($this->anonymizationConfig[$table])) {
             $this->anonymizationConfig[$table] = [];
         }
         $this->anonymizationConfig[$table][$targetName] = [
             'anonymizer' => $config['anonymizer'],
-            'target' => $target,
             'options' => new Options($config['options']),
         ];
-
-        if (!isset($this->anonymizers[$config['anonymizer']])) {
-            $this->anonymizers[$config['anonymizer']] = new $anonymizer($this->connection);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Initialize all anonymizers.
-     */
-    public function initialize(): self
-    {
-        foreach($this->anonymizers as $anonymizer) {
-            $anonymizer->initialize();
-        }
 
         return $this;
     }
@@ -123,6 +98,22 @@ class Anonymizator //extends \IteratorAggregate
     }
 
     /**
+     * Create anonymizer instance.
+     */
+    protected function createAnonymizer(string $name, string $tableName, string $targetName, array $config): AbstractAnonymizer
+    {
+        $className = $this->anonymizerRegistry->get($name);
+        \assert(\is_subclass_of($className, AbstractAnonymizer::class));
+
+        return new $className(
+            $tableName,
+            $targetName,
+            $this->connection,
+            $config['options'] ?? new Options(),
+        );
+    }
+
+    /**
      * Anonymize all configured database tables.
      *
      * @param null|array<string> $excludedTargets
@@ -137,7 +128,7 @@ class Anonymizator //extends \IteratorAggregate
      *   If set to false, there will be one UPDATE query per anonymizer, if set
      *   to true a single UPDATE query for anonymizing all at once will be done.
      *
-     * @return \Iterator<string>
+     * @return \Generator<string>
      *   Progression messages.
      */
     public function anonymize(
@@ -179,20 +170,37 @@ class Anonymizator //extends \IteratorAggregate
         $count = 1;
 
         foreach ($plan as $table => $targets) {
-            $timer = $this->startTimer();
+            $initTimer = $this->startTimer();
 
-            if ($atOnce) {
-                if (!$targets) {
-                    $targets = \array_keys($this->getTableConfig($table));
+            // Create anonymizer array prior running the anonymisation.
+            $anonymizers = [];
+            foreach ($this->getTableConfigTargets($table, $targets) as $target => $config) {
+                if (!isset($config['anonymizer'])) {
+                    throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $target));
                 }
-                yield \sprintf(' * table %d/%d: "%s" ("%s")...', $count, $total, $table, \implode('", "', $targets));
-                yield from $this->anonymizeTableAtOnce($table, $targets);
-                yield $this->stopTimer($timer);
-            } else {
-                yield \sprintf(' * table %d/%d: "%s":', $count, $total, $table);
-                yield from $this->anonymizeTablePerColumn($table, $targets);
-                yield '   ' . $this->stopTimer($timer);
+                $anonymizers[] = $this->createAnonymizer($config['anonymizer'], $table, $target, $config);
             }
+
+            try {
+                yield \sprintf(' * table %d/%d: "%s" ("%s")', $count, $total, $table, \implode('", "', $targets));
+                yield "   - initializing anonymizers...";
+                \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
+                yield $this->printTimer($initTimer);
+
+                if ($atOnce) {
+                    yield from $this->anonymizeTableAtOnce($table, $anonymizers);
+                } else {
+                    yield from $this->anonymizeTablePerColumn($table, $anonymizers);
+                }
+            } finally {
+                $cleanTimer = $this->startTimer();
+                // Cleanup everything, even in case of any error.
+                yield "   - cleaning anonymizers...";
+                \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->clean());
+                yield $this->printTimer($cleanTimer);
+                yield '   - total ' . $this->printTimer($initTimer);
+            }
+
             $count++;
         }
     }
@@ -200,68 +208,61 @@ class Anonymizator //extends \IteratorAggregate
     /**
      * Anonymize a single database table using a single UPDATE query for each.
      */
-    protected function anonymizeTableAtOnce(string $table, ?array $targets = null): \Generator
+    protected function anonymizeTableAtOnce(string $table, array $anonymizers): \Generator
     {
+        yield '   - anonymizing...';
+
+        $timer = $this->startTimer();
         $platform = $this->connection->getDatabasePlatform();
 
-        $updateQuery = $this->connection
+        $updateQuery = $this
+            ->connection
             ->createQueryBuilder()
             ->update($platform->quoteIdentifier($table))
         ;
 
-        foreach ($this->getTableConfigTargets($table, $targets) as $target => $config) {
-            if (!isset($config['anonymizer'])) {
-                throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $target));
-            }
-
-            $this->anonymizers[$config['anonymizer']]->anonymize(
-                $updateQuery,
-                $config['target'],
-                $config['options']
-            );
+        foreach ($anonymizers as $anonymizer) {
+            \assert($anonymizer instanceof AbstractAnonymizer);
+            $anonymizer->anonymize($updateQuery);
         }
 
         $updateQuery->executeQuery();
 
-        yield from []; // Keep signature, avoid crash.
+        yield $this->printTimer($timer);
     }
 
     /**
      * Anonymize a single database table using one UPDATE query per target.
      */
-    protected function anonymizeTablePerColumn(string $table, ?array $targets = null, ?string $progress = null): \Generator
+    protected function anonymizeTablePerColumn(string $table, array $anonymizers): \Generator
     {
         $platform = $this->connection->getDatabasePlatform();
 
-        $targets = $this->getTableConfigTargets($table, $targets);
-
-        $total = \count($targets);
+        $total = \count($anonymizers);
         $count = 1;
 
-        foreach ($targets as $target => $config) {
+        foreach ($anonymizers as $anonymizer) {
+            \assert($anonymizer instanceof AbstractAnonymizer);
+
             $timer = $this->startTimer();
 
-            yield \sprintf('   - target %d/%d: "%s"."%s"...', $count, $total, $table, $target);
+            $table = $anonymizer->getTableName();
+            $target = $anonymizer->getColumnName();
 
-            $updateQuery = $this->connection
+            yield \sprintf('   - anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target);
+
+            $updateQuery = $this
+                ->connection
                 ->createQueryBuilder()
                 ->update($platform->quoteIdentifier($table))
             ;
 
-            if (!isset($config['anonymizer'])) {
-                throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $target));
-            }
-
-            $this->anonymizers[$config['anonymizer']]->anonymize(
-                $updateQuery,
-                $config['target'],
-                $config['options']
-            );
+            $anonymizer->anonymize($updateQuery);
 
             $updateQuery->executeQuery();
             $count++;
 
-            yield $this->stopTimer($timer);
+            yield $this->printTimer($timer);
         }
     }
 
@@ -270,7 +271,7 @@ class Anonymizator //extends \IteratorAggregate
         return \hrtime(true);
     }
 
-    protected function stopTimer(null|int|float $timer): string
+    protected function printTimer(null|int|float $timer): string
     {
         if (null === $timer) {
             return 'N/A';
@@ -281,18 +282,6 @@ class Anonymizator //extends \IteratorAggregate
             Format::time((\hrtime(true) - $timer) / 1e+6),
             Format::memory(\memory_get_usage(true)),
         );
-    }
-
-    /**
-     * Clean all anonymizers
-     */
-    public function clean(): self
-    {
-        foreach($this->anonymizers as $anonymizer) {
-            $anonymizer->clean();
-        }
-
-        return $this;
     }
 
     public function getConnectionName(): string
