@@ -158,13 +158,7 @@ abstract class AbstractAnonymizer
 
     protected function getSetIfNotNullExpression(string $columnExpression, string $valueExpression): string
     {
-        $plateform = $this->connection->getDatabasePlatform();
-
-        return match (true) {
-            $plateform instanceof MySQLPlatform => \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression),
-            $plateform instanceof PostgreSQLPlatform => \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression),
-            default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
-        };
+        return \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression);
     }
 
     /**
@@ -180,8 +174,7 @@ abstract class AbstractAnonymizer
             // We are going to add a forced CAST here so that the user may
             // give anything, an int, a date, etc... MySQL doesn't need that
             // because it uses type coercition and does the job implicitely.
-            $plateform instanceof PostgreSQLPlatform => \sprintf("lpad(cast(%s as text), %d, '%s')", $textExpression, $padSize, $padString),
-            default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
+            default => \sprintf("lpad(cast(%s as text), %d, '%s')", $textExpression, $padSize, $padString),
         };
     }
 
@@ -204,6 +197,7 @@ abstract class AbstractAnonymizer
         return match (true) {
             $plateform instanceof MySQLPlatform => "rand()",
             $plateform instanceof PostgreSQLPlatform => "random()",
+            // There is no SQL standard for this as we know of.
             default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
         };
     }
