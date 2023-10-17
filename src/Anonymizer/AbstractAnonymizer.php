@@ -11,13 +11,15 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Target;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
     final public function __construct(
+        protected string $tableName,
+        protected string $columnName,
         protected Connection $connection,
+        protected Options $options,
     ) {}
 
     public static function getName(): string
@@ -30,7 +32,32 @@ abstract class AbstractAnonymizer
     }
 
     /**
-     * Initialize your anonymizer
+     * Get table name.
+     *
+     * @internal
+     *   For reporting while anonymizing.
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+
+    /**
+     * Get column name.
+     *
+     * It can either return a real colum name, for column-level anonymizers,
+     * but it may also return an arbitrary name, for table-level anonymizers.
+     *
+     * @internal
+     *   For reporting while anonymizing.
+     */
+    public function getColumnName(): string
+    {
+        return $this->columnName;
+    }
+
+    /**
+     * Initialize your anonymizer.
      *
      * Override this method for your needs, for example create a temporary
      * table with dummy data.
@@ -42,7 +69,7 @@ abstract class AbstractAnonymizer
     /**
      * Add statement to existing update query to anonymize a specific target.
      */
-    abstract public function anonymize(QueryBuilder $updateQuery, Target $target, Options $options): void;
+    abstract public function anonymize(QueryBuilder $updateQuery): void;
 
     /**
      * Clean your anonymizer

@@ -6,7 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EmailAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Column;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 
 class EmailAnonymizerTest extends UnitTestCase
@@ -15,9 +14,14 @@ class EmailAnonymizerTest extends UnitTestCase
     {
         $updateQuery = $this->getQueryBuilder()->update('some_table');
 
-        $instance = new EmailAnonymizer($this->getConnection());
+        $instance = new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options()
+        );
 
-        $instance->anonymize($updateQuery, new Column('some_table', 'email'), new Options());
+        $instance->anonymize($updateQuery);
 
         self::assertSameSql(
             <<<SQL
@@ -33,11 +37,16 @@ class EmailAnonymizerTest extends UnitTestCase
     {
         $updateQuery = $this->getQueryBuilder()->update('some_table');
 
-        $instance = new EmailAnonymizer($this->getConnection());
+        $instance = new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'domain' => 'makina-corpus.com',
+            ])
+        );
 
-        $instance->anonymize($updateQuery, new Column('some_table', 'email'), new Options([
-            'domain' => 'makina-corpus.com',
-        ]));
+        $instance->anonymize($updateQuery);
 
         self::assertSameSql(
             <<<SQL

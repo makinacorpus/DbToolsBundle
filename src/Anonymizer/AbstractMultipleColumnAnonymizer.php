@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
 
 /**
  * Class of anonymizers that work on a Table target, and allow updating
  * more than one column at a time.
  */
-abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
+abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
 {
-    protected ?string $sampleTableName = null;
+    private ?string $sampleTableName = null;
 
     /**
      * Get column names.
@@ -69,16 +68,12 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
+    public function anonymize(QueryBuilder $query): void
     {
-        if (!$target instanceof Target\Table) {
-            throw new \InvalidArgumentException("This anonymizer only accepts Target\Table target.");
-        }
-
         $columns = $this->getColumnNames();
         $sampleTableName = $this->getSampleTableName();
 
-        if (0 >= $options->count()) {
+        if (0 >= $this->options->count()) {
             throw new \InvalidArgumentException(\sprintf(
                 "Options are empty. You should at least give one of those: %s",
                 \implode(', ', $columns)
@@ -86,7 +81,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
         }
 
         $plateform = $this->connection->getDatabasePlatform();
-        $columnOptions = \array_filter($columns, fn ($column) => $options->has($column));
+        $columnOptions = \array_filter($columns, fn ($column) => $this->options->has($column));
 
         $random = $this->connection
             ->createQueryBuilder()
@@ -95,7 +90,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
             ->setMaxResults(1)
             ->where(
                 $this->connection->createExpressionBuilder()->notLike(
-                    $plateform->quoteIdentifier($target->table) . '.' . $options->get(\reset($columnOptions)),
+                    $plateform->quoteIdentifier($this->tableName) . '.' . $this->options->get(\reset($columnOptions)),
                     $sampleTableName . '.' . \reset($columnOptions)
                 )
             )
@@ -108,7 +103,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractAnonymizer
                 \implode(
                     ', ',
                     \array_map(
-                        fn ($column) => $plateform->quoteIdentifier($options->get($column)),
+                        fn ($column) => $plateform->quoteIdentifier($this->options->get($column)),
                         $columnOptions
                     )
                 )

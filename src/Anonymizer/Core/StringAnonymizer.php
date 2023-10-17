@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target as Target;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
@@ -28,25 +24,21 @@ class StringAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query, Target\Target $target, Options $options): void
+    public function anonymize(QueryBuilder $query): void
     {
-        if (!$target instanceof Target\Column) {
-            throw new \InvalidArgumentException("This anonymizer only accepts Target\Column target.");
-        }
-
-        if (!$options->has('sample')) {
+        if (!$this->options->has('sample')) {
             throw new \InvalidArgumentException(\sprintf(
                 <<<TXT
                 You should provide an 'sample' option with this anonymizer.
                 Check your configuration for table "%s", column "%s"
                 TXT,
-                $target->table,
-                $target->column
+                $this->tableName,
+                $this->columnName,
             ));
         }
-        $sample = $options->get('sample');
+        $sample = $this->options->get('sample');
 
-        $this->validateSample($target, $sample);
+        $this->validateSample($sample);
 
         $plateform = $this->connection->getDatabasePlatform();
 
@@ -64,14 +56,14 @@ class StringAnonymizer extends AbstractAnonymizer
             ->setMaxResults(1)
             ->where(
                 $this->connection->createExpressionBuilder()->notLike(
-                    $plateform->quoteIdentifier($target->table) . '.' . $target->column,
+                    $plateform->quoteIdentifier($this->tableName) . '.' . $plateform->quoteIdentifier($this->columnName),
                     $sampleTable . '.value'
                 )
             )
             ->orderBy($this->getSqlRandomExpression())
         ;
 
-        $query->set($plateform->quoteIdentifier($target->column), \sprintf('(%s)', $random));
+        $query->set($plateform->quoteIdentifier($this->columnName), \sprintf('(%s)', $random));
     }
 
     /**
@@ -86,7 +78,7 @@ class StringAnonymizer extends AbstractAnonymizer
         }
     }
 
-    private function validateSample(Target\Column $target, $sample): self
+    private function validateSample(mixed $sample): self
     {
         if (\is_null($sample) || 0 === \count($sample)) {
             throw new \InvalidArgumentException(\sprintf(
@@ -94,8 +86,8 @@ class StringAnonymizer extends AbstractAnonymizer
                 No sample given, or given sample is empty.
                 Check your configuration for table "%s", column "%s"
                 TXT,
-                $target->table,
-                $target->column
+                $this->tableName,
+                $this->columnName
             ));
         }
 

@@ -47,7 +47,7 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
             new AnonymizerRegistry(),
         );
 
-        $anonymizator->addAnonymization('table_with_phone', 'phone_column', [
+        $anonymizator->registerAnonymization('table_with_phone', 'phone_column', [
             'anonymizer' => 'fr_fr.phone',
         ]);
 

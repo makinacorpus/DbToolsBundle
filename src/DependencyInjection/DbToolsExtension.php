@@ -68,7 +68,7 @@ final class DbToolsExtension extends Extension
 
                 foreach ($connectionConfig as $table => $tableConfig) {
                     foreach ($tableConfig as $name => $singleConfig) {
-                        $definition->addMethodCall('addAnonymization', [$table, $name, $singleConfig]);
+                        $definition->addMethodCall('registerAnonymization', [$table, $name, $singleConfig]);
                     }
                 }
 

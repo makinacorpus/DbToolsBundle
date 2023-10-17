@@ -6,7 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymizer\FrFR;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PhoneNumberAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Target\Column;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 
 class PhoneNumberAnonymizerTest extends UnitTestCase
@@ -15,9 +14,14 @@ class PhoneNumberAnonymizerTest extends UnitTestCase
     {
         $updateQuery = $this->getQueryBuilder()->update('some_table');
 
-        $instance = new PhoneNumberAnonymizer($this->getConnection());
+        $instance = new PhoneNumberAnonymizer(
+            'some_table',
+            'phone_column',
+            $this->getConnection(),
+            new Options(),
+        );
 
-        $instance->anonymize($updateQuery, new Column('some_table', 'phone_column'), new Options());
+        $instance->anonymize($updateQuery);
 
         self::assertSameSql(
             <<<SQL

@@ -24,7 +24,7 @@ abstract class FunctionalTestCase extends UnitTestCase
      * Create table with columns.
      *
      * @param array<string,string|array|Column> $columns
-     * @param array<array<string,mixed>> $values
+     * @param array<array<string,mixed>> $rows
      */
     protected function createOrReplaceTable(
         string $tableName,
