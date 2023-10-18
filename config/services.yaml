@@ -6,6 +6,12 @@ services:
             - '@db_tools.anonymization.anonymizator.registry'
             - '%doctrine.default_connection%'
         tags: ['console.command']
+    db_tools.command.clean:
+        class: MakinaCorpus\DbToolsBundle\Command\CleanCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.registry'
+            - '%doctrine.default_connection%'
+        tags: ['console.command']
     db_tools.command.check:
         class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
         arguments:
