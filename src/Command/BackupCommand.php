@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-#[AsCommand(name: 'db-tools:backup', description: 'Backup database', aliases: ['dbt:b'])]
+#[AsCommand(name: 'db-tools:backup', description: 'Backup database')]
 class BackupCommand extends Command
 {
     private SymfonyStyle $io;

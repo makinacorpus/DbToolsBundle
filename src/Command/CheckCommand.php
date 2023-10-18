@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:check', description: 'Check DbTools configuration', aliases: ['dbt:c'])]
+#[AsCommand(name: 'db-tools:check', description: 'Check DbTools configuration')]
 class CheckCommand extends Command
 {
     public function __construct(

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:clean', description: 'Clean DbTools left-over temporary tables', aliases: ['dbt:l'])]
+#[AsCommand(name: 'db-tools:clean', description: 'Clean DbTools left-over temporary tables')]
 class CleanCommand extends Command
 {
     public function __construct(
