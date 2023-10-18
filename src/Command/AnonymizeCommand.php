@@ -16,16 +16,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'db-tools:anonymize', description: 'Anonymize database', aliases: ['dbt:a'])]
 class AnonymizeCommand extends Command
 {
-    private SymfonyStyle $io;
-    private string $connectionName;
-
     public function __construct(
         private AnonymizatorRegistry $anonymizatorRegistry,
-        string $defaultConnectionName,
+        private string $defaultConnectionName,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
     }
 
     /**
@@ -75,22 +70,22 @@ class AnonymizeCommand extends Command
             throw new \LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
         }
 
+        $io = new SymfonyStyle($input, $output);
+
+        if ('prod' == $input->getOption('env')) {
+            $io->caution("This command cannot be launched in production!");
+        }
+
         if ($force = $input->getOption('force')) {
+            $io->warning("--force is set, no confirmation will be asked.");
+
             $input->setInteractive(false);
         }
 
-        $this->io = new SymfonyStyle($input, $output);
+        if (!$force && !$io->confirm("Are you sure you want to anonymize your database?", false)) {
+            $io->warning('Action cancelled');
 
-        if ('prod' == $input->getOption('env')) {
-            $this->io->caution("This command cannot be launched in production!");
-        }
-
-        if (!$force && !$this->io->confirm("Are you sure you want to anonymize your database?", false)) {
-            throw new \RuntimeException('Action cancelled');
-        }
-
-        if ($input->getOption('connection')) {
-            $this->connectionName = $input->getOption('connection');
+            return self::FAILURE;
         }
 
         // Target identification.
@@ -98,26 +93,27 @@ class AnonymizeCommand extends Command
         $onlyTargets = $input->getOption('target');
         $atOnce = !$input->getOption('split-per-column');
 
-        $anonymizator = $this->anonymizatorRegistry->get($this->connectionName);
+        $connectionName = $input->getOption('connection') ?? $this->defaultConnectionName;
+        $anonymizator = $this->anonymizatorRegistry->get($connectionName);
 
         $needsLineFeed = false;
         foreach ($anonymizator->anonymize($excludedTargets, $onlyTargets, $atOnce) as $message) {
             if (\str_ends_with($message, '...')) {
-                $output->write($message);
+                $io->write($message);
                 $needsLineFeed = true;
             } else if ($needsLineFeed) {
-                $output->writeln(' [' . $message . ']');
+                $io->writeln(' [' . $message . ']');
                 $needsLineFeed = false;
             } else {
-                $output->writeln($message);
+                $io->writeln($message);
             }
         }
         if ($needsLineFeed) {
-            $output->writeln("");
+            $io->writeln("");
         }
 
-        $this->io->newLine();
-        $this->io->success("Database anonymized !");
+        $io->newLine();
+        $io->success("Database anonymized !");
 
         return Command::SUCCESS;
     }

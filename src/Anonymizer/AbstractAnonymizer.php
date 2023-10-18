@@ -15,6 +15,8 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
+    const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
+
     final public function __construct(
         protected string $tableName,
         protected string $columnName,
@@ -153,7 +155,7 @@ abstract class AbstractAnonymizer
 
     protected function generateTempTableName(): string
     {
-        return \uniqid('anonymizer_sample_');
+        return \uniqid(self::TEMP_TABLE_PREFIX);
     }
 
     protected function getSetIfNotNullExpression(string $columnExpression, string $valueExpression): string
