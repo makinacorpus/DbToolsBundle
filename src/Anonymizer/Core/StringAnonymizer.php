@@ -46,7 +46,7 @@ class StringAnonymizer extends AbstractAnonymizer
             ['value'],
             $sample,
             $sampleTable = $this->generateTempTableName(),
-            [Type::getType('string')],
+            [Type::getType('text')],
         );
 
         $random = $this->connection
