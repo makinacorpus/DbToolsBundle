@@ -13,5 +13,5 @@ interface RestorerFactoryInterface
     /**
      * Check if given DBAL driver is supported by this restorer factory.
      */
-    public function isSupported($driver): bool;
+    public function isSupported(string $driver): bool;
 }

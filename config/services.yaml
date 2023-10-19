@@ -34,6 +34,12 @@ services:
             - '@db_tools.restorer.factory.registry'
             - '@db_tools.storage'
         tags: ['console.command']
+    db_tools.command.stats:
+        class: MakinaCorpus\DbToolsBundle\Command\StatsCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.stats_provider.factory.registry'
+        tags: ['console.command']
 
     # Utilities
     db_tools.storage:
@@ -61,6 +67,17 @@ services:
     db_tools.restorer.factory.mysql:
         class: MakinaCorpus\DbToolsBundle\Restorer\MySQL\RestorerFactory
         tags: ['db_tools.restorer.factory']
+
+    # Stats providers
+    db_tools.stats_provider.factory.registry:
+        class: MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactoryRegistry
+        arguments: ['@doctrine']
+    db_tools.stats_provider.factory.pgsql:
+        class: MakinaCorpus\DbToolsBundle\Stats\PgSQL\PgSQLStatsProviderFactory
+        tags: ['db_tools.stats_provider.factory']
+    db_tools.stats_provider.factory.mysql:
+        class: MakinaCorpus\DbToolsBundle\Stats\MySQL\MySQLStatsProviderFactory
+        tags: ['db_tools.stats_provider.factory']
 
     # Anonymization
     db_tools.anonymization.anonymizer.registry:
