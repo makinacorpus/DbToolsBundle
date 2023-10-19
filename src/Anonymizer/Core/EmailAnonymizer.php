@@ -8,7 +8,14 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-#[AsAnonymizer('email')]
+#[AsAnonymizer(
+    name: 'email',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize email addresses.
+    You can choose a domain and a tld with option `domain`.
+    TXT
+)]
 class EmailAnonymizer extends AbstractAnonymizer
 {
     /**

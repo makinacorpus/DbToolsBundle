@@ -26,7 +26,15 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
  * Options are:
  *   - "mode": can be "mobile" or "landline"
  */
-#[AsAnonymizer('fr_fr.phone')]
+#[AsAnonymizer(
+    name: 'fr_fr.phone',
+    pack: 'fr_fr',
+    description: <<<TXT
+    Anonymize with a random fictional french phone number.
+    You can choose if you want a "landline" or a "mobile" phone
+    number with option `mode`
+    TXT
+)]
 class PhoneNumberAnonymizer extends AbstractAnonymizer
 {
     /**

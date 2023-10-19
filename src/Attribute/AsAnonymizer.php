@@ -12,5 +12,7 @@ class AsAnonymizer
 {
     public function __construct(
         public string $name,
+        public string $pack,
+        public ?string $description = null,
     ) {}
 }

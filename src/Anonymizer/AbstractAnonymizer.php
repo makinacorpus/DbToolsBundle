@@ -26,8 +26,13 @@ abstract class AbstractAnonymizer
 
     public static function getName(): string
     {
+        return self::getMetadata()->name;
+    }
+
+    public static function getMetadata(): AsAnonymizer
+    {
         if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
-            return $attribute[0]->newInstance()->name;
+            return $attribute[0]->newInstance();
         }
 
         throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");
