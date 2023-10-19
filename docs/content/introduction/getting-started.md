@@ -48,8 +48,8 @@ php bin/console db-tools:check
 ```
 
 :::tip
-If this command returns an error, got to the [binaries configuration section](/introduction/configuration#binaries)
-to understant how to solve them.
+If this command returns errors, get to the [binaries configuration section](/introduction/configuration#binaries)
+to understand how to solve them.
 :::
 
 ## `db-tools:backup`
