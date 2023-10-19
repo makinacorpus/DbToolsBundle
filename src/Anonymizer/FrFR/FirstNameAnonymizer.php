@@ -14,7 +14,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
     Anonymize with a random french firstname from a sample of ~500 items.
     TXT
 )]
-class FirstnameAnonymizer extends EnumAnonymizer
+class FirstNameAnonymizer extends EnumAnonymizer
 {
     /**
      * {@inheritdoc}

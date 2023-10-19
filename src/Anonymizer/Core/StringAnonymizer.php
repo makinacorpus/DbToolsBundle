@@ -12,7 +12,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 /**
  * Anonymize a string column with a random value from a custom sample.
  *
- * If you need to generate a complexe sample, you should consider to
+ * If you need to generate a complex sample, you should consider to
  * implement your own EnumAnonymizer.
  */
 #[AsAnonymizer(
