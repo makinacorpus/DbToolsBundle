@@ -114,7 +114,7 @@ abstract class AbstractAnonymizer
         foreach ($columns as $index => $name) {
             $type = $types[$index] ?? null;
             if (!$type) {
-                $type = Type::getType('string');
+                $type = Type::getType('text');
             } elseif (!$type instanceof Type) {
                 $type = Type::getType($type);
             }
@@ -168,20 +168,34 @@ abstract class AbstractAnonymizer
         return \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression);
     }
 
-    /**
-     * Generate an SQL text pad left expression.
-     */
-    protected function getSqlTextPadLeftExpression(string $textExpression, int $padSize, string $padString): string
+    protected function getStringAggExpression(string $textExpression, string $rawJoinString = ','): string
     {
         $plateform = $this->connection->getDatabasePlatform();
+        $quotedJoinString = $plateform->quoteStringLiteral($rawJoinString);
 
-        // @todo Warning: no proper escaping.
         return match (true) {
-            $plateform instanceof MySQLPlatform => \sprintf("lpad(%s, %d, '%s')", $textExpression, $padSize, $padString),
+            $plateform instanceof MySQLPlatform => \sprintf("group_concat(%s, %s)", $textExpression, $quotedJoinString),
             // We are going to add a forced CAST here so that the user may
             // give anything, an int, a date, etc... MySQL doesn't need that
             // because it uses type coercition and does the job implicitely.
-            default => \sprintf("lpad(cast(%s as text), %d, '%s')", $textExpression, $padSize, $padString),
+            default => \sprintf("string_agg(cast(%s as text), %s)", $textExpression, $quotedJoinString),
+        };
+    }
+
+    /**
+     * Generate an SQL text pad left expression.
+     */
+    protected function getSqlTextPadLeftExpression(string $textExpression, int $padSize, string $rawPadString): string
+    {
+        $plateform = $this->connection->getDatabasePlatform();
+        $quotedPadString = $plateform->quoteStringLiteral($rawPadString);
+
+        return match (true) {
+            $plateform instanceof MySQLPlatform => \sprintf("lpad(%s, %d, %s)", $textExpression, $padSize, $quotedPadString),
+            // We are going to add a forced CAST here so that the user may
+            // give anything, an int, a date, etc... MySQL doesn't need that
+            // because it uses type coercition and does the job implicitely.
+            default => \sprintf("lpad(cast(%s as text), %d, %s)", $textExpression, $padSize, $quotedPadString),
         };
     }
 

@@ -20,7 +20,7 @@ abstract class EnumAnonymizer extends AbstractAnonymizer
      */
     protected function getSampleType(): string
     {
-        return 'string';
+        return 'text';
     }
 
     /**
