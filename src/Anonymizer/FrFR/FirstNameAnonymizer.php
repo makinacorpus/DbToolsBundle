@@ -7,8 +7,14 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-#[AsAnonymizer('fr_fr.prenom')]
-class PrenomAnonymizer extends EnumAnonymizer
+#[AsAnonymizer(
+    name: 'firstname',
+    pack: 'fr_fr',
+    description: <<<TXT
+    Anonymize with a random french firstname from a sample of ~500 items.
+    TXT
+)]
+class FirstNameAnonymizer extends EnumAnonymizer
 {
     /**
      * {@inheritdoc}

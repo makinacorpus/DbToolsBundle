@@ -22,7 +22,15 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
  *
  * Sample from https://randommer.io/random-address
  */
-#[AsAnonymizer('address')]
+#[AsAnonymizer(
+    name: 'address',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize a mutlicolumn postal address.
+    Map columns for each part with options (`country`, `locality`, `region`,
+    `postal_code`, `street_address`, `secondary_address`)
+    TXT
+)]
 class AddressAnonymizer extends AbstractMultipleColumnAnonymizer
 {
     /**

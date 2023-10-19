@@ -38,7 +38,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         foreach ($columns as $name => $column) {
             if (\is_string($column)) {
                 $columns[$name] = new Column($name, Type::getType($column), $defaultColumnOptions);
-            } else if (\is_array($column)) {
+            } elseif (\is_array($column)) {
                 if (isset($column['type'])) {
                     $type = Type::getType($column['type']);
                     unset($column['type']);
@@ -46,7 +46,7 @@ abstract class FunctionalTestCase extends UnitTestCase
                     $type = Type::getType('string');
                 }
                 $columns[$name] = new Column($name, $type, $column + $defaultColumnOptions);
-            } else if (!$column instanceof Column) {
+            } elseif (!$column instanceof Column) {
                 throw new \InvalidArgumentException(\sprintf("Column must be a string (type), and array (doctrine/dbal Column class options) or a %s instance", Column::class));
             }
         }
@@ -79,7 +79,8 @@ abstract class FunctionalTestCase extends UnitTestCase
                 ->createSchemaManager()
                 ->dropTable($tableName)
             ;
-        } catch (TableDoesNotExist|TableNotFoundException) {}
+        } catch (TableDoesNotExist|TableNotFoundException) {
+        }
     }
 
     /** @after */

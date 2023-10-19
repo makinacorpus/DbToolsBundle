@@ -8,10 +8,13 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-/**
- * Anonymize a string column by applying a MD5 function.
- */
-#[AsAnonymizer('md5')]
+#[AsAnonymizer(
+    name: 'md5',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize a column by hashing its value.
+    TXT
+)]
 class Md5Anonymizer extends AbstractAnonymizer
 {
     /**

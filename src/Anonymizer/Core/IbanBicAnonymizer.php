@@ -21,7 +21,14 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
  *  - "sample_size": total number of different IBAN that will be generated, the higher
  *    is this number, the less duplicates you will have in the end.
  */
-#[AsAnonymizer('iban-bic')]
+#[AsAnonymizer(
+    name: 'iban-bic',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize IBAN and BIC on two columns.
+    Map columns for each part with options (`iban` and `bic`)
+    TXT
+)]
 class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
 {
     /**

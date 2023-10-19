@@ -8,10 +8,14 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-/**
- * Anonyze with a random Float between to bounds and with a given precision.
- */
-#[AsAnonymizer('float')]
+#[AsAnonymizer(
+    name: 'float',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize with a random float between two bounds.
+    Options are `min` , `max` and `precision` (default 2).
+    TXT
+)]
 class FloatAnonymizer extends AbstractAnonymizer
 {
     /**

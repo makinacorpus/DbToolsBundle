@@ -26,11 +26,11 @@ class Backupper extends AbstractBackupper
             $args[] = '-h';
             $args[] = $dbParams['host'];
         }
-            if (isset($dbParams['user'])) {
+        if (isset($dbParams['user'])) {
             $args[] = '-U';
             $args[] = $dbParams['user'];
         }
-            if (isset($dbParams['port'])) {
+        if (isset($dbParams['port'])) {
             $args[] = '-p';
             $args[] = $dbParams['port'];
         }

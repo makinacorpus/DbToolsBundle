@@ -15,7 +15,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
-    const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
+    public const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
 
     final public function __construct(
         protected string $tableName,
@@ -24,10 +24,15 @@ abstract class AbstractAnonymizer
         protected Options $options,
     ) {}
 
-    public static function getName(): string
+    public static function id(): string
     {
-        if ($attribute = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
-            return $attribute[0]->newInstance()->name;
+        return self::getMetadata()->id();
+    }
+
+    public static function getMetadata(): AsAnonymizer
+    {
+        if ($attributes = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
+            return $attributes[0]->newInstance();
         }
 
         throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");

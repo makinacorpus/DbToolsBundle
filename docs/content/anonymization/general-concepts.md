@@ -1,6 +1,10 @@
 # Anonymization In-Depth
 
 
+:::tip
+List availabe anonymizers with the `db-tools:anonymization:list` command.
+:::
+
 ## Target
 
   ### Column targeted Anonymizer

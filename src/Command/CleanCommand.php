@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:clean', description: 'Clean DbTools left-over temporary tables')]
+#[AsCommand(name: 'db-tools:anonymization:clean', description: 'Clean DbTools left-over temporary tables')]
 class CleanCommand extends Command
 {
     public function __construct(
@@ -60,7 +60,7 @@ class CleanCommand extends Command
         }
 
         if ('prod' == $input->getOption('env')) {
-            $this->io->caution("This command cannot be launched in production!");
+            $io->caution("This command cannot be launched in production!");
         }
 
         $connectionName = $input->getOption('connection') ?? $this->defaultConnectionName;

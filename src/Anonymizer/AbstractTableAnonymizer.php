@@ -10,6 +10,4 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer;
  *
  * This will be used for validation purpose.
  */
-abstract class AbstractTableAnonymizer extends AbstractAnonymizer
-{
-}
+abstract class AbstractTableAnonymizer extends AbstractAnonymizer {}

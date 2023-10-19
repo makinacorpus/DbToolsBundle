@@ -8,10 +8,14 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-/**
- * Anonyze with a random integer between to bounds.
- */
-#[AsAnonymizer('integer')]
+#[AsAnonymizer(
+    name: 'integer',
+    pack: 'core',
+    description: <<<TXT
+    Anonymize with a random integer between two bounds.
+    Options are `min` , `max`.
+    TXT
+)]
 class IntegerAnonymizer extends AbstractAnonymizer
 {
     /**
