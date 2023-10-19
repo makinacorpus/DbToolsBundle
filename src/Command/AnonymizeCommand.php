@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymize', description: 'Anonymize database')]
+#[AsCommand(name: 'db-tools:anonymization:run', description: 'Anonymize database', aliases: ['db-tools:anonymize'])]
 class AnonymizeCommand extends Command
 {
     public function __construct(

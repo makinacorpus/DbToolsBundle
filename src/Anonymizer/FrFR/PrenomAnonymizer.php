@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 #[AsAnonymizer(
-    name: 'fr_fr.prenom',
+    name: 'prenom',
     pack: 'fr_fr',
     description: <<<TXT
     Anonymize with a random french firstname from a sample of ~500 items.

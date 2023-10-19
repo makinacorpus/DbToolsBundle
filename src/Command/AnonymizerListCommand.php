@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymization:list-anonymizer', description: 'List all available anonymizers')]
+#[AsCommand(name: 'db-tools:anonymization:list', description: 'List all available anonymizers')]
 class AnonymizerListCommand extends Command
 {
     public function __construct(
@@ -44,7 +44,7 @@ class AnonymizerListCommand extends Command
             }
 
 
-            $list[$metadata->pack]['<info>' . $metadata->name . '</info>'] = $metadata->description;
+            $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $metadata->description;
         }
 
         \array_walk($list, fn(array &$anonymizers) => \ksort($anonymizers, SORT_STRING));

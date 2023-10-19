@@ -27,7 +27,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
  *   - "mode": can be "mobile" or "landline"
  */
 #[AsAnonymizer(
-    name: 'fr_fr.phone',
+    name: 'phone',
     pack: 'fr_fr',
     description: <<<TXT
     Anonymize with a random fictional french phone number.

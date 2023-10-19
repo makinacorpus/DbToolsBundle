@@ -77,7 +77,7 @@ class AnonymizerRegistry
                     ));
                 }
 
-                $classes[$className::getName()] = $className;
+                $classes[$className::id()] = $className;
             }
         }
 

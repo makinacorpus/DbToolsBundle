@@ -24,9 +24,9 @@ abstract class AbstractAnonymizer
         protected Options $options,
     ) {}
 
-    public static function getName(): string
+    public static function id(): string
     {
-        return self::getMetadata()->name;
+        return self::getMetadata()->id();
     }
 
     public static function getMetadata(): AsAnonymizer

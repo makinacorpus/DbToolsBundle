@@ -15,4 +15,11 @@ class AsAnonymizer
         public string $pack,
         public ?string $description = null,
     ) {}
+
+    public function id(): string
+    {
+        // Id is 'pack.name' except for anonymiser from core
+        // which don't have prefix.
+        return ('core' !== $this->pack ? $this->pack . '.' : '') . $this->name;
+    }
 }
