@@ -56,7 +56,8 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
             $this->getConnection()->executeQuery('select phone_column from table_with_phone where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {}
+        foreach ($anonymizator->anonymize() as $message) {
+        }
 
         $phoneNumbers = $this->getConnection()->executeQuery('select phone_column from table_with_phone order by id asc')->fetchFirstColumn();
         $this->assertNotNull($phoneNumbers[0]);

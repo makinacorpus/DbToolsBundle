@@ -101,7 +101,7 @@ class AnonymizeCommand extends Command
             if (\str_ends_with($message, '...')) {
                 $io->write($message);
                 $needsLineFeed = true;
-            } else if ($needsLineFeed) {
+            } elseif ($needsLineFeed) {
                 $io->writeln(' [' . $message . ']');
                 $needsLineFeed = false;
             } else {

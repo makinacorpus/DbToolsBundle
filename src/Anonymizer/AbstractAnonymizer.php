@@ -15,7 +15,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 abstract class AbstractAnonymizer
 {
-    const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
+    public const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
 
     final public function __construct(
         protected string $tableName,

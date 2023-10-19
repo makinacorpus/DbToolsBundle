@@ -60,7 +60,7 @@ class CleanCommand extends Command
         }
 
         if ('prod' == $input->getOption('env')) {
-            $this->io->caution("This command cannot be launched in production!");
+            $io->caution("This command cannot be launched in production!");
         }
 
         $connectionName = $input->getOption('connection') ?? $this->defaultConnectionName;

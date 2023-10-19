@@ -146,7 +146,7 @@ class Anonymizator //extends \IteratorAggregate
         if ($onlyTargets) {
             foreach ($onlyTargets as $targetString) {
                 if (\str_contains($targetString, '.')) {
-                    list ($table, $target) = \explode('.', $targetString, 2);
+                    list($table, $target) = \explode('.', $targetString, 2);
                     $plan[$table][] = $target; // Avoid duplicates.
                 } else {
                     $plan[$targetString] = [];

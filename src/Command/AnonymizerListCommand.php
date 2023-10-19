@@ -47,7 +47,7 @@ class AnonymizerListCommand extends Command
             $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $metadata->description;
         }
 
-        \array_walk($list, fn(array &$anonymizers) => \ksort($anonymizers, SORT_STRING));
+        \array_walk($list, fn (array &$anonymizers) => \ksort($anonymizers, SORT_STRING));
 
         $table = [];
         $first = true;

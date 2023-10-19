@@ -82,9 +82,7 @@ abstract class UnitTestCase extends TestCase
     /**
      * Initialize database.
      */
-    protected function initializeDatabase(): void
-    {
-    }
+    protected function initializeDatabase(): void {}
 
     /**
      * Get testing connection object.
