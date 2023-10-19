@@ -11,9 +11,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 #[AsAnonymizer(
     name: 'md5',
     pack: 'core',
-    description: <<<TXT
-    Anonymize a column by hashing its value.
-    TXT
+    description: 'Anonymize a column by hashing its value.'
 )]
 class Md5Anonymizer extends AbstractAnonymizer
 {

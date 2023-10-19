@@ -18,7 +18,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 #[AsAnonymizer(
     name: 'string',
     pack: 'core',
-    description: 'Anonymize a column by setting a random value from a given sample option.'
+    description: "Anonymize a column by setting a random value from a given 'sample' option."
 )]
 class StringAnonymizer extends AbstractAnonymizer
 {

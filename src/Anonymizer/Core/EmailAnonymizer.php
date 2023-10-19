@@ -12,8 +12,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
     name: 'email',
     pack: 'core',
     description: <<<TXT
-    Anonymize email addresses.
-    You can choose a domain and a tld with option `domain`.
+    Anonymize email addresses. You can choose a domain and a tld with option 'domain'.
     TXT
 )]
 class EmailAnonymizer extends AbstractAnonymizer

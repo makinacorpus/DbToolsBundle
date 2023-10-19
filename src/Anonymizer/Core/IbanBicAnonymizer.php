@@ -26,7 +26,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
     pack: 'core',
     description: <<<TXT
     Anonymize IBAN and BIC on two columns.
-    Map columns for each part with options (`iban` and `bic`)
+    Map columns for each part with options ('iban' and 'bic')
     TXT
 )]
 class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer

@@ -13,7 +13,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
     pack: 'core',
     description: <<<TXT
     Anonymize with a random integer between two bounds.
-    Options are `min` , `max`.
+    Options are 'min' , 'max'.
     TXT
 )]
 class IntegerAnonymizer extends AbstractAnonymizer
