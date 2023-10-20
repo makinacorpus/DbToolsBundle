@@ -250,4 +250,13 @@ class Anonymizator //extends \IteratorAggregate
     {
         return $this->anonymizationConfig ?? $this->loadConfiguration();
     }
+
+    public function checkConfig(): void
+    {
+        foreach ($this->getAnonymizationConfig()->all() as $tableConfig) {
+            foreach ($tableConfig as $config) {
+                $this->createAnonymizer($config);
+            }
+        }
+    }
 }

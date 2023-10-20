@@ -33,6 +33,7 @@ class AnonymizationCheckCommand extends Command
         foreach ($this->anonymizatorRegistry->all() as $connectionName => $anonymizator) {
             $io->title('Connection: ' . $connectionName);
 
+            $anonymizator->checkConfig();
             $config = $anonymizator->getAnonymizationConfig();
             foreach ($config->all() as $table => $tableConfig) {
                 $io->section('Table: ' . $table);
