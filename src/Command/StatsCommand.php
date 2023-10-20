@@ -76,7 +76,7 @@ class StatsCommand extends Command
                   - "maint": maintainance statistics, such as PostgreSQL VACUUM,
                   - "code": occasionaly display SQL code, such as CREATE statements.
                 TXT,
-                [StatValue::TAG_INFO],
+                [StatValue::TAG_INFO, StatValue::TAG_READ],
             )
         ;
     }

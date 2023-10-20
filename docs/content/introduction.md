@@ -38,3 +38,4 @@ And finally, you want to know more about your database ?
 ```sh
 php bin/console db-tools:stats
 ```
+Read more about the [statistics command](/stats).

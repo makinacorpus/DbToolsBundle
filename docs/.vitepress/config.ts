@@ -65,6 +65,10 @@ export default defineConfig({
           { text: 'Pack FR_Fr', link: '/anonymization/pack-FR-Fr' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
         ]
+      },
+      {
+        text: 'Statistics',
+        link: '/stats',
       }
     ]
   }
