@@ -21,8 +21,8 @@ class BackupperFactory implements BackupperFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function isSupported($driver): bool
+    public function isSupported(string $driver): bool
     {
-        return \in_array($driver, ['pdo_mysql']);
+        return \str_contains($driver, 'mysql') || \str_contains($driver, 'maria');
     }
 }

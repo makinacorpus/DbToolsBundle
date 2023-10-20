@@ -13,7 +13,7 @@ class DbToolsPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         if ($container->has('db_tools.backupper.factory.registry')) {
-            $definition = $container->findDefinition('db_tools.backupper.factory.registry');
+            $definition = $container->getDefinition('db_tools.backupper.factory.registry');
 
             $taggedServices = $container->findTaggedServiceIds('db_tools.backupper.factory');
             foreach ($taggedServices as $id => $tags) {
@@ -22,7 +22,7 @@ class DbToolsPass implements CompilerPassInterface
         }
 
         if ($container->has('db_tools.restorer.factory.registry')) {
-            $definition = $container->findDefinition('db_tools.restorer.factory.registry');
+            $definition = $container->getDefinition('db_tools.restorer.factory.registry');
 
             $taggedServices = $container->findTaggedServiceIds('db_tools.restorer.factory');
             foreach ($taggedServices as $id => $tags) {
@@ -30,8 +30,17 @@ class DbToolsPass implements CompilerPassInterface
             }
         }
 
+        if ($container->has('db_tools.stats_provider.factory.registry')) {
+            $definition = $container->getDefinition('db_tools.stats_provider.factory.registry');
+
+            $taggedServices = $container->findTaggedServiceIds('db_tools.stats_provider.factory');
+            foreach ($taggedServices as $id => $tags) {
+                $definition->addMethodCall('register', [new Reference($id)]);
+            }
+        }
+
         if ($container->has('db_tools.anonymization.anonymizator.registry')) {
-            $definition = $container->findDefinition('db_tools.anonymization.anonymizator.registry');
+            $definition = $container->getDefinition('db_tools.anonymization.anonymizator.registry');
 
             $taggedServices = $container->findTaggedServiceIds('db_tools.anonymization.anonymizator');
             foreach ($taggedServices as $id => $tags) {

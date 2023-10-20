@@ -13,5 +13,5 @@ interface BackupperFactoryInterface
     /**
      * Check if given DBAL driver is supported by this backupper factory.
      */
-    public function isSupported($driver): bool;
+    public function isSupported(string $driver): bool;
 }
