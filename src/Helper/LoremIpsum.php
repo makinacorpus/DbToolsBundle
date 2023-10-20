@@ -40,7 +40,7 @@ class LoremIpsum
      * @access private
      * @var    array<string>
      */
-    private $words = array(
+    private $words = [
         // Lorem ipsum...
         'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
 
@@ -73,7 +73,7 @@ class LoremIpsum
         'ultricies', 'urna', 'ut', 'varius', 'vehicula', 'vel', 'velit',
         'venenatis', 'vestibulum', 'vitae', 'vivamus', 'viverra', 'volutpat',
         'vulputate',
-    );
+    ];
 
     /**
      * Word
@@ -118,7 +118,7 @@ class LoremIpsum
     public function words($count = 1, $tags = false, $array = false)
     {
         $count      = (int) $count;
-        $words      = array();
+        $words      = [];
         $word_count = 0;
 
         // Shuffles and appends the word list to compensate for count
@@ -186,7 +186,7 @@ class LoremIpsum
      */
     public function sentences($count = 1, $tags = false, $array = false)
     {
-        $sentences = array();
+        $sentences = [];
 
         for ($i = 0; $i < $count; $i++) {
             $sentences[] = $this->wordsArray($this->gauss(24.46, 5.08));
@@ -242,7 +242,7 @@ class LoremIpsum
      */
     public function paragraphs($count = 1, $tags = false, $array = false)
     {
-        $paragraphs = array();
+        $paragraphs = [];
 
         for ($i = 0; $i < $count; $i++) {
             $paragraphs[] = strval($this->sentences($this->gauss(5.8, 1.93)));
@@ -354,7 +354,7 @@ class LoremIpsum
     {
         if ($tags) {
             if (!is_array($tags)) {
-                $tags = array($tags);
+                $tags = [$tags];
             } else {
                 // Flips the array so we can work from the inside out
                 $tags = array_reverse($tags);

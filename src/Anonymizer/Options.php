@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
-class Options
+class Options implements \Stringable
 {
     public function __construct(
         private array $options = [],
@@ -28,5 +28,14 @@ class Options
     public function count(): int
     {
         return \count($this->options);
+    }
+
+    public function __toString(): string
+    {
+        return \implode(', ', \array_map(
+            fn ($key, $value) => $key . ': ' . (\is_array($value) ? '[' . \implode(', ', $value) . ']' : $value),
+            \array_keys($this->options),
+            \array_values($this->options),
+        ));
     }
 }

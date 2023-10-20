@@ -1,11 +1,16 @@
 services:
     # Commands
-    db_tools.command.anonymization.list-anonymizer:
+    db_tools.command.anonymization.list:
         class: MakinaCorpus\DbToolsBundle\Command\AnonymizerListCommand
         arguments:
             - '@db_tools.anonymization.anonymizer.registry'
         tags: ['console.command']
-    db_tools.command.anonymize:
+    db_tools.command.anonymization.check:
+        class: MakinaCorpus\DbToolsBundle\Command\AnonymizationCheckCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.registry'
+        tags: ['console.command']
+    db_tools.command.anonymization.run:
         class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
         arguments:
             - '@db_tools.anonymization.anonymizator.registry'

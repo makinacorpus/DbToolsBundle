@@ -5,51 +5,23 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\LoaderInterface;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 
 class Anonymizator //extends \IteratorAggregate
 {
-    private array $anonymizationConfig = [];
+    private ?AnonymizationConfig $anonymizationConfig = null;
 
     public function __construct(
         private string $connectionName,
         private Connection $connection,
-        private AnonymizerRegistry $anonymizerRegistry
+        private AnonymizerRegistry $anonymizerRegistry,
+        private LoaderInterface $configurationLoader,
     ) {}
 
-    /**
-     * Add target anonymization configuration.
-     */
-    public function registerAnonymization(string $table, string $targetName, array $config): self
+    public function loadConfiguration(): AnonymizationConfig
     {
-        if (!isset($config['anonymizer'])) {
-            throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $targetName));
-        }
-
-        // Populate defaults.
-        $config += [
-            'target' => 'column',
-            'options' => [],
-        ];
-
-        if (!$this->anonymizerRegistry->get($config['anonymizer'])) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Can not find anonymizer "%s", check your anonymization configuration for table "%s", key "%s".',
-                $config['anonymizer'],
-                $table,
-                $targetName
-            ));
-        }
-
-        if (!isset($this->anonymizationConfig[$table])) {
-            $this->anonymizationConfig[$table] = [];
-        }
-        $this->anonymizationConfig[$table][$targetName] = [
-            'anonymizer' => $config['anonymizer'],
-            'options' => new Options($config['options']),
-        ];
-
-        return $this;
+        return $this->anonymizationConfig = $this->configurationLoader->load();
     }
 
     /**
@@ -57,59 +29,22 @@ class Anonymizator //extends \IteratorAggregate
      */
     public function count(): int
     {
-        return \count($this->anonymizationConfig);
-    }
-
-    /**
-     * Get a single table configuration.
-     */
-    protected function getTableConfig(string $table): array
-    {
-        return $this->anonymizationConfig[$table] ?? throw new \InvalidArgumentException(\sprintf(
-            "Table '%s' does not exist in configuration",
-            $table
-        ));
-    }
-
-    /**
-     * Get all columns or table targets for a given table.
-     *
-     * @param null|array $targets
-     *   Restrict return to the given target names.
-     */
-    protected function getTableConfigTargets(string $table, ?array $targets = null): array
-    {
-        $config = $this->getTableConfig($table);
-
-        if ($targets) {
-            $ret = [];
-            foreach ($targets as $target) {
-                $ret[$target] = $config[$target] ?? throw new \InvalidArgumentException(\sprintf(
-                    "Target '%s'.'%s' does not exist in configuration",
-                    $table,
-                    $target
-                ));
-            }
-
-            return $ret;
-        }
-
-        return $config;
+        return $this->getAnonymizationConfig()->count();
     }
 
     /**
      * Create anonymizer instance.
      */
-    protected function createAnonymizer(string $name, string $tableName, string $targetName, array $config): AbstractAnonymizer
+    protected function createAnonymizer(AnonymizationSingleConfig $config): AbstractAnonymizer
     {
-        $className = $this->anonymizerRegistry->get($name);
+        $className = $this->anonymizerRegistry->get($config->anonymizer);
         \assert(\is_subclass_of($className, AbstractAnonymizer::class));
 
         return new $className(
-            $tableName,
-            $targetName,
+            $config->table,
+            $config->targetName,
             $this->connection,
-            $config['options'] ?? new Options(),
+            $config->options,
         );
     }
 
@@ -153,7 +88,7 @@ class Anonymizator //extends \IteratorAggregate
                 }
             }
         } else {
-            foreach ($this->anonymizationConfig as $tableName => $config) {
+            foreach ($this->getAnonymizationConfig()->all() as $tableName => $config) {
                 if ($excludedTargets && \in_array($tableName, $excludedTargets)) {
                     continue; // Whole table is ignored.
                 }
@@ -174,11 +109,8 @@ class Anonymizator //extends \IteratorAggregate
 
             // Create anonymizer array prior running the anonymisation.
             $anonymizers = [];
-            foreach ($this->getTableConfigTargets($table, $targets) as $target => $config) {
-                if (!isset($config['anonymizer'])) {
-                    throw new \InvalidArgumentException(\sprintf('Missing "anonymizer" for table "%s", key "%s"', $table, $target));
-                }
-                $anonymizers[] = $this->createAnonymizer($config['anonymizer'], $table, $target, $config);
+            foreach ($this->getAnonymizationConfig()->getTableConfigTargets($table, $targets) as $target => $config) {
+                $anonymizers[] = $this->createAnonymizer($config);
             }
 
             try {
@@ -312,5 +244,10 @@ class Anonymizator //extends \IteratorAggregate
     public function getConnectionName(): string
     {
         return $this->connectionName;
+    }
+
+    public function getAnonymizationConfig(): AnonymizationConfig
+    {
+        return $this->anonymizationConfig ?? $this->loadConfiguration();
     }
 }
