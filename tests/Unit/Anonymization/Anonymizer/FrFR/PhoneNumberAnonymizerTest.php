@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymizer\FrFR;
+namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\FrFR;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymizer\FrFR\PhoneNumberAnonymizer;

@@ -1,0 +1,5 @@
+default:
+    user:
+        age_column:
+            options: {min: 0, max: 99}
+
