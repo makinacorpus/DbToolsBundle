@@ -17,7 +17,7 @@ class BackupperFactoryRegistry
         private array $backupperBinaries,
     ) {}
 
-    public function addBackupperFactory(BackupperFactoryInterface $factory): void
+    public function register(BackupperFactoryInterface $factory): void
     {
         $this->backupperFactories[] = $factory;
     }

@@ -39,6 +39,8 @@ final class DbToolsExtension extends Extension
         // Restorer
         $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
 
+        // Anonymization
+
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];
         foreach ($anonymizerPaths as $userPath) {
@@ -55,7 +57,6 @@ final class DbToolsExtension extends Extension
         }
         $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymizer';
 
-        // Anonymization
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
 
         if (isset($config['anonymization']) && isset($config['anonymization']['type'])) {
@@ -67,31 +68,11 @@ final class DbToolsExtension extends Extension
                 TXT);
             }
 
-            // Foreach doctrine connection
-            foreach (['default' => 1] as $connection => $connectionConfig) {
-                // We register the configuration loader.
-                $loaderId = match ($type) {
-                    'yaml' => $this->registerYamlLoader($connection, $config['anonymization']['file'], $container),
-                    'attributes' => $this->registerAttributesLoader($connection, $container),
-                    default => throw new \InvalidArgumentException(\sprintf("'%s' type is unknown. Available types are 'yaml' and 'attributes'.", $type)),
-                };
-
-                // We register the anonymizator
-                $definition = new Definition();
-                $definition->setClass(Anonymizator::class);
-                $definition->setArguments([
-                    $connection,
-                    new Reference(\sprintf('doctrine.dbal.%s_connection', $connection)),
-                    new Reference('db_tools.anonymization.anonymizer.registry'),
-                    new Reference($loaderId),
-                ]);
-                $definition->addTag('db_tools.anonymization.anonymizator');
-
-                $anonymizatorId = \sprintf('db_tools.anonymization.%s_anonymizator', $connection);
-                $container->setDefinition($anonymizatorId, $definition);
-
-                $this->createAnonymizatorWarmup($connection, $anonymizatorId, $container);
-            }
+            match ($type) {
+                'yaml' => $this->registerYamlLoader($config['anonymization']['file'], $container),
+                'attributes' => $this->registerAttributesLoader($container),
+                default => throw new \InvalidArgumentException(\sprintf("'%s' type is unknown. Available types are 'yaml' and 'attributes'.", $type)),
+            };
         }
     }
 
@@ -103,37 +84,21 @@ final class DbToolsExtension extends Extension
         return new DbToolsConfiguration();
     }
 
-    private function registerYamlLoader(string $connection, string $file, ContainerBuilder $container): string
+    private function registerYamlLoader(string $file, ContainerBuilder $container): void
     {
         $definition = new Definition();
         $definition->setClass(YamlLoader::class);
-        $definition->setArguments([$connection, $file]);
+        $definition->setArguments([$file]);
 
-        $loaderId = \sprintf('db_tools.anonymization.loader.%s', $connection);
-        $container->setDefinition($loaderId, $definition);
-
-        return $loaderId;
+        $container->setDefinition('db_tools.anonymization.loader', $definition);
     }
 
-    private function registerAttributesLoader(string $connection, ContainerBuilder $container): string
+    private function registerAttributesLoader(ContainerBuilder $container): void
     {
         $definition = new Definition();
         $definition->setClass(AttributesLoader::class);
-        $definition->setArguments([new Reference(\sprintf('doctrine.orm.%s_entity_manager', $connection))]);
+        $definition->setArguments([new Reference('doctrine.orm.command.entity_manager_provider')]);
 
-        $loaderId = \sprintf('db_tools.anonymization.loader.%s', $connection);
-        $container->setDefinition($loaderId, $definition);
-
-        return $loaderId;
-    }
-
-    private function createAnonymizatorWarmup(string $connection, string $anonymizatorId, ContainerBuilder $container): void
-    {
-        if (! $container->getParameter('kernel.debug')) {
-            $cacheWarmerId = \sprintf('db_tools.anonymization.cache_warmer.%s_anonymizator', $connection);
-            $container->register($cacheWarmerId, AnonymizatorCacheWarmer::class)
-                ->setArguments([new Reference($anonymizatorId)])
-                ->addTag('kernel.cache_warmer', ['priority' => 0]); // priority should be lower than DoctrineMetadataCacheWarmer
-        }
+        $container->setDefinition('db_tools.anonymization.loader', $definition);
     }
 }

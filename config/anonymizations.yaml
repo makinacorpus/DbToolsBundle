@@ -1,32 +1,31 @@
 default: # There is one configuration per doctrine connection
-  # Configuration to anonymize a table named `user`
-  user:
-      # Some Anonymizer does not require any option, you can use them like this
-      prenom: fr_fr.firstname
-      nom: fr_fr.lastname
-      # Some does require options, specify them like this
-      age:
-          anonymizer: integer
-          options: {min: 0, max: 99}
-      # Some has optionnal options, specify them
-      email:
-          anonymizer: email
-          options: {domain: 'toto.com'}
-      # Or not
-      email: email
-      level:
-          anonymizer: string
-          options: {sample: ['none', 'bad', 'good', 'expert']}
-      # Given you have columns `street`, `zip_code`, `city` and `country`,
-      # this configuration will fill these column with real, coherent address
-      # from a ~300 elements sample.
-      address:
-          target: table
-          anonymizer: address
-          options:
-              street_address: 'street'
-              # secondary_address:
-              postal_code: 'zip_code'
-              locality: 'city'
-              # region:
-              country: 'country'
+    # Configuration to anonymize a table named `user`
+    user:
+        # Some Anonymizer does not require any option, you can use them like this
+        prenom: fr_fr.firstname
+        nom: fr_fr.lastname
+        # Some does require options, specify them like this
+        age:
+            anonymizer: integer
+            options: {min: 0, max: 99}
+        # Some has optionnal options, specify them
+        email:
+            anonymizer: email
+            options: {domain: 'toto.com'}
+        # Or not
+        email: email
+        level:
+            anonymizer: string
+            options: {sample: ['none', 'bad', 'good', 'expert']}
+        # Given you have columns `street`, `zip_code`, `city` and `country`,
+        # this configuration will fill these column with real, coherent address
+        # from a ~300 elements sample.
+        address:
+            anonymizer: address
+            options:
+                street_address: 'street'
+                # secondary_address:
+                postal_code: 'zip_code'
+                locality: 'city'
+                # region:
+                country: 'country'

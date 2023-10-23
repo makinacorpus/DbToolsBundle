@@ -6,10 +6,10 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 class AnonymizationConfig
 {
-    /** @var array<string, array<string, AnonymizationSingleConfig>> */
+    /** @var array<string, array<string, AnonymizerConfig>> */
     private array $tableConfigs = [];
 
-    public function add(AnonymizationSingleConfig $config): void
+    public function add(AnonymizerConfig $config): void
     {
         if (!isset($this->tableConfigs[$config->table])) {
             $this->tableConfigs[$config->table] = [];
@@ -19,7 +19,7 @@ class AnonymizationConfig
     }
 
     /**
-     * @return array<string, array<string, AnonymizationSingleConfig>>
+     * @return array<string, array<string, AnonymizerConfig>>
      */
     public function all(): array
     {
@@ -27,7 +27,7 @@ class AnonymizationConfig
     }
 
     /**
-     * @return array<string, AnonymizationSingleConfig>
+     * @return array<string, AnonymizerConfig>
      */
     public function getTableConfig($table): array
     {
@@ -38,7 +38,7 @@ class AnonymizationConfig
     }
 
     /**
-     * @return array<string, AnonymizationSingleConfig>
+     * @return array<string, AnonymizerConfig>
      */
     public function getTableConfigTargets(string $table, ?array $targets = null): array
     {

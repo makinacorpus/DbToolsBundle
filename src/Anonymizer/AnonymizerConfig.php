@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
-class AnonymizationSingleConfig
+class AnonymizerConfig
 {
     public function __construct(
         public string $table,
