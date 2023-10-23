@@ -225,7 +225,6 @@ class LoremIpsum
     {
         // The $array parameter set to true means an array is returned.
         // Return type is mixed, we should probably cast to array.
-        // @phpstan-ignore-next-line
         return $this->paragraphs($count, $tags, true);
     }
 
@@ -315,7 +314,7 @@ class LoremIpsum
     private function punctuate(&$sentences)
     {
         foreach ($sentences as $key => $sentence) {
-            $words = count($sentence);
+            $words = \strlen($sentence);
             // Only worry about commas on sentences longer than 4 words
             if ($words > 4) {
                 $mean    = log($words, 6);

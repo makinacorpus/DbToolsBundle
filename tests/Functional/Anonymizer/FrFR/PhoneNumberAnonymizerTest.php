@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\FrFR;
 
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
 
 class PhoneNumberAnonymizerTest extends FunctionalTestCase
@@ -41,15 +44,20 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
+        $config = new AnonymizationConfig();
+        $config->add(new AnonymizerConfig(
+            'table_with_phone',
+            'phone_column',
+            'fr_fr.phone',
+            new Options()
+        ));
+
         $anonymizator = new Anonymizator(
             'default',
             $this->getConnection(),
             new AnonymizerRegistry(),
+            $config
         );
-
-        $anonymizator->registerAnonymization('table_with_phone', 'phone_column', [
-            'anonymizer' => 'fr_fr.phone',
-        ]);
 
         $this->assertSame(
             "0234567834",

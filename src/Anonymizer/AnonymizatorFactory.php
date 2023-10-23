@@ -22,7 +22,7 @@ class AnonymizatorFactory
     public function getOrCreate(string $connectionName): Anonymizator
     {
         if (isset($this->anonymizators[$connectionName])) {
-            $this->anonymizators[$connectionName];
+            return $this->anonymizators[$connectionName];
         }
 
         /** @var Connection */

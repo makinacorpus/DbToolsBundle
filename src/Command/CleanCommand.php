@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CleanCommand extends Command
 {
     public function __construct(
-        private AnonymizatorRegistry $anonymizatorRegistry,
+        private AnonymizatorFactory $anonymizatorFactory,
         private string $defaultConnectionName,
     ) {
         parent::__construct();
@@ -64,7 +64,7 @@ class CleanCommand extends Command
         }
 
         $connectionName = $input->getOption('connection') ?? $this->defaultConnectionName;
-        $anonymizator = $this->anonymizatorRegistry->get($connectionName);
+        $anonymizator = $this->anonymizatorFactory->getOrCreate($connectionName);
 
         $items = \iterator_to_array($anonymizator->clean(true));
 
