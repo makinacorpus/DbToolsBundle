@@ -27,7 +27,7 @@ features:
   - icon:
       src: '/images/anonymize.svg'
     title: Anonymize
-    details: Configure database anonymization with a single yaml using provided or custom anonymizers.
+    details: Set up database anonymization with attributes on Doctrine Entities or with a YAML configuration file.
   - icon:
       src: '/images/gdpr.svg'
     title: Set up a GRDP-friendly workflow
