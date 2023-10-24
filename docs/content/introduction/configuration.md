@@ -3,6 +3,10 @@
 The *DbToolsBundle* let you configure some of its behaviours. All of these
 parameters as to be setted up in the `config/packages/db_tools.yaml` file.
 
+:::tip
+A complete example of this file can be found in the bundle sources in: `vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`
+:::
+
 ## Backup configuration
 
 Some options are available to customize how the `db-tools:backup` works.
@@ -27,12 +31,12 @@ Here is an example for exclude `table1` and `table2` for the `default` doctrine 
 
 db_tools:
 
-  #...
+    #...
 
-  excluded_tables:
-    - default: ['table1', 'table2']
+    excluded_tables:
+        - default: ['table1', 'table2']
 
-  #...
+    #...
 ```
 
 :::tip
@@ -55,11 +59,11 @@ Here is an exemple value:
 
 db_tools:
 
-  #...
+    #...
 
-  backup_expiration_age: '1 week ago'
+    backup_expiration_age: '1 week ago'
 
-  #...
+    #...
 ```
 
 ## Binaries
@@ -76,19 +80,18 @@ If the `db-tools:check` command returns you some errors:
 
   db_tools:
 
-    #...
+      #...
 
-    backupper_binaries:
-      pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-      pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-      pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
-    restorer_binaries:
-      pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-      pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-      pdo_mysql: 'usr/bin/mysql' # default 'mysql'
+      backupper_binaries:
+          pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+          pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+          pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+      restorer_binaries:
+          pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+          pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+          pdo_mysql: 'usr/bin/mysql' # default 'mysql'
 
-
-    #...
+      #...
   ```
  * Or, your binaries are not present on your system: you will need to install them
 
@@ -115,50 +118,30 @@ RUN apt-get update && \
 
 ## Anonymization
 
-How the **DbToolsBundle** anonymize your database can be configured in this file.
+Per default, the **DbToolsBundle** will only look for anonymization configurations from attributes on Doctrine Entities.
 
-Here is a complete example:
+But if you prefere configure it via YAML, you can declare it in this section.
 
 ```yml
 # config/packages/db_tools.yaml
 
 db_tools:
+    # ...
 
-  #...
-
-  anonymization:
-    default: # There is one configuration per doctrine connection
-      # Configuration to anonymize a table named `user`
-      user:
-        # Some Anonymizer does not require any option, you can use them like this
-        prenom: fr_fr.prenom
-        nom: fr_fr.nom
-        # Some does require options, specify them like this
-        age:
-          anonymizer: integer
-          options: {min: 0, max: 99}
-        # Some has optionnal options, specify them
-        email:
-          anonymizer: email
-          options: {domain: 'toto.com'}
-        # Or not
-        email: email
-        level:
-          anonymizer: string
-          options: {sample: ['none', 'bad', 'good', 'expert']}
-        # Given you have columns `street`, `zip_code`, `city` and `country`,
-        # this configuration will fill these column with real, coherent address
-        # from a ~300 elements sample.
-        address:
-          target: table
-          anonymizer: address
-          options:
-            street_address: 'street'
-            # secondary_address:
-            postal_code: 'zip_code'
-            locality: 'city'
-            # region:
-            country: 'country'
+    # Anonymization configuration.
+    anonymization:
+        # If you want to configure anonymization with attributes on
+        # Doctrine entities, you have nothing to add here: if doctrine/orm
+        # is available the DbToolsBundle will automatically look for it.
+        #
+        # If you want to load configuration from a yaml:
+        # 1/ If you want to configure anonymization only for the default
+        # DBAL connection, declare it like this:
+        yaml: '%kernel.project_dir%/config/anonymizations.yaml'
+        # 2/ If you use multiple connection, declare each configuration like this:
+        #yaml:
+            #- connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
+            #- connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
 
   #...
 ```
