@@ -9,6 +9,10 @@ class AnonymizationConfig
     /** @var array<string, array<string, AnonymizerConfig>> */
     private array $tableConfigs = [];
 
+    public function __construct(
+        public readonly string $connectionName = 'default'
+    ) {}
+
     public function add(AnonymizerConfig $config): void
     {
         if (!isset($this->tableConfigs[$config->table])) {

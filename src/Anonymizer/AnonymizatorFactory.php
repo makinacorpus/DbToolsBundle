@@ -12,12 +12,18 @@ class AnonymizatorFactory
 {
     /** @var Array<string, Anonymizator> */
     private array $anonymizators = [];
+    /** @var LoaderInterface[] */
+    private array $configurationLoaders = [];
 
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private AnonymizerRegistry $anonymizerRegistry,
-        private LoaderInterface $configurationLoader,
     ) {}
+
+    public function addConfigurationLoader(LoaderInterface $loader): void
+    {
+        $this->configurationLoaders[] = $loader;
+    }
 
     public function getOrCreate(string $connectionName): Anonymizator
     {
@@ -28,11 +34,17 @@ class AnonymizatorFactory
         /** @var Connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
 
+        $config = new AnonymizationConfig($connectionName);
+
+        foreach ($this->configurationLoaders as $loader) {
+            $loader->loadTo($config);
+        }
+
         return $this->anonymizators[$connectionName] = new Anonymizator(
             $connectionName,
             $connection,
             $this->anonymizerRegistry,
-            $this->configurationLoader->load($connectionName)
+            $config
         );
     }
 

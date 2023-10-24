@@ -15,16 +15,15 @@ class YamlLoader implements LoaderInterface
 {
     public function __construct(
         private string $file,
+        private string $connectionName = 'default',
     ) {}
 
-    public function load(string $connectionName): AnonymizationConfig
+    public function loadTo(AnonymizationConfig $config): void
     {
-        $anonymizationConfig = new AnonymizationConfig();
-
         $yamlConfig = Yaml::parseFile($this->file);
 
-        if (!isset($yamlConfig[$connectionName])) {
-            return $anonymizationConfig;
+        if ($this->connectionName !== $config->connectionName) {
+            return;
         }
 
         $resolver = (new OptionsResolver())
@@ -34,11 +33,11 @@ class YamlLoader implements LoaderInterface
             ->setAllowedTypes('options', 'array')
         ;
 
-        foreach ($yamlConfig[$connectionName] as $table => $tableConfigs) {
-            foreach ($tableConfigs as $target => $config) {
+        foreach ($yamlConfig as $table => $tableConfigs) {
+            foreach ($tableConfigs as $target => $targetConfig) {
                 try {
-                    $config = \is_array($config) ? $config : ['anonymizer' => $config];
-                    $config = $resolver->resolve($config);
+                    $targetConfig = \is_array($targetConfig) ? $targetConfig : ['anonymizer' => $targetConfig];
+                    $targetConfig = $resolver->resolve($targetConfig);
                 } catch (ExceptionInterface $e) {
                     $message = $e->getMessage();
                     throw new \InvalidArgumentException(<<<TXT
@@ -47,15 +46,13 @@ class YamlLoader implements LoaderInterface
                     TXT);
                 }
 
-                $anonymizationConfig->add(new AnonymizerConfig(
+                $config->add(new AnonymizerConfig(
                     $table,
                     $target,
-                    $config['anonymizer'],
-                    new Options($config['options']),
+                    $targetConfig['anonymizer'],
+                    new Options($targetConfig['options']),
                 ));
             }
         }
-
-        return $anonymizationConfig;
     }
 }

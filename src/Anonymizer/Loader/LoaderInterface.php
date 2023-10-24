@@ -8,5 +8,5 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
 
 interface LoaderInterface
 {
-    public function load(string $connectionName): AnonymizationConfig;
+    public function loadTo(AnonymizationConfig $config): void;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Configuration;
 
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\YamlLoader;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
@@ -15,7 +16,8 @@ class YamlLoaderTest extends UnitTestCase
         $path = \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader/config_ok.yaml';
 
         // We try to load configuration for the 'default' connection.
-        $config = (new YamlLoader($path))->load('default');
+        $config = new AnonymizationConfig('default');
+        (new YamlLoader($path))->loadTo($config);
 
         // Then we validate what's in it:
         self::assertCount(2, $config->all());
@@ -56,23 +58,9 @@ class YamlLoaderTest extends UnitTestCase
         self::assertSame('level_column', $user2TableConfig['level_column']->targetName);
         self::assertSame(['none', 'bad', 'good', 'expert'], $user2TableConfig['level_column']->options->get('sample'));
 
-
-        // We try to load configuration for the 'other_connection' connection.
-        $config = (new YamlLoader($path))->load('other_connection');
-
-        // Then we validate what's in it:
-        self::assertCount(1, $config->all());
-
-        $table1Config = $config->getTableConfig('table1');
-        self::assertCount(1, $table1Config);
-
-        self::assertInstanceOf(AnonymizerConfig::class, $table1Config['target1']);
-        self::assertSame('anonymizer1', $table1Config['target1']->anonymizer);
-        self::assertSame('target1', $table1Config['target1']->targetName);
-        self::assertSame('value1', $table1Config['target1']->options->get('option1'));
-
         // We try to load configuration for the 'not_in_the_file' connection.
-        $config = (new YamlLoader($path))->load('not_in_the_file');
+        $config = new AnonymizationConfig('not_in_the_file');
+        (new YamlLoader($path))->loadTo($config);
 
         // Then we validate it's empty:
         self::assertCount(0, $config->all());
@@ -82,10 +70,12 @@ class YamlLoaderTest extends UnitTestCase
     {
         self::expectExceptionMessageMatches("@table 'user', key 'age_column':@");
         $path = \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader/config_ko_no_anonymizer.yaml';
-        (new YamlLoader($path))->load('default');
+        $config = new AnonymizationConfig('default');
+        (new YamlLoader($path))->loadTo($config);
 
         self::expectExceptionMessageMatches("@table 'user', key 'age_column':@");
         $path = \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader/config_ko_unknow_parameter.yaml';
-        (new YamlLoader($path))->load('default');
+        $config = new AnonymizationConfig('default');
+        (new YamlLoader($path))->loadTo($config);
     }
 }

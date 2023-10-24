@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Mock;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\LoaderInterface;
 
 class TestingAnonymizationLoader implements LoaderInterface
 {
-    private AnonymizationConfig $config;
+    /**
+     *  @param AnonymizerConfig[] $anonymizerConfigs
+     */
+    public function __construct(
+        private array $anonymizerConfigs = []
+    ) {}
 
-    public function __construct(?AnonymizationConfig $config = null)
+    public function loadTo(AnonymizationConfig $config): void
     {
-        $this->config = $config ?? new AnonymizationConfig();
-    }
-
-    public function load(string $connectionName): AnonymizationConfig
-    {
-        return $this->config;
+        foreach ($this->anonymizerConfigs as $anonymizerConfig) {
+            $config->add($anonymizerConfig);
+        }
     }
 }

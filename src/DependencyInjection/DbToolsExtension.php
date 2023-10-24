@@ -4,16 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
 
-use Doctrine\Bundle\DoctrineBundle\CacheWarmer\AnonymizatorCacheWarmer;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\AttributesLoader;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\YamlLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 final class DbToolsExtension extends Extension
@@ -58,22 +52,6 @@ final class DbToolsExtension extends Extension
         $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymizer';
 
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
-
-        if (isset($config['anonymization']) && isset($config['anonymization']['type'])) {
-            $type = $config['anonymization']['type'];
-            if ('yaml' === $type && !isset($config['anonymization']['file'])) {
-                throw new \InvalidArgumentException(<<<TXT
-                If you want to configure your anonymization with a yaml file,
-                you should provide a 'file' parameter
-                TXT);
-            }
-
-            match ($type) {
-                'yaml' => $this->registerYamlLoader($config['anonymization']['file'], $container),
-                'attributes' => $this->registerAttributesLoader($container),
-                default => throw new \InvalidArgumentException(\sprintf("'%s' type is unknown. Available types are 'yaml' and 'attributes'.", $type)),
-            };
-        }
     }
 
     /**
@@ -82,23 +60,5 @@ final class DbToolsExtension extends Extension
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
         return new DbToolsConfiguration();
-    }
-
-    private function registerYamlLoader(string $file, ContainerBuilder $container): void
-    {
-        $definition = new Definition();
-        $definition->setClass(YamlLoader::class);
-        $definition->setArguments([$file]);
-
-        $container->setDefinition('db_tools.anonymization.loader', $definition);
-    }
-
-    private function registerAttributesLoader(ContainerBuilder $container): void
-    {
-        $definition = new Definition();
-        $definition->setClass(AttributesLoader::class);
-        $definition->setArguments([new Reference('doctrine.orm.command.entity_manager_provider')]);
-
-        $container->setDefinition('db_tools.anonymization.loader', $definition);
     }
 }

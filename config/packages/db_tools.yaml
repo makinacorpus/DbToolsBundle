@@ -29,9 +29,15 @@ db_tools:
 
     # Anonymization configuration.
     # anonymization:
-    #     # `yaml` or `attributes`, default `attributes`
-    #     type: yaml
-    #     # give a file only for `yaml`,
-    #     # for attributes, the DbToolsBundle will  automaticly look for
-    #     # anonymization on Doctrine entities class
-    #     file: '%kernel.project_dir%/config/anonymizations.yaml'
+    #     # If you want to configure anonymization with attributes on
+    #     # Doctrine entities, you have nothing to add here: if doctrine/orm
+    #     # is available the DbToolsBundle will automatically look for it.
+    #     #
+    #     # If you want to load configuration from a yaml:
+    #     # 1/ If you want to configure anonymization only for the default
+    #     # DBAL connection, declare it like this:
+    #     yaml: '%kernel.project_dir%/config/anonymizations.yaml'
+    #     # 2/ If you use multiple connection, declare each configuration like this:
+    #     yaml:
+    #         - connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
+    #         - connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'

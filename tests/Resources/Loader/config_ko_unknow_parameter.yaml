@@ -1,6 +1,5 @@
-default:
-    user:
-        age_column:
-            anonymizer: integer
-            options: {min: 0, max: 99}
-            parameter: 'test'
+user:
+    age_column:
+        anonymizer: integer
+        options: {min: 0, max: 99}
+        parameter: 'test'

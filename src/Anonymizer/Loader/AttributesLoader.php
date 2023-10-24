@@ -17,11 +17,9 @@ class AttributesLoader implements LoaderInterface
         private EntityManagerProvider $entityManagerProvider,
     ) {}
 
-    public function load(string $connectionName): AnonymizationConfig
+    public function loadTo(AnonymizationConfig $config): void
     {
-        $config = new AnonymizationConfig();
-
-        $entityManager = $this->entityManagerProvider->getManager($connectionName);
+        $entityManager = $this->entityManagerProvider->getManager($config->connectionName);
 
         $metadatas = $entityManager->getMetadataFactory()->getAllMetadata();
 
@@ -54,7 +52,5 @@ class AttributesLoader implements LoaderInterface
                 }
             }
         }
-
-        return $config;
     }
 }

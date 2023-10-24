@@ -30,9 +30,9 @@ class AnonymizatorFactoryTest extends UnitTestCase
 
         $factory = new AnonymizatorFactory(
             $doctrineRegistry,
-            $this->createMock(AnonymizerRegistry::class),
-            new TestingAnonymizationLoader()
+            $this->createMock(AnonymizerRegistry::class)
         );
+        $factory->addConfigurationLoader(new TestingAnonymizationLoader());
 
         $anonymizator = $factory->getOrCreate('connection');
 
@@ -59,30 +59,32 @@ class AnonymizatorFactoryTest extends UnitTestCase
             ->willReturn($entityManager)
         ;
 
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
-            'table_test',
-            'target_test',
-            'anonymizer_test',
-            new Options()
-        ));
-        $config->add(new AnonymizerConfig(
-            'table_test',
-            'target_test2',
-            'anonymizer_test2',
-            new Options(['option1' => 'value1'])
-        ));
-
         $factory = new AnonymizatorFactory(
             $doctrineRegistry,
             $this->createMock(AnonymizerRegistry::class),
-            new TestingAnonymizationLoader($config)
         );
+
+        $factory->addConfigurationLoader(new TestingAnonymizationLoader($configs = [
+            new AnonymizerConfig(
+                'table_test',
+                'target_test',
+                'anonymizer_test',
+                new Options()
+            ),
+            new AnonymizerConfig(
+                'table_test',
+                'target_test2',
+                'anonymizer_test2',
+                new Options(['option1' => 'value1'])
+            )
+        ]));
 
         $anonymizator = $factory->getOrCreate('connection');
 
         self::assertInstanceOf(Anonymizator::class, $anonymizator);
         self::assertCount(1, $anonymizator->getAnonymizationConfig()->all());
-        self::assertSame($config, $anonymizator->getAnonymizationConfig());
+        self::assertCount(2, $anonymizator->getAnonymizationConfig()->all()['table_test']);
+        self::assertContains($configs[0], $anonymizator->getAnonymizationConfig()->all()['table_test']);
+        self::assertContains($configs[1], $anonymizator->getAnonymizationConfig()->all()['table_test']);
     }
 }
