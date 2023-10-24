@@ -25,7 +25,7 @@ class AttributesLoader implements LoaderInterface
 
         foreach ($metadatas as $metadata) {
             \assert($metadata instanceof ClassMetadata);
-            $reflexionClass = $metadata->getReflectionClass();
+            $reflexionClass = $metadata->getReflectionClass() ?? new \ReflectionClass($metadata->getName());
             if ($attributes = $reflexionClass->getAttributes(Anonymize::class)) {
                 foreach ($attributes as $key => $attribute) {
                     $anonymization = $attribute->newInstance();
