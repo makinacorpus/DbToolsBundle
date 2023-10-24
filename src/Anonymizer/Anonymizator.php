@@ -10,7 +10,6 @@ use MakinaCorpus\DbToolsBundle\Helper\Format;
 class Anonymizator //extends \IteratorAggregate
 {
     public function __construct(
-        private string $connectionName,
         private Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
@@ -106,7 +105,7 @@ class Anonymizator //extends \IteratorAggregate
 
             // Create anonymizer array prior running the anonymisation.
             $anonymizers = [];
-            foreach ($this->anonymizationConfig->getTableConfigTargets($table, $targets) as $target => $config) {
+            foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
                 $anonymizers[] = $this->createAnonymizer($config);
             }
 
@@ -240,7 +239,7 @@ class Anonymizator //extends \IteratorAggregate
 
     public function getConnectionName(): string
     {
-        return $this->connectionName;
+        return $this->anonymizationConfig->connectionName;
     }
 
     public function checkConfig(): void

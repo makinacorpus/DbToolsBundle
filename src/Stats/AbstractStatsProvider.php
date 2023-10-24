@@ -76,7 +76,7 @@ abstract class AbstractStatsProvider implements StatsProvider
     protected function singleValueLine(
         string $name,
         null|bool|float|int|string|\DateTimeImmutable $value,
-        string $unit = self::UNIT_UNIT,
+        string $unit = StatValue::UNIT_UNIT,
         array $tags = [],
         ?string $description = null,
     ): StatValueList {
@@ -86,7 +86,7 @@ abstract class AbstractStatsProvider implements StatsProvider
                 new StatValue(
                     'value',
                     $value,
-                    StatValue::UNIT_BYTE,
+                    $unit,
                     $tags,
                 )
             ],

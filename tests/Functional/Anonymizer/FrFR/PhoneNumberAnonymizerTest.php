@@ -53,7 +53,6 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
         ));
 
         $anonymizator = new Anonymizator(
-            'default',
             $this->getConnection(),
             new AnonymizerRegistry(),
             $config

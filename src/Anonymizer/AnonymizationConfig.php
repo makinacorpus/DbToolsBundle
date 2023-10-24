@@ -31,26 +31,23 @@ class AnonymizationConfig
     }
 
     /**
+     * Retrieve AnonymizerConfigs for a table.
+     *
+     * @param ?array $filteredTargets if given, only AnonymizerConfigs
+     *   for those specifics targets will be returned.
+     *
      * @return array<string, AnonymizerConfig>
      */
-    public function getTableConfig($table): array
+    public function getTableConfig(string $table, ?array $filteredTargets = null): array
     {
-        return $this->tableConfigs[$table] ?? throw new \InvalidArgumentException(\sprintf(
+        $config = $this->tableConfigs[$table] ?? throw new \InvalidArgumentException(\sprintf(
             "Table '%s' does not exist in configuration",
             $table
         ));
-    }
 
-    /**
-     * @return array<string, AnonymizerConfig>
-     */
-    public function getTableConfigTargets(string $table, ?array $targets = null): array
-    {
-        $config = $this->getTableConfig($table);
-
-        if ($targets) {
+        if ($filteredTargets) {
             $ret = [];
-            foreach ($targets as $target) {
+            foreach ($filteredTargets as $target) {
                 $ret[$target] = $config[$target] ?? throw new \InvalidArgumentException(\sprintf(
                     "Target '%s'.'%s' does not exist in configuration",
                     $table,

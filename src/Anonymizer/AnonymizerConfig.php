@@ -7,9 +7,9 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 class AnonymizerConfig
 {
     public function __construct(
-        public string $table,
-        public string $targetName,
-        public string $anonymizer,
-        public Options $options,
+        public readonly string $table,
+        public readonly string $targetName,
+        public readonly string $anonymizer,
+        public readonly Options $options,
     ) {}
 }

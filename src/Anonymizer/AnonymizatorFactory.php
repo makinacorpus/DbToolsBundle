@@ -41,7 +41,6 @@ class AnonymizatorFactory
         }
 
         return $this->anonymizators[$connectionName] = new Anonymizator(
-            $connectionName,
             $connection,
             $this->anonymizerRegistry,
             $config

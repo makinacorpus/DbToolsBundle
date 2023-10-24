@@ -8,19 +8,19 @@ use MakinaCorpus\DbToolsBundle\Helper\Format;
 
 class StatValue
 {
-    const TAG_CODE = 'code';
-    const TAG_INFO = 'info';
-    const TAG_MAINTENANCE = 'maint';
-    const TAG_READ = 'read';
-    const TAG_WRITE = 'write';
+    public const TAG_CODE = 'code';
+    public const TAG_INFO = 'info';
+    public const TAG_MAINTENANCE = 'maint';
+    public const TAG_READ = 'read';
+    public const TAG_WRITE = 'write';
 
-    const UNIT_BOOL = 'bool';
-    const UNIT_BYTE = 'byte';
-    const UNIT_CODE = 'code';
-    const UNIT_DATETIME = 'datetime';
-    const UNIT_MSEC = 'msec';
-    const UNIT_NAME = 'name';
-    const UNIT_UNIT = 'unit';
+    public const UNIT_BOOL = 'bool';
+    public const UNIT_BYTE = 'byte';
+    public const UNIT_CODE = 'code';
+    public const UNIT_DATETIME = 'datetime';
+    public const UNIT_MSEC = 'msec';
+    public const UNIT_NAME = 'name';
+    public const UNIT_UNIT = 'unit';
 
     public function __construct(
         public string $name,
