@@ -51,7 +51,7 @@ class AttributeLoaderTest extends UnitTestCase
 
         // We try to load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
-        (new AttributesLoader($entityManagerProvider))->loadTo($config);
+        (new AttributesLoader($entityManagerProvider))->load($config);
 
         // Then we validate what's in it:
         self::assertCount(1, $config->all());

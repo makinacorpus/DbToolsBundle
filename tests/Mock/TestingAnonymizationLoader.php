@@ -17,7 +17,7 @@ class TestingAnonymizationLoader implements LoaderInterface
         private array $anonymizerConfigs = []
     ) {}
 
-    public function loadTo(AnonymizationConfig $config): void
+    public function load(AnonymizationConfig $config): void
     {
         foreach ($this->anonymizerConfigs as $anonymizerConfig) {
             $config->add($anonymizerConfig);

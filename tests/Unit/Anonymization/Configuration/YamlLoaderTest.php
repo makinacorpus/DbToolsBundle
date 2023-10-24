@@ -17,7 +17,7 @@ class YamlLoaderTest extends UnitTestCase
 
         // We try to load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
-        (new YamlLoader($path))->loadTo($config);
+        (new YamlLoader($path))->load($config);
 
         // Then we validate what's in it:
         self::assertCount(2, $config->all());
@@ -60,7 +60,7 @@ class YamlLoaderTest extends UnitTestCase
 
         // We try to load configuration for the 'not_in_the_file' connection.
         $config = new AnonymizationConfig('not_in_the_file');
-        (new YamlLoader($path))->loadTo($config);
+        (new YamlLoader($path))->load($config);
 
         // Then we validate it's empty:
         self::assertCount(0, $config->all());
@@ -71,11 +71,11 @@ class YamlLoaderTest extends UnitTestCase
         self::expectExceptionMessageMatches("@table 'user', key 'age_column':@");
         $path = \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader/config_ko_no_anonymizer.yaml';
         $config = new AnonymizationConfig('default');
-        (new YamlLoader($path))->loadTo($config);
+        (new YamlLoader($path))->load($config);
 
         self::expectExceptionMessageMatches("@table 'user', key 'age_column':@");
         $path = \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader/config_ko_unknow_parameter.yaml';
         $config = new AnonymizationConfig('default');
-        (new YamlLoader($path))->loadTo($config);
+        (new YamlLoader($path))->load($config);
     }
 }

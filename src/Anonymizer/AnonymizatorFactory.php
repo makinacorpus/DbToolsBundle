@@ -37,7 +37,7 @@ class AnonymizatorFactory
         $config = new AnonymizationConfig($connectionName);
 
         foreach ($this->configurationLoaders as $loader) {
-            $loader->loadTo($config);
+            $loader->load($config);
         }
 
         return $this->anonymizators[$connectionName] = new Anonymizator(

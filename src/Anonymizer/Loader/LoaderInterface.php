@@ -11,5 +11,5 @@ interface LoaderInterface
     /**
      * Load AnonymizerConfiguration to an existing AnonymizationConfig.
      */
-    public function loadTo(AnonymizationConfig $config): void;
+    public function load(AnonymizationConfig $config): void;
 }

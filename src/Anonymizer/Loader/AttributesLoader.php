@@ -17,7 +17,7 @@ class AttributesLoader implements LoaderInterface
         private EntityManagerProvider $entityManagerProvider,
     ) {}
 
-    public function loadTo(AnonymizationConfig $config): void
+    public function load(AnonymizationConfig $config): void
     {
         $entityManager = $this->entityManagerProvider->getManager($config->connectionName);
 

@@ -1,43 +1,43 @@
 db_tools:
     # Where to put generated backups
-    # storage_directory: '%kernel.project_dir%/var/private/db_tools'
+    #storage_directory: '%kernel.project_dir%/var/private/db_tools'
 
     # When old backups are considered obsolete
     # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
-    # backup_expiration_age: '6 months ago' # default '3 months ago'
+    #backup_expiration_age: '6 months ago' # default '3 months ago'
 
     # List here tables (per connection) you don't want in your backups
-    # excluded_tables:
-    #   - default: ['table1', 'table2']
+    #excluded_tables:
+        #- default: ['table1', 'table2']
 
     # Specify here paths to binaries, only if the system can't find them by himself
-    # backupper_binaries:
-    #     pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-    #     pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-    #     pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
-    # restorer_binaries:
-    #     pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-    #     pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-    #     pdo_mysql: 'usr/bin/mysql' # default 'mysql'
+    #backupper_binaries:
+        #pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+        #pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
+        #pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+    #restorer_binaries:
+        #pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+        #pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
+        #pdo_mysql: 'usr/bin/mysql' # default 'mysql'
 
     # Update this configuration if you want to look for anonymizers in a custom folder.
     # These are default paths that will always be registered even if you override the
     # the setting and don't repeat them:
-    # anonymizer_paths:
-    #     - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
-    #     - '%kernel.project_dir%/src/Anonymizer'
+    #anonymizer_paths:
+        #- '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+        #- '%kernel.project_dir%/src/Anonymizer'
 
     # Anonymization configuration.
-    # anonymization:
-    #     # If you want to configure anonymization with attributes on
-    #     # Doctrine entities, you have nothing to add here: if doctrine/orm
-    #     # is available the DbToolsBundle will automatically look for it.
-    #     #
-    #     # If you want to load configuration from a yaml:
-    #     # 1/ If you want to configure anonymization only for the default
-    #     # DBAL connection, declare it like this:
-    #     yaml: '%kernel.project_dir%/config/anonymizations.yaml'
-    #     # 2/ If you use multiple connection, declare each configuration like this:
-    #     yaml:
-    #         - connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
-    #         - connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
+    #anonymization:
+        # If you want to configure anonymization with attributes on
+        # Doctrine entities, you have nothing to add here: if doctrine/orm
+        # is available the DbToolsBundle will automatically look for it.
+        #
+        # If you want to load configuration from a yaml:
+        # 1/ If you want to configure anonymization only for the default
+        # DBAL connection, declare it like this:
+        #yaml: '%kernel.project_dir%/config/anonymizations.yaml'
+        # 2/ If you use multiple connection, declare each configuration like this:
+        #yaml:
+            #- connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
+            #- connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'

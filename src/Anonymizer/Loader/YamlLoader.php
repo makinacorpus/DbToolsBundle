@@ -18,7 +18,7 @@ class YamlLoader implements LoaderInterface
         private string $connectionName = 'default',
     ) {}
 
-    public function loadTo(AnonymizationConfig $config): void
+    public function load(AnonymizationConfig $config): void
     {
         $yamlConfig = Yaml::parseFile($this->file);
 
@@ -40,10 +40,12 @@ class YamlLoader implements LoaderInterface
                     $targetConfig = $resolver->resolve($targetConfig);
                 } catch (ExceptionInterface $e) {
                     $message = $e->getMessage();
-                    throw new \InvalidArgumentException(<<<TXT
-                    Error while validating configuration for table '${table}', key '${target}':
-                    ${message}
-                    TXT);
+                    throw new \InvalidArgumentException(
+                        <<<TXT
+                        Error while validating configuration for table '${table}', key '${target}':
+                        ${message}
+                        TXT
+                    );
                 }
 
                 $config->add(new AnonymizerConfig(
