@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
+use Doctrine\Persistence\Mapping\RuntimeReflectionService;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\AttributesLoader;
@@ -23,6 +24,7 @@ class AttributeLoaderTest extends UnitTestCase
             \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader'
         ]);
         $classMetadata = new ClassMetadata(TestEntity::class);
+        $classMetadata->initializeReflection(new RuntimeReflectionService());
 
         $attributeDriver->loadMetadataForClass(TestEntity::class, $classMetadata);
 
