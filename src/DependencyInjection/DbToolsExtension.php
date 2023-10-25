@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 final class DbToolsExtension extends Extension
@@ -52,29 +49,7 @@ final class DbToolsExtension extends Extension
         }
         $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymizer';
 
-        // Anonymization
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
-
-        if (isset($config['anonymization'])) {
-            foreach ($config['anonymization'] as $connection => $connectionConfig) {
-                $definition = new Definition();
-                $definition->setClass(Anonymizator::class);
-                $definition->setArguments([
-                    $connection,
-                    new Reference(\sprintf('doctrine.dbal.%s_connection', $connection)),
-                    new Reference('db_tools.anonymization.anonymizer.registry'),
-                ]);
-                $definition->addTag('db_tools.anonymization.anonymizator');
-
-                foreach ($connectionConfig as $table => $tableConfig) {
-                    foreach ($tableConfig as $name => $singleConfig) {
-                        $definition->addMethodCall('registerAnonymization', [$table, $name, $singleConfig]);
-                    }
-                }
-
-                $container->setDefinition(\sprintf('db_tools.anonymization.%s_anonymizator', $connection), $definition);
-            }
-        }
     }
 
     /**

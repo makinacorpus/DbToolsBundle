@@ -1,7 +1,5 @@
 # Database statistics
 
-## Introduction
-
 The bundle comes with a handy `db-tools:stats` command that can help you analyze
 your database state and performance.
 

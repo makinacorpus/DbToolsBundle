@@ -1,0 +1,22 @@
+user:
+    age_column:
+        anonymizer: integer
+        options: {min: 0, max: 99}
+    email_column:
+        anonymizer: email
+        options: {domain: 'toto.com'}
+
+    address:
+        anonymizer: address
+        options:
+            street_address: 'street'
+            # secondary_address:
+            postal_code: 'zip_code'
+            locality: 'city'
+            # region:
+            country: 'country'
+user2:
+    email_column: email
+    level_column:
+        anonymizer: string
+        options: {sample: ['none', 'bad', 'good', 'expert']}

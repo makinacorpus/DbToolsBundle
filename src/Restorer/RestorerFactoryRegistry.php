@@ -17,7 +17,7 @@ class RestorerFactoryRegistry
         private array $restorerBinaries,
     ) {}
 
-    public function addRestorerFactory(RestorerFactoryInterface $factory): void
+    public function register(RestorerFactoryInterface $factory): void
     {
         $this->restorerFactories[] = $factory;
     }

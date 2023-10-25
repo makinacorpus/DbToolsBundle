@@ -29,4 +29,13 @@ class Options
     {
         return \count($this->options);
     }
+
+    public function toDisplayString(): string
+    {
+        return \implode(', ', \array_map(
+            fn ($key, $value) => $key . ': ' . (\is_array($value) ? '[' . \implode(', ', $value) . ']' : $value),
+            \array_keys($this->options),
+            \array_values($this->options),
+        ));
+    }
 }

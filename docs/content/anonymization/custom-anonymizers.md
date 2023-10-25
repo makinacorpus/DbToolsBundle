@@ -1,10 +1,10 @@
 # Custom Anonymizers
 
-The *DbToolsBundle* let you create your own *Anonymizers*.
+The *DbToolsBundle* allows you create your own *Anonymizers*.
 
-By default, the *DbToolsbundle* will look for *Anonymizers* in 'src/Anonymizer' folder.
-To add a new one, you only have to create a class that extends `MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer` with
-the `AsAnonymizer` attribute and put it in this folder like this:
+To create one, you only have to add a class in 'src/Anonymizer' that extends
+`MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer` and put the
+`AsAnonymizer` attribute.
 
 ```php
 <?php

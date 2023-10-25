@@ -1,20 +1,25 @@
 services:
     # Commands
-    db_tools.command.anonymization.list-anonymizer:
+    db_tools.command.anonymization.list:
         class: MakinaCorpus\DbToolsBundle\Command\AnonymizerListCommand
         arguments:
             - '@db_tools.anonymization.anonymizer.registry'
         tags: ['console.command']
-    db_tools.command.anonymize:
+    db_tools.command.anonymization.check:
+        class: MakinaCorpus\DbToolsBundle\Command\AnonymizationCheckCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.factory'
+        tags: ['console.command']
+    db_tools.command.anonymization.run:
         class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
         arguments:
-            - '@db_tools.anonymization.anonymizator.registry'
+            - '@db_tools.anonymization.anonymizator.factory'
             - '%doctrine.default_connection%'
         tags: ['console.command']
     db_tools.command.clean:
         class: MakinaCorpus\DbToolsBundle\Command\CleanCommand
         arguments:
-            - '@db_tools.anonymization.anonymizator.registry'
+            - '@db_tools.anonymization.anonymizator.factory'
             - '%doctrine.default_connection%'
         tags: ['console.command']
     db_tools.command.check:
@@ -88,5 +93,6 @@ services:
     db_tools.anonymization.anonymizer.registry:
         class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry
         arguments: ['%db_tools.anonymization.anonymizer.paths%']
-    db_tools.anonymization.anonymizator.registry:
-        class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorRegistry
+    db_tools.anonymization.anonymizator.factory:
+        class: MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorFactory
+        arguments: ['@doctrine', '@db_tools.anonymization.anonymizer.registry']

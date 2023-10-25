@@ -11,115 +11,224 @@ where:
 
 For example `contact@makina-corpus.com` will give `826464d916e6052ad209037ca71ce324@example.com` after anonymization.
 
-Considering you want to anonymize column `email_address` of table `user`, from the `default` doctrine connection,
-you can configure it like this:
+::: code-group
+```php [Attribute]
+<?php
 
-```yml
-# config/packages/db_tools.yaml
+namespace App\Entity;
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      user:
-        email_address: email
-  #...
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 180, unique: true)]
+    #[Anonymize(type: 'email')] // [!code ++]
+    private ?string $email = null;
+
+    // ...
+}
 ```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    email_address: email
+
+#...
+```
+:::
 
 Or like this, with the domain option
 
-```yml
-# config/packages/db_tools.yaml
+::: code-group
+```php [Attribute]
+<?php
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      user:
-        email_address:
-          anonymizer: email
-          options: {domain: 'custom-domain.com'}
-  #...
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 180, unique: true)]
+    #[Anonymize(type: 'email', options: ['domain' => 'custom-domain.com'])] // [!code ++]
+    private ?string $email = null;
+
+    // ...
+}
 ```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    email_address:
+        anonymizer: email
+        options: {domain: 'custom-domain.com'}
+#...
+```
+:::
 
 ## IntegerAnonymizer
 
 This *Anonymizer* will fill configured column with a random integer between two values.
 
-Considering you want to anonymize column `age` of table `user`, from the `default` doctrine connection
-and you want to put in it a random integer between `10`, `99`, you can configure it like this:
+::: code-group
+```php [Attribute]
+<?php
 
-```yml
-# config/packages/db_tools.yaml
+namespace App\Entity;
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      age:
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column]
+    #[Anonymize(type: 'integer', options: ['min' => 10, 'max' => 99])] // [!code ++]
+    private ?int $age = null;
+
+    // ...
+}
+```
+
+```yml [YAML]
+# config/anonymization.yaml
+
+user:
+    age:
         anonymizer: integer
         options: {min: 10, max: 99}
-  #...
+
+#...
 ```
+:::
 
 ## FloatAnonymizer
 
 This *Anonymizer* will fill configured column with a random float between two values and a given precision (default 2).
 
-Considering you want to anonymize column `size` of table `user`, from the `default` doctrine connection
-and you want to put in it a random integer between `120`, `300`, with a precision of `4` digits you can
-configure it like this:
+::: code-group
+```php [Attribute]
+<?php
 
-```yml
-# config/packages/db_tools.yaml
+namespace App\Entity;
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      age:
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column]
+    #[Anonymize(type: 'float', options: ['min' => 10, 'max' => 99, 'precision' => 4])] // [!code ++]
+    private ?float $size = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    size:
         anonymizer: float
         options: {min: 120, max: 300, precision: 4}
-  #...
+#...
 ```
+:::
 
 ## Md5Anonymizer
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
 
-Considering you want to hash column `my_dirty_secret` of table `user`, from the `default` doctrine connection,
-you can configure it like this:
+::: code-group
+```php [Attribute]
+<?php
 
-```yml
-# config/packages/db_tools.yaml
+namespace App\Entity;
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      my_dirty_secret: md5
-  #...
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    #[Anonymize(type: 'md5')] // [!code ++]
+    private ?string $myDirtySecret = null;
+
+    // ...
+}
 ```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    my_dirty_secret: md5
+#...
+```
+:::
 
 ## StringAnonymizer
 
 This *Anonymizer* will fill configured column with a random value from a given sample.
 
-Considering you want to anonymize column `level` of table `user`, from the `default` doctrine connection
-and you want to put in it a random value from `none`, `bad`, `good` or `expert`, you can configure it like this:
+::: code-group
+```php [Attribute]
+<?php
 
-```yml
-# config/packages/db_tools.yaml
+namespace App\Entity;
 
-db_tools:
-  #...
-  anonymization:
-    default:
-      level:
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    #[Anonymize(type: 'string', options: ['sample' => ['none', 'bad', 'good', 'expert']])] // [!code ++]
+    private ?string $level = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+user:
+    level:
         anonymizer: string
         options: {sample: ['none', 'bad', 'good', 'expert']}
-  #...
+#...
 ```
+:::
 
 :::warning
 If you use the same sample on multiple columns or if you use a large sample, it could be more efficient and convinient
@@ -145,20 +254,58 @@ Available parts are :
 | `street_address`     | The street address. For example, 5 rue de la Paix                       | 5 rue de la Paix   |
 | `secondary_address`  | Additional information (apartment, block)                               | Appartement 310    |
 
+::: code-group
+```php [Attribute]
+<?php
 
-Considering you want to anonymize colmuns that represent an address on table `user`, from the `default` doctrine connection,
-you can configure it like this:
+namespace App\Entity;
 
-```yml
-# config/packages/db_tools.yaml
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
-db_tools:
-  #...
-  anonymization:
-   address:
-          target: table
-          anonymizer: address
-          options:
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+#[Anonymize(type: 'address', options: [ // [!code ++]
+    'street_address' => 'street', // [!code ++]
+    'secondary_address': 'street_second_line' // [!code ++]
+    'postal_code' => 'zip_code', // [!code ++]
+    'locality' => 'city', // [!code ++]
+    'region' => 'region' // [!code ++]
+    'country' => 'country', // [!code ++]
+])] // [!code ++]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    private ?string $street = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $streetSecondLine = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $zipCode = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $country = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+user:
+    address:
+        target: table
+        anonymizer: address
+        options:
             street_address: 'street'
             secondary_address: 'street_address_2'
             postal_code: 'zip_code'
@@ -167,6 +314,7 @@ db_tools:
             country: 'country'
   #...
 ```
+:::
 
 :::tip
 Note that you don't have to provide a column for each part. You can use this *Anonymizer* to
