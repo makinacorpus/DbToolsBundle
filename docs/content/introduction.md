@@ -31,7 +31,7 @@ Or simply anonymize your current database ?
 php bin/console db-tools:anonymize
 ```
 
-*(ok, these last two will ask you some [configurations](/anonymization/general-concepts) :wink:)*
+*(ok, these last two will ask you some [configurations](/anonymization/essentials) :wink:)*
 
 And finally, you want to know more about your database ?
 

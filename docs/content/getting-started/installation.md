@@ -1,8 +1,4 @@
-# Getting Started
-
-All you need to know to start using the DbToolsBundle.
-
-## Installation
+# Installation
 
 Add the *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
 
@@ -51,18 +47,3 @@ php bin/console db-tools:check
 If this command returns errors, get to the [binaries configuration section](/introduction/configuration#binaries)
 to understand how to solve them.
 :::
-
-## `db-tools:backup`
-
-
-## `db-tools:restore`
-
-
-## `db-tools:anonymize`
-
-
-## `db-tools:gdprify` <Badge type="warning" text="coming soon" />
-
-
-## `db-tools:stats` <Badge type="warning" text="coming soon" />
-

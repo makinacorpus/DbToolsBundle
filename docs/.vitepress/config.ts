@@ -43,17 +43,13 @@ export default defineConfig({
           { text: 'Introduction', link: '/introduction' },
           {
             text: 'Getting Started',
-            link: '/introduction/getting-started',
+            collapsed: false,
             items: [
-              { text: 'Installation', link: '/introduction/getting-started#installation' },
-              { text: 'db-tools:backup', link: '/introduction/getting-started#db-tools-backup' },
-              { text: 'db-tools:restore', link: '/introduction/getting-started#db-tools-restore' },
-              { text: 'db-tools:anonymize', link: '/introduction/getting-started#db-tools-anonymize' },
-              { text: 'db-tools:gdprify', link: '/introduction/getting-started#db-tools-gdprify' },
-              { text: 'db-tools:stats', link: '/introduction/getting-started#db-tools-stats' },
+              { text: 'Installation', link: '/getting-started/installation' },
+              { text: 'Basics', link: '/getting-started/basics' },
             ]
           },
-          { text: 'Bundle configuration', link: '/introduction/configuration' },
+          { text: 'Bundle configuration', link: '/configuration' },
         ]
       },
       {

@@ -1,7 +1,7 @@
 # Bundle configuration
 
-The *DbToolsBundle* let you configure some of its behaviours. All of these
-parameters as to be setted up in the `config/packages/db_tools.yaml` file.
+The *DbToolsBundle* let you configure some of its behaviours. As with any classic Symfony Bundle,
+all will take place in the `config/packages/db_tools.yaml` file.
 
 :::tip
 A complete example of this file can be found in the bundle sources in: `vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`
