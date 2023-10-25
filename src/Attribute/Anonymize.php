@@ -11,7 +11,7 @@ namespace MakinaCorpus\DbToolsBundle\Attribute;
 class Anonymize
 {
     public function __construct(
-        public string $anonymizer,
+        public string $type,
         public array $options = [],
     ) {}
 }

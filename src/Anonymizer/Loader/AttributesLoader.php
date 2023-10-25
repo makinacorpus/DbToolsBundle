@@ -32,8 +32,8 @@ class AttributesLoader implements LoaderInterface
                     $config->add(new AnonymizerConfig(
                         $metadata->getTableName(),
                         // For a anonymization setted on table, we give an arbitrary name
-                        $anonymization->anonymizer . '_' . $key,
-                        $anonymization->anonymizer,
+                        $anonymization->type . '_' . $key,
+                        $anonymization->type,
                         new Options($anonymization->options),
                     ));
                 }
@@ -46,7 +46,7 @@ class AttributesLoader implements LoaderInterface
                     $config->add(new AnonymizerConfig(
                         $metadata->getTableName(),
                         $metadata->getColumnName($fieldName),
-                        $anonymization->anonymizer,
+                        $anonymization->type,
                         new Options($anonymization->options),
                     ));
                 }

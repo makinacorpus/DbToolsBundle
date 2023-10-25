@@ -26,9 +26,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 180, unique: true)] // [!code focus]
-    #[Anonymize('email')] // [!code focus]
-    private ?string $email = null; // [!code focus]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Anonymize(type: 'email')] // [!code ++]
+    private ?string $email = null;
 
     // ...
 }
@@ -61,9 +61,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 180, unique: true)] // [!code focus]
-    #[Anonymize('email', ['domain' => 'custom-domain.com'])] // [!code focus]
-    private ?string $email = null; // [!code focus]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Anonymize(type: 'email', options: ['domain' => 'custom-domain.com'])] // [!code ++]
+    private ?string $email = null;
 
     // ...
 }
@@ -99,9 +99,9 @@ class User
 {
     // ...
 
-    #[ORM\Column] // [!code focus]
-    #[Anonymize('integer', ['min' => 10, 'max' => 99])] // [!code focus]
-    private ?int $age = null; // [!code focus]
+    #[ORM\Column]
+    #[Anonymize(type: 'integer', options: ['min' => 10, 'max' => 99])] // [!code ++]
+    private ?int $age = null;
 
     // ...
 }
@@ -138,9 +138,9 @@ class User
 {
     // ...
 
-    #[ORM\Column] // [!code focus]
-    #[Anonymize('float', ['min' => 10, 'max' => 99, 'precision' => 4])] // [!code focus]
-    private ?float $size = null; // [!code focus]
+    #[ORM\Column]
+    #[Anonymize(type: 'float', options: ['min' => 10, 'max' => 99, 'precision' => 4])] // [!code ++]
+    private ?float $size = null;
 
     // ...
 }
@@ -176,9 +176,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('md5')] // [!code focus]
-    private ?string $myDirtySecret = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize(type: 'md5')] // [!code ++]
+    private ?string $myDirtySecret = null;
 
     // ...
 }
@@ -212,9 +212,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('string', ['sample' => ['none', 'bad', 'good', 'expert']])] // [!code focus]
-    private ?string $level = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize(type: 'string', options: ['sample' => ['none', 'bad', 'good', 'expert']])] // [!code ++]
+    private ?string $level = null;
 
     // ...
 }
@@ -265,35 +265,35 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
 #[ORM\Entity()]
 #[ORM\Table(name: '`user`')]
-#[Anonymize('address', [ // [!code focus]
-    'street_address' => 'street', // [!code focus]
-    'secondary_address': 'street_second_line' // [!code focus]
-    'postal_code' => 'zip_code', // [!code focus]
-    'locality' => 'city', // [!code focus]
-    'region' => 'region' // [!code focus]
-    'country' => 'country', // [!code focus]
-])] // [!code focus]
-class User // [!code focus]
+#[Anonymize(type: 'address', options: [ // [!code ++]
+    'street_address' => 'street', // [!code ++]
+    'secondary_address': 'street_second_line' // [!code ++]
+    'postal_code' => 'zip_code', // [!code ++]
+    'locality' => 'city', // [!code ++]
+    'region' => 'region' // [!code ++]
+    'country' => 'country', // [!code ++]
+])] // [!code ++]
+class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $street = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $street = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $streetSecondLine = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $streetSecondLine = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $zipCode = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $zipCode = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $city = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $city = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $region = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $region = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    private ?string $country = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    private ?string $country = null;
 
     // ...
 }

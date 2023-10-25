@@ -53,17 +53,17 @@ export default defineConfig({
               { text: 'db-tools:stats', link: '/introduction/getting-started#db-tools-stats' },
             ]
           },
-          { text: 'Configuration', link: '/introduction/configuration' },
+          { text: 'Bundle configuration', link: '/introduction/configuration' },
         ]
       },
       {
-        text: 'Anonymization In-Depth',
+        text: 'Anonymization',
         collapsed: false,
         items: [
-          { text: 'General concepts', link: '/anonymization/general-concepts' },
+          { text: 'Essentials', link: '/anonymization/essentials' },
           { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
-          { text: 'Pack FR_Fr', link: '/anonymization/pack-FR-Fr' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
+          { text: 'Pack FR_Fr', link: '/anonymization/pack-FR-Fr' },
         ]
       },
       {

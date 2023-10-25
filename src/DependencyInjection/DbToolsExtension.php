@@ -33,8 +33,6 @@ final class DbToolsExtension extends Extension
         // Restorer
         $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
 
-        // Anonymization
-
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];
         foreach ($anonymizerPaths as $userPath) {

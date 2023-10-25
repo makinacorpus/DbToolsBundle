@@ -9,7 +9,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
 #[ORM\Entity()]
 #[ORM\Table(name: 'test')]
-#[Anonymize('address', [
+#[Anonymize(type: 'address', options: [
     'street_address' => 'street',
     // secondary_address: ''
     'postal_code' => 'zip_code',
@@ -25,11 +25,11 @@ class TestEntity
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Anonymize('email', ['domain' => 'toto.com'])]
+    #[Anonymize(type:'email', options: ['domain' => 'toto.com'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Anonymize('integer', ['min' => 0, 'max' => 65])]
+    #[Anonymize(type:'integer', options: ['min' => 0, 'max' => 65])]
     private ?int $age = null;
 
     #[ORM\Column(length: 255)]

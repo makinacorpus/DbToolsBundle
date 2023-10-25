@@ -1,4 +1,4 @@
-# Configuration
+# Bundle configuration
 
 The *DbToolsBundle* let you configure some of its behaviours. All of these
 parameters as to be setted up in the `config/packages/db_tools.yaml` file.
@@ -120,7 +120,9 @@ RUN apt-get update && \
 
 Per default, the **DbToolsBundle** will only look for anonymization configurations from attributes on Doctrine Entities.
 
-But if you prefere configure it via YAML, you can declare it in this section.
+But the **DbToolsBundle** does not necessary need Doctrine ORM to anonymize your data, it can do it just with a DBAL connection.
+In this case (or if your prefere YAML over attributes): you can configure the DbToolsBundle to look for anonymization
+configurations in a YAML file:
 
 ```yml
 # config/packages/db_tools.yaml
@@ -130,10 +132,6 @@ db_tools:
 
     # Anonymization configuration.
     anonymization:
-        # If you want to configure anonymization with attributes on
-        # Doctrine entities, you have nothing to add here: if doctrine/orm
-        # is available the DbToolsBundle will automatically look for it.
-        #
         # If you want to load configuration from a yaml:
         # 1/ If you want to configure anonymization only for the default
         # DBAL connection, declare it like this:
@@ -147,5 +145,5 @@ db_tools:
 ```
 
 :::tip
-For more information about anonymization, refere to the [Anonymization section](/anonymization/general-concepts).
+For more information about anonymization, refere to the [Anonymization section](/anonymization/essentials).
 :::
