@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
+use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
 
@@ -26,7 +27,7 @@ use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
      - 'sample_count': (int) how many different values to use (default is 100).
     TXT
 )]
-class LoremIpsumAnonymizer extends EnumAnonymizer
+class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
 {
     /**
      * {@inheritdoc}

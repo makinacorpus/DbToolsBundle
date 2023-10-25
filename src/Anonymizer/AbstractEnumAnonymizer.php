@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 
 /**
  * Can not be use alone, check FrFR/PrenomAnonymizer for an
  * example on how to extends this Anonymizer for your need.
  */
-abstract class EnumAnonymizer extends AbstractAnonymizer
+abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
 {
     private ?string $sampleTableName = null;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\Core\EnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 #[AsAnonymizer(
@@ -14,7 +14,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
     Anonymize with a random french lastname from a sample of ~500 items.
     TXT
 )]
-class LastNameAnonymizer extends EnumAnonymizer
+class LastNameAnonymizer extends AbstractEnumAnonymizer
 {
     /**
      * {@inheritdoc}
