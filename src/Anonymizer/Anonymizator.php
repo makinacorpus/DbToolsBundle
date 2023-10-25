@@ -7,7 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 use Doctrine\DBAL\Connection;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 
-class Anonymizator //extends \IteratorAggregate
+class Anonymizator
 {
     public function __construct(
         private Connection $connection,

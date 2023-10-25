@@ -2,8 +2,8 @@
 
 The *DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching `console db-tools:anonymize` will be all you need to replace
-sensitive data by random and/or hashed ones in your database.
+After some configurations, launching `console db-tools:anonymize` will be all you need to do to
+replace sensitive data by random and/or hashed ones in your database.
 
 There is two ways to tell the DbToolsBundle how it should offuscate your data:
 
