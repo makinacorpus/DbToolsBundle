@@ -19,7 +19,13 @@ class AttributesLoader implements LoaderInterface
 
     public function load(AnonymizationConfig $config): void
     {
-        $entityManager = $this->entityManagerProvider->getManager($config->connectionName);
+        try {
+            $entityManager = $this->entityManagerProvider->getManager($config->connectionName);
+        } catch (\InvalidArgumentException) {
+            // Entity manager on the given connection does not exists.
+            // Simply pass attribute lookup.
+            return;
+        }
 
         $metadatas = $entityManager->getMetadataFactory()->getAllMetadata();
 

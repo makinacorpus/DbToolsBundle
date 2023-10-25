@@ -42,8 +42,8 @@ class YamlLoader implements LoaderInterface
                     $message = $e->getMessage();
                     throw new \InvalidArgumentException(
                         <<<TXT
-                        Error while validating configuration for table '${table}', key '${target}':
-                        ${message}
+                        Error while validating configuration for table '{$table}', key '{$target}':
+                        {$message}
                         TXT
                     );
                 }
