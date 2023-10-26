@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 /**
- * Anonymized a complete address.
+ * Anonymized a complete address with a sample of ~300 dumb worldwide addresses.
  *
  * This anonymizer handle:
  *  - country: The country. For example, France.
