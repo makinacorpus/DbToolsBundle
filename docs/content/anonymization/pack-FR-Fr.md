@@ -4,7 +4,7 @@ This page list the common purpose *Anonymizers* provided by the *DbToolsBundle*.
 
 ## LastnameAnonymizer
 
-Works like the StringAnonymizer, but with a provided sample of 500 french lastnames.
+Same as LastnameAnonymizer from core, but with a provided sample of 500 french lastnames.
 
 ::: code-group
 ```php [Attribute]
@@ -40,7 +40,7 @@ user:
 
 ## FirstnameAnonymizer
 
-Works like the StringAnonymizer, but with a provided sample of 500 french firstnames.
+Same as FirstnameAnonymizer from core, but with a provided sample of 500 french firstnames.
 
 ::: code-group
 ```php [Attribute]
