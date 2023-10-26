@@ -78,11 +78,13 @@ class BackupperRestorerTest extends FunctionalTestCase
         $binary = match (\getenv('DBAL_DRIVER')) {
             'pdo_mysql' => 'mysqldump',
             'pdo_pgsql' => 'pg_dump',
+            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
         };
 
         $backupper = match (\getenv('DBAL_DRIVER')) {
             'pdo_mysql' => new MysqlBackupper($binary, $connection),
             'pdo_pgsql' => new PgSQLBackupper($binary, $connection),
+            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
         };
 
         $output = $backupper->checkBinary();
@@ -109,14 +111,7 @@ class BackupperRestorerTest extends FunctionalTestCase
         $connection = $this->getConnection();
 
         // First we do some modifications to the database
-        $this->dropTableIfExist(
-            'table_in_backup_2',
-            [
-                'id' => 'integer',
-                'data' => 'string',
-            ],
-            $this->initialData,
-        );
+        $this->dropTableIfExist('table_in_backup_2');
 
         $connection
             ->createQueryBuilder()
@@ -128,11 +123,13 @@ class BackupperRestorerTest extends FunctionalTestCase
         $binary = match (\getenv('DBAL_DRIVER')) {
             'pdo_mysql' => 'mysql',
             'pdo_pgsql' => 'pg_restore',
+            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
         };
 
         $restorer = match (\getenv('DBAL_DRIVER')) {
             'pdo_mysql' => new MysqlRestorer($binary, $connection),
             'pdo_pgsql' => new PgSQLRestorer($binary, $connection),
+            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
         };
 
         $output = $restorer->checkBinary();
@@ -153,7 +150,7 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         // Now we check data integrity:
         // - All data from initial insert (see self::createTestData) should be there
-        // - Data from our previous modifications should not be
+        // - Deleted data from our previous modifications should not be
 
         $schemaManager = $connection->createSchemaManager();
         self::assertTrue($schemaManager->tablesExist('table_in_backup_1'));
