@@ -32,12 +32,9 @@ class IntegerAnonymizer extends AbstractAnonymizer
 
         $updateQuery->set(
             $plateform->quoteIdentifier($this->columnName),
-            \sprintf(
-                'FLOOR(%s*(%s-%s+1)+%s)',
-                $this->getSqlRandomExpression(),
-                $this->options->get('max'),
-                $this->options->get('min'),
-                $this->options->get('min')
+            $this->getSetIfNotNullExpression(
+                $plateform->quoteIdentifier($this->columnName),
+                $this->getSqlRandomIntExpression($this->options->get('max'), $this->options->get('min'))
             )
         );
     }
