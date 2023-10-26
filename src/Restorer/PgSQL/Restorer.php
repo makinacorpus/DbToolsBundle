@@ -42,9 +42,9 @@ class Restorer extends AbstractRestorer
         $args[] = '--clean';
         $args[] = '-d';
         $args[] = $dbParams['dbname'];
-        $args[] = '--no-owner';
         $args[] = '-j';
         $args[] = 2;
+        $args[] = '--if-exists';
         $args[] = '--disable-triggers';
         $args[] = $this->backupFilename;
 
