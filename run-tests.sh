@@ -22,7 +22,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    php_fpm vendor/bin/phpunit
+    phpunit vendor/bin/phpunit
 
 echo "Running tests with MySQL 8"
 docker compose exec \
@@ -34,7 +34,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=root \
     -e DBAL_USER=root \
-    php_fpm vendor/bin/phpunit
+    phpunit vendor/bin/phpunit
 
 echo "Running tests with MariaDB 11"
 docker compose exec \
@@ -46,7 +46,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD="password" \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    php_fpm vendor/bin/phpunit
+    phpunit vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 10"
 docker compose exec \
@@ -58,7 +58,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    php_fpm vendor/bin/phpunit
+    phpunit vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 16"
 docker compose exec \
@@ -70,4 +70,4 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    php_fpm vendor/bin/phpunit
+    phpunit vendor/bin/phpunit

@@ -17,11 +17,4 @@ RUN apt-get update && apt-get install -y postgresql-client-16
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
-RUN chmod +x /usr/local/bin/docker-php-entrypoint
-
-# ENTRYPOINT [ "init.sh" ]
-
 WORKDIR /var/www
-
-EXPOSE 9000
