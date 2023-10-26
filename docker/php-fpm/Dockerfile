@@ -8,8 +8,7 @@ RUN apt-get update && \
     docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
     docker-php-ext-install -j$(nproc) pgsql pdo_pgsql pdo mysqli pdo_mysql zip xml gd curl bcmath && \
     docker-php-ext-enable apcu pdo_pgsql pdo_mysql sodium && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
-    pecl install xdebug-3.1.6 && docker-php-ext-enable xdebug
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Instaling postgresql-client-16
 RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc| gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
@@ -17,8 +16,6 @@ RUN sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main
 RUN apt-get update && apt-get install -y postgresql-client-16
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-COPY xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 COPY docker-php-entrypoint /usr/local/bin/docker-php-entrypoint
 RUN chmod +x /usr/local/bin/docker-php-entrypoint

@@ -10,7 +10,7 @@ docker compose -p db_tools_bundle_test up -d --force-recreate --remove-orphans
 sleep 10
 
 echo "Downloading composer dependencies"
-docker compose exec php_db_tools_testing composer install
+docker compose exec php_fpm composer install
 
 echo "Running tests with MySQL 5.7"
 docker compose exec \
@@ -22,7 +22,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    php_db_tools_testing vendor/bin/phpunit
+    php_fpm vendor/bin/phpunit
 
 echo "Running tests with MySQL 8"
 docker compose exec \
@@ -34,7 +34,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=root \
     -e DBAL_USER=root \
-    php_db_tools_testing vendor/bin/phpunit
+    php_fpm vendor/bin/phpunit
 
 echo "Running tests with MariaDB 11"
 docker compose exec \
@@ -46,7 +46,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD="password" \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    php_db_tools_testing vendor/bin/phpunit
+    php_fpm vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 10"
 docker compose exec \
@@ -58,7 +58,7 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    php_db_tools_testing vendor/bin/phpunit
+    php_fpm vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 16"
 docker compose exec \
@@ -70,4 +70,4 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    php_db_tools_testing vendor/bin/phpunit
+    php_fpm vendor/bin/phpunit

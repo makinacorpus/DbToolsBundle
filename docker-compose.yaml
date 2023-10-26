@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-    php_db_tools_testing:
+    php_fpm:
         build: ./docker/php-fpm
         networks:
             - db-tools-test
