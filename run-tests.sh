@@ -4,62 +4,70 @@
 # You need docker on your box for it work.
 
 echo "Running docker compose up and waiting for 10 seconds."
-echo "In order to shut it donw after tests, manually run: "
+echo "In order to shut it down after tests, manually run: "
 echo "    docker compose -p db_tools_bundle_test down"
 docker compose -p db_tools_bundle_test up -d --force-recreate --remove-orphans
 sleep 10
 
+echo "Downloading composer dependencies"
+docker compose exec php_db_tools_testing composer install
+
 echo "Running tests with MySQL 5.7"
-DBAL_DRIVER=pdo_mysql \
-    DBAL_DBNAME=test_db \
-    DBAL_HOST=127.0.0.1 \
-    DBAL_PASSWORD=password \
-    DBAL_PORT=9001 \
-    DBAL_ROOT_PASSWORD="password" \
-    DBAL_ROOT_USER="root" \
-    DBAL_USER=root \
-    vendor/bin/phpunit
+docker compose exec \
+    -e DBAL_DRIVER=pdo_mysql \
+    -e DBAL_DBNAME=test_db \
+    -e DBAL_HOST=mysql57 \
+    -e DBAL_PASSWORD=password \
+    -e DBAL_PORT=3306 \
+    -e DBAL_ROOT_PASSWORD=password \
+    -e DBAL_ROOT_USER="root" \
+    -e DBAL_USER=root \
+    php_db_tools_testing vendor/bin/phpunit
 
 echo "Running tests with MySQL 8"
-DBAL_DRIVER=pdo_mysql \
-    DBAL_DBNAME=test_db \
-    DBAL_HOST=127.0.0.1 \
-    DBAL_PASSWORD=password \
-    DBAL_PORT=9002 \
-    DBAL_ROOT_PASSWORD="password" \
-    DBAL_ROOT_USER="root" \
-    DBAL_USER=root \
-    vendor/bin/phpunit
+docker compose exec \
+    -e DBAL_DRIVER=pdo_mysql \
+    -e DBAL_DBNAME=test_db \
+    -e DBAL_HOST=mysql80 \
+    -e DBAL_PASSWORD=password \
+    -e DBAL_PORT=3306 \
+    -e DBAL_ROOT_PASSWORD=password \
+    -e DBAL_ROOT_USER=root \
+    -e DBAL_USER=root \
+    php_db_tools_testing vendor/bin/phpunit
 
 echo "Running tests with MariaDB 11"
-DBAL_DRIVER=pdo_mysql \
-    DBAL_DBNAME=test_db \
-    DBAL_HOST=127.0.0.1 \
-    DBAL_PASSWORD=password \
-    DBAL_PORT=9003 \
-    DBAL_ROOT_PASSWORD="password" \
-    DBAL_ROOT_USER="root" \
-    DBAL_USER=root \
-    vendor/bin/phpunit
+docker compose exec \
+    -e DBAL_DRIVER=pdo_mysql \
+    -e DBAL_DBNAME=test_db \
+    -e DBAL_HOST=mariadb11 \
+    -e DBAL_PASSWORD=password \
+    -e DBAL_PORT=3306 \
+    -e DBAL_ROOT_PASSWORD="password" \
+    -e DBAL_ROOT_USER="root" \
+    -e DBAL_USER=root \
+    php_db_tools_testing vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 10"
-DBAL_DRIVER=pdo_pgsql \
-    DBAL_DBNAME=test_db \
-    DBAL_HOST=127.0.0.1 \
-    DBAL_PASSWORD=password \
-    DBAL_PORT=9004 \
-    DBAL_ROOT_PASSWORD="password" \
-    DBAL_ROOT_USER="postgres" \
-    DBAL_USER=root \
-    vendor/bin/phpunit
+docker compose exec \
+    -e DBAL_DRIVER=pdo_pgsql \
+    -e DBAL_DBNAME=test_db \
+    -e DBAL_HOST=postgresql10 \
+    -e DBAL_PASSWORD=password \
+    -e DBAL_PORT=5432 \
+    -e DBAL_ROOT_PASSWORD=password \
+    -e DBAL_ROOT_USER=postgres \
+    -e DBAL_USER=postgres \
+    php_db_tools_testing vendor/bin/phpunit
 
 echo "Running tests with PostgreSQL 16"
-DBAL_DRIVER=pdo_pgsql \
-    DBAL_DBNAME=test_db \
-    DBAL_HOST=127.0.0.1 \
-    DBAL_PASSWORD=password \
-    DBAL_PORT=9005 \
-    DBAL_ROOT_PASSWORD="password" \
-    DBAL_ROOT_USER="postgres" \
-    DBAL_USER=root \
-    vendor/bin/phpunit
+docker compose exec \
+    -e DBAL_DRIVER=pdo_pgsql \
+    -e DBAL_DBNAME=test_db \
+    -e DBAL_HOST=postgresql16 \
+    -e DBAL_PASSWORD=password \
+    -e DBAL_PORT=5432 \
+    -e DBAL_ROOT_PASSWORD=password \
+    -e DBAL_ROOT_USER=postgres \
+    -e DBAL_USER=postgres \
+    php_db_tools_testing vendor/bin/phpunit

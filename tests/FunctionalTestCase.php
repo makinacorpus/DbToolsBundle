@@ -118,6 +118,8 @@ abstract class FunctionalTestCase extends UnitTestCase
         $privConnection = $this->createPrivConnection();
         try {
             $privConnection->createSchemaManager()->createDatabase('test_db');
+        } catch(\Exception $e) {
+
         } finally {
             $privConnection->close();
         }
