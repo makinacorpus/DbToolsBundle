@@ -50,6 +50,14 @@ services:
             - '%doctrine.default_connection%'
             - '@db_tools.stats_provider.factory.registry'
         tags: ['console.command']
+    db_tools.command.gdprify:
+        class: MakinaCorpus\DbToolsBundle\Command\GdprifyCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.restorer.factory.registry'
+            - '@db_tools.backupper.factory.registry'
+            - '@db_tools.anonymization.anonymizator.factory'
+        tags: ['console.command']
 
     # Utilities
     db_tools.storage:
