@@ -54,7 +54,7 @@ class GdprifyCommand extends Command
                 - a backup of the newly anonymized database
 
             Note that the backup will overwrite the given file. This way, after this
-            command no sensitive data remain on your disk.
+            command, no sensitive data remain on your disk.
             TXT)
             ->addArgument(
                 'filename',

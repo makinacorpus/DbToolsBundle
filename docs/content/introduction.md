@@ -3,16 +3,17 @@
 
 ![Logo](../images/logo.svg)
 
-The idea of this bundle is to simplify life for Symfony developpers when dealing with database,
-anonymization and GDPR problematics.
+The idea of this bundle is to make life easier for Symfony developers when managing
+database backup and restoration workflows on one hand, and production data import
+and anonymization on the other.
 
-Want to backup your database (and clean old backups)?
+Want to backup your database?
 
 ```sh
 php bin/console db-tools:backup
 ```
 
-Import an previous dump?
+Restore an previous dump?
 
 ```sh
 php bin/console db-tools:restore
@@ -31,11 +32,10 @@ Or simply anonymize your current database ?
 php bin/console db-tools:anonymize
 ```
 
-*(ok, these last two will ask you some [configurations](./anonymization/essentials) :wink:)*
+*(ok, these last two will ask you some [configurations](./anonymization/essentials)* :wink:*)*
 
 And finally, you want to know more about your database ?
 
 ```sh
 php bin/console db-tools:stats
 ```
-Read more about the [statistics command](./stats).

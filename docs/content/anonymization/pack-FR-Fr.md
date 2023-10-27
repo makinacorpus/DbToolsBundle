@@ -10,8 +10,6 @@ Same as LastnameAnonymizer from core, but with a provided sample of 500 french l
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -46,8 +44,6 @@ Same as FirstnameAnonymizer from core, but with a provided sample of 500 french 
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -85,8 +81,6 @@ Available option is `mode` which can either be `mobile` or `landline`. Default v
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -131,8 +125,6 @@ Same as AddressAnonymizer from core but with a provided sample of 500 french dum
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;

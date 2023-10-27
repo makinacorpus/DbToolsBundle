@@ -7,8 +7,6 @@ To create one, you only have to add a class in 'src/Anonymizer' that extends
 `AsAnonymizer` attribute.
 
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Anonymizer;

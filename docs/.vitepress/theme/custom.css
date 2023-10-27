@@ -28,3 +28,7 @@
   --vp-c-text-code: #bec931;
   --vp-makina-logo-text: white;
 }
+
+.main img {
+  margin: auto;
+}

@@ -15,8 +15,6 @@ For example `contact@makina-corpus.com` will give `826464d916e6052ad209037ca71ce
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -50,8 +48,6 @@ Or like this, with the domain option
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -94,8 +90,6 @@ Options are :
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -150,8 +144,6 @@ This *Anonymizer* will fill configured column with a random integer between two 
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -189,8 +181,6 @@ This *Anonymizer* will fill configured column with a random float between two va
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -227,8 +217,6 @@ This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymi
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -263,8 +251,6 @@ This *Anonymizer* will fill configured column with a random value from a given s
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -306,8 +292,6 @@ Works like the StringAnonymizer, but with a provided sample of 1000 worldwide la
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -342,8 +326,6 @@ Works like the StringAnonymizer, but with a provided sample of 1000 worldwide la
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -392,8 +374,6 @@ Available parts are :
 
 ::: code-group
 ```php [Attribute]
-<?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;

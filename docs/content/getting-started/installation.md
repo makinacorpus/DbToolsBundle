@@ -27,7 +27,6 @@ Then, activate the bundle:
 
 ```php
 // config/bundles.php
-<?php
 
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
