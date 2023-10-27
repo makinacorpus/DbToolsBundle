@@ -48,10 +48,10 @@ class GdprifyCommand extends Command
             ->setHelp(<<<TXT
             A GDPR-friendly workflow to import a production backup file.
 
-            This command will successivly perfom:
+            This command will successively perfom:
                 - an import of the given backup file
                 - an anonymization of the database
-                - an backup of the newly anonymized database
+                - a backup of the newly anonymized database
 
             Note that the backup will overwrite the given file. This way, after this
             command no sensitive data remain on your disk.
