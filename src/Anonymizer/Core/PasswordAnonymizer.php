@@ -31,7 +31,6 @@ class PasswordAnonymizer extends AbstractAnonymizer
             $algorithm => ['algorithm' => $algorithm]
         ]);
         $passwordHasher = $passwordHasherFactory->getPasswordHasher($algorithm);
-
         $hashedPassword = $passwordHasher->hash($password);
 
         $plateform = $this->connection->getDatabasePlatform();
@@ -39,7 +38,10 @@ class PasswordAnonymizer extends AbstractAnonymizer
         $quotedColumn = $plateform->quoteIdentifier($this->columnName);
         $updateQuery->set(
             $quotedColumn,
-            $plateform->quoteStringLiteral($hashedPassword)
+            $this->getSetIfNotNullExpression(
+                $quotedColumn,
+                $plateform->quoteStringLiteral($hashedPassword)
+            )
         );
     }
 }
