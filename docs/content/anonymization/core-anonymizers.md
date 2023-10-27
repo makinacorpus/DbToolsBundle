@@ -236,6 +236,78 @@ to create your own custom anonymizer, see the [Custom Anonymizers](/anonymizatio
 how to do that.
 :::
 
+## LastnameAnonymizer
+
+Works like the StringAnonymizer, but with a provided sample of 1000 worldwide lastnames.
+
+::: code-group
+```php [Attribute]
+<?php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)] // [!code focus]
+    #[Anonymize('lastname')] // [!code focus]
+    private ?string $lastname = null; // [!code focus]
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    lastname: lastname
+#...
+```
+:::
+
+## FirstnameAnonymizer
+
+Works like the StringAnonymizer, but with a provided sample of 1000 worldwide lastnames.
+
+::: code-group
+```php [Attribute]
+<?php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)] // [!code focus]
+    #[Anonymize('firstname')] // [!code focus]
+    private ?string $firstname = null; // [!code focus]
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+user:
+    firstname: firstname
+#...
+```
+:::
+
 ## AddressAnonymizer
 
 This *Anonymizer* is multi-column. It let you anonymize, at once, mutiple columns on one table

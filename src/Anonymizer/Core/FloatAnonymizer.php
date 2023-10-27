@@ -35,13 +35,16 @@ class FloatAnonymizer extends AbstractAnonymizer
 
         $updateQuery->set(
             $plateform->quoteIdentifier($this->columnName),
-            \sprintf(
-                'FLOOR(%s * (%s - %s + 1) + %s) / %s',
-                $this->getSqlRandomExpression(),
-                $max * $precision,
-                $min * $precision,
-                $min * $precision,
-                $precision
+            $this->getSetIfNotNullExpression(
+                $plateform->quoteIdentifier($this->columnName),
+                \sprintf(
+                    'FLOOR(%s * (%s - %s + 1) + %s) / %s',
+                    $this->getSqlRandomExpression(),
+                    $max * $precision,
+                    $min * $precision,
+                    $min * $precision,
+                    $precision
+                )
             )
         );
     }

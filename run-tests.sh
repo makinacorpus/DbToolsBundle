@@ -12,7 +12,12 @@ sleep 10
 echo "Downloading composer dependencies"
 docker compose exec php_fpm composer install
 
-echo "Running tests with MySQL 5.7"
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+printf "${RED}\n\n-------------------------------- ${NC}"
+printf "${RED}Running tests with MySQL 5.7${NC}"
+printf "${RED} --------------------------------\n\n${NC}"
 docker compose exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
@@ -22,9 +27,11 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    phpunit vendor/bin/phpunit
+    phpunit vendor/bin/phpunit $@
 
-echo "Running tests with MySQL 8"
+printf "${RED}\n\n-------------------------------- ${NC}"
+printf "${RED}Running tests with MySQL 8${NC}"
+printf "${RED} --------------------------------\n\n${NC}"
 docker compose exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
@@ -34,9 +41,11 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=root \
     -e DBAL_USER=root \
-    phpunit vendor/bin/phpunit
+    phpunit vendor/bin/phpunit $@
 
-echo "Running tests with MariaDB 11"
+printf "${RED}\n\n-------------------------------- ${NC}"
+printf "${RED}Running tests with MariaDB 11${NC}"
+printf "${RED} --------------------------------\n\n${NC}"
 docker compose exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
@@ -46,9 +55,11 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD="password" \
     -e DBAL_ROOT_USER="root" \
     -e DBAL_USER=root \
-    phpunit vendor/bin/phpunit
+    phpunit vendor/bin/phpunit $@
 
-echo "Running tests with PostgreSQL 10"
+printf "${RED}\n\n-------------------------------- ${NC}"
+printf "${RED}Running tests with PostgreSQL 10${NC}"
+printf "${RED} --------------------------------\n\n${NC}"
 docker compose exec \
     -e DBAL_DRIVER=pdo_pgsql \
     -e DBAL_DBNAME=test_db \
@@ -58,9 +69,11 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    phpunit vendor/bin/phpunit
+    phpunit vendor/bin/phpunit $@
 
-echo "Running tests with PostgreSQL 16"
+printf "${RED}\n\n-------------------------------- ${NC}"
+printf "${RED}Running tests with PostgreSQL 16${NC}"
+printf "${RED} --------------------------------\n\n${NC}"
 docker compose exec \
     -e DBAL_DRIVER=pdo_pgsql \
     -e DBAL_DBNAME=test_db \
@@ -70,4 +83,4 @@ docker compose exec \
     -e DBAL_ROOT_PASSWORD=password \
     -e DBAL_ROOT_USER=postgres \
     -e DBAL_USER=postgres \
-    phpunit vendor/bin/phpunit
+    phpunit vendor/bin/phpunit $@

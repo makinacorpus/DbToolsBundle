@@ -31,7 +31,7 @@ class PhoneNumberAnonymizerTest extends UnitTestCase
                     when "phone_column" is not null then '063998' || lpad(
                         cast(
                             cast(
-                                random() * (9999 - 0 + 1)
+                                random() * (9999 - 0 + 1)+ 0
                                 as int
                             )
                             as text
