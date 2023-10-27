@@ -1,10 +1,30 @@
 # Installation
 
+The DbToolsBundle follow [all Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
+you should not be lost if you are a regular Symfony developper.
+
+## Requirements & Dependencies
+
+- PHP 8.1 or higher
+- Symfony 6.0 or higher
+- Doctrine/DBAL: the DbToolsBundle takes advantage of the available DBAL connections
+
+Currently supported database vendors are:
+
+- PostgreSQL (10 a,d higher)
+- MariaDB (11 and higher)
+- MySQL (5.7 and higher)
+
+## Installation
+
 Add the *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
 
 ```sh
 composer require makinacoprus/db-tools-bundle
 ```
+
+## Activate the bundle
+
 Then, activate the bundle:
 
 ```php
