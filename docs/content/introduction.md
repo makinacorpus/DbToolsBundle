@@ -31,11 +31,11 @@ Or simply anonymize your current database ?
 php bin/console db-tools:anonymize
 ```
 
-*(ok, these last two will ask you some [configurations](/anonymization/essentials) :wink:)*
+*(ok, these last two will ask you some [configurations](./anonymization/essentials) :wink:)*
 
 And finally, you want to know more about your database ?
 
 ```sh
 php bin/console db-tools:stats
 ```
-Read more about the [statistics command](/stats).
+Read more about the [statistics command](./stats).
