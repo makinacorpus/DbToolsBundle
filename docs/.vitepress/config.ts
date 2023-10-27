@@ -35,6 +35,13 @@ export default defineConfig({
     search: {
       provider: 'local'
     },
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
+    },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/makinacorpus/db-tools-bundle' }
+    ],
     sidebar: [
       {
         text: 'Reference',
