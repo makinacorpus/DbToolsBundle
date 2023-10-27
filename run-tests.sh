@@ -10,7 +10,7 @@ docker compose -p db_tools_bundle_test up -d --force-recreate --remove-orphans
 sleep 10
 
 echo "Downloading composer dependencies"
-docker compose exec php_fpm composer install
+docker compose -p db_tools_bundle_test exec phpunit composer install
 
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -18,7 +18,7 @@ NC='\033[0m' # No Color
 printf "${RED}\n\n-------------------------------- ${NC}"
 printf "${RED}Running tests with MySQL 5.7${NC}"
 printf "${RED} --------------------------------\n\n${NC}"
-docker compose exec \
+docker compose -p db_tools_bundle_test exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
     -e DBAL_HOST=mysql57 \
@@ -32,7 +32,7 @@ docker compose exec \
 printf "${RED}\n\n-------------------------------- ${NC}"
 printf "${RED}Running tests with MySQL 8${NC}"
 printf "${RED} --------------------------------\n\n${NC}"
-docker compose exec \
+docker compose -p db_tools_bundle_test exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
     -e DBAL_HOST=mysql80 \
@@ -46,7 +46,7 @@ docker compose exec \
 printf "${RED}\n\n-------------------------------- ${NC}"
 printf "${RED}Running tests with MariaDB 11${NC}"
 printf "${RED} --------------------------------\n\n${NC}"
-docker compose exec \
+docker compose -p db_tools_bundle_test exec \
     -e DBAL_DRIVER=pdo_mysql \
     -e DBAL_DBNAME=test_db \
     -e DBAL_HOST=mariadb11 \
@@ -60,7 +60,7 @@ docker compose exec \
 printf "${RED}\n\n-------------------------------- ${NC}"
 printf "${RED}Running tests with PostgreSQL 10${NC}"
 printf "${RED} --------------------------------\n\n${NC}"
-docker compose exec \
+docker compose -p db_tools_bundle_test exec \
     -e DBAL_DRIVER=pdo_pgsql \
     -e DBAL_DBNAME=test_db \
     -e DBAL_HOST=postgresql10 \
@@ -74,7 +74,7 @@ docker compose exec \
 printf "${RED}\n\n-------------------------------- ${NC}"
 printf "${RED}Running tests with PostgreSQL 16${NC}"
 printf "${RED} --------------------------------\n\n${NC}"
-docker compose exec \
+docker compose -p db_tools_bundle_test exec \
     -e DBAL_DRIVER=pdo_pgsql \
     -e DBAL_DBNAME=test_db \
     -e DBAL_HOST=postgresql16 \

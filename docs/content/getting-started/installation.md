@@ -7,11 +7,11 @@ you should not be lost if you are a regular Symfony developper.
 
 - PHP 8.1 or higher
 - Symfony 6.0 or higher
-- Doctrine/DBAL: the DbToolsBundle takes advantage of the available DBAL connections
+- Doctrine/DBAL: the DbToolsBundle takes advantage of available DBAL connections
 
 Currently supported database vendors are:
 
-- PostgreSQL (10 a,d higher)
+- PostgreSQL (10 and higher)
 - MariaDB (11 and higher)
 - MySQL (5.7 and higher)
 
@@ -22,8 +22,6 @@ Add the *DbToolsBundle* to your Symfony project with [composer](https://getcompo
 ```sh
 composer require makinacoprus/db-tools-bundle
 ```
-
-## Activate the bundle
 
 Then, activate the bundle:
 

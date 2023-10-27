@@ -76,7 +76,7 @@ class EmailAnonymizerTest extends FunctionalTestCase
         $this->assertNotNull($datas[2]);
         $this->assertNotSame('toto3@example.com', $datas[2]);
         $this->assertStringEndsWith('example.com', $datas[0]);
-        $this->assertNull($datas[4]);
+        $this->assertNull($datas[3]);
         $this->assertCount(4, \array_unique($datas), 'All generated values are different.');
     }
 

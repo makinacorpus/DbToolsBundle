@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
+namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
