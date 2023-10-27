@@ -59,6 +59,12 @@ nicely anonymize data: the *DbToolsBundle* get rid of that for you.
 With just some attributes on your Doctrine Entities, you can configure a complete anonymization
 for your sensitive data.
 
+::: info
+Anonymization does not only work with Doctrine Entities. **You can use it with
+any database** and [configure it with YAML](../configuration#anonymization). All you need is a DBAL connection.
+:::
+
+
 ```php [Attribute]
 namespace App\Entity;
 
@@ -81,11 +87,6 @@ class User
     // ...
 }
 ```
-
-::: tip
-Anonymization does not only work with Doctrine Entites. **You can use it with
-any database** and [configure it with YAML](../configuration#anonymization). All you need is a DBAL connection.
-:::
 
 With this configuration, after you launch `console db-tools:anonymize`, all your user's email addresses
 will be gone and replace with hashed ones.

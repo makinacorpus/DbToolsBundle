@@ -11,7 +11,7 @@ There is two ways to tell the DbToolsBundle how it should offuscate your data:
 2. you can configure it with a **YAML** file
 
 ::: tip
-The *DbToolsBundle* does not only work with Doctrine Entites to anonymize data. **You can use it with
+The *DbToolsBundle* does not only work with Doctrine Entities to anonymize data. **You can use it with
 any database**, all you need is a DBAL connection, all you will need is
 
 In such case, the YAML configuration is the only available option.
