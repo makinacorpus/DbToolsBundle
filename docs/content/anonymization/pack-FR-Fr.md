@@ -2,6 +2,8 @@
 
 This page list the common purpose *Anonymizers* provided by the *DbToolsBundle*.
 
+[[toc]]
+
 ## LastnameAnonymizer
 
 Works like the StringAnonymizer, but with a provided sample of 500 french lastnames.
@@ -21,9 +23,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('fr_fr.lastname')] // [!code focus]
-    private ?string $lastname = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('fr_fr.lastname')] // [!code ++]
+    private ?string $lastname = null;
 
     // ...
 }
@@ -57,9 +59,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('fr_fr.firstname')] // [!code focus]
-    private ?string $firstname = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('fr_fr.firstname')] // [!code ++]
+    private ?string $firstname = null;
 
     // ...
 }
@@ -96,13 +98,13 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('fr_fr.phone', ['mode' => 'landline'])] // [!code focus]
-    private ?string $telephoneFixe = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('fr_fr.phone', ['mode' => 'landline'])] // [!code ++]
+    private ?string $telephoneFixe = null;
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('fr_fr.phone')] // [!code focus]
-    private ?string $telephoneMobile = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('fr_fr.phone')] // [!code ++]
+    private ?string $telephoneMobile = null;
 
     // ...
 }

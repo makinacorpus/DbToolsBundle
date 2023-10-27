@@ -145,5 +145,5 @@ db_tools:
 ```
 
 :::tip
-For more information about anonymization, refere to the [Anonymization section](/anonymization/essentials).
+For more information about anonymization, refere to the [Anonymization section](./anonymization/essentials).
 :::

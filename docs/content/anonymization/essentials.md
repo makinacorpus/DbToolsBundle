@@ -113,7 +113,7 @@ composer dbtoolsbundle/pack-fr-fr
 ```
 
 If you can't find what you need from core anonymizers and in available packs, the *DbToolsBundle* allows
-you [create your own *Custom Anonymizers*](/anonymization/custom-anonymizers).
+you [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
 You can list all available *Anonymizers* with `console db-tools:anonymization:list` command.
