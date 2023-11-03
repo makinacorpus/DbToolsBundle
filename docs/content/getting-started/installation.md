@@ -1,6 +1,6 @@
 # Installation
 
-The DbToolsBundle follow [all Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
+The DbToolsBundle follows [Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
 you should not be lost if you are a regular Symfony developper.
 
 ## Requirements & Dependencies
@@ -9,11 +9,11 @@ you should not be lost if you are a regular Symfony developper.
 - Symfony 6.0 or higher
 - Doctrine/DBAL: the DbToolsBundle takes advantage of available DBAL connections
 
-Currently supported database vendors are:
+Currently supported database vendors:
 
-- PostgreSQL (10 and higher)
-- MariaDB (11 and higher)
-- MySQL (5.7 and higher)
+- PostgreSQL 10 or higher
+- MariaDB 11 or higher
+- MySQL 5.7 or higher
 
 ## Installation
 

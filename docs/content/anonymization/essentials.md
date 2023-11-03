@@ -2,10 +2,10 @@
 
 The *DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching `console db-tools:anonymize` will be all you need to do to
+After some configurations, launching `console db-tools:anonymize` will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
-There is two ways to tell the DbToolsBundle how it should offuscate your data:
+There is two ways to tell the DbToolsBundle how it should anonymize your data:
 
 1. you can use **attributes** on class and properties on your Doctrine Entities
 2. you can configure it with a **YAML** file
@@ -27,7 +27,7 @@ represents an email address.
 
 Each *Anonymizer* could take options to specify how it should work.
 
-All you need to do to configure Anonymization is map each column you want to offuscate with a specific anonymizer.
+All you need to do to configure Anonymization is map each column you want to anonymize with a specific anonymizer.
 
 ## Example
 
@@ -99,7 +99,7 @@ user:
 
 ## Multicolumn Anonymizers
 
-...
+@todo
 
 ## Going further
 
@@ -113,7 +113,7 @@ composer dbtoolsbundle/pack-fr-fr
 ```
 
 If you can't find what you need from core anonymizers and in available packs, the *DbToolsBundle* allows
-you [create your own *Custom Anonymizers*](./custom-anonymizers).
+you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
 You can list all available *Anonymizers* with `console db-tools:anonymization:list` command.

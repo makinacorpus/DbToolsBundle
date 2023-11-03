@@ -19,8 +19,8 @@ Default value is `'%kernel.project_dir%/var/private/db_tools'`.
 
 ### Excluded tables
 
-The `excluded_tables` parameter let you configure tables to exclude from backups. Give a configuration a
-per doctrine connection
+The `excluded_tables` parameter let you configure tables to exclude from backups. Give a
+configuration per doctrine connection.
 
 Default value is `null`: no table are excluded.
 
@@ -41,7 +41,7 @@ db_tools:
 
 :::tip
 Note that you can override this configuration while running the `db-tools:backup` command using
-the `--excluded-tables` option.
+the `--exclude` option.
 :::
 
 ### Backup expiration age
@@ -50,9 +50,8 @@ The `backup_expiration_age` parameter let you choose when a backup is considered
 
 Default value is `'3 months ago'`.
 
-Use [PHP relative date/time formats](https://www.php.net/manual/en/datetime.formats.relative.php) for this value.
-
-Here is an exemple value:
+Use [PHP relative date/time formats](https://www.php.net/manual/en/datetime.formats.relative.php)
+for this value.
 
 ```yml
 # config/packages/db_tools.yaml
@@ -68,13 +67,15 @@ db_tools:
 
 ## Binaries
 
-`db-tools:backup` and `db-tools:restore` need your system/environment to provide some extra binaries to be able to work.
-These binaries depend on the database vendor you use, you will need:
+`db-tools:backup` and `db-tools:restore` need your system/environment to provide some extra binaries
+to be able to work. These binaries depend on the database vendor you use, you will need:
 * for PostgreSQL: `pg_dump` and `pg_restore`
 * for MariaDB/MySQL: `mysqldump` and `mysql`
 
 If the `db-tools:check` command returns you some errors:
- * Your binaries are present on your system but the DbToolsBundle can't find them: you will need to specify path for these binaries
+ * if your binaries are present on your system but the DbToolsBundle can't find them: you will need
+   to specify path for these binaries:
+
   ```yml
   # config/packages/db_tools.yaml
 
@@ -93,7 +94,7 @@ If the `db-tools:check` command returns you some errors:
 
       #...
   ```
- * Or, your binaries are not present on your system: you will need to install them
+ * Or, if your binaries are not present on your system: you will need to install them
 
 
 
@@ -105,7 +106,7 @@ for PostgreSQL:
 
 ```
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends postgresql-client \
+    apt-get install -y --no-install-recommends postgresql-client
 ```
 
 for MariaDB/MySQL:
@@ -115,6 +116,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends default-mysql-client
 ```
 :::
+
+## Anonymizer paths
+
+@todo
 
 ## Anonymization
 

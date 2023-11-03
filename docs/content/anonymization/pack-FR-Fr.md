@@ -1,6 +1,6 @@
 # Pack FR_Fr
 
-This page list the common purpose *Anonymizers* provided by the *DbToolsBundle*.
+This page list *Anonymizers* provided by the *Fr_Fr pack*.
 
 [[toc]]
 

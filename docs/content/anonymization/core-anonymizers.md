@@ -303,9 +303,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('lastname')] // [!code focus]
-    private ?string $lastname = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('lastname')] // [!code ++]
+    private ?string $lastname = null;
 
     // ...
 }
@@ -337,9 +337,9 @@ class User
 {
     // ...
 
-    #[ORM\Column(length: 255)] // [!code focus]
-    #[Anonymize('firstname')] // [!code focus]
-    private ?string $firstname = null; // [!code focus]
+    #[ORM\Column(length: 255)]
+    #[Anonymize('firstname')] // [!code ++]
+    private ?string $firstname = null;
 
     // ...
 }
