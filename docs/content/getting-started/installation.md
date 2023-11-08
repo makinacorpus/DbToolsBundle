@@ -15,6 +15,10 @@ Currently supported database vendors:
 - MariaDB 11 or higher
 - MySQL 5.7 or higher
 
+::: info
+The bundle could also work with other database vendors. Check out the [database vendors support page](../database-vendors).
+:::
+
 ## Installation
 
 Add the *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
