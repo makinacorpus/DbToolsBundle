@@ -25,15 +25,15 @@ class StringAnonymizerTest extends FunctionalTestCase
             [
                 [
                     'id' => '1',
-                    'data' => "'test1'",
+                    'data' => 'test1',
                 ],
                 [
                     'id' => '2',
-                    'data' => "'test2'",
+                    'data' => 'test2',
                 ],
                 [
                     'id' => '3',
-                    'data' => "'test3'",
+                    'data' => 'test3',
                 ],
                 [
                     'id' => '4',

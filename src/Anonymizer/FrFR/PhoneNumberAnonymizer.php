@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\FrFR;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 /**
  * Anonymize french telephone numbers.
@@ -39,33 +39,26 @@ class PhoneNumberAnonymizer extends AbstractAnonymizer
     /**
      * {@inheritdoc}
      */
-    public function anonymize(QueryBuilder $updateQuery): void
+    public function anonymize(Update $update): void
     {
-        $plateform = $this->connection->getDatabasePlatform();
+        $expr = $update->expression();
 
-        $prefixExpression =  $plateform->quoteStringLiteral(
-            match ($this->options->get('mode', 'mobile')) {
-                'mobile' => '063998',
-                'landline' => '026191',
-                default => throw new \InvalidArgumentException('"mode" option can be "mobile", "landline"'),
-            }
-        );
-
-        $escapedColumnName = $plateform->quoteIdentifier($this->columnName);
-
-        $updateQuery->set(
-            $escapedColumnName,
+        $update->set(
+            $this->columnName,
             $this->getSetIfNotNullExpression(
-                $escapedColumnName,
-                $plateform->getConcatExpression(
-                    $prefixExpression,
+                $expr->concat(
+                    match ($this->options->get('mode', 'mobile')) {
+                        'mobile' => '063998',
+                        'landline' => '026191',
+                        default => throw new \InvalidArgumentException('"mode" option can be "mobile", "landline"'),
+                    },
                     $this->getSqlTextPadLeftExpression(
-                        $this->getSqlRandomIntExpression(9999),
+                        $expr->randomInt(9999),
                         4,
                         '0'
                     ),
                 ),
-            ),
+            )
         );
     }
 }

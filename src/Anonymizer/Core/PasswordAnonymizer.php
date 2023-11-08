@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Query\Update;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 
 #[AsAnonymizer(
@@ -22,7 +22,7 @@ class PasswordAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $updateQuery): void
+    public function anonymize(Update $update): void
     {
         $algorithm = $this->options->get('algorithm', 'auto');
         $password = $this->options->get('password', 'password');
@@ -33,14 +33,10 @@ class PasswordAnonymizer extends AbstractAnonymizer
         $passwordHasher = $passwordHasherFactory->getPasswordHasher($algorithm);
         $hashedPassword = $passwordHasher->hash($password);
 
-        $plateform = $this->connection->getDatabasePlatform();
-
-        $quotedColumn = $plateform->quoteIdentifier($this->columnName);
-        $updateQuery->set(
-            $quotedColumn,
+        $update->set(
+            $this->columnName,
             $this->getSetIfNotNullExpression(
-                $quotedColumn,
-                $plateform->quoteStringLiteral($hashedPassword)
+                $hashedPassword
             )
         );
     }

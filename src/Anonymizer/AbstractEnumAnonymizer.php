@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use MakinaCorpus\QueryBuilder\Query\Select;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 /**
  * Can not be use alone, check FrFR/PrenomAnonymizer for an
@@ -33,10 +34,10 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
     public function initialize(): void
     {
         $this->validateSample();
-        $this->createSampleTempTable(
+
+        $this->sampleTableName = $this->createSampleTempTable(
             ['value'],
             $this->getSample(),
-            $this->getSampleTableName(),
             // Also handles types such as ''.
             ($type = $this->getSampleType()) ? [$type] : null,
         );
@@ -45,25 +46,37 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query): void
+    public function anonymize(Update $update): void
     {
-        $plateform = $this->connection->getDatabasePlatform();
+        $expr = $update->expression();
 
-        $random = $this->connection
-            ->createQueryBuilder()
-            ->select($this->getSampleTableName() . '.value')
-            ->from($this->getSampleTableName())
-            ->setMaxResults(1)
-            ->where(
-                $this->connection->createExpressionBuilder()->notLike(
-                    $plateform->quoteIdentifier($this->tableName) . '.' . $plateform->quoteIdentifier($this->columnName),
-                    $this->getSampleTableName() . '.value'
-                )
-            )
-            ->orderBy($this->getSqlRandomExpression())
+        $targetCount = $this->countTable($this->tableName);
+        $sampleCount = $this->countTable($this->sampleTableName);
+
+        $joinAlias = $this->sampleTableName . '_' . $this->columnName;
+        $join = (new Select($this->sampleTableName))
+            ->column('value')
+            ->columnRaw('ROW_NUMBER() OVER (ORDER BY ?)', 'rownum', [$expr->random()])
+            ->range($targetCount) // Avoid duplicate rows.
         ;
 
-        $query->set($plateform->quoteIdentifier($this->columnName), \sprintf('(%s)', $random));
+        $update->join(
+            $join,
+            $expr
+                ->where()
+                ->raw(
+                    'MOD(?, ?) + 1 = ?',
+                    [
+                        $expr->column(self::JOIN_ID, self::JOIN_TABLE),
+                        $sampleCount,
+                        $expr->column('rownum', $joinAlias),
+                    ]
+                )
+                ->isNotNull($expr->column($this->columnName, self::JOIN_TABLE)),
+            $joinAlias
+        );
+
+        $update->set($this->columnName, $expr->column('value', $joinAlias));
     }
 
     /**
@@ -71,19 +84,9 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
      */
     public function clean(): void
     {
-        $this->connection
-            ->createSchemaManager()
-            ->dropTable($this->getSampleTableName())
-        ;
-    }
-
-    protected function getSampleTableName(): string
-    {
         if ($this->sampleTableName) {
-            return $this->sampleTableName;
+            $this->connection->createSchemaManager()->dropTable($this->sampleTableName);
         }
-
-        return $this->sampleTableName = $this->generateTempTableName();
     }
 
     protected function validateSample(): void

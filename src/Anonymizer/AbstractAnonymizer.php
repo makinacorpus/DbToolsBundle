@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\MySQLPlatform;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
+use MakinaCorpus\QueryBuilder\ExpressionFactory;
+use MakinaCorpus\QueryBuilder\Query\Update;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 
 abstract class AbstractAnonymizer
 {
-    public const TEMP_TABLE_PREFIX = 'anonymizer_sample_';
+    public const JOIN_ID = '_db_tools_id';
+    public const JOIN_TABLE = '_target_table';
+    public const TEMP_TABLE_PREFIX = '_db_tools_sample_';
 
     final public function __construct(
         protected string $tableName,
@@ -76,7 +79,7 @@ abstract class AbstractAnonymizer
     /**
      * Add statement to existing update query to anonymize a specific target.
      */
-    abstract public function anonymize(QueryBuilder $updateQuery): void;
+    abstract public function anonymize(Update $update): void;
 
     /**
      * Clean your anonymizer
@@ -87,6 +90,19 @@ abstract class AbstractAnonymizer
      * This method is only launch once at the end of the anonymization process.
      */
     public function clean(): void {}
+
+    /**
+     * Count table.
+     */
+    protected function countTable(string $table): int
+    {
+        return (int) (new DoctrineQueryBuilder($this->connection))
+            ->select($table)
+            ->columnRaw('count(*)')
+            ->executeQuery()
+            ->fetchOne()
+        ;
+    }
 
     /**
      * Create a temporary table with one or more sample columns, and populate it
@@ -100,15 +116,12 @@ abstract class AbstractAnonymizer
      * @return string
      *   The table name.
      */
-    protected function createSampleTempTable(array $columns, array $values = [], ?string $tableName = null, array $types = []): string
+    protected function createSampleTempTable(array $columns, array $values = [], array $types = []): string
     {
         $types = \array_values($types);
         $columns = \array_values($columns);
         $columnCount = \count($columns);
-
-        if (!$tableName) {
-            $tableName = $this->generateTempTableName();
-        }
+        $tableName = $this->generateTempTableName();
 
         $tableColumns = [];
         foreach ($columns as $index => $name) {
@@ -163,63 +176,26 @@ abstract class AbstractAnonymizer
         return \uniqid(self::TEMP_TABLE_PREFIX);
     }
 
-    protected function getSetIfNotNullExpression(string $columnExpression, string $valueExpression): string
+    protected function getSetIfNotNullExpression(mixed $valueExpression, mixed $columnExpression = null): Expression
     {
-        return \sprintf('case when %s is not null then %s end', $columnExpression, $valueExpression);
-    }
-
-    protected function getStringAggExpression(string $textExpression, string $rawJoinString = ','): string
-    {
-        $plateform = $this->connection->getDatabasePlatform();
-        $quotedJoinString = $plateform->quoteStringLiteral($rawJoinString);
-
-        return match (true) {
-            $plateform instanceof MySQLPlatform => \sprintf("group_concat(%s, %s)", $textExpression, $quotedJoinString),
-            // We are going to add a forced CAST here so that the user may
-            // give anything, an int, a date, etc... MySQL doesn't need that
-            // because it uses type coercition and does the job implicitely.
-            default => \sprintf("string_agg(cast(%s as text), %s)", $textExpression, $quotedJoinString),
-        };
+        if (null === $columnExpression) {
+            $columnExpression = ExpressionFactory::column($this->columnName, $this->tableName);
+        }
+        return ExpressionFactory::ifThen(ExpressionFactory::where()->isNotNull($columnExpression), $valueExpression);
     }
 
     /**
      * Generate an SQL text pad left expression.
      */
-    protected function getSqlTextPadLeftExpression(string $textExpression, int $padSize, string $rawPadString): string
+    protected function getSqlTextPadLeftExpression(mixed $textExpression, int $padSize, string $rawPadString): Expression
     {
-        $plateform = $this->connection->getDatabasePlatform();
-        $quotedPadString = $plateform->quoteStringLiteral($rawPadString);
-
-        return match (true) {
-            $plateform instanceof MySQLPlatform => \sprintf("lpad(%s, %d, %s)", $textExpression, $padSize, $quotedPadString),
-            // We are going to add a forced CAST here so that the user may
-            // give anything, an int, a date, etc... MySQL doesn't need that
-            // because it uses type coercition and does the job implicitely.
-            default => \sprintf("lpad(cast(%s as text), %d, %s)", $textExpression, $padSize, $quotedPadString),
-        };
-    }
-
-    /**
-     * Generate an SQL expression that creates a random integer between 0
-     * and the given maximum.
-     */
-    protected function getSqlRandomIntExpression(int $max, int $min = 0): string
-    {
-        return \sprintf("cast(%s * (%d - %d + 1) + %s as int)", $this->getSqlRandomExpression(), $max, $min, $min);
-    }
-
-    /**
-     * Generate a decimal number between 0 and 1.
-     */
-    protected function getSqlRandomExpression(): string
-    {
-        $plateform = $this->connection->getDatabasePlatform();
-
-        return match (true) {
-            $plateform instanceof MySQLPlatform => "rand()",
-            $plateform instanceof PostgreSQLPlatform => "random()",
-            // There is no SQL standard for this as we know of.
-            default => throw new \InvalidArgumentException(\sprintf('%s is not supported.', \get_class($plateform)))
-        };
+        return ExpressionFactory::raw(
+            'lpad(?, ?, ?)',
+            [
+                ExpressionFactory::cast($textExpression, 'text'),
+                $padSize,
+                $rawPadString,
+            ],
+        );
     }
 }

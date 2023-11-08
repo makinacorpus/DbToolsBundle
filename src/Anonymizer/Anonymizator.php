@@ -13,6 +13,8 @@ use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\Query\DoctrineUpdate;
 
 class Anonymizator
 {
@@ -28,6 +30,11 @@ class Anonymizator
     public function count(): int
     {
         return $this->anonymizationConfig->count();
+    }
+
+    protected function getQueryBuilder(): DoctrineQueryBuilder
+    {
+        return new DoctrineQueryBuilder($this->connection);
     }
 
     /**
@@ -122,7 +129,7 @@ class Anonymizator
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
                 yield $this->printTimer($initTimer);
 
-                $this->addSerialColumn($table);
+                $this->addAnonymizerIdColumn($table);
 
                 if ($atOnce) {
                     yield from $this->anonymizeTableAtOnce($table, $anonymizers);
@@ -135,7 +142,7 @@ class Anonymizator
                 yield "   - cleaning anonymizers...";
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->clean());
 
-                $this->removeSerialColumn($tableName);
+                $this->removeAnonymizerIdColumn($table);
 
                 yield $this->printTimer($cleanTimer);
                 yield '   - total ' . $this->printTimer($initTimer);
@@ -168,7 +175,7 @@ class Anonymizator
                 }
             } else {
                 if (!$dryRun) {
-                    $this->removeSerialColumn($tableName);
+                    $this->removeAnonymizerIdColumn($tableName);
                 }
             }
         }
@@ -182,20 +189,14 @@ class Anonymizator
         yield '   - anonymizing...';
 
         $timer = $this->startTimer();
-        $platform = $this->connection->getDatabasePlatform();
-
-        $updateQuery = $this
-            ->connection
-            ->createQueryBuilder()
-            ->update($platform->quoteIdentifier($table))
-        ;
+        $update = $this->createUpdateQuery($table);
 
         foreach ($anonymizers as $anonymizer) {
             \assert($anonymizer instanceof AbstractAnonymizer);
-            $anonymizer->anonymize($updateQuery);
+            $anonymizer->anonymize($update);
         }
 
-        $updateQuery->executeQuery();
+        $update->executeStatement();
 
         yield $this->printTimer($timer);
     }
@@ -205,8 +206,6 @@ class Anonymizator
      */
     protected function anonymizeTablePerColumn(string $table, array $anonymizers): \Generator
     {
-        $platform = $this->connection->getDatabasePlatform();
-
         $total = \count($anonymizers);
         $count = 1;
 
@@ -220,19 +219,34 @@ class Anonymizator
 
             yield \sprintf('   - anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target);
 
-            $updateQuery = $this
-                ->connection
-                ->createQueryBuilder()
-                ->update($platform->quoteIdentifier($table))
-            ;
-
-            $anonymizer->anonymize($updateQuery);
-
-            $updateQuery->executeQuery();
+            $update = $this->createUpdateQuery($table);
+            $anonymizer->anonymize($update);
+            $update->executeStatement();
             $count++;
 
             yield $this->printTimer($timer);
         }
+    }
+
+    protected function createUpdateQuery(string $table): DoctrineUpdate
+    {
+        $update = $this->getQueryBuilder()->update($table);
+
+        // Add target table a second time into the FROM statement of the
+        // UPDATE query, in order for anonymizers to be able to JOIN over
+        // it. Otherwise, JOIN would not be possible for RDBMS that speak
+        // standard SQL.
+        $expr = $update->expression();
+        $update->join(
+            $table,
+            $expr->where()->isEqual(
+                $expr->column(AbstractAnonymizer::JOIN_ID, $table),
+                $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
+            ),
+            AbstractAnonymizer::JOIN_TABLE
+        );
+
+        return $update;
     }
 
     protected function startTimer(): int|float
@@ -254,30 +268,30 @@ class Anonymizator
     }
 
     /**
-     * This method will add a serial column on the table to anonymize: having a
-     * serial will allow UPDATE "target_table" FROM "sample_table" statements
-     * for injecting data randomly by joining over ROW_NUMBER() using this
-     * serial column.
+     * This method will add a anonymizer identifier as a serial column on the
+     * table to anonymize: having a serial will allow UPDATE "target_table" FROM
+     * "sample_table" statements for injecting data randomly by joining over
+     * ROW_NUMBER() using this serial column.
      *
      * @internal
      *   Public for unit testing only.
      */
-    public function addSerialColumn(string $table): void
+    public function addAnonymizerIdColumn(string $table): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
         foreach ($schemaManager->listTableColumns($table) as $column) {
             \assert($column instanceof Column);
 
-            if ('_anonymizer_id' === $column->getName()) {
+            if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
                 return;
             }
         }
 
         $platform = $this->connection->getDatabasePlatform();
 
-        if ($platform instanceof AbstractMySQLPlatform || $platform instanceof MariaDBPlatform) {
-            $this->addSerialColumnMySql($table);
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $this->addAnonymizerIdColumnMySql($table);
 
             return;
         }
@@ -289,7 +303,7 @@ class Anonymizator
                         tableName: $table,
                         addedColumns: [
                             new Column(
-                                '_anonymizer_id',
+                                AbstractAnonymizer::JOIN_ID,
                                 Type::getType(Types::BIGINT),
                                 [
                                     'autoincrement' => true,
@@ -303,16 +317,16 @@ class Anonymizator
     }
 
     /**
-     * Remote serial column.
+     * Remote anonymizer identifier column.
      */
-    protected function removeSerialColumn(string $tableName): void
+    protected function removeAnonymizerIdColumn(string $tableName): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
         foreach ($schemaManager->listTableColumns($tableName) as $column) {
             \assert($column instanceof Column);
 
-            if ('_anonymizer_id' === $column->getName()) {
+            if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
                 $this->dropColumn($tableName, $column->getName());
             }
         }
@@ -338,7 +352,7 @@ class Anonymizator
      * All other RDBMS should be fine with more than one identity columns per
      * table.
      */
-    protected function addSerialColumnMySql(string $table)
+    protected function addAnonymizerIdColumnMySql(string $table)
     {
         $schemaManager = $this->connection->createSchemaManager();
         $platform = $this->connection->getDatabasePlatform();
@@ -350,7 +364,7 @@ class Anonymizator
                         tableName: $table,
                         addedColumns: [
                             new Column(
-                                '_anonymizer_id',
+                                AbstractAnonymizer::JOIN_ID,
                                 Type::getType(Types::BIGINT),
                                 [
                                     'autoincrement' => false,
@@ -364,68 +378,103 @@ class Anonymizator
             ),
         );
 
-        $escapedTableName = $platform->quoteIdentifier($table);
-        $escapedSequenceTableName = $platform->quoteIdentifier('_anonymizer_seq_' . $table);
-        $escapedFunctionName = $platform->quoteIdentifier('_anonymizer_seq_' . $table . '_get');
+        $queryBuilder = $this->getQueryBuilder();
 
-        $this->connection->executeStatement(
+        $sequenceTableName = $platform->quoteIdentifier('_db_tools_seq_' . $table);
+        $functionName = $platform->quoteIdentifier('_db_tools_seq_' . $table . '_get');
+
+        $queryBuilder->executeStatement(
             <<<SQL
-            DROP TABLE IF EXISTS {$escapedSequenceTableName};
-            SQL
-        );
-        $this->connection->executeStatement(
-            <<<SQL
-            DROP FUNCTION IF EXISTS {$escapedFunctionName};
-            SQL
+            DROP TABLE IF EXISTS ?::table
+            SQL,
+            [$sequenceTableName],
         );
 
-        $this->connection->executeStatement(
+        $queryBuilder->executeStatement(
             <<<SQL
-            CREATE TABLE {$escapedSequenceTableName} (
+            DROP FUNCTION IF EXISTS ?::identifier
+            SQL,
+            [$functionName],
+        );
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            CREATE TABLE ?::table (
                 `value` BIGINT DEFAULT NULL
             );
-            SQL
+            SQL,
+            [$sequenceTableName],
         );
 
-        $this->connection->executeStatement(
+        $queryBuilder->executeStatement(
             <<<SQL
-            INSERT INTO {$escapedSequenceTableName} (`value`) VALUES (0);
-            SQL
+            INSERT INTO ?::table (`value`) VALUES (0);
+            SQL,
+            [$sequenceTableName],
         );
 
         try {
-            $this->connection->executeStatement(
+            $queryBuilder->executeStatement(
                 <<<SQL
-                CREATE FUNCTION IF NOT EXISTS {$escapedFunctionName}() RETURNS BIGINT
+                CREATE FUNCTION IF NOT EXISTS ?::identifier() RETURNS BIGINT
                 DETERMINISTIC
                 BEGIN
-                    SELECT `value` + 1 INTO @value FROM {$escapedSequenceTableName} LIMIT 1;
-                    UPDATE {$escapedSequenceTableName} SET value = @value;
+                    SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
+                    UPDATE ?::table SET value = @value;
                     RETURN @value;
                 END;
                 ;;
-                SQL
+                SQL,
+                [
+                    $functionName,
+                    $sequenceTableName,
+                    $sequenceTableName,
+                ],
             );
 
-            $this->connection->executeStatement(
+            $queryBuilder->executeStatement(
                 <<<SQL
-                UPDATE {$escapedTableName}
-                SET
-                    `_anonymizer_id` = {$escapedFunctionName}();
-                SQL
+                UPDATE ?::table SET ?::column = ?::identifier();
+                SQL,
+                [
+                    $table,
+                    AbstractAnonymizer::JOIN_ID,
+                    $functionName,
+                ],
             );
+
+            $this->createIndex($table, AbstractAnonymizer::JOIN_ID);
         } finally {
-            $this->connection->executeStatement(
+            $queryBuilder->executeStatement(
                 <<<SQL
-                DROP FUNCTION IF EXISTS {$escapedFunctionName};
-                SQL
+                DROP FUNCTION IF EXISTS ?::identifier;
+                SQL,
+                [$functionName],
             );
-            $this->connection->executeStatement(
+
+            $queryBuilder->executeStatement(
                 <<<SQL
-                DROP TABLE IF EXISTS {$escapedSequenceTableName};
-                SQL
+                DROP TABLE IF EXISTS ?::table;
+                SQL,
+                [$sequenceTableName],
             );
         }
+    }
+
+    /**
+     * Create an index.
+     */
+    protected function createIndex(string $table, string... $column): void
+    {
+        $indexName = $table . '_' . \implode('_', $column) . '_idx';
+        $columnList = \implode(', ', \array_map(fn ($value) => '?', $column));
+
+        $this->getQueryBuilder()->raw(
+            <<<SQL
+            CREATE INDEX ?::identifier ON ?::table ({$columnList})
+            SQL,
+            [$indexName, $table, ...$column]
+        );
     }
 
     /**

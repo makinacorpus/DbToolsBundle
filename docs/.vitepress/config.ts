@@ -67,6 +67,7 @@ export default defineConfig({
           { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
           { text: 'Pack FR_Fr', link: '/anonymization/pack-FR-Fr' },
+          { text: 'Internals', link: '/anonymization/internals' },
         ]
       },
       {

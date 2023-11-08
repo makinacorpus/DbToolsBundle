@@ -7,9 +7,13 @@ namespace MakinaCorpus\DbToolsBundle\Tests;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use MakinaCorpus\QueryBuilder\Expression;
+use MakinaCorpus\QueryBuilder\QueryBuilder;
+use MakinaCorpus\QueryBuilder\Platform\Escaper\StandardEscaper;
+use MakinaCorpus\QueryBuilder\Writer\Writer;
 use PHPUnit\Framework\TestCase;
+use MakinaCorpus\QueryBuilder\SqlString;
 
 /**
  * Extends this class whenever you need either one of the connection or the
@@ -103,7 +107,18 @@ abstract class UnitTestCase extends TestCase
      */
     protected function getQueryBuilder(): QueryBuilder
     {
-        return new QueryBuilder($this->getConnection());
+        return new QueryBuilder();
+    }
+
+    /**
+     * Get prepared SQL.
+     */
+    protected function prepareSql(string|Expression|\Stringable $input): SqlString
+    {
+        if ($input instanceof SqlString) {
+            return $input;
+        }
+        return (new Writer(new StandardEscaper('#', 1)))->prepare($input);
     }
 
     /**
@@ -114,19 +129,12 @@ abstract class UnitTestCase extends TestCase
      * way.
      */
     protected function assertSameSql(
-        string|QueryBuilder|\Stringable $expected,
-        string|QueryBuilder|\Stringable $actual,
+        string|Expression|\Stringable $expected,
+        string|Expression|\Stringable $actual,
         string $message = ''
     ): void {
-        if ($expected instanceof QueryBuilder) {
-            $expected = $expected->getSQL();
-        }
-        if ($actual instanceof QueryBuilder) {
-            $actual = $actual->getSQL();
-        }
-
-        $expected = (string) $expected;
-        $actual = (string) $actual;
+        $expected = $this->prepareSql($expected);
+        $actual = $this->prepareSql($actual);
 
         if ($message) {
             self::assertSame(

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
     name: 'integer',
@@ -21,21 +21,22 @@ class IntegerAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $updateQuery): void
+    public function anonymize(Update $update): void
     {
         if (!($this->options->has('min') && $this->options->has('max'))) {
             throw new \InvalidArgumentException("You should provide 2 options (min and max) with this anonymizer");
         }
 
-        $plateform = $this->connection->getDatabasePlatform();
+        $expr = $update->expression();
 
-
-        $updateQuery->set(
-            $plateform->quoteIdentifier($this->columnName),
+        $update->set(
+            $this->columnName,
             $this->getSetIfNotNullExpression(
-                $plateform->quoteIdentifier($this->columnName),
-                $this->getSqlRandomIntExpression($this->options->get('max'), $this->options->get('min'))
-            )
+                $expr->randomInt(
+                    $this->options->get('max'),
+                    $this->options->get('min'),
+                ),
+            ),
         );
     }
 }

@@ -12,7 +12,7 @@ class EmailAnonymizerTest extends UnitTestCase
 {
     public function testAnonymizeWithDefaultDomain(): void
     {
-        $updateQuery = $this->getQueryBuilder()->update('some_table');
+        $update = $this->getQueryBuilder()->update('some_table');
 
         $instance = new EmailAnonymizer(
             'some_table',
@@ -21,21 +21,28 @@ class EmailAnonymizerTest extends UnitTestCase
             new Options()
         );
 
-        $instance->anonymize($updateQuery);
+        $instance->anonymize($update);
+
+        $prepared = $this->prepareSql($update);
 
         self::assertSameSql(
             <<<SQL
-            update some_table
+            update "some_table"
             set
-                "email" = 'anon-' || md5("email") || '@' || 'example.com'
+                "email" = #1 || md5("some_table"."email") || #2 || #3
             SQL,
-            $updateQuery,
+            $prepared,
+        );
+
+        self::assertSame(
+            ['anon-', '@', 'example.com'],
+            $prepared->getArguments()->getAll(),
         );
     }
 
     public function testAnonymize(): void
     {
-        $updateQuery = $this->getQueryBuilder()->update('some_table');
+        $update = $this->getQueryBuilder()->update('some_table');
 
         $instance = new EmailAnonymizer(
             'some_table',
@@ -46,15 +53,22 @@ class EmailAnonymizerTest extends UnitTestCase
             ])
         );
 
-        $instance->anonymize($updateQuery);
+        $instance->anonymize($update);
+
+        $prepared = $this->prepareSql($update);
 
         self::assertSameSql(
             <<<SQL
-            update some_table
+            update "some_table"
             set
-                "email" = 'anon-' || md5("email") || '@' || 'makina-corpus.com'
+                "email" = #1 || md5("some_table"."email") || #2 || #3
             SQL,
-            $updateQuery,
+            $update,
+        );
+
+        self::assertSame(
+            ['anon-', '@', 'makina-corpus.com'],
+            $prepared->getArguments()->getAll(),
         );
     }
 }

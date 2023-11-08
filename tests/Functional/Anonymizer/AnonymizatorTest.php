@@ -8,10 +8,13 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry;
-use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
 
 class AnonymizatorTest extends FunctionalTestCase
 {
@@ -37,8 +40,25 @@ class AnonymizatorTest extends FunctionalTestCase
                         new Column(
                             'value',
                             Type::getType(Types::TEXT),
+                            [
+                                'notnull' => null,
+                            ]
                         ),
-                    ]
+                        new Column(
+                            'my_street',
+                            Type::getType(Types::TEXT),
+                            [
+                                'notnull' => null,
+                            ]
+                        ),
+                        new Column(
+                            'my_city',
+                            Type::getType(Types::TEXT),
+                            [
+                                'notnull' => null,
+                            ]
+                        ),
+                    ],
                 ))->setPrimaryKey(['id'])
             )
         ;
@@ -47,6 +67,35 @@ class AnonymizatorTest extends FunctionalTestCase
         $builder->insert('table_test')->values(['value' => "'foo'"])->executeStatement();
         $builder->insert('table_test')->values(['value' => "'bar'"])->executeStatement();
         $builder->insert('table_test')->values(['value' => "'baz'"])->executeStatement();
+    }
+
+    public function testMultipleAnonymizersAtOnce(): void
+    {
+        $config = new AnonymizationConfig();
+        $config->add(new AnonymizerConfig(
+            'table_test',
+            'value',
+            'string',
+            new Options([
+                'sample' => ['foo', 'bar', 'baz'],
+            ]),
+        ));
+        $config->add(new AnonymizerConfig(
+            'table_test',
+            'foo',
+            'fr_fr.address',
+            new Options([
+                'street_address' => 'my_street',
+                'locality' => 'my_city',
+            ]),
+        ));
+
+        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), $config);
+        $anonymizator->addAnonymizerIdColumn('table_test');
+
+        foreach ($anonymizator->anonymize() as $message) {}
+
+        self::expectNotToPerformAssertions();
     }
 
     public function testSerial(): void
@@ -66,18 +115,18 @@ class AnonymizatorTest extends FunctionalTestCase
         );
 
         $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
-        $anonymizator->addSerialColumn('table_test');
+        $anonymizator->addAnonymizerIdColumn('table_test');
 
         self::assertSame(
             [
-                ['id' => 1, 'value' => 'foo', '_anonymizer_id' => 1],
-                ['id' => 2, 'value' => 'bar', '_anonymizer_id' => 2],
-                ['id' => 3, 'value' => 'baz', '_anonymizer_id' => 3],
+                ['id' => 1, 'value' => 'foo', AbstractAnonymizer::JOIN_ID => 1],
+                ['id' => 2, 'value' => 'bar', AbstractAnonymizer::JOIN_ID => 2],
+                ['id' => 3, 'value' => 'baz', AbstractAnonymizer::JOIN_ID => 3],
             ],
             $this
                 ->getConnection()
                 ->executeQuery(
-                    'select id, value, _anonymizer_id from table_test order by id'
+                    'select id, value, _db_tools_id from table_test order by id'
                 )
                 ->fetchAllAssociative()
         );
