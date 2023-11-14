@@ -12,7 +12,7 @@
  * @license   http://www.opensource.org/licenses/mit-license.html
  * @link      https://github.com/joshtronic/php-loremipsum
  *
- * Only changes are purely cosmetic.
+ * Only changes are purely cosmetic, typings, resilience and bugfixes.
  */
 
 declare (strict_types=1);
@@ -22,25 +22,15 @@ namespace MakinaCorpus\DbToolsBundle\Helper;
 class LoremIpsum
 {
     /**
-     * First
-     *
-     * Whether or not we should be starting the string with "Lorem ipsum..."
-     *
-     * @access private
-     * @var    mixed
+     * Whether or not we should be starting the string with "Lorem ipsum...".
      */
-    private $first = true;
+    private ?string $first = null;
 
     /**
-     * Words
-     *
      * A lorem ipsum vocabulary of sorts. Not a complete list as I'm unsure if
      * a complete list exists and if so, where to get it.
-     *
-     * @access private
-     * @var    array<string>
      */
-    private $words = [
+    private array $words = [
         // Lorem ipsum...
         'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
 
@@ -76,49 +66,28 @@ class LoremIpsum
     ];
 
     /**
-     * Word
-     *
      * Generates a single word of lorem ipsum.
      *
-     * @access public
-     * @param  mixed  $tags string or array of HTML tags to wrap output with
-     * @return string generated lorem ipsum word
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
      */
-    public function word($tags = false)
+    public function word(null|string|array $tags = null): string
     {
-        return strval($this->words(1, $tags));
+        return \reset($this->words(1, $tags));
     }
 
     /**
-     * Words Array
-     *
      * Generates an array of lorem ipsum words.
      *
-     * @access public
-     * @param  integer $count how many words to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @return mixed  generated lorem ipsum words
+     * @param int $count
+     *   How many words to generate.
+     * @return array<string>
+     *   Generated lorem ipsum words
      */
-    public function wordsArray($count = 1, $tags = false)
+    public function wordsArray(int $count = 1): array
     {
-        return $this->words($count, $tags, true);
-    }
-
-    /**
-     * Words
-     *
-     * Generates words of lorem ipsum.
-     *
-     * @access public
-     * @param  integer $count how many words to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @param  boolean $array whether an array or a string should be returned
-     * @return mixed   string or array of generated lorem ipsum words
-     */
-    public function words($count = 1, $tags = false, $array = false)
-    {
-        $count      = (int) $count;
-        $words      = [];
+        $count = (int) $count;
+        $words = [];
         $word_count = 0;
 
         // Shuffles and appends the word list to compensate for count
@@ -132,241 +101,232 @@ class LoremIpsum
                 // Checks that the last word of the list and the first word of
                 // the list that's about to be appended are not the same
                 if (!$word_count || $words[$word_count - 1] != $this->words[0]) {
-                    $words      = array_merge($words, $this->words);
-                    $word_count = count($words);
-                    $shuffle    = false;
+                    $words = \array_merge($words, $this->words);
+                    $word_count = \count($words);
+                    $shuffle = false;
                 }
             }
         }
 
-        $words = array_slice($words, 0, $count);
-
-        return $this->output($words, $tags, $array);
+        return \array_slice($words, 0, $count);
     }
 
     /**
-     * Sentence
+     * Generates words of lorem ipsum.
      *
+     * @param int $count
+     *   How many words to generate.
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string
+     *   Generated lorem ipsum words.
+     */
+    public function words($count = 1, null|string|array $tags = null): string
+    {
+        return $this->output($this->wordsArray($count), $tags, false);
+    }
+
+    /**
      * Generates a full sentence of lorem ipsum.
      *
-     * @access public
-     * @param  mixed  $tags string or array of HTML tags to wrap output with
-     * @return string generated lorem ipsum sentence
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string
+     *   Generated lorem ipsum sentence.
      */
-    public function sentence($tags = false)
+    public function sentence(null|string|array $tags = null)
     {
-        return strval($this->sentences(1, $tags));
+        return $this->sentences(1, $tags);
     }
 
     /**
-     * Sentences Array
-     *
      * Generates an array of lorem ipsum sentences.
      *
-     * @access public
-     * @param  integer $count how many sentences to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @return mixed   generated lorem ipsum sentences
+     * @param int $count
+     *   How many sentences to generate.
+     * @return array<string>
+     *   Generated lorem ipsum sentences.
      */
-    public function sentencesArray($count = 1, $tags = false)
-    {
-        return $this->sentences($count, $tags, true);
-    }
-
-    /**
-     * Sentences
-     *
-     * Generates sentences of lorem ipsum.
-     *
-     * @access public
-     * @param  integer $count how many sentences to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @param  boolean $array whether an array or a string should be returned
-     * @return mixed   string or array of generated lorem ipsum sentences
-     */
-    public function sentences($count = 1, $tags = false, $array = false)
+    public function sentencesArray($count = 1): array
     {
         $sentences = [];
 
         for ($i = 0; $i < $count; $i++) {
-            $sentences[] = $this->wordsArray($this->gauss(24.46, 5.08));
+            $sentences[] = $this->punctuate($this->wordsArray($this->gauss(24.46, 5.08)));
         }
 
-        $this->punctuate($sentences);
-
-        return $this->output($sentences, $tags, $array);
+        return $sentences;
     }
 
     /**
-     * Paragraph
+     * Generates sentences of lorem ipsum.
      *
+     * @param int $count
+     *   How many sentences to generate.
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string
+     *   Generated lorem ipsum sentences.
+     */
+    public function sentences($count = 1, null|string|array $tags = null): string
+    {
+        return $this->output($this->sentencesArray($count), $tags);
+    }
+
+    /**
      * Generates a full paragraph of lorem ipsum.
      *
-     * @access public
-     * @param  mixed  $tags string or array of HTML tags to wrap output with
-     * @return string generated lorem ipsum paragraph
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string
+     *   Generated lorem ipsum paragraph.
      */
-    public function paragraph($tags = false)
+    public function paragraph(null|string|array $tags = null): string
     {
-        return strval($this->paragraphs(1, $tags));
+        return $this->paragraphs(1, $tags);
     }
 
     /**
-     * Paragraph Array
-     *
      * Generates an array of lorem ipsum paragraphs.
      *
-     * @access public
-     * @param  integer $count how many paragraphs to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @return array<string>   generated lorem ipsum paragraphs
+     * @param int $count
+     *   How many paragraphs to generate.
+     * @return array<string>
+     *   Generated lorem ipsum paragraphs.
      */
-    public function paragraphsArray($count = 1, $tags = false)
-    {
-        // The $array parameter set to true means an array is returned.
-        // Return type is mixed, we should probably cast to array.
-        return $this->paragraphs($count, $tags, true);
-    }
-
-    /**
-     * Paragraphs
-     *
-     * Generates paragraphs of lorem ipsum.
-     *
-     * @access public
-     * @param  integer $count how many paragraphs to generate
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @param  boolean $array whether an array or a string should be returned
-     * @return mixed   string or array of generated lorem ipsum paragraphs
-     */
-    public function paragraphs($count = 1, $tags = false, $array = false)
+    public function paragraphsArray($count = 1)
     {
         $paragraphs = [];
 
         for ($i = 0; $i < $count; $i++) {
-            $paragraphs[] = strval($this->sentences($this->gauss(5.8, 1.93)));
+            $paragraphs[] = $this->sentences($this->gauss(5.8, 1.93));
         }
 
-        if ($array) {
-            return $this->output($paragraphs, $tags, $array, "\n\n");
-        }
-        return strval($this->output($paragraphs, $tags, false, "\n\n"));
+        return $paragraphs;
     }
 
     /**
-     * Gaussian Distribution
+     * Generates paragraphs of lorem ipsum.
+     *
+     * @param int $count
+     *   How many paragraphs to generate.
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string
+     *   Generated lorem ipsum paragraphs.
+     */
+    public function paragraphs($count = 1, null|string|array $tags = null): string
+    {
+        return $this->output($this->paragraphsArray($count), $tags, "\n\n");
+    }
+
+    /**
+     * Gaussian Distribution.
      *
      * This is some smart kid stuff. I went ahead and combined the N(0,1) logic
      * with the N(m,s) logic into this single function. Used to calculate the
      * number of words in a sentence, the number of sentences in a paragraph
      * and the distribution of commas in a sentence.
      *
-     * @access private
-     * @param  double  $mean average value
-     * @param  double  $std_dev stadnard deviation
-     * @return int  calculated distribution
+     * @param float $mean
+     *   Average value.
+     * @param float $std_dev
+     *   Standard deviation.
+     * @return int
+     *   Calculated distribution.
      */
-    private function gauss($mean, $std_dev)
+    private function gauss(int|float $mean, int|float $std_dev): int
     {
-        $x = mt_rand() / mt_getrandmax();
-        $y = mt_rand() / mt_getrandmax();
-        $z = sqrt(-2 * log($x)) * cos(2 * pi() * $y);
+        $x = \mt_rand() / \mt_getrandmax();
+        $y = \mt_rand() / \mt_getrandmax();
+        $z = \sqrt(-2 * \log($x)) * \cos(2 * \pi() * $y);
 
-        return intval($z * $std_dev + $mean);
+        return \intval($z * $std_dev + $mean);
     }
 
     /**
-     * Shuffle
-     *
      * Shuffles the words, forcing "Lorem ipsum..." at the beginning if it is
      * the first time we are generating the text.
-     *
-     * @access private
-     * @return void
      */
-    private function shuffle()
+    private function shuffle(): void
     {
         if ($this->first) {
-            $this->first = array_slice($this->words, 0, 8);
-            $this->words = array_slice($this->words, 8);
+            $this->first = \array_slice($this->words, 0, 8);
+            $this->words = \array_slice($this->words, 8);
 
-            shuffle($this->words);
+            \shuffle($this->words);
 
             $this->words = $this->first + $this->words;
 
-            $this->first = false;
+            $this->first = null;
         } else {
-            shuffle($this->words);
+            \shuffle($this->words);
         }
     }
 
     /**
-     * Punctuate
-     *
      * Applies punctuation to a sentence. This includes a period at the end,
      * the injection of commas as well as capitalizing the first letter of the
      * first word of the sentence.
      *
-     * @access private
-     * @param  array<string>   $sentences the sentences we would like to punctuate
-     * @return void
+     * @param array<string> $sentences
+     *   Word array.
+     * @return string
+     *   Punctuated sentence.
      */
-    private function punctuate(&$sentences)
+    private function punctuate(array $words): string
     {
-        foreach ($sentences as $key => $sentence) {
-            $words = \strlen($sentence);
-            // Only worry about commas on sentences longer than 4 words
-            if ($words > 4) {
-                $mean    = log($words, 6);
-                $std_dev = $mean / 6;
-                $commas  = $this->gauss($mean, $std_dev);
+        $word_count = \count($words);
 
-                for ($i = 1; $i <= $commas; $i++) {
-                    $word = round($i * $words / ($commas + 1));
+        // Only worry about commas on sentences longer than 4 words.
+        if ($word_count > 4) {
+            $mean = \log($word_count, 6);
+            $std_dev = $mean / 6;
+            $commas = $this->gauss($mean, $std_dev);
 
-                    if ($word < ($words - 1) && $word > 0) {
-                        $sentence[$word] .= ',';
-                    }
+            for ($i = 1; $i <= $commas; $i++) {
+                $word = \round($i * $word_count / ($commas + 1));
+
+                if ($word < ($word_count - 1) && $word > 0) {
+                    $words[$word] .= ',';
                 }
             }
-
-            $sentences[$key] = ucfirst(implode(' ', $sentence) . '.');
         }
+
+        return \ucfirst(\implode(' ', $words) . '.');
     }
 
     /**
-     * Output
-     *
      * Does the rest of the processing of the strings. This includes wrapping
      * the strings in HTML tags, handling transformations with the ability of
      * back referencing and determining if the passed array should be converted
      * into a string or not.
      *
-     * @access private
-     * @param  array<string>   $strings an array of generated strings
-     * @param  mixed   $tags string or array of HTML tags to wrap output with
-     * @param  boolean $array whether an array or a string should be returned
-     * @param  string  $delimiter the string to use when calling implode()
-     * @return mixed   string or array of generated lorem ipsum text
+     * @param array<string> $strings
+     *   An array of generated strings.
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @return string|array
+     *   Generated lorem ipsum text.
      */
-    private function output($strings, $tags, $array, $delimiter = ' ')
+    private function outputArray(array $strings, null|string|array $tags): array
     {
         if ($tags) {
-            if (!is_array($tags)) {
+            if (!\is_array($tags)) {
                 $tags = [$tags];
             } else {
                 // Flips the array so we can work from the inside out
-                $tags = array_reverse($tags);
+                $tags = \array_reverse($tags);
             }
 
             foreach ($strings as $key => $string) {
                 foreach ($tags as $tag) {
-                    if (is_string($tag)) {
+                    if (\is_string($tag)) {
                         // Detects / applies back reference
                         if ($tag[0] == '<') {
-                            $string = str_replace('$1', $string, $tag);
+                            $string = \str_replace('$1', $string, $tag);
                         } else {
-                            $string = sprintf('<%1$s>%2$s</%1$s>', $tag, $string);
+                            $string = \sprintf('<%1$s>%2$s</%1$s>', $tag, $string);
                         }
                     }
 
@@ -375,10 +335,26 @@ class LoremIpsum
             }
         }
 
-        if (!$array) {
-            $strings = implode($delimiter, $strings);
-        }
-
         return $strings;
+    }
+
+    /**
+     * Does the rest of the processing of the strings. This includes wrapping
+     * the strings in HTML tags, handling transformations with the ability of
+     * back referencing and determining if the passed array should be converted
+     * into a string or not.
+     *
+     * @param array<string> $strings
+     *   An array of generated strings.
+     * @param null|string|array $tags
+     *   String or array of HTML tags to wrap output with.
+     * @param string $delimiter
+     *   The string to use when calling implode().
+     * @return string|array
+     *   Generated lorem ipsum text.
+     */
+    private function output(array $strings, null|string|array $tags, $delimiter = ' ')
+    {
+        return \implode($delimiter, $this->outputArray($strings, $tags, $delimiter));
     }
 }
