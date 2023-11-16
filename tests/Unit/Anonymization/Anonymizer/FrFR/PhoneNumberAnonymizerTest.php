@@ -12,7 +12,7 @@ class PhoneNumberAnonymizerTest extends UnitTestCase
 {
     public function testAnonymize(): void
     {
-        $updateQuery = $this->getQueryBuilder()->update('some_table');
+        $update = $this->getQueryBuilder()->update('some_table');
 
         $instance = new PhoneNumberAnonymizer(
             'some_table',
@@ -21,27 +21,19 @@ class PhoneNumberAnonymizerTest extends UnitTestCase
             new Options(),
         );
 
-        $instance->anonymize($updateQuery);
+        $instance->anonymize($update);
 
         self::assertSameSql(
             <<<SQL
-            update some_table
+            update "some_table"
             set
                 "phone_column" = case
-                    when "phone_column" is not null then '063998' || lpad(
-                        cast(
-                            cast(
-                                random() * (9999 - 0 + 1)+ 0
-                                as int
-                            )
-                            as text
-                        ),
-                        4,
-                        '0'
-                    )
+                    when "some_table"."phone_column" is not null
+                        then #1 || lpad(cast(floor(random() * (cast(#2 as int) - #3 + 1) + #4) as text), #5, #6)
+                    else null
                 end
             SQL,
-            $updateQuery,
+            $update,
         );
     }
 }

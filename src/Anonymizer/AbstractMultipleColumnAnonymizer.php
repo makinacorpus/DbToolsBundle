@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use MakinaCorpus\QueryBuilder\Query\Select;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 /**
  * Class of anonymizers that work on a Table target, and allow updating
@@ -45,22 +46,13 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     }
 
     /**
-     * Get sample table name, if null one will be automatically created.
-     */
-    protected function getSampleTableName(): ?string
-    {
-        return $this->sampleTableName ?? ($this->sampleTableName = $this->generateTempTableName());
-    }
-
-    /**
      * @inheritdoc
      */
     public function initialize(): void
     {
-        $this->createSampleTempTable(
+        $this->sampleTableName = $this->createSampleTempTable(
             $this->getColumnNames(),
             $this->getSamples(),
-            $this->getSampleTableName(),
             $this->getColumnTypes(),
         );
     }
@@ -68,10 +60,9 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query): void
+    public function anonymize(Update $update): void
     {
         $columns = $this->getColumnNames();
-        $sampleTableName = $this->getSampleTableName();
 
         if (0 >= $this->options->count()) {
             throw new \InvalidArgumentException(\sprintf(
@@ -80,36 +71,39 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
             ));
         }
 
-        $plateform = $this->connection->getDatabasePlatform();
         $columnOptions = \array_filter($columns, fn ($column) => $this->options->has($column));
 
-        $random = $this->connection
-            ->createQueryBuilder()
-            ->select(...\array_map(fn ($column) => $sampleTableName . '.' . $column, $columnOptions))
-            ->from($sampleTableName)
-            ->setMaxResults(1)
-            ->where(
-                $this->connection->createExpressionBuilder()->notLike(
-                    $plateform->quoteIdentifier($this->tableName) . '.' . $this->options->get(\reset($columnOptions)),
-                    $sampleTableName . '.' . \reset($columnOptions)
-                )
-            )
-            ->orderBy($this->getSqlRandomExpression())
+        $expr = $update->expression();
+
+        $targetCount = $this->countTable($this->tableName);
+        $sampleCount = $this->countTable($this->sampleTableName);
+
+        $joinAlias = $this->sampleTableName . '_' . $this->columnName;
+        $join = (new Select($this->sampleTableName))
+            ->columns($columnOptions)
+            ->columnRaw('ROW_NUMBER() OVER (ORDER BY ?)', 'rownum', [$expr->random()])
+            ->range($targetCount) // Avoid duplicate rows.
         ;
 
-        $query->set(
-            \sprintf(
-                '(%s)',
-                \implode(
-                    ', ',
-                    \array_map(
-                        fn ($column) => $plateform->quoteIdentifier($this->options->get($column)),
-                        $columnOptions
-                    )
-                )
+        $update->join(
+            $join,
+            $expr->where()->raw(
+                'MOD(?, ?) + 1 = ?',
+                [
+                    $expr->column(self::JOIN_ID, self::JOIN_TABLE),
+                    $sampleCount,
+                    $expr->column('rownum', $joinAlias),
+                ]
             ),
-            \sprintf('(%s)', $random),
+            $joinAlias
         );
+
+        foreach ($columnOptions as $column) {
+            $update->set(
+                $this->options->get($column),
+                $expr->column($column, $joinAlias)
+            );
+        }
     }
 
     /**
@@ -117,7 +111,8 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
      */
     public function clean(): void
     {
-        $this->connection->createSchemaManager()->dropTable($this->getSampleTableName());
+        if ($this->sampleTableName) {
+            $this->connection->createSchemaManager()->dropTable($this->sampleTableName);
+        }
     }
-
 }

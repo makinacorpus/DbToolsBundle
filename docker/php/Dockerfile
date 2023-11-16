@@ -21,4 +21,8 @@ RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc| gpg --dearmor
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+COPY ./ssh/id_ed25519 /root/.ssh/id_ed25519
+COPY ./ssh/id_ed25519.pub /root/.ssh/id_ed25519.pub
+COPY ./ssh/config /root/.ssh/config
+
 WORKDIR /var/www

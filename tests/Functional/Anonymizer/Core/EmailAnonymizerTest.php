@@ -25,15 +25,15 @@ class EmailAnonymizerTest extends FunctionalTestCase
             [
                 [
                     'id' => '1',
-                    'data' => "'toto1@example.com'",
+                    'data' => 'toto1@example.com',
                 ],
                 [
                     'id' => '2',
-                    'data' => "'toto2@example.com'",
+                    'data' => 'toto2@example.com',
                 ],
                 [
                     'id' => '3',
-                    'data' => "'toto3@example.com'",
+                    'data' => 'toto3@example.com',
                 ],
                 [
                     'id' => '4',
@@ -101,8 +101,7 @@ class EmailAnonymizerTest extends FunctionalTestCase
             $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        foreach ($anonymizator->anonymize() as $message) {}
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);

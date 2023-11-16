@@ -15,10 +15,19 @@ use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\DBAL\Schema\Exception\TableDoesNotExist;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 
 abstract class FunctionalTestCase extends UnitTestCase
 {
     private array $createdTables = [];
+
+    /**
+     * Get real query builder.
+     */
+    protected function getDoctrineQueryBuilder(): DoctrineQueryBuilder
+    {
+        return new DoctrineQueryBuilder($this->getConnection());
+    }
 
     /**
      * Create table with columns.
@@ -58,13 +67,11 @@ abstract class FunctionalTestCase extends UnitTestCase
 
         $this->createdTables[] = $tableName;
 
+        // We have to insert one by one because the test case might
+        // use a different set of columns for each row.
+        $queryBuilder = $this->getDoctrineQueryBuilder();
         foreach ($rows as $row) {
-            $connection
-                ->createQueryBuilder()
-                ->insert($tableName)
-                ->values($row)
-                ->executeStatement()
-            ;
+            $queryBuilder->insert($tableName)->values($row)->executeStatement();
         }
     }
 

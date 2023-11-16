@@ -25,15 +25,15 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
             [
                 [
                     'id' => '1',
-                    'data' => "'0234567834'",
+                    'data' => '0234567834',
                 ],
                 [
                     'id' => '2',
-                    'data' => "'0334567234'",
+                    'data' => '0334567234',
                 ],
                 [
                     'id' => '3',
-                    'data' => "'0534567234'",
+                    'data' => '0534567234',
                 ],
                 [
                     'id' => '4',

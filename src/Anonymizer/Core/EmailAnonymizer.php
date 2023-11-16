@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
     name: 'email',
@@ -20,21 +20,18 @@ class EmailAnonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $updateQuery): void
+    public function anonymize(Update $update): void
     {
-        $domain = $this->options->get('domain', 'example.com');
+        $expr = $update->expression();
 
-        $plateform = $this->connection->getDatabasePlatform();
-
-        $quotedColumn = $plateform->quoteIdentifier($this->columnName);
-        $updateQuery->set(
-            $quotedColumn,
-            $plateform->getConcatExpression(
-                "'anon-'",
-                'MD5(' . $quotedColumn . ')',
-                "'@'",
-                "'" . $domain . "'",
-            )
+        $update->set(
+            $this->columnName,
+            $expr->concat(
+                'anon-',
+                $expr->functionCall('md5', $expr->column($this->columnName, $this->tableName)),
+                '@',
+                $this->options->get('domain', 'example.com'),
+            ),
         );
     }
 }

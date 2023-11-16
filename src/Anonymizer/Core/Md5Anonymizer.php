@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymizer\Core;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
     name: 'md5',
@@ -18,11 +18,16 @@ class Md5Anonymizer extends AbstractAnonymizer
     /**
      * @inheritdoc
      */
-    public function anonymize(QueryBuilder $query): void
+    public function anonymize(Update $update): void
     {
-        $plateform = $this->connection->getDatabasePlatform();
-        $quotedColumn = $plateform->quoteIdentifier($this->columnName);
+        $expr = $update->expression();
 
-        $query->set($quotedColumn, 'MD5(' . $quotedColumn . ')');
+        $update->set(
+            $this->columnName,
+            $expr->functionCall(
+                'md5',
+                $expr->column($this->columnName, $this->tableName)
+            ),
+        );
     }
 }
