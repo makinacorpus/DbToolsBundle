@@ -5,7 +5,7 @@ A set of Symfony Console Commands to interact with your database
     <img style="height:160px;" src="https://github.com/makinacorpus/db-tools-bundle/raw/2b407b13314eb6bd87ab2c64376163803f9b90d0/docs/content/images/logo.png">
 </p>
 
-** /!\ Work in progress /!\ **
+**/!\ Work in progress /!\\**
 
 Currently supported database vendors: PostgreSQL, MariaDB/MySQL
 
