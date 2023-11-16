@@ -1,8 +1,8 @@
 # DbToolsBundle
 A set of Symfony Console Commands to interact with your database
 
-<p align="center">
-    <img src="https://github.com/makinacorpus/db-tools-bundle/blob/2b407b13314eb6bd87ab2c64376163803f9b90d0/docs/content/images/logo.png">
+<p align="center" style="margin: auto">
+    <img style="height:160px;" src="https://github.com/makinacorpus/db-tools-bundle/raw/2b407b13314eb6bd87ab2c64376163803f9b90d0/docs/content/images/logo.png">
 </p>
 
 ** /!\ Work in progress /!\ **
