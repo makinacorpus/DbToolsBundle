@@ -1,13 +1,11 @@
 # DbToolsBundle
-a set of Symfony Console Commands to interact with your database
+A set of Symfony Console Commands to interact with your database
 
-![Logo](./docs/content/images/logo.svg)
+<p align="center">
+    <img src="https://github.com/makinacorpus/db-tools-bundle/blob/2b407b13314eb6bd87ab2c64376163803f9b90d0/docs/content/images/logo.png">
+</p>
 
-- `db-tools:backup`: Backup your database and deals with old backups cleanup
-- `db-tools:restore`: Restore your database from previous backups
-- `db-tools:anonymize`: Launch setted up anonymization on your database
-- `db-tools:gdprify` (comming soon): Restore, anonymize & re-export a given dump
-- `db-tools:stats` (comming soon): Display usefull statistics about your database
+** /!\ Work in progress /!\ **
 
 Currently supported database vendors: PostgreSQL, MariaDB/MySQL
 
