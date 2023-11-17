@@ -4,8 +4,6 @@ FROM php:8.1-fpm-bookworm
 RUN apt-get update
 RUN apt-get install -yqq --no-install-recommends default-mysql-client acl iproute2 zip zlib1g-dev libzip-dev \
     libxml2-dev libpng-dev libghc-curl-dev libldb-dev libldap2-dev gnupg2 libpq-dev
-# For dev dependencies
-RUN apt-get install -yqq --no-install-recommends git ssh
 
 # PHP required extensions
 RUN pecl install apcu
@@ -20,9 +18,5 @@ RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc| gpg --dearmor
     apt-get update && apt-get install -y postgresql-16
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-COPY ./ssh/id_ed25519 /root/.ssh/id_ed25519
-COPY ./ssh/id_ed25519.pub /root/.ssh/id_ed25519.pub
-COPY ./ssh/config /root/.ssh/config
 
 WORKDIR /var/www
