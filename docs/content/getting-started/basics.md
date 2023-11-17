@@ -94,7 +94,7 @@ With this configuration, after you launch `console db-tools:anonymize`, all your
 will be gone and replace with hashed ones.
 
 ::: tip
-Learn more about how to configure Anonymization in the [dedicated section]('../anonymization/essentials').
+Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
 Now you have anonymized data you have previously imported. But the backup

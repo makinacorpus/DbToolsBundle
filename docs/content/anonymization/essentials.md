@@ -19,7 +19,7 @@ In such case, the YAML configuration is the only available option.
 
 If Doctrine ORM is enabled, the *DbToolsBundle* will automatically look for attributes on your entities.
 If you want to use YAML configuration, look at the [Bundle Configuration
-section](/introduction/configuration#anonymization) to see how to configure it.
+section](../configuration#anonymization) to see how to configure it.
 
 The anonymization is based on *Anonymizers*. An *Anonymizer* represents a way to anonymize a column (or
 multiple columns in certain cases). For example, you will use the EmailAnonymizer to anonymize a column that

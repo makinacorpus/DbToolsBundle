@@ -9,11 +9,11 @@ export default defineConfig({
   base: "/",
   metaChunk: false,
   head: [
-    ['link', { rel: 'icon', href: '/images/logo.svg' }]
+    ['link', { rel: 'icon', href: '/logo.svg' }]
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: '/images//logo.svg',
+    logo: '/logo.svg',
     nav: [
       { text: 'Home', link: '/' },
     ],
@@ -57,6 +57,7 @@ export default defineConfig({
             ]
           },
           { text: 'Bundle configuration', link: '/configuration' },
+          { text: 'Database vendors support', link: '/database-vendors' },
         ]
       },
       {

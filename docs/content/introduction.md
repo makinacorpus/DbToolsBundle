@@ -1,7 +1,7 @@
 # DbToolsBundle
 **A set of Symfony Console Commands to interact with your database**
 
-![Logo](../images/logo.svg)
+![Logo](./public/logo.svg)
 
 The idea of this bundle is to make life easier for Symfony developers when managing
 database backup and restoration workflows on one hand, and production data import

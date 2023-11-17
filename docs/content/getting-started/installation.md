@@ -65,6 +65,6 @@ php bin/console db-tools:check
 ```
 
 :::tip
-If this command returns errors, get to the [binaries configuration section](/introduction/configuration#binaries)
+If this command returns errors, get to the [binaries configuration section](../configuration#binaries)
 to understand how to solve them.
 :::
