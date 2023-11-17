@@ -1,3 +1,5 @@
+[![Coding standards](https://github.com/makinacorpus/db-tools-bundle/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/makinacorpus/db-tools-bundle/actions/workflows/coding-standards.yml) [![Static Analysis](https://github.com/makinacorpus/db-tools-bundle/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/makinacorpus/db-tools-bundle/actions/workflows/static-analysis.yml)  [![Documentation Status](https://readthedocs.org/projects/dbtoolsbundle/badge/?version=latest)](https://dbtoolsbundle.readthedocs.io/en/latest/?badge=latest)
+
 # DbToolsBundle
 A set of Symfony Console Commands to interact with your database
 
