@@ -24,7 +24,7 @@ class LoremIpsum
     /**
      * Whether or not we should be starting the string with "Lorem ipsum...".
      */
-    private ?string $first = null;
+    private ?array $first = null;
 
     /**
      * A lorem ipsum vocabulary of sorts. Not a complete list as I'm unsure if
@@ -73,7 +73,7 @@ class LoremIpsum
      */
     public function word(null|string|array $tags = null): string
     {
-        return \reset($this->words(1, $tags));
+        return $this->words(1, $tags);
     }
 
     /**
@@ -123,10 +123,11 @@ class LoremIpsum
      */
     public function words($count = 1, null|string|array $tags = null): string
     {
-        return $this->output($this->wordsArray($count), $tags, false);
+        return $this->output($this->wordsArray($count), $tags);
     }
 
     /**
+
      * Generates a full sentence of lorem ipsum.
      *
      * @param null|string|array $tags
@@ -269,7 +270,7 @@ class LoremIpsum
      * the injection of commas as well as capitalizing the first letter of the
      * first word of the sentence.
      *
-     * @param array<string> $sentences
+     * @param array<string> $words
      *   Word array.
      * @return string
      *   Punctuated sentence.
@@ -306,7 +307,7 @@ class LoremIpsum
      *   An array of generated strings.
      * @param null|string|array $tags
      *   String or array of HTML tags to wrap output with.
-     * @return string|array
+     * @return array
      *   Generated lorem ipsum text.
      */
     private function outputArray(array $strings, null|string|array $tags): array
@@ -350,11 +351,11 @@ class LoremIpsum
      *   String or array of HTML tags to wrap output with.
      * @param string $delimiter
      *   The string to use when calling implode().
-     * @return string|array
+     * @return string
      *   Generated lorem ipsum text.
      */
-    private function output(array $strings, null|string|array $tags, $delimiter = ' ')
+    private function output(array $strings, null|string|array $tags, $delimiter = ' '): string
     {
-        return \implode($delimiter, $this->outputArray($strings, $tags, $delimiter));
+        return \implode($delimiter, $this->outputArray($strings, $tags));
     }
 }
