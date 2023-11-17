@@ -5,7 +5,6 @@ export default defineConfig({
   lang: 'en',
   title: "DbToolsBundle",
   srcDir: "content",
-  cleanUrls: true,
   base: "/",
   metaChunk: false,
   head: [

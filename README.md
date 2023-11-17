@@ -19,7 +19,7 @@ composer require makinacorpus/db-tools-bundle
 
 ## Documentation
 
-Read [DbToolsBundle documentation](https://db-tools-bundle.readthedocs.io/) on Read the Docs.
+Read [DbToolsBundle documentation](https://dbtoolsbundle.readthedocs.io/) on Read the Docs.
 
 ## Licence
 
