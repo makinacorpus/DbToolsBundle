@@ -32,10 +32,9 @@ jobs:
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
-          tools: "cs2pr"
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
 
       - name: "Run a Code style analysis with friendsofphp/php-cs-fixer"
-        run: "vendor/bin/php-cs-fixer fix --verbose --allow-risky=yes | cs2pr"
+        run: "vendor/bin/php-cs-fixer fix --verbose --allow-risky=yes"
