@@ -81,7 +81,8 @@ class AddressAnonymizerTest extends FunctionalTestCase
             $this->getConnection()->executeQuery('select my_street_address from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {}
+        foreach ($anonymizator->anonymize() as $message) {
+        }
 
         $datas = $this->getConnection()->executeQuery('select * from table_test order by id asc')->fetchAllAssociative();
         $this->assertNotNull($datas[0]);

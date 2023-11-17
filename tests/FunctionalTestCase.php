@@ -86,7 +86,8 @@ abstract class FunctionalTestCase extends UnitTestCase
                 ->createSchemaManager()
                 ->dropTable($tableName)
             ;
-        } catch (TableDoesNotExist|TableNotFoundException) {}
+        } catch (TableDoesNotExist|TableNotFoundException) {
+        }
     }
 
     /** @after */

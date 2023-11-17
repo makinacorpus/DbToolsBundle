@@ -464,7 +464,7 @@ class Anonymizator
     /**
      * Create an index.
      */
-    protected function createIndex(string $table, string... $column): void
+    protected function createIndex(string $table, string...$column): void
     {
         $indexName = $table . '_' . \implode('_', $column) . '_idx';
         $columnList = \implode(', ', \array_map(fn ($value) => '?', $column));

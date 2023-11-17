@@ -101,7 +101,8 @@ class EmailAnonymizerTest extends FunctionalTestCase
             $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {}
+        foreach ($anonymizator->anonymize() as $message) {
+        }
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);

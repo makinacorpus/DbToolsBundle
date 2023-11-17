@@ -39,7 +39,7 @@ class AnonymizerRegistry
         $includedFiles = [];
 
         foreach ($this->paths as $path) {
-            if (! \is_dir($path)) {
+            if (!\is_dir($path)) {
                 throw new \LogicException(\sprintf("Given path '%s' is not a directory", $path));
             }
 
