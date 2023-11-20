@@ -5,16 +5,16 @@ The *DbToolsBundle* provides a convinient way to anonymize data from your databa
 After some configurations, launching `console db-tools:anonymize` will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
-There is two ways to tell the DbToolsBundle how it should anonymize your data:
+There is two ways to tell the *DbToolsBundle* how it should anonymize your data:
 
-1. you can use **attributes** on class and properties on your Doctrine Entities
-2. you can configure it with a **YAML** file
+1. you can use **PHP attributes** on Doctrine Entities' classes and properties
+2. you can declare it with a **YAML** file
 
 ::: tip
-The *DbToolsBundle* does not only work with Doctrine Entities to anonymize data. **You can use it with
-any database**, all you need is a DBAL connection, all you will need is
+The *DbToolsBundle* does not only work with Doctrine Entities to anonymize data. You can use it with
+*any* database, all you need is a DBAL connection.
 
-In such case, the YAML configuration is the only available option.
+In such case, the [YAML configuration](../configuration#anonymization) is the only available option.
 :::
 
 If Doctrine ORM is enabled, the *DbToolsBundle* will automatically look for attributes on your entities.
@@ -27,21 +27,22 @@ represents an email address.
 
 Each *Anonymizer* could take options to specify how it should work.
 
-All you need to do to configure Anonymization is map each column you want to anonymize with a specific anonymizer.
+In others word, all you need to do to configure Anonymization is map each column you want to anonymize with a specific anonymizer.
 
 ## Example
 
 The best way to understand how it works is to see a simple example: let's take an entity `User`.
 
-This entity has several fields we want to anonymize, and others that do not represent sensitive data:
+This entity has several fields we want to anonymize, and others that we don't:
 
 - `id`: Serial
-- `emailAddress`: An email address that we want to anonymize
-- `age`: An integer that we want to randomize
-- `level`: A string ('none', 'bad', 'good' or 'expert') that we want to randomize
-- `secret`: A string that we want to hash
+- `emailAddress`: An email address **that we want to anonymize**
+- `age`: An integer **that we want to randomize**
+- `level`: A string ('none', 'bad', 'good' or 'expert') **that we want to randomize**
+- `secret`: A string **that we want to hash**
 - `lastLogin`: A DateTime we want to keep intact
 
+Here is how you can declare this configruation with PHP attributes and with YAML:
 
 ::: code-group
 ```php [Attribute]
@@ -99,7 +100,71 @@ user:
 
 ## Multicolumn Anonymizers
 
-@todo
+Some *Anonymizers* are mutlicolumn. For example the *AddressAnonymizer* can, by himself, anonymize 6 columns.
+
+*Multicolumn anonymizers* are usefull when you want to keep coherent data after anonymization.
+
+When using PHP attributes, those anonymizers should be put on class:
+
+::: code-group
+```php [Attribute]
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: '`user`')]
+#[Anonymize(type: 'address', options: [ // [!code ++]
+    'street_address' => 'street', // [!code ++]
+    'secondary_address': 'street_second_line' // [!code ++]
+    'postal_code' => 'zip_code', // [!code ++]
+    'locality' => 'city', // [!code ++]
+    'region' => 'region' // [!code ++]
+    'country' => 'country', // [!code ++]
+])] // [!code ++]
+class User
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    private ?string $street = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $streetSecondLine = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $zipCode = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $country = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+user:
+    address:
+        target: table
+        anonymizer: address
+        options:
+            street_address: 'street'
+            secondary_address: 'street_address_2'
+            postal_code: 'zip_code'
+            locality: 'city'
+            region: 'region'
+            country: 'country'
+  #...
+```
+:::
 
 ## Going further
 
@@ -109,7 +174,7 @@ complete description of each one of them in the next section.
 You can also add *Anonymizers* from community packs. For example, to add the `PackFRFr` run:
 
 ```bash
-composer dbtoolsbundle/pack-fr-fr
+composer require db-tools-bundle/pack-fr-fr
 ```
 
 If you can't find what you need from core anonymizers and in available packs, the *DbToolsBundle* allows

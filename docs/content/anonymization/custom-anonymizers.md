@@ -1,15 +1,15 @@
 # Custom Anonymizers
 
+## Basics
+
 The *DbToolsBundle* allows you to create your own *Anonymizers*.
 
-To create one, you only have to add a class in the `src/Anonymizer` directory
-that extends `AbstractAnonymizer` and add the `AsAnonymizer` attribute.
+To create one, you will need to
+
+1. add a class in the `src/Anonymizer` directory extends `AbstractAnonymizer`
+2. add the `AsAnonymizer` attribute on it
 
 ```php
-// src/Anonymizer/MyAnonymizer.php
-
-declare(strict_types=1);
-
 namespace App\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
@@ -40,3 +40,95 @@ To inspire you, browse existing *Anonymizers* in:
 You can tell the *DbToolsBundle* your *Custom Anonymizers* live in a different directory
 with the [*Anonymizer paths* configuration](../configuration#anonymizer-paths).
 :::
+
+## Enum Anonymizers
+
+A classic need is to anonymize a column filling it with a random value from a large sample.
+
+For example, it's what is done by the *FirstNameAnonymizer* and the *LastNameAnonymizer* which use
+a sample of 1000 items.
+
+If you need to create such a anonymizer, extend the *AbstractEnumAnonymizer*.
+
+Here is a complete example:
+
+```php
+namespace App\Anonymizer;
+
+use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractEnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+
+#[AsAnonymizer(
+    name: 'my_enum_anonymizer',
+    pack: 'my_app',
+    description: <<<TXT
+    Describe here if you want how your anonymizer works.
+    TXT
+)]
+class MyEnumAnonymizer extends AbstractEnumAnonymizer
+{
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSample(): array
+    {
+        // Generate here your sample.
+
+        return ['Foo', 'Bar', 'Baz'];
+    }
+}
+```
+
+## Mutlicolumn Anonymizers
+
+As for an enum anonymizer, if you need to create a mutlicolumn anonymizer based on a big sample, you can extend the
+*AbstractMultipleColumnAnonymizer*.
+
+Here is a complete example:
+
+```php
+namespace App\Anonymizer;
+
+use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+
+#[AsAnonymizer(
+    name: 'my_multicolumn_anonymizer',
+    pack: 'my_app',
+    description: <<<TXT
+    Describe here if you want how your anonymizer works.
+    TXT
+)]
+class MyMulticolumnAnonymizer extends AbstractMultipleColumnAnonymizer
+{
+    /**
+     * @inheritdoc
+     */
+    protected function getColumnNames(): array
+    {
+        // Declare here name fo each part of your multicolumn
+        // anonymizer
+        return [
+            'part_one',
+            'part_two',
+            'part_three',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getSample(): array
+    {
+        // Generate here your sample.
+
+        return [
+          ['Foo', 'Bar', 'Baz'],
+          ['Foo1', 'Bar1', 'Baz1'],
+          ['Foo2', 'Bar2', 'Baz2'],
+          ['Foo3', 'Bar3', 'Baz3'],
+        ];
+    }
+}
+```

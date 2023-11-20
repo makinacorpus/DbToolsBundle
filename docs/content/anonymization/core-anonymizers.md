@@ -1,6 +1,6 @@
 # Core Anonymizers
 
-This page list the common purpose *Anonymizers* provided by the *DbToolsBundle*.
+This page list all *Anonymizers* provided by *DbToolsBundle*.
 
 [[toc]]
 
@@ -44,7 +44,7 @@ user:
 ```
 :::
 
-Or like this, with the domain option
+Or, with the domain option:
 
 ::: code-group
 ```php [Attribute]
@@ -80,7 +80,7 @@ user:
 
 ## PasswordAnonymizer
 
-This *Anonymizer* give you way to set the same password for each one of your users. It is based on
+This *Anonymizer* give you a way to set the same password for each one of your users. It is based on
 the [Symfony PasswordHasher Component](https://symfony.com/doc/current/security/passwords.html).
 
 Options are :
@@ -281,9 +281,9 @@ user:
 :::
 
 :::warning
-If you use the same sample on multiple columns or if you use a large sample, it could be more efficient and convinient
-to create your own custom anonymizer, see the [Custom Anonymizers](/anonymization/custom-anonymizers) section to learn
-how to do that.
+If you use the same sample multiple times, if you use a large sample or if you use a generated one, it could be
+more efficient and convinient to create your own custom anonymizer, see the [Custom Anonymizers](/anonymization/custom-anonymizers)
+section to learn how to do that.
 :::
 
 ## LastnameAnonymizer
@@ -322,7 +322,7 @@ user:
 
 ## FirstnameAnonymizer
 
-Works like the StringAnonymizer, but with a provided sample of 1000 worldwide lastnames.
+Works like the StringAnonymizer, but with a provided sample of 1000 worldwide firstnames.
 
 ::: code-group
 ```php [Attribute]
@@ -356,10 +356,10 @@ user:
 
 ## AddressAnonymizer
 
-This *Anonymizer* is multi-column. It let you anonymize, at once, mutiple columns on one table
+This *Anonymizer* is multicolumn. It let you anonymize, at once, mutiple columns on one table
 that represent different parts of a postal address.
 
-Each part will be fill with a coherent random address from a sample 300  addresses around the world.
+Each part will be fill with a coherent random address from a sample of 300 addresses around the world.
 
 Available parts are :
 
@@ -434,5 +434,5 @@ user:
 
 :::tip
 Note that you don't have to provide a column for each part. You can use this *Anonymizer* to
-only anonymize some parts of an address. To do so, just remove options you don't want in the example below.
+only anonymize some parts of an address. To do so, remove options you don't want in the example below.
 :::

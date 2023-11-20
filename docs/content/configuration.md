@@ -9,7 +9,7 @@ A complete example of this file can be found in the bundle sources in: `vendor/m
 
 ## Backup configuration
 
-Some options are available to customize how the `db-tools:backup` works.
+Some options are available to customize how the `db-tools:backup` command works.
 
 ### Storage directory
 
@@ -19,7 +19,7 @@ Default value is `'%kernel.project_dir%/var/private/db_tools'`.
 
 ### Excluded tables
 
-The `excluded_tables` parameter let you configure tables to exclude from backups. Give a
+The `excluded_tables` parameter let you configure tables to exclude from backups. You will need to give a
 configuration per doctrine connection.
 
 Default value is `null`: no table are excluded.
@@ -72,8 +72,14 @@ to be able to work. These binaries depend on the database vendor you use, you wi
 * for PostgreSQL: `pg_dump` and `pg_restore`
 * for MariaDB/MySQL: `mysqldump` and `mysql`
 
+You can verify that binaries for your DBAL connection(s) are correctly found by the *DbToolsBundle* launching:
+
+```sh
+php console db-tools:check
+```
+
 If the `db-tools:check` command returns you some errors:
- * if your binaries are present on your system but the DbToolsBundle can't find them: you will need
+ * if your binaries are present on your system but the *DbToolsBundle* can't find them: you will need
    to specify path for these binaries:
 
   ```yml
@@ -119,11 +125,27 @@ RUN apt-get update && \
 
 ## Anonymizer paths
 
-@todo
+By default, the *DbToolsBundle* will look for *anonymizers* in 2 directories
+
+* `%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer`
+* `%kernel.project_dir%/src/Anonymizer`
+
+If you want to put custom anonymizers in another directory or if you want to load
+a pack of anonymizers from en external library, you can modify/add paths:
+
+
+```yml
+# config/packages/db_tools.yaml
+
+ anonymizer_paths:
+        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+        - '%kernel.project_dir%/src/Anonymizer'
+        - '%kernel.project_dir%/vendor/myAnonymizerProvider/anonymizers/src'
+```
 
 ## Anonymization
 
-Per default, the **DbToolsBundle** will only look for anonymization configurations from attributes on Doctrine Entities.
+Per default, the **DbToolsBundle** will only look for anonymization configurations from PHP attributes on Doctrine Entities.
 
 But the **DbToolsBundle** does not necessary need Doctrine ORM to anonymize your data, it can do it just with a DBAL connection.
 In this case (or if your prefere YAML over attributes): you can configure the DbToolsBundle to look for anonymization

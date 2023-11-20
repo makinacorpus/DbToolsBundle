@@ -17,7 +17,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
     ],
     editLink: {
-      pattern: 'https://gitlab.makina-corpus.net/chalets/OMAE/-/tree/main/docs/content/:path',
+      pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
       text: 'Edit this page on Github'
     },
     docFooter: {
@@ -39,7 +39,7 @@ export default defineConfig({
       copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/makinacorpus/db-tools-bundle' }
+      { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
     ],
     sidebar: [
       {

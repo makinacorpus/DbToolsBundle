@@ -1,6 +1,6 @@
 # Pack FR_Fr
 
-This page list *Anonymizers* provided by the *Fr_Fr pack*.
+This page list *Anonymizers* provided by the *pack FR_Fr*.
 
 [[toc]]
 

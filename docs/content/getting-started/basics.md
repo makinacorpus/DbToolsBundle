@@ -38,32 +38,32 @@ console db-tools:restore
 It will list you all the backups present on your disk, and you will just have
 to choose the one you want to restore!
 
-These commands are just kinds of shortcut for `pg_dump`/`pg_restore` or
-`mysqldump`/`mysql` but much more handy to use. They use the correct binaries
-with the correct options for you.
+These commands are only kinds of shortcut for `pg_dump`/`pg_restore` or
+`mysqldump`/`mysql` but much more handy to use. They find the correct binaries
+and execute them with the correct options for you.
 
 ## Use case 2 - Anonymizing while getting back production data on your local environment
 
 *You need to get back data from your production environment, but you don't want to
 have sensitive data on your local environment.*
 
-Let's say you have launched a `console db-tools:backup` on your production envrionment, and
+Let's say you have launched a `console db-tools:backup` on your production environment, and
 you got back the file on your machine.
 
 You could run `console db-tools:restore` to populate your database with those production
 data. Doing so, you will end up with sensitive data on your machine: and you don't want that.
-First of all, because in most cases, in UE, with GDPR: that's illegal. Secondly because you just
+First of all, because in most cases (for example in UE, with GDPR): that's illegal. Secondly because you just
 don't want to know personnal data from your (or your client's) customers.
 
 To avoid that, you need a proper **anonymization**. It could be tricky and time consumming to try to
 nicely anonymize data: the *DbToolsBundle* get rid of that for you.
 
-With just some attributes on your Doctrine Entities, you can configure a complete anonymization
+With just some PHP attributes on your Doctrine Entities, you can configure a complete anonymization
 for your sensitive data.
 
 ::: info
-Anonymization does not only work with Doctrine Entities. **You can use it with
-any database** and [configure it with YAML](../configuration#anonymization). All you need is a DBAL connection.
+Anonymization does not only work with Doctrine Entities. You can use it with
+*any* database and [configure it with YAML](../configuration#anonymization). All you need is a DBAL connection.
 :::
 
 
@@ -97,7 +97,7 @@ will be gone and replace with hashed ones.
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
-Now you have anonymized data you have previously imported. But the backup
+Now, you have anonymized data you have previously imported. But the backup
 file remains on your disk, and its sensitive data with it.
 
 To avoid this, the *DbToolsBundle* provides a command to apply a complete *gdpr-friendly* workflow:
@@ -123,9 +123,9 @@ your colleagues.
 
 ## Use case 3 - Having basic stats on your database without proper monitoring
 
-In a small project, you can always have a nice monitoring for your database. Often all you
-have is a simple database client. In such case, getting stats frequently ends with copy/pasting
-big SQL queries in a shell prompt.
+In a small project, you can't always have a nice monitoring for your database. Often all you
+have is a simple database client accesible throw a ssh connection. In such case, getting stats
+frequently ends with copy/pasting big SQL queries in a shell prompt.
 
 If this sounds familiar to you, try to launch:
 

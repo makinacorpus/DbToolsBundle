@@ -13,10 +13,10 @@ hero:
       link: ./introduction
     - theme: alt
       text: View on GitHub
-      link: https://github.com/vuejs/vitepress
-    - theme: alt
-      text: View on Packagist
-      link: https://github.com/vuejs/vitepress
+      link: https://github.com/makinacorpus/DbToolsBundle
+    # - theme: alt
+    #   text: View on Packagist
+    #   link: https://github.com/makinacorpus/DbToolsBundle
 
 features:
   - icon:
@@ -33,7 +33,7 @@ features:
       light: '/anonymize.svg'
       dark: '/anonymize-d.svg'
     title: Anonymize
-    details: Set up database anonymization with attributes on Doctrine Entities or with a YAML configuration file.
+    details: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
   - icon:
       light: '/gdpr.svg'
       dark: '/gdpr-d.svg'

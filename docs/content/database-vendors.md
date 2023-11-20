@@ -6,12 +6,12 @@ Officially, supported database vendors are:
 - MariaDB 11 or higher
 - MySQL 5.7 or higher
 
-But, some of the DbToolsBundle functionnalies could work with other vendors.
+But, some of the DbToolsBundle functionnalities could work with other vendors.
 
-Some of those vendors are only unit-tested but has never been really experienced in production. If you use one of
-them in production and think it should/could be marked as "Working", feel free to open an issue on Github.
+Some of those vendors are only unit-tested and have never been really experienced in production. If you use one of
+them in production and think it should/could be marked as "Working", feel free to [open an issue on Github](https://github.com/makinacorpus/DbToolsBundle/issues/new).
 
-If the vendor you use is unsupported and you want it to be added to this list, feel free to open an issue on Github.
+If the vendor you use is unsupported and you want it to be added to this list, feel free to [open an issue on Github](https://github.com/makinacorpus/DbToolsBundle/issues/new).
 If there is enough people interested, we could consider to add it.
 
 Here is a matrix of the current state of support:
