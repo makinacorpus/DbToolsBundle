@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
 
 class Md5AnonymizerTest extends FunctionalTestCase

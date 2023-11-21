@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorFactory;
+use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;

@@ -12,7 +12,7 @@ To create one, you will need to
 ```php
 namespace App\Anonymizer;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 #[AsAnonymizer(
@@ -55,7 +55,7 @@ Here is a complete example:
 ```php
 namespace App\Anonymizer;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractEnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 #[AsAnonymizer(
@@ -90,7 +90,7 @@ Here is a complete example:
 ```php
 namespace App\Anonymizer;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AbstractMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractMultipleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 #[AsAnonymizer(
