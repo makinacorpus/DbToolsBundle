@@ -81,7 +81,11 @@ export default defineConfig({
       {
         text: 'Statistics',
         link: '/stats',
-      }
+      },
+      {
+        text: 'Contribute',
+        link: '/contribute',
+      },
     ]
   }
 })

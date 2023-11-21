@@ -7,10 +7,16 @@ The idea of this bundle is to make life easier for Symfony developers when manag
 database backup and restoration workflows on one hand, and production data import
 and anonymization on the other.
 
-This bundle is provided by:
+* To learn more about what you can do with this bundle, jump to [the Basics section](./getting-started/basics.md)
+* To dive into anonymization, go to the [Anonymization > Essentials section](./anonymization/essentials.md)
+* To share some of your anonymizers with the community, read the [Contribute section](./contribute.md)
+
+---
+
+This bundle is proudly developped by:
 
 <a href="https://makina-corpus.com/" target="_blank" title="Makina Corpus">
-    <svg style="margin: auto" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480px" height="62px" viewBox="0 0 480 62" >
+    <svg style="margin: auto; max-width: 100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480px" height="62px" viewBox="0 0 480 62" >
       <g>
         <path fill="#D0DD2A" d="M57.4,47.5c-2-1.6-4-3.3-6-4.899c-0.8-0.7-0.9-0.802-0.3-1.7   c1.2-2.102,2-4.3,2.5-6.602C54.4,30.7,54.3,27.2,53.1,23.7c-0.4-1.2-1-2.2-1.6-3.3c-0.2-0.3-0.3-0.6,0-0.9c0.9-1,1.8-2,2.8-2.9   c1.4-1.5,2.9-2.9,4.2-4.4c1.5-1.7,1.1-3.7-0.8-4.8c-0.5-0.4-1.1-0.7-1.7-1c-1.5-0.8-3-0.7-4.4-0.1c-1.2,0.5-2,1.3-2.9,2.3l-5,4.8   c-0.3,0.2-0.4,0.2-0.7,0.2c-0.3,0-0.6-0.1-1-0.1c-12.5-2-19.5,5.3-19.5,5.3c-0.3,0.3-0.6,0.3-0.9,0c-0.9-0.7-1.8-1.3-2.6-2   c-1.4-1.1-2.4-1.3-3.9-0.4c-1,0.6-1.5,1.5-2.2,2.3c-0.4,0.4-0.7,0.9-1,1.3c-0.8,1.3-0.7,2.6,0.4,3.7c0.9,0.9,1.8,1.8,2.8,2.7   c0.4,0.3,0.4,0.6,0.2,1.1c-0.3,0.6-0.6,1.1-0.8,1.7c-2.2,5-2.8,10.099-1,15.4c0.3,0.8,0.1,1.198-0.4,1.8   c-1.4,1.5-2.9,2.898-4.1,4.5c-1.1,1.398-1.1,3.1-0.1,4.6c0.4,0.5,0.8,1,1.2,1.5c1.1,1.299,2.9,1.299,4.1,0.2   c1.3-1.2,2.5-2.5,3.8-3.7c1.5-1.399,1-1.399,2.9-0.399c3.1,1.6,6.4,2.1,9.9,1.8c3.7-0.3,7-1.602,10.2-3.4c0.9-0.5,1-0.5,1.8,0.2   l1.3,1.2c1.3,1.2,2.6,2.398,3.9,3.5c1.8,1.5,4.5,1.6,6.4,0.3c1.3-0.901,2.4-2,3.5-3.1C59.5,51.799,59.5,49.2,57.4,47.5 M39.6,41.4   c-4.7,4.8-12.9,6.6-17.3,1.898C17.8,38.4,19.4,32.101,22.7,27.6c3.3-4.5,11.6-9.3,17.9-4.4C46.6,27.8,44.3,36.5,39.6,41.4"/>
         <path fill="var(--vp-makina-logo-text)" d="M88.6,13.1c0.5,0.5,0.9,1.1,1.2,1.9l7.9,27.3l8-27.3c0.2-0.8,0.6-1.4,1.1-1.9   s1.2-0.7,2.1-0.7c0.9,0,1.6,0.2,2.2,0.7s1,1.2,1.2,2l5.6,33.9l-4.4,0.8L108.9,18l-9,30.3h-4.4L86.6,18l-4.5,30   c-0.1,0.6-0.3,1.1-0.7,1.5C81,49.8,80.5,50,79.8,50c-0.6,0-1.1-0.2-1.5-0.601c-0.4-0.399-0.6-0.899-0.6-1.5v-0.8l5.4-32   c0.2-0.9,0.6-1.5,1.2-2c0.6-0.5,1.4-0.7,2.2-0.7C87.3,12.4,88.1,12.7,88.6,13.1"/>
