@@ -3,13 +3,21 @@
 # DbToolsBundle
 A set of Symfony Console Commands to interact with your database
 
+---
 <p align="center" style="margin: auto">
-    <img style="height:160px;" src="https://github.com/makinacorpus/db-tools-bundle/raw/2b407b13314eb6bd87ab2c64376163803f9b90d0/docs/content/images/logo.png">
+<strong>⚠️⚠️⚠️ Work in progress ⚠️⚠️⚠️</strong>
 </p>
 
-**/!\ Work in progress /!\\**
+---
 
-Currently supported database vendors: PostgreSQL, MariaDB/MySQL
+<p align="center" style="margin: auto">
+    <img style="height:160px;" src="/docs/content/public/logo.svg">
+</p>
+
+* **Backup**: Backup your database and manage your dumps with a simple command.
+* **Restore**: Easily restore a previous dump of your database.
+* **Anonymize**: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
+* Set up a **GRDP-friendly** workflow: Make it easier to follow GDPR best practices when importing production dump to other environments.
 
 ## Installation
 
