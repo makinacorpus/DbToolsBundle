@@ -101,22 +101,43 @@ class AnonymizatorTest extends FunctionalTestCase
 
     public function testSerial(): void
     {
+        // Some connectors will return string values for int.
+        $actual = \array_map(
+            fn (array $item) => ['id' => (int) $item['id']] + $item,
+            $this
+                ->getConnection()
+                ->executeQuery(
+                    'select id, value from table_test order by id'
+                )
+                ->fetchAllAssociative(),
+        );
+
         self::assertSame(
             [
                 ['id' => 1, 'value' => 'foo'],
                 ['id' => 2, 'value' => 'bar'],
                 ['id' => 3, 'value' => 'baz'],
             ],
-            $this
-                ->getConnection()
-                ->executeQuery(
-                    'select id, value from table_test order by id'
-                )
-                ->fetchAllAssociative()
+            $actual,
         );
 
         $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
         $anonymizator->addAnonymizerIdColumn('table_test');
+
+        // Some connectors will return string values for int.
+        $actual = \array_map(
+            fn (array $item) => [
+                'id' => (int) $item['id'],
+                'value' => $item['value'],
+                AbstractAnonymizer::JOIN_ID => (int) $item[AbstractAnonymizer::JOIN_ID],
+            ],
+            $this
+                ->getConnection()
+                ->executeQuery(
+                    'select id, value, _db_tools_id from table_test order by id'
+                )
+                ->fetchAllAssociative(),
+        );
 
         self::assertSame(
             [
@@ -124,12 +145,7 @@ class AnonymizatorTest extends FunctionalTestCase
                 ['id' => 2, 'value' => 'bar', AbstractAnonymizer::JOIN_ID => 2],
                 ['id' => 3, 'value' => 'baz', AbstractAnonymizer::JOIN_ID => 3],
             ],
-            $this
-                ->getConnection()
-                ->executeQuery(
-                    'select id, value, _db_tools_id from table_test order by id'
-                )
-                ->fetchAllAssociative()
+            $actual
         );
     }
 }

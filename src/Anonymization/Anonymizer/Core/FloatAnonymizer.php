@@ -39,7 +39,7 @@ class FloatAnonymizer extends AbstractAnonymizer
                 $expr->raw(
                     'FLOOR(? * (? - ? + 1) + ?) / ?',
                     [
-                        $expr->random(),
+                        $this->getRandomExpression(),
                         $expr->cast($max * $precision, 'int'),
                         $min * $precision,
                         $min * $precision,

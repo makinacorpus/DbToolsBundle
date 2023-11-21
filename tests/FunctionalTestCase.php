@@ -6,14 +6,15 @@ namespace MakinaCorpus\DbToolsBundle\Tests;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver\Middleware\EnableForeignKeys;
 use Doctrine\DBAL\Driver\OCI8\Middleware\InitializeSession;
-use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\DatabaseObjectNotFoundException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
-use Doctrine\DBAL\Schema\Exception\TableDoesNotExist;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Schema\Exception\TableDoesNotExist;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 
@@ -86,7 +87,7 @@ abstract class FunctionalTestCase extends UnitTestCase
                 ->createSchemaManager()
                 ->dropTable($tableName)
             ;
-        } catch (TableDoesNotExist|TableNotFoundException) {
+        } catch (TableDoesNotExist|TableNotFoundException|DatabaseObjectNotFoundException) {
         }
     }
 
@@ -141,9 +142,16 @@ abstract class FunctionalTestCase extends UnitTestCase
             self::markTestSkipped("Missing 'DBAL_DRIVER' environment variable.");
         }
 
+        $driverOptions = [];
+        if (\str_contains($driver,  'sqlsrv')) {
+            // https://stackoverflow.com/questions/71688125/odbc-driver-18-for-sql-serverssl-provider-error1416f086
+            $driverOptions['TrustServerCertificate'] = "true";
+        }
+
         $params = \array_filter([
             'dbname' => \getenv('DBAL_DBNAME'),
             'driver' => $driver,
+            'driverOptions' => $driverOptions,
             'host' => \getenv('DBAL_HOST'),
             'password' => \getenv('DBAL_PASSWORD'),
             'port' => \getenv('DBAL_PORT'),

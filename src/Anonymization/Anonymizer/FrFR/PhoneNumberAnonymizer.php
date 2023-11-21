@@ -52,11 +52,7 @@ class PhoneNumberAnonymizer extends AbstractAnonymizer
                         'landline' => '026191',
                         default => throw new \InvalidArgumentException('"mode" option can be "mobile", "landline"'),
                     },
-                    $this->getSqlTextPadLeftExpression(
-                        $expr->randomInt(9999),
-                        4,
-                        '0'
-                    ),
+                    $expr->lpad($this->getRandomIntExpression(9999), 4, '0')
                 ),
             )
         );

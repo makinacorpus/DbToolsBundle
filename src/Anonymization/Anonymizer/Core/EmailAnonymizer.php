@@ -26,11 +26,13 @@ class EmailAnonymizer extends AbstractAnonymizer
 
         $update->set(
             $this->columnName,
-            $expr->concat(
-                'anon-',
-                $expr->functionCall('md5', $expr->column($this->columnName, $this->tableName)),
-                '@',
-                $this->options->get('domain', 'example.com'),
+            $this->getSetIfNotNullExpression(
+                $expr->concat(
+                    'anon-',
+                    $expr->md5($expr->column($this->columnName, $this->tableName)),
+                    '@',
+                    $this->options->get('domain', 'example.com'),
+                ),
             ),
         );
     }

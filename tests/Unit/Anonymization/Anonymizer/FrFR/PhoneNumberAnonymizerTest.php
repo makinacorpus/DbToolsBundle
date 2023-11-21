@@ -29,7 +29,7 @@ class PhoneNumberAnonymizerTest extends UnitTestCase
             set
                 "phone_column" = case
                     when "some_table"."phone_column" is not null
-                        then #1 || lpad(cast(floor(random() * (cast(#2 as int) - #3 + 1) + #4) as text), #5, #6)
+                        then #1 || lpad(cast(floor(random() * (cast(#2 as int) - #3 + 1) + #4) as varchar), #5, #6)
                     else null
                 end
             SQL,

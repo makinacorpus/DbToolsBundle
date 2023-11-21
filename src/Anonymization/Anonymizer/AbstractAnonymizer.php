@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
-use MakinaCorpus\QueryBuilder\Query\Update;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 abstract class AbstractAnonymizer
 {
@@ -176,26 +177,49 @@ abstract class AbstractAnonymizer
         return \uniqid(self::TEMP_TABLE_PREFIX);
     }
 
+    /**
+     * Return a random float between 0 and 1 expression.
+     *
+     * makina-corpus/query-builder already support this, but due to an odd SQL
+     * Server non standard behaviour, we reimplement it here: SQL Server RAND()
+     * return value will always be the same no matter how many time you call it
+     * inside a single SQL query. This means that when you update many rows
+     * using a RAND() based value, all rows will have the same value.
+     *
+     * We are going to get arround by injected a random value as seed for the
+     * RAND() function, because SQL Server allows this. Using NEWID() which
+     * generates an GUID might be slow, but we'll that at usage later.
+     *
+     * This function takes care of this, and will return an expression that
+     * works with all supported RDBMS.
+     */
+    protected function getRandomExpression(): Expression
+    {
+        if ($this->connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+            return ExpressionFactory::raw('rand(abs(checksum(newid())))');
+        }
+        return ExpressionFactory::random();
+    }
+
+    /**
+     * For the same reason as getRandomExpression().
+     */
+    protected function getRandomIntExpression(int $max, int $min = 0): Expression
+    {
+        if ($this->connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+            return ExpressionFactory::raw(
+                'FLOOR(? * (? - ? + 1) + ?)',
+                [$this->getRandomExpression(), ExpressionFactory::cast($max, 'int'), $min, $min]
+            );
+        }
+        return ExpressionFactory::randomInt($max, $min);
+    }
+
     protected function getSetIfNotNullExpression(mixed $valueExpression, mixed $columnExpression = null): Expression
     {
         if (null === $columnExpression) {
             $columnExpression = ExpressionFactory::column($this->columnName, $this->tableName);
         }
         return ExpressionFactory::ifThen(ExpressionFactory::where()->isNotNull($columnExpression), $valueExpression);
-    }
-
-    /**
-     * Generate an SQL text pad left expression.
-     */
-    protected function getSqlTextPadLeftExpression(mixed $textExpression, int $padSize, string $rawPadString): Expression
-    {
-        return ExpressionFactory::raw(
-            'lpad(?, ?, ?)',
-            [
-                ExpressionFactory::cast($textExpression, 'text'),
-                $padSize,
-                $rawPadString,
-            ],
-        );
     }
 }

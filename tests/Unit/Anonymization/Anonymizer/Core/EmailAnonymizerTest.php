@@ -29,7 +29,10 @@ class EmailAnonymizerTest extends UnitTestCase
             <<<SQL
             update "some_table"
             set
-                "email" = #1 || md5("some_table"."email") || #2 || #3
+                "email" = case when "some_table"."email" is not null
+                    then #1 || md5(cast("some_table"."email" as varchar))|| #2 || #3
+                    else null
+                end
             SQL,
             $prepared,
         );
@@ -61,7 +64,10 @@ class EmailAnonymizerTest extends UnitTestCase
             <<<SQL
             update "some_table"
             set
-                "email" = #1 || md5("some_table"."email") || #2 || #3
+                "email" = case when "some_table"."email" is not null
+                    then #1 || md5(cast("some_table"."email" as varchar))|| #2 || #3
+                    else null
+                end
             SQL,
             $update,
         );
