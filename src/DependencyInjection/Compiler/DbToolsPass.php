@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\DependencyInjection\Compiler;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\AttributesLoader;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\YamlLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\YamlLoader;
 use MakinaCorpus\DbToolsBundle\DependencyInjection\DbToolsConfiguration;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
