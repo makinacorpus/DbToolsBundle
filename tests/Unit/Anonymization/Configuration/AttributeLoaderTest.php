@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Doctrine\Persistence\Mapping\RuntimeReflectionService;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\AttributesLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 

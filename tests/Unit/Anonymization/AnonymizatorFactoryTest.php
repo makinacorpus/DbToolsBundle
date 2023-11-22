@@ -6,12 +6,11 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizatorFactory;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerRegistry;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
+use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Tests\Mock\TestingAnonymizationLoader;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 

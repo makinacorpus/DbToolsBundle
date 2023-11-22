@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Configuration;
 
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymizer\Loader\YamlLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\YamlLoader;
 use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
 
 class YamlLoaderTest extends UnitTestCase
