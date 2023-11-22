@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakinaCorpus\DbToolsBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
@@ -61,8 +63,5 @@ class TestKernel extends Kernel implements CompilerPassInterface
     /**
      * @return void
      */
-    public function process(ContainerBuilder $container)
-    {
-
-    }
+    public function process(ContainerBuilder $container) {}
 }

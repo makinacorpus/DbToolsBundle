@@ -14,6 +14,7 @@ class GdprifyCommandTest extends KernelTestCase
     {
         $this->markTestSkipped("Hard to test for know.");
 
+        // @phpstan-ignore-next-line
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
