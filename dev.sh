@@ -1,33 +1,34 @@
 #!/bin/bash
 
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 section_title() {
     printf "${RED}\n-------------------------------- ${NC}"
     printf "${RED}$1${NC}"
-    printf "${RED} --------------------------------\n\n${NC}"
+    printf "${RED} --------------------------------\n${NC}"
 }
 
-#  - build: Build docker containers
+# Build docker containers
 do_build() {
     section_title "Rebuilding containers"
     docker compose -p db_tools_bundle_test build;
 }
 
-#  - up: Start docker containers
+# Start docker containers
 do_up() {
     section_title "Up containers"
     docker compose -p db_tools_bundle_test up -d --force-recreate --remove-orphans
 }
 
-#  - down: Stop docker containers
+# Stop docker containers
 do_down() {
     section_title "Down containers"
     docker compose -p db_tools_bundle_test down
 }
 
-#  - checks: Launch composer checks (for Static analysis & Code style fixer)
+# Launch composer checks (for Static analysis & Code style fixer)
 do_checks() {
     section_title "Composer checks"
     echo 'composer install'
@@ -36,7 +37,7 @@ do_checks() {
     docker compose -p db_tools_bundle_test exec phpunit composer checks
 }
 
-#  - test: Run PHPunit tests for all database vendors
+# Run PHPunit tests for all database vendors
 do_test() {
     section_title "Composer install dependencies"
     docker compose -p db_tools_bundle_test exec phpunit composer install
@@ -102,26 +103,30 @@ do_test() {
         phpunit vendor/bin/phpunit $@
 }
 
-#  - notice: Display this help
+# Display help
 do_notice() {
     section_title "DbToolsTest dev scripts"
 
-    echo 'Welcome to DbToolsBundle dev script !'
-    echo
-    echo 'This script will help you to contribute to the DbToolsBundle.'
-    echo
-    echo 'It will allow you to :'
-    echo '  - build, up and down a complete docker stack with all database vendors'
-    echo '    and versions that the DbToolsBundle supports'
-    echo '  - run Code Style Fixer (with PHP CS Fixer) and launch Static Analysis (with PHPStan)'
-    echo '  - run PHPunit tests for all database vendors'
-    echo
-    echo 'Launch the script with one of these available actions:'
-
-    # Show autodoc help
-    awk '{ if ($0 ~ /^#[^!]/) { \
-                gsub(/^#/, "", $0); print $0 } }' "$0"
-    echo " "
+    printf "\nWelcome to DbToolsBundle dev script !"
+    printf "\n"
+    printf "\nThis script will help you to contribute to the DbToolsBundle."
+    printf "\n"
+    printf "\nIt will allow you to :"
+    printf "\n"
+    printf "\n  - build, up and down a complete docker stack with all database vendors"
+    printf "\n    and versions that the DbToolsBundle supports"
+    printf "\n  - run Code Style Fixer (with PHP CS Fixer) and launch Static Analysis (with PHPStan)"
+    printf "\n  - run PHPunit tests for all database vendors"
+    printf "\n\n--\n"
+    printf "\nLaunch the script with one of these available actions:"
+    printf "\n"
+    printf "\n  - ${GREEN}build${NC}: Build docker containers"
+    printf "\n  - ${GREEN}up${NC}: Start docker containers"
+    printf "\n  - ${GREEN}down${NC}: Stop docker containers"
+    printf "\n  - ${GREEN}checks${NC}: Launch composer checks (for Static analysis & Code style fixer)"
+    printf "\n  - ${GREEN}test${NC}: Run PHPunit tests for all database vendors"
+    printf "\n  - ${GREEN}notice${NC}: Display this help"
+    printf "\n\n"
 }
 
 args=${@:-usage}
