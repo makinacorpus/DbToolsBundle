@@ -1,33 +1,26 @@
 services:
     # Commands
+    db_tools.command.anonymization.run:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizeCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.factory'
+            - '%doctrine.default_connection%'
+        tags: ['console.command']
     db_tools.command.anonymization.list:
-        class: MakinaCorpus\DbToolsBundle\Command\AnonymizerListCommand
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand
         arguments:
             - '@db_tools.anonymization.anonymizer.registry'
         tags: ['console.command']
-    db_tools.command.anonymization.check:
-        class: MakinaCorpus\DbToolsBundle\Command\AnonymizationCheckCommand
-        arguments:
-            - '@db_tools.anonymization.anonymizator.factory'
-        tags: ['console.command']
-    db_tools.command.anonymization.run:
-        class: MakinaCorpus\DbToolsBundle\Command\AnonymizeCommand
-        arguments:
-            - '@db_tools.anonymization.anonymizator.factory'
-            - '%doctrine.default_connection%'
-        tags: ['console.command']
     db_tools.command.clean:
-        class: MakinaCorpus\DbToolsBundle\Command\CleanCommand
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\CleanCommand
         arguments:
             - '@db_tools.anonymization.anonymizator.factory'
             - '%doctrine.default_connection%'
         tags: ['console.command']
-    db_tools.command.check:
-        class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
+    db_tools.command.anonymization.check:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\ConfigCheckCommand
         arguments:
-            - '%doctrine.default_connection%'
-            - '@db_tools.backupper.factory.registry'
-            - '@db_tools.restorer.factory.registry'
+            - '@db_tools.anonymization.anonymizator.factory'
         tags: ['console.command']
     db_tools.command.backup:
         class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
@@ -37,6 +30,22 @@ services:
             - '@db_tools.backupper.factory.registry'
             - '@db_tools.storage'
         tags: ['console.command']
+    db_tools.command.check:
+        class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.backupper.factory.registry'
+            - '@db_tools.restorer.factory.registry'
+        tags: ['console.command']
+    db_tools.command.gdprify:
+        class: MakinaCorpus\DbToolsBundle\Command\GdprifyCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.restorer.factory.registry'
+            - '@db_tools.backupper.factory.registry'
+            - '@db_tools.anonymization.anonymizator.factory'
+        tags: ['console.command']
+
     db_tools.command.restore:
         class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
         arguments:
@@ -49,14 +58,6 @@ services:
         arguments:
             - '%doctrine.default_connection%'
             - '@db_tools.stats_provider.factory.registry'
-        tags: ['console.command']
-    db_tools.command.gdprify:
-        class: MakinaCorpus\DbToolsBundle\Command\GdprifyCommand
-        arguments:
-            - '%doctrine.default_connection%'
-            - '@db_tools.restorer.factory.registry'
-            - '@db_tools.backupper.factory.registry'
-            - '@db_tools.anonymization.anonymizator.factory'
         tags: ['console.command']
 
     # Utilities

@@ -52,6 +52,7 @@ do_test() {
         -e DBAL_ROOT_PASSWORD=password \
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
+        -e DATABASE_URL=mysql://root:password@mysql57:3306/test_db?serverVersion=5.7 \
         phpunit vendor/bin/phpunit $@
 
     section_title "Running tests with MySQL 8"
@@ -64,6 +65,7 @@ do_test() {
         -e DBAL_ROOT_PASSWORD=password \
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
+        -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8 \
         phpunit vendor/bin/phpunit $@
 
     section_title "Running tests with MariaDB 11"
@@ -76,6 +78,7 @@ do_test() {
         -e DBAL_ROOT_PASSWORD="password" \
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
+        -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db?serverVersion=11.1.3-MariaDB \
         phpunit vendor/bin/phpunit $@
 
     section_title "Running tests with PostgreSQL 10"
@@ -88,6 +91,7 @@ do_test() {
         -e DBAL_ROOT_PASSWORD=password \
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
+        -e DATABASE_URL="postgresql://postgres:password@postgresql10:5432/test_db?serverVersion=10&charset=utf8" \
         phpunit vendor/bin/phpunit $@
 
     section_title "Running tests with PostgreSQL 16"
@@ -100,6 +104,7 @@ do_test() {
         -e DBAL_ROOT_PASSWORD=password \
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
+        -e DATABASE_URL="postgresql://postgres:password@postgresql16:5432/test_db?serverVersion=16&charset=utf8" \
         phpunit vendor/bin/phpunit $@
 }
 

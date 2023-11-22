@@ -7,6 +7,7 @@
     <env name="DBAL_PORT" value=""/>
     <env name="DBAL_USER" value=""/>
     <env name="DBAL_PASSWORD" value=""/>
+    <env name="KERNEL_CLASS" value="MakinaCorpus\DbToolsBundle\Tests\TestKernel"/>
   </php>
   <testsuites>
     <testsuite name="Functional">

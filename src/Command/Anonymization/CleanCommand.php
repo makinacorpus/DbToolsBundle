@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Command;
+namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use Symfony\Component\Console\Attribute\AsCommand;

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Command;
+namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use Symfony\Component\Console\Attribute\AsCommand;

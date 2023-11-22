@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Command;
+namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
@@ -13,8 +13,8 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymization:check', description: 'Check and dump anonymization configuration.')]
-class AnonymizationCheckCommand extends Command
+#[AsCommand(name: 'db-tools:anonymization:config-check', description: 'Check and dump anonymization configuration.')]
+class ConfigCheckCommand extends Command
 {
     public function __construct(
         private AnonymizatorFactory $anonymizatorFactory,

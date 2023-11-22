@@ -27,7 +27,7 @@ services:
         networks:
             - db-tools-test
     mariadb11:
-        image: mariadb:11
+        image: mariadb:11.1.3
         restart: 'no'
         environment:
             MYSQL_DATABASE: test_db
