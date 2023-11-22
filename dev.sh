@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Welcome DbToolsTest dev scripts !
-# --
-# Available actions are:
-
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
@@ -31,7 +27,7 @@ do_down() {
     docker compose -p db_tools_bundle_test down
 }
 
-#  - checks: Launch composer checks (for Static analysis & Code style)
+#  - checks: Launch composer checks (for Static analysis & Code style fixer)
 do_checks() {
     section_title "Composer checks"
     echo 'composer install'
@@ -40,7 +36,7 @@ do_checks() {
     docker compose -p db_tools_bundle_test exec phpunit composer checks
 }
 
-#  - test: Run tests with real database
+#  - test: Run PHPunit tests for all database vendors
 do_test() {
     section_title "Composer install dependencies"
     docker compose -p db_tools_bundle_test exec phpunit composer install
@@ -110,18 +106,27 @@ do_test() {
 do_notice() {
     section_title "DbToolsTest dev scripts"
 
+    echo 'Welcome to DbToolsBundle dev script !'
+    echo
+    echo 'This script will help you to contribute to the DbToolsBundle.'
+    echo
+    echo 'It will allow you to :'
+    echo '  - build, up and down a complete docker stack with all database vendors'
+    echo '    and versions that the DbToolsBundle supports'
+    echo '  - run Code Style Fixer (with PHP CS Fixer) and launch Static Analysis (with PHPStan)'
+    echo '  - run PHPunit tests for all database vendors'
+    echo
+    echo 'Launch the script with one of these available actions:'
+
     # Show autodoc help
     awk '{ if ($0 ~ /^#[^!]/) { \
                 gsub(/^#/, "", $0); print $0 } }' "$0"
     echo " "
 }
 
-
 args=${@:-usage}
 action=${1-}
-echo $action
-echo $actions
-echo $action in $actions
+
 if [[ -n $@ ]];then shift;fi
 
 case $action in
