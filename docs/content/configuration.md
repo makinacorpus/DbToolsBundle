@@ -138,7 +138,7 @@ a pack of anonymizers from en external library, you can modify/add paths:
 # config/packages/db_tools.yaml
 
  anonymizer_paths:
-        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer'
         - '%kernel.project_dir%/src/Anonymizer'
         - '%kernel.project_dir%/vendor/myAnonymizerProvider/anonymizers/src'
 ```
