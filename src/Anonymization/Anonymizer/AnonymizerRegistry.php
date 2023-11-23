@@ -12,9 +12,11 @@ class AnonymizerRegistry
     private array $paths = [];
 
     public function __construct(
+        private ?string $projectDir = null,
         ?array $paths = null
     ) {
         $this->addPath($paths ?? [__DIR__]);
+        $this->locatePacks();
     }
 
     public function addPath(array $paths): void
@@ -93,5 +95,43 @@ class AnonymizerRegistry
         }
 
         return $this->getAnonymizers()[$name];
+    }
+
+    private function locatePacks(): void
+    {
+        if (null === $this->projectDir) {
+            return;
+        }
+
+        $iterator = new \RegexIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($this->projectDir . '/vendor', \FilesystemIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            ),
+            '/^.+composer\.json$/i',
+            \RecursiveRegexIterator::GET_MATCH
+        );
+
+        $packPaths = [];
+        foreach ($iterator as $file) {
+            $rawComposerJson = \file_get_contents($file[0]);
+            $composerJson = \json_decode($rawComposerJson);
+
+            if (isset($composerJson->type) && $composerJson->type === 'db-tools-bundle-pack') {
+                $packagePath = \rtrim($file[0], 'composer.json');
+                $anonymizersPath = $packagePath . 'src/Anonymizer/';
+                if (\is_dir($anonymizersPath)) {
+                    $packPaths[] = $anonymizersPath;
+                } else {
+                    throw new \DomainException(\sprintf(
+                        "Pack of anonymizers '%s' (%s) as no 'src/Anonymizer/' directory and is thus not usable.",
+                        $composerJson->name ?? 'no-name',
+                        $packagePath
+                    ));
+                }
+            }
+        }
+
+        $this->addPath($packPaths);
     }
 }

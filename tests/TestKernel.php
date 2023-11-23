@@ -22,6 +22,7 @@ class TestKernel extends Kernel implements CompilerPassInterface
     public function __construct(string $environment, bool $debug)
     {
         $this->testRootDir = sys_get_temp_dir().'/'.uniqid('db_tools_', true);
+        \mkdir($this->testRootDir . '/vendor', 777, true);
 
         parent::__construct($environment, $debug);
     }
