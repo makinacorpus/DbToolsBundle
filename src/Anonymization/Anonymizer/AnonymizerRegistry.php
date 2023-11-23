@@ -97,7 +97,6 @@ class AnonymizerRegistry
         return $this->getAnonymizers()[$name];
     }
 
-
     private function locatePacks(): void
     {
         $iterator = new \RegexIterator(
