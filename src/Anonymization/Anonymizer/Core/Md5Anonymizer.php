@@ -24,10 +24,7 @@ class Md5Anonymizer extends AbstractAnonymizer
 
         $update->set(
             $this->columnName,
-            $expr->functionCall(
-                'md5',
-                $expr->column($this->columnName, $this->tableName)
-            ),
+            $expr->md5($expr->column($this->columnName, $this->tableName)),
         );
     }
 }

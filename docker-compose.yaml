@@ -54,6 +54,18 @@ services:
             - 9505:5432
         networks:
             - db-tools-test
+    sqlsrv2019:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        restart: unless-stopped
+        environment:
+            ACCEPT_EULA: "y"
+            MSSQL_PID: Developer
+            MSSQL_SA_PASSWORD: P@ssword123
+            SA_PASSWORD: P@ssword123
+        ports:
+            - 9506:1433
+        networks:
+            - db-tools-test
 
 networks:
   db-tools-test:

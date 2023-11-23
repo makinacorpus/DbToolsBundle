@@ -27,12 +27,10 @@ class IntegerAnonymizer extends AbstractAnonymizer
             throw new \InvalidArgumentException("You should provide 2 options (min and max) with this anonymizer");
         }
 
-        $expr = $update->expression();
-
         $update->set(
             $this->columnName,
             $this->getSetIfNotNullExpression(
-                $expr->randomInt(
+                $this->getRandomIntExpression(
                     $this->options->get('max'),
                     $this->options->get('min'),
                 ),

@@ -106,6 +106,19 @@ do_test() {
         -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql16:5432/test_db?serverVersion=16&charset=utf8" \
         phpunit vendor/bin/phpunit $@
+
+    section_title "Running tests with SQL Server 2019"
+    docker compose -p db_tools_bundle_test exec \
+        -e DBAL_DRIVER=pdo_sqlsrv \
+        -e DBAL_DBNAME=test_db \
+        -e DBAL_HOST=sqlsrv2019 \
+        -e DBAL_PASSWORD=P@ssword123 \
+        -e DBAL_PORT=1433 \
+        -e DBAL_ROOT_PASSWORD=P@ssword123 \
+        -e DBAL_ROOT_USER=sa \
+        -e DBAL_USER=sa \
+        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
+        phpunit vendor/bin/phpunit $@
 }
 
 # Display help

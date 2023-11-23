@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Schema\TableDiff;
@@ -16,6 +17,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
+use MakinaCorpus\QueryBuilder\Bridge\AbstractBridge;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\Query\DoctrineUpdate;
 
@@ -233,21 +235,63 @@ class Anonymizator
 
     protected function createUpdateQuery(string $table): DoctrineUpdate
     {
-        $update = $this->getQueryBuilder()->update($table);
+        $builder = $this->getQueryBuilder();
+        $update = $builder->update($table);
 
+        $expr = $update->expression();
+
+        //
         // Add target table a second time into the FROM statement of the
         // UPDATE query, in order for anonymizers to be able to JOIN over
         // it. Otherwise, JOIN would not be possible for RDBMS that speak
         // standard SQL.
-        $expr = $update->expression();
-        $update->join(
-            $table,
-            $expr->where()->isEqual(
-                $expr->column(AbstractAnonymizer::JOIN_ID, $table),
-                $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
-            ),
-            AbstractAnonymizer::JOIN_TABLE
-        );
+        //
+        // This is the only and single hack regarding the UPDATE clause
+        // syntax, all RDBMS accept the following query:
+        //
+        //     UPDATE foo
+        //     SET val = bar.val
+        //     FROM foo AS foo_2
+        //     JOIN bar ON bar.id = foo_2.id
+        //     WHERE foo.id = foo_2.id
+        //
+        // Except for SQL Server, which cannot deambiguate the foo table
+        // reference in the WHERE clause, so we have to write it this
+        // way:
+        //
+        //     UPDATE foo
+        //     SET val = bar.val
+        //     FROM (
+        //         SELECT *
+        //         FROM foo
+        //     ) AS foo_2
+        //     JOIN bar ON bar.id = foo_2.id
+        //     WHERE foo.id = foo_2.id
+        //
+        // Which by the way also works with other RDBMS, but is an
+        // optimization fence for some, because the nested SELECT becomes
+        // a temporary table (especially for MySQL...). For those we need
+        // to keep the original query, even if semantically identical.
+        //
+        if (AbstractBridge::SERVER_SQLSERVER === $builder->getServerFlavor()) {
+            $update->join(
+                $builder->select($table),
+                $expr->where()->isEqual(
+                    $expr->column(AbstractAnonymizer::JOIN_ID, $table),
+                    $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
+                ),
+                AbstractAnonymizer::JOIN_TABLE
+            );
+        } else {
+            $update->join(
+                $table,
+                $expr->where()->isEqual(
+                    $expr->column(AbstractAnonymizer::JOIN_ID, $table),
+                    $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
+                ),
+                AbstractAnonymizer::JOIN_TABLE
+            );
+        }
 
         return $update;
     }
@@ -295,6 +339,12 @@ class Anonymizator
 
         if ($platform instanceof AbstractMySQLPlatform) {
             $this->addAnonymizerIdColumnMySql($table);
+
+            return;
+        }
+
+        if ($platform instanceof SQLServerPlatform) {
+            $this->addAnonymizerIdColumnSqlServer($table);
 
             return;
         }
@@ -462,6 +512,99 @@ class Anonymizator
                 [$sequenceTableName],
             );
         }
+    }
+
+    /**
+     * Add second identity column for SQL Server.
+     *
+     * Pretty much like MySQL, SQL Server doesn't allow a second identity
+     * column, we need to manually create a sequence. It's much easier than
+     * MySQL thought.
+     */
+    protected function addAnonymizerIdColumnSqlServer(string $table)
+    {
+        $platform = $this->connection->getDatabasePlatform();
+        $queryBuilder = $this->getQueryBuilder();
+
+        $sequenceName = $platform->quoteIdentifier('_db_tools_seq_' . $table);
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            ALTER TABLE ?::table DROP COLUMN IF EXISTS ?::column
+            SQL,
+            [
+                $table,
+                AbstractAnonymizer::JOIN_ID,
+            ],
+        );
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            DROP SEQUENCE IF EXISTS ?::identifier;
+            SQL,
+            [$sequenceName],
+        );
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            CREATE SEQUENCE ?::identifier
+                AS int
+                START WITH 1
+                INCREMENT BY 1;
+            SQL,
+            [$sequenceName],
+        );
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            ALTER TABLE ?::table
+                ADD ?::column int NOT NULL DEFAULT (
+                    NEXT VALUE FOR ?::identifier
+                );
+            SQL,
+            [
+                $table,
+                AbstractAnonymizer::JOIN_ID,
+                $sequenceName,
+            ],
+        );
+
+        // Remove default value, default values are constraints in SQL Server
+        // we must find its auto generated identifier. Removing the constraint
+        // at this stade is mandatory otherwise column will not be deletable
+        // later when anonymizator will proceed to cleanup.
+        // @see https://stackoverflow.com/questions/1364526/how-do-you-drop-a-default-value-from-a-column-in-a-table
+        $queryBuilder->executeStatement(
+            <<<SQL
+            DECLARE @ConstraintName nvarchar(200)
+            SELECT @ConstraintName = Name
+                FROM SYS.DEFAULT_CONSTRAINTS
+                WHERE PARENT_OBJECT_ID = OBJECT_ID(?)
+                    AND PARENT_COLUMN_ID = (
+                        SELECT column_id
+                            FROM sys.columns
+                            WHERE NAME = ?
+                                AND object_id = OBJECT_ID(?)
+                    )
+            IF @ConstraintName IS NOT NULL
+            EXEC('ALTER TABLE ' + ? + ' DROP CONSTRAINT ' + @ConstraintName)
+            SQL,
+            [
+                $table,
+                AbstractAnonymizer::JOIN_ID,
+                $table,
+                $table,
+            ],
+        );
+
+        $queryBuilder->executeStatement(
+            <<<SQL
+            DROP SEQUENCE IF EXISTS ?::identifier;
+            SQL,
+            [$sequenceName],
+        );
+
+        $this->createIndex($table, AbstractAnonymizer::JOIN_ID);
     }
 
     /**

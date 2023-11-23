@@ -88,10 +88,9 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         $update->join(
             $join,
             $expr->where()->raw(
-                'MOD(?, ?) + 1 = ?',
+                '? + 1 = ?',
                 [
-                    $expr->column(self::JOIN_ID, self::JOIN_TABLE),
-                    $sampleCount,
+                    $expr->mod($expr->column(self::JOIN_ID, self::JOIN_TABLE), $sampleCount),
                     $expr->column('rownum', $joinAlias),
                 ]
             ),

@@ -121,6 +121,31 @@ MySQL has many limitations:
 In order to workaround this, we chose to create an index over the anonymizer
 identifier sequence, which wouldn't be necessary otherwise.
 
+### SQL Server specifics
+
+When using the same table as the updated one in the `FROM` clause, SQL Server
+will shadow the updated table for the benefit of the one from the `FROM`
+clause, hence the generated `UPDATE` not working.
+
+For working around this, SQL Server has its own variant which is:
+
+```sql
+UPDATE
+    "client"
+SET
+    "nom" = "sample_1"."value",
+    "civilite" = "sample_2"."value"
+
+FROM (
+    SELECT * FROM "client"
+) AS "_target_table"
+
+-- ...
+```
+
+Which is semantically equivalent and solve the table reference shadowing
+issue.
+
 ### Other variants
 
 Only PostgreSQL and MySQL are extensively tested for now, other SQL dialects

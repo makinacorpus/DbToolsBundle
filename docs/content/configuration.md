@@ -123,6 +123,10 @@ RUN apt-get update && \
 ```
 :::
 
+:::warning
+Dump and restore is not supported yet for SQL Server.
+:::
+
 ## Anonymizer paths
 
 By default, the *DbToolsBundle* will look for *anonymizers* in 2 directories
