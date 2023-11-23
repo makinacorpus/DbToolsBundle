@@ -12,7 +12,7 @@ class AnonymizerRegistry
     private array $paths = [];
 
     public function __construct(
-        private string $projectDir,
+        private ?string $projectDir = null,
         ?array $paths = null
     ) {
         $this->addPath($paths ?? [__DIR__]);
@@ -99,6 +99,10 @@ class AnonymizerRegistry
 
     private function locatePacks(): void
     {
+        if (null === $this->projectDir) {
+            return;
+        }
+
         $iterator = new \RegexIterator(
             new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($this->projectDir . '/vendor', \FilesystemIterator::SKIP_DOTS),

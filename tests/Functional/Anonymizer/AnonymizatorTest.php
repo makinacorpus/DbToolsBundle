@@ -90,7 +90,7 @@ class AnonymizatorTest extends FunctionalTestCase
             ]),
         ));
 
-        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(''), $config);
+        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), $config);
         $anonymizator->addAnonymizerIdColumn('table_test');
 
         foreach ($anonymizator->anonymize() as $message) {
@@ -115,7 +115,7 @@ class AnonymizatorTest extends FunctionalTestCase
                 ->fetchAllAssociative()
         );
 
-        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(''), new AnonymizationConfig());
+        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
         $anonymizator->addAnonymizerIdColumn('table_test');
 
         self::assertSame(

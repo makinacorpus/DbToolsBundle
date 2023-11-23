@@ -54,7 +54,7 @@ class EmailAnonymizerTest extends FunctionalTestCase
 
         $anonymizator = new Anonymizator(
             $this->getConnection(),
-            new AnonymizerRegistry(''),
+            new AnonymizerRegistry(),
             $config
         );
 
@@ -92,7 +92,7 @@ class EmailAnonymizerTest extends FunctionalTestCase
 
         $anonymizator = new Anonymizator(
             $this->getConnection(),
-            new AnonymizerRegistry(''),
+            new AnonymizerRegistry(),
             $config
         );
 
