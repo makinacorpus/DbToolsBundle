@@ -28,11 +28,17 @@ do_down() {
     docker compose -p db_tools_bundle_test down
 }
 
+do_composer_install() {
+    echo 'composer install'
+    docker compose -p db_tools_bundle_test exec phpunit composer install
+}
+
 # Launch composer checks (for Static analysis & Code style fixer)
 do_checks() {
     section_title "Composer checks"
-    echo 'composer install'
-    docker compose -p db_tools_bundle_test exec phpunit composer install
+
+    do_composer_install
+
     echo 'composer checks'
     docker compose -p db_tools_bundle_test exec phpunit composer checks
 }
@@ -144,8 +150,7 @@ do_test_sqlsrv() {
 
 # Run PHPunit tests for all database vendors
 do_test_all() {
-    section_title "Composer install dependencies"
-    docker compose -p db_tools_bundle_test exec phpunit composer install
+    do_composer_install
 
     do_test_mysql57
     do_test_mysql80
@@ -181,7 +186,7 @@ do_test() {
     if [[ -n $@ ]];then shift;fi
 
     case $suit in
-        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv) do_test_$action "$@";;
+        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv) do_composer_install && do_test_$suit "$@";;
         *) do_test_notice;;
     esac
 }
