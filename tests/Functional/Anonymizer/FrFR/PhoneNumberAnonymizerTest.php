@@ -54,7 +54,7 @@ class PhoneNumberAnonymizerTest extends FunctionalTestCase
 
         $anonymizator = new Anonymizator(
             $this->getConnection(),
-            new AnonymizerRegistry(),
+            new AnonymizerRegistry(''),
             $config
         );
 
