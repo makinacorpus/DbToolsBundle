@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Command;
 
+use MakinaCorpus\DbToolsBundle\Tests\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class RestoreCommandTest extends KernelTestCase
+class RestoreCommandTest extends FunctionalKernelTestCase
 {
     public function testExecute(): void
     {
+        self::skipIfNoDatabase();
+
         $this->markTestSkipped("Hard to test for know.");
 
         // @phpstan-ignore-next-line
@@ -22,6 +24,6 @@ class RestoreCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        $commandTester->assertCommandIsSuccessful();
+        self::assertCommandIsSuccessful($commandTester);
     }
 }

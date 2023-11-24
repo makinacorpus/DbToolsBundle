@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Stats;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 
 class StatsProviderFactoryRegistry
 {
@@ -37,6 +38,6 @@ class StatsProviderFactoryRegistry
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf("No stats provider found for connection '%s'", $connectionName));
+        throw new NotImplementedException(\sprintf("Stat collection is not implemented for driver '%s' while using connection '%s'", $driver, $connectionName));
     }
 }

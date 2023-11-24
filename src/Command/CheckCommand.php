@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -45,13 +46,19 @@ class CheckCommand extends Command
 
         $connection = $input->getArgument('connection') ?? $this->defaultConnectionName;
 
-        $backupper = $this->backupperFactoryRegistry->create($connection);
-        $response = $backupper->checkBinary();
-        $io->success("Backupper binary ok : " . $response);
+        try {
+            $backupper = $this->backupperFactoryRegistry->create($connection);
+            $response = $backupper->checkBinary();
+            $io->success("Backupper binary ok : " . $response);
 
-        $restorer = $this->restorerFactoryRegistry->create($connection);
-        $response = $restorer->checkBinary();
-        $io->success("Restorer binary ok : " . $response);
+            $restorer = $this->restorerFactoryRegistry->create($connection);
+            $response = $restorer->checkBinary();
+            $io->success("Restorer binary ok : " . $response);
+        } catch (NotImplementedException $e) {
+            $io->error($e->getMessage());
+
+            return NotImplementedException::CONSOLE_EXIT_STATUS;
+        }
 
         return Command::SUCCESS;
     }

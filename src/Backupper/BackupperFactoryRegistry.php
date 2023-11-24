@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 
 class BackupperFactoryRegistry
 {
@@ -33,25 +34,17 @@ class BackupperFactoryRegistry
         $connection = $this->doctrineRegistry->getConnection($connectionName);
         $driver = $connection->getParams()['driver'];
 
-        if (!\array_key_exists($driver, $this->backupperBinaries)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "There is no backupper binary provided for DBAL driver '%s'",
-                $driver
-            ));
-        }
-
-        foreach($this->backupperFactories as $backupperFactory) {
-            if ($backupperFactory->isSupported($driver)) {
-                return $backupperFactory->create(
-                    $this->backupperBinaries[$driver],
-                    $connection
-                );
+        if (\array_key_exists($driver, $this->backupperBinaries)) {
+            foreach ($this->backupperFactories as $backupperFactory) {
+                if ($backupperFactory->isSupported($driver)) {
+                    return $backupperFactory->create(
+                        $this->backupperBinaries[$driver],
+                        $connection
+                    );
+                }
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            "No backupper found for connection '%s'",
-            $connectionName
-        ));
+        throw new NotImplementedException(\sprintf("Backup is not implemented or configured for driver '%s' while using connection '%s'", $driver, $connectionName));
     }
 }
