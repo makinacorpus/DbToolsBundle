@@ -81,13 +81,13 @@ jobs:
         env:
           DBAL_DRIVER: "${{ matrix.extension }}"
           DBAL_DBNAME: "test_db"
-          DBAL_HOST: "localhost"
+          DBAL_HOST: "postgres"
           DBAL_PASSWORD: "postgres"
           DBAL_PORT: "5432"
           DBAL_ROOT_PASSWORD: "postgres"
           DBAL_ROOT_USER: "postgres"
           DBAL_USER: "postgres"
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
+          DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
         run: "vendor/bin/phpunit"
 
   # phpunit-postgres:
