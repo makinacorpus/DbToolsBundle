@@ -49,7 +49,7 @@ class IntegerAnonymizerTest extends FunctionalTestCase
             'table_test',
             'data',
             'integer',
-            new Options(['min' => 200, 'max' => 556])
+            new Options(['min' => 200, 'max' => 10000])
         ));
 
         $anonymizator = new Anonymizator(
@@ -71,17 +71,17 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $data = (int) $datas[0];
         $this->assertNotNull($data);
         $this->assertNotSame(1, $data);
-        $this->assertTrue($data >= 200 && $data <= 556);
+        $this->assertTrue($data >= 200 && $data <= 10000);
 
         $data = (int) $datas[1];
         $this->assertNotNull($data);
         $this->assertNotSame(2, $data);
-        $this->assertTrue($data >= 200 && $data <= 556);
+        $this->assertTrue($data >= 200 && $data <= 10000);
 
         $data = (int) $datas[2];
         $this->assertNotNull($data);
         $this->assertNotSame(3, $data);
-        $this->assertTrue($data >= 200 && $data <= 556);
+        $this->assertTrue($data >= 200 && $data <= 10000);
 
         $this->assertNull($datas[3]);
 

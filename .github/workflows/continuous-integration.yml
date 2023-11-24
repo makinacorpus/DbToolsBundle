@@ -47,6 +47,10 @@ jobs:
             postgres-version: "16"
             extension: "pdo_pgsql"
 
+    env:
+      SYMFONY_DEPRECATIONS_HELPER: max[self]=0
+      SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
+
     services:
       postgres:
         image: "postgres:${{ matrix.postgres-version }}"
