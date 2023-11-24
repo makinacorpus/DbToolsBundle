@@ -17,10 +17,88 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\Exception\TableDoesNotExist;
 use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
+use Doctrine\DBAL\Logging\Middleware;
+use Psr\Log\AbstractLogger;
 
 abstract class FunctionalTestCase extends UnitTestCase
 {
     private array $createdTables = [];
+
+    /**
+     * Skip for given database.
+     */
+    protected function skipIfDatabase(string $database, ?string $message = null): void
+    {
+        if ($this->getDoctrineQueryBuilder()->getServerFlavor() === $database) {
+            self::markTestSkipped(\sprintf("Test disabled for database '%s'", $database));
+        }
+    }
+
+    /**
+     * Skip for given database.
+     */
+    protected function skipIfDatabaseNot(string $database, ?string $message = null): void
+    {
+        if ($this->getDoctrineQueryBuilder()->getServerFlavor() !== $database) {
+            self::markTestSkipped(\sprintf("Test disabled for database '%s'", $database));
+        }
+    }
+
+    /**
+     * Skip for given database, and greater than version.
+     */
+    protected function skipIfDatabaseGreaterThan(string $database, string $version, ?string $message = null): void
+    {
+        $this->skipIfDatabase($database);
+
+        $serverVersion = $this->getDoctrineQueryBuilder()->getServerVersion();
+
+        if (null === $serverVersion) {
+            throw new \Exception(\sprintf("Database '%s', server version is null", $database));
+        }
+
+        $serverVersion = $this->normalizeVersion($version);
+        $version = $this->normalizeVersion($version);
+
+        if (0 <= \version_compare($serverVersion, $version)) {
+            self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version >= '%s'", $database, $version));
+        }
+    }
+
+    /**
+     * Skip for given database, and lower than version.
+     */
+    protected function skipIfDatabaseLessThan(string $database, string $version, ?string $message = null): void
+    {
+        if ($this->getDoctrineQueryBuilder()->getServerFlavor() !== $database) {
+            return;
+        }
+
+        $serverVersion = $this->getDoctrineQueryBuilder()->getServerVersion();
+
+        if (null === $serverVersion) {
+            throw new \Exception(\sprintf("Database '%s', server version is null", $database));
+        }
+
+        $serverVersion = $this->normalizeVersion($serverVersion);
+        $version = $this->normalizeVersion($version);
+
+        if (0 > \version_compare($serverVersion, $version)) {
+            self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version <= '%s'", $database, $version));
+        }
+    }
+
+    /**
+     * Normalize version to an x.y.z semantic version string.
+     */
+    protected function normalizeVersion(string $version): string
+    {
+        $matches = [];
+        if (\preg_match('/(\d+)(\.\d+|)(\.\d+|).*/ims', $version, $matches)) {
+            return $matches[1] . ($matches[2] ?: '.0') . ($matches[3] ?: '.0');
+        }
+        throw new \Exception(\sprintf("Database version '%s', is not in 'x.y.z' semantic format", $version));
+    }
 
     /**
      * Get real query builder.
@@ -184,24 +262,42 @@ abstract class FunctionalTestCase extends UnitTestCase
     }
 
     /**
-     * Code copied from doctrine/dbal package.
+     * Code copied and adapted from doctrine/dbal package.
      *
      * @see \Doctrine\DBAL\Tests\FunctionalTestCase
      */
     private static function createConfiguration(string $driver): Configuration
     {
         $configuration = new Configuration();
+        $middlewares = [];
+
+        // @todo Option
+        if (false) {
+            $middlewares[] = new Middleware(
+                new class () extends AbstractLogger
+                {
+                    public function log($level, string|\Stringable $message, array $context = []): void
+                    {
+                        if (\str_contains($message, 'Executing statement')) {
+                            echo $message, \print_r($context, true), "\n";
+                        }
+                    }
+                },
+            );
+        }
 
         switch ($driver) {
             case 'pdo_oci':
             case 'oci8':
-                $configuration->setMiddlewares([new InitializeSession()]);
+                $middlewares[] = new InitializeSession();
                 break;
             case 'pdo_sqlite':
             case 'sqlite3':
-                $configuration->setMiddlewares([new EnableForeignKeys()]);
+                $middlewares[] = new EnableForeignKeys();
                 break;
         }
+
+        $configuration->setMiddlewares($middlewares);
 
         $configuration->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
 

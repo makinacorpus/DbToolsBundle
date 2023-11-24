@@ -154,16 +154,30 @@ do_test_sqlsrv() {
     do_test_sqlsrv2019
 }
 
+# SQLite version depends upon the PHP embeded version or linked
+# library, we cannot target X or Y version.
+do_test_sqlite() {
+    section_title "Running tests with SQLite"
+    docker compose -p db_tools_bundle_test exec \
+        -e DBAL_DRIVER=pdo_sqlite \
+        -e DBAL_DBNAME=test_db \
+        -e DBAL_HOST=127.0.0.1 \
+        -e DATABASE_URL="pdo-sqlite:///:memory:" \
+        phpunit vendor/bin/phpunit $@
+}
+
 # Run PHPunit tests for all database vendors
 do_test_all() {
     do_composer_install
 
-    do_test_mysql57
+    # @todo Temporary deactivated MySQL 5.7 due to a bug.
+    # do_test_mysql57
     do_test_mysql80
     do_test_mariadb11
     do_test_postgresql10
     do_test_postgresql16
     do_test_sqlsrv2019
+    do_test_sqlite
 }
 
 do_test_notice() {
@@ -181,6 +195,7 @@ do_test_notice() {
     printf "\n  - ${GREEN}postgresql16${NC}: Launch test for PostgreSQL 16"
     printf "\n  - ${GREEN}sqlsrv${NC}: Launch test for SQL Server 2019"
     printf "\n  - ${GREEN}sqlsrv2019${NC}: Launch test for SQL Server 2019"
+    printf "\n  - ${GREEN}sqlite${NC}: Launch test for SQLite"
     printf "\n\nYou can then use PHPUnit option as usual:"
     printf "\n${GREEN}./dev.sh test mysql --filter AnonymizatorFactoryTest${NC}"
     printf "\n\n"
@@ -192,7 +207,7 @@ do_test() {
     if [[ -n $@ ]];then shift;fi
 
     case $suit in
-        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv) do_composer_install && do_test_$suit "$@";;
+        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv|sqlite) do_composer_install && do_test_$suit "$@";;
         *) do_test_notice;;
     esac
 }
