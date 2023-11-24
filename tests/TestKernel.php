@@ -27,6 +27,7 @@ class TestKernel extends Kernel implements CompilerPassInterface
 
         $filesystem->mkdir($this->testRootDir . '/vendor');
         $filesystem->mkdir($this->testRootDir . '/var/cache');
+        $filesystem->mkdir($this->testRootDir . '/var/db_tools');
 
         parent::__construct($environment, $debug);
     }

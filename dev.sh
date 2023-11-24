@@ -90,7 +90,7 @@ do_test_mariadb11() {
         -e DBAL_ROOT_PASSWORD="password" \
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
-        -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db?serverVersion=11.1.3-MariaDB \
+        -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db \
         phpunit vendor/bin/phpunit $@
 }
 

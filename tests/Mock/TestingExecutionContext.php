@@ -78,22 +78,22 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath) {}
+    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath): void {}
 
     /**
      * {@inheritdoc}
      */
-    public function setGroup(?string $group) {}
+    public function setGroup(?string $group): void {}
 
     /**
      * {@inheritdoc}
      */
-    public function setConstraint(Constraint $constraint) {}
+    public function setConstraint(Constraint $constraint): void {}
 
     /**
      * {@inheritdoc}
      */
-    public function markGroupAsValidated(string $cacheKey, string $groupHash) {}
+    public function markGroupAsValidated(string $cacheKey, string $groupHash): void {}
 
     /**
      * {@inheritdoc}
@@ -106,7 +106,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function markConstraintAsValidated(string $cacheKey, string $constraintHash) {}
+    public function markConstraintAsValidated(string $cacheKey, string $constraintHash): void {}
 
     /**
      * {@inheritdoc}

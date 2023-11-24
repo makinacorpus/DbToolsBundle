@@ -147,113 +147,134 @@ jobs:
           DBAL_ROOT_USER: "postgres"
           DBAL_USER: "postgres"
           DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
-        run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+        run: "vendor/bin/phpunit"
 
-  # phpunit-mariadb:
-  #   name: "PHPUnit with MariaDB"
-  #   runs-on: "ubuntu-22.04"
+  phpunit-mariadb:
+    name: "PHPUnit with MariaDB"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+    needs: "phpunit-smoke-tests"
 
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       mariadb-version:
-  #         - "10.6"  # LTS (Jul 2026)
-  #         - "10.11" # LTS (Feb 2028)
-  #         - "11.0"  # STS (Jun 2024)
-  #         - "11.1"  # STS (Aug 2024)
-  #       extension:
-  #         - "mysqli"
-  #         - "pdo_mysql"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+        mariadb-version:
+          - "10.6"  # LTS (Jul 2026)
+          - "10.11" # LTS (Feb 2028)
+          - "11.0"  # STS (Jun 2024)
+          - "11.1"  # STS (Aug 2024)
+        extension:
+          - "mysqli"
+          - "pdo_mysql"
 
-  #   services:
-  #     mariadb:
-  #       image: "mariadb:${{ matrix.mariadb-version }}"
-  #       env:
-  #         MYSQL_ALLOW_EMPTY_PASSWORD: yes
-  #         MYSQL_DATABASE: "doctrine_tests"
+    services:
+      mariadb:
+        image: "mariadb:${{ matrix.mariadb-version }}"
+        env:
+          MARIADB_ROOT_PASSWORD: "password"
+          MYSQL_DATABASE: "test_db"
 
-  #       options: >-
-  #         --health-cmd "mariadb-admin ping --silent || mysqladmin ping --silent"
+        options: >-
+          --health-cmd "mariadb-admin ping --silent || mysqladmin ping --silent"
 
-  #       ports:
-  #         - "3306:3306"
+        ports:
+          - "3306:3306"
 
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
 
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
-  #         extensions: "${{ matrix.extension }}"
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          ini-values: "zend.assertions=1"
+          extensions: "${{ matrix.extension }}"
 
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
 
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "mariadb"
+          DBAL_PASSWORD: "password"
+          DBAL_PORT: "3306"
+          DBAL_ROOT_PASSWORD: "password"
+          DBAL_ROOT_USER: "root"
+          DBAL_USER: "root"
+          DATABASE_URL: "mysql://root:password@mariadb:3306/test_db"
+        run: "vendor/bin/phpunit"
 
-  # phpunit-mysql:
-  #   name: "PHPUnit with MySQL"
-  #   runs-on: "ubuntu-22.04"
+  phpunit-mysql:
+    name: "PHPUnit with MySQL"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+    needs: "phpunit-smoke-tests"
 
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       mysql-version:
-  #         - "5.7"
-  #         - "8.0"
-  #         - "8.2"
-  #       extension:
-  #         - "mysqli"
-  #         - "pdo_mysql"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+        mysql-version:
+          - "5.7"
+          - "8.0"
+          - "8.2"
+        extension:
+          - "mysqli"
+          - "pdo_mysql"
 
-  #   services:
-  #     mysql:
-  #       image: "mysql:${{ matrix.mysql-version }}"
+    services:
+      mysql:
+        image: "mysql:${{ matrix.mysql-version }}"
 
-  #       options: >-
-  #         --health-cmd "mysqladmin ping --silent"
-  #         -e MYSQL_ALLOW_EMPTY_PASSWORD=yes
-  #         -e MYSQL_DATABASE=doctrine_tests
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          -e MYSQL_ROOT_PASSWORD=password
+          -e MYSQL_DATABASE=test_db
 
-  #       ports:
-  #         - "3306:3306"
+        ports:
+          - "3306:3306"
 
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
 
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
-  #         extensions: "${{ matrix.extension }}"
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          ini-values: "zend.assertions=1"
+          extensions: "${{ matrix.extension }}"
 
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
 
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "mysql"
+          DBAL_PASSWORD: "password"
+          DBAL_PORT: "3306"
+          DBAL_ROOT_PASSWORD: "password"
+          DBAL_ROOT_USER: "root"
+          DBAL_USER: "root"
+          DATABASE_URL: "mysql://root:password@mysql:3306/test_db"
+        run: "vendor/bin/phpunit"
 
   # phpunit-mssql:
   #   name: "PHPUnit with SQL Server"
