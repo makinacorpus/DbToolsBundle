@@ -26,7 +26,7 @@ jobs:
     name: "PHPUnit with Symfony et PHP version matrix"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
 
     strategy:
       matrix:
