@@ -44,8 +44,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        // $this->skipIfDatabase(AbstractBridge::SERVER_SQLITE, 'SQLite RANDOM() return an int, not a float, requires specific code.');
-
         $config = new AnonymizationConfig();
         $config->add(new AnonymizerConfig(
             'table_test',
