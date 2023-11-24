@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Kernel;
 
 class TestKernel extends Kernel implements CompilerPassInterface
@@ -22,7 +23,10 @@ class TestKernel extends Kernel implements CompilerPassInterface
     public function __construct(string $environment, bool $debug)
     {
         $this->testRootDir = sys_get_temp_dir().'/'.uniqid('db_tools_', true);
-        \mkdir($this->testRootDir . '/vendor', 777, true);
+        $filesystem = new Filesystem();
+
+        $filesystem->mkdir($this->testRootDir . '/vendor');
+        $filesystem->mkdir($this->testRootDir . '/var/cache');
 
         parent::__construct($environment, $debug);
     }

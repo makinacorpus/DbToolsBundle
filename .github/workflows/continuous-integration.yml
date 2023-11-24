@@ -1,0 +1,447 @@
+name: "Continuous Integration"
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/continuous-integration.yml
+      - composer.*
+      - phpunit.xml.dist
+      - src/**
+      - tests/**
+  push:
+    branches:
+      - "main"
+    paths:
+      - .github/workflows/continuous-integration.yml
+      - composer.*
+      - phpunit.xml.dist
+      - src/**
+      - tests/**
+
+env:
+  fail-fast: true
+
+jobs:
+  phpunit-smoke-test:
+    name: "PHPUnit with Symfony et PHP version matrix"
+    runs-on: "./docker/php-ci"
+
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+          - "8.2"
+          - "8.3"
+        symfony-version:
+          - 6.3.*
+          - 6.4.*
+        postgres-version:
+          - "16"
+        extension:
+          - "pdo_pgsql"
+        include:
+          - php-version: "8.1"
+            symfony-version: 5.4.*
+            postgres-version: "16"
+            extension: "pdo_pgsql"
+
+    services:
+      postgres:
+        image: "postgres:${{ matrix.postgres-version }}"
+        env:
+          POSTGRES_PASSWORD: "postgres"
+
+        options: >-
+          --health-cmd "pg_isready"
+
+        ports:
+          - "5432:5432"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: "pgsql pdo_pgsql"
+          ini-values: "zend.assertions=1"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
+
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "localhost"
+          DBAL_PASSWORD: "postgres"
+          DBAL_PORT: "5432"
+          DBAL_ROOT_PASSWORD: "postgres"
+          DBAL_ROOT_USER: "postgres"
+          DBAL_USER: "postgres"
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
+        run: "vendor/bin/phpunit"
+
+  # phpunit-postgres:
+  #   name: "PHPUnit with PostgreSQL"
+  #   runs-on: "ubuntu-22.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       postgres-version:
+  #         - "10"
+  #         - "15"
+  #         - "16"
+  #       extension:
+  #         - "pgsql"
+  #         - "pdo_pgsql"
+
+  #   services:
+  #     postgres:
+  #       image: "postgres:${{ matrix.postgres-version }}"
+  #       env:
+  #         POSTGRES_PASSWORD: "postgres"
+
+  #       options: >-
+  #         --health-cmd "pg_isready"
+
+  #       ports:
+  #         - "5432:5432"
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         extensions: "pgsql pdo_pgsql"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+
+  # phpunit-mariadb:
+  #   name: "PHPUnit with MariaDB"
+  #   runs-on: "ubuntu-22.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       mariadb-version:
+  #         - "10.6"  # LTS (Jul 2026)
+  #         - "10.11" # LTS (Feb 2028)
+  #         - "11.0"  # STS (Jun 2024)
+  #         - "11.1"  # STS (Aug 2024)
+  #       extension:
+  #         - "mysqli"
+  #         - "pdo_mysql"
+
+  #   services:
+  #     mariadb:
+  #       image: "mariadb:${{ matrix.mariadb-version }}"
+  #       env:
+  #         MYSQL_ALLOW_EMPTY_PASSWORD: yes
+  #         MYSQL_DATABASE: "doctrine_tests"
+
+  #       options: >-
+  #         --health-cmd "mariadb-admin ping --silent || mysqladmin ping --silent"
+
+  #       ports:
+  #         - "3306:3306"
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+  #         extensions: "${{ matrix.extension }}"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+
+  # phpunit-mysql:
+  #   name: "PHPUnit with MySQL"
+  #   runs-on: "ubuntu-22.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       mysql-version:
+  #         - "5.7"
+  #         - "8.0"
+  #         - "8.2"
+  #       extension:
+  #         - "mysqli"
+  #         - "pdo_mysql"
+
+  #   services:
+  #     mysql:
+  #       image: "mysql:${{ matrix.mysql-version }}"
+
+  #       options: >-
+  #         --health-cmd "mysqladmin ping --silent"
+  #         -e MYSQL_ALLOW_EMPTY_PASSWORD=yes
+  #         -e MYSQL_DATABASE=doctrine_tests
+
+  #       ports:
+  #         - "3306:3306"
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+  #         extensions: "${{ matrix.extension }}"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+
+  # phpunit-mssql:
+  #   name: "PHPUnit with SQL Server"
+  #   runs-on: "ubuntu-20.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       extension:
+  #         - "sqlsrv"
+  #         - "pdo_sqlsrv"
+  #       collation:
+  #         - "Latin1_General_100_CI_AS_SC_UTF8"
+
+  #   services:
+  #     mssql:
+  #       image: "mcr.microsoft.com/mssql/server:2019-latest"
+  #       env:
+  #         ACCEPT_EULA: "Y"
+  #         SA_PASSWORD: "Doctrine2018"
+  #         MSSQL_COLLATION: "${{ matrix.collation }}"
+
+  #       options: >-
+  #         --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Doctrine2018"
+
+  #       ports:
+  #         - "1433:1433"
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+  #         tools: "pecl"
+  #         extensions: "${{ matrix.extension }}-5.10.0beta1"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+
+    #   phpunit-sqlite:
+    #     name: "PHPUnit with SQLite"
+    #     runs-on: "${{ matrix.os }}"
+
+    #     strategy:
+    #       matrix:
+    #         os:
+    #           - "ubuntu-22.04"
+    #         php-version:
+    #           - "8.1"
+    #           - "8.2"
+    #           - "8.3"
+    #         dependencies:
+    #           - "highest"
+    #         extension:
+    #           - "pdo_sqlite"
+    #           - "sqlite3"
+
+    #     steps:
+    #       - name: "Checkout"
+    #         uses: "actions/checkout@v4"
+    #         with:
+    #           fetch-depth: 2
+
+    #       - name: "Install PHP"
+    #         uses: "shivammathur/setup-php@v2"
+    #         with:
+    #           php-version: "${{ matrix.php-version }}"
+    #           coverage: "pcov"
+    #           ini-values: "zend.assertions=1"
+
+    #       - name: "Install dependencies with Composer"
+    #         uses: "ramsey/composer-install@v2"
+    #         with:
+    #           composer-options: "--ignore-platform-req=php+"
+    #           dependency-versions: "${{ matrix.dependencies }}"
+
+    #       - name: "Print SQLite version"
+    #         run: >
+    #           php -r 'printf("Testing with libsqlite version %s\n", (new PDO("sqlite::memory:"))->query("select sqlite_version()")->fetch()[0]);'
+    #         if: "${{ matrix.extension == 'pdo_sqlite' }}"
+
+    #       - name: "Print SQLite version"
+    #         run: >
+    #           php -r 'printf("Testing with libsqlite version %s\n", SQLite3::version()["versionString"]);'
+    #         if: "${{ matrix.extension == 'sqlite3' }}"
+
+    #       - name: "Run PHPUnit"
+    #         run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+  # phpunit-oci8:
+  #   name: "PHPUnit on OCI8"
+  #   runs-on: "ubuntu-22.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       oracle-version:
+  #         - "21"
+  #         - "23"
+
+  #   services:
+  #     oracle:
+  #       image: gvenzl/oracle-${{ matrix.oracle-version < 23 && 'xe' || 'free'  }}:${{ matrix.oracle-version }}
+  #       env:
+  #         ORACLE_PASSWORD: oracle
+  #       ports:
+  #         - "1521:1521"
+  #       options: >-
+  #         --health-cmd healthcheck.sh
+  #         --health-interval 20s
+  #         --health-timeout 10s
+  #         --health-retries 10
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         extensions: "oci8"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/oci8${{ matrix.oracle-version < 23 && '-21' || ''  }}.xml --coverage-clover=coverage.xml"
+
+  # phpunit-pdo-oci:
+  #   name: "PHPUnit on PDO_OCI"
+  #   runs-on: "ubuntu-22.04"
+
+  #   strategy:
+  #     matrix:
+  #       php-version:
+  #         - "8.1"
+  #         - "8.2"
+  #         - "8.3"
+  #       oracle-version:
+  #         - "21"
+  #         - "23"
+
+  #   services:
+  #     oracle:
+  #       image: gvenzl/oracle-${{ matrix.oracle-version < 23 && 'xe' || 'free'  }}:${{ matrix.oracle-version }}
+  #       env:
+  #         ORACLE_PASSWORD: oracle
+  #       ports:
+  #         - "1521:1521"
+  #       options: >-
+  #         --health-cmd healthcheck.sh
+  #         --health-interval 20s
+  #         --health-timeout 10s
+  #         --health-retries 10
+
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: "actions/checkout@v4"
+  #       with:
+  #         fetch-depth: 2
+
+  #     - name: "Install PHP"
+  #       uses: "shivammathur/setup-php@v2"
+  #       with:
+  #         php-version: "${{ matrix.php-version }}"
+  #         extensions: "pdo_oci"
+  #         coverage: "pcov"
+  #         ini-values: "zend.assertions=1"
+
+  #     - name: "Install dependencies with Composer"
+  #       uses: "ramsey/composer-install@v2"
+  #       with:
+  #         composer-options: "--ignore-platform-req=php+"
+
+  #     - name: "Run PHPUnit"
+  #       run: "vendor/bin/phpunit -c ci/github/phpunit/pdo_oci${{ matrix.oracle-version < 23 && '-21' || ''  }}.xml --coverage-clover=coverage.xml"

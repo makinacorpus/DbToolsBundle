@@ -6,12 +6,17 @@ on:
       - .github/workflows/composer-checks.yml
       - composer.*
       - .php-cs-fixer.dist.php
-      - phpstan.neon.dist
       - src/**
       - tests/**
   push:
     branches:
       - "main"
+    paths:
+      - .github/workflows/composer-checks.yml
+      - composer.*
+      - .php-cs-fixer.dist.php
+      - src/**
+      - tests/**
 
 jobs:
   php-cs-fixer:
