@@ -225,7 +225,6 @@ jobs:
         php-version:
           - "8.1"
         mysql-version:
-          - "5.7"
           - "8.0"
           - "8.2"
         extension:
@@ -276,58 +275,70 @@ jobs:
           DATABASE_URL: "mysql://root:password@mysql:3306/test_db"
         run: "vendor/bin/phpunit"
 
-  # phpunit-mssql:
-  #   name: "PHPUnit with SQL Server"
-  #   runs-on: "ubuntu-20.04"
+  phpunit-mssql:
+    name: "PHPUnit with SQL Server"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+    needs: "phpunit-smoke-tests"
 
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       extension:
-  #         - "sqlsrv"
-  #         - "pdo_sqlsrv"
-  #       collation:
-  #         - "Latin1_General_100_CI_AS_SC_UTF8"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+        extension:
+          - "sqlsrv"
+          - "pdo_sqlsrv"
+        collation:
+          - "Latin1_General_100_CI_AS_SC_UTF8"
 
-  #   services:
-  #     mssql:
-  #       image: "mcr.microsoft.com/mssql/server:2019-latest"
-  #       env:
-  #         ACCEPT_EULA: "Y"
-  #         SA_PASSWORD: "Doctrine2018"
-  #         MSSQL_COLLATION: "${{ matrix.collation }}"
+    services:
+      mssql:
+        image: "mcr.microsoft.com/mssql/server:2019-latest"
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: "password"
+          MSSQL_COLLATION: "${{ matrix.collation }}"
 
-  #       options: >-
-  #         --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P Doctrine2018"
+        options: >-
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P test_db"
 
-  #       ports:
-  #         - "1433:1433"
+        ports:
+          - "1433:1433"
 
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
 
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
-  #         tools: "pecl"
-  #         extensions: "${{ matrix.extension }}-5.10.0beta1"
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          ini-values: "zend.assertions=1"
+          tools: "pecl"
+          extensions: "${{ matrix.extension }}-5.10.0beta1"
 
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
 
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "mssql"
+          DBAL_PASSWORD: "password"
+          DBAL_PORT: "3306"
+          DBAL_ROOT_PASSWORD: "password"
+          DBAL_ROOT_USER: "sa"
+          DBAL_USER: "sa"
+          DATABASE_URL: "pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true"
+
+        run: "vendor/bin/phpunit"
 
     #   phpunit-sqlite:
     #     name: "PHPUnit with SQLite"
