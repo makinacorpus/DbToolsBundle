@@ -18,7 +18,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
-use MakinaCorpus\QueryBuilder\Bridge\AbstractBridge;
+use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\Query\DoctrineUpdate;
 
@@ -245,7 +245,7 @@ class Anonymizator
         // UPDATE query, in order for anonymizers to be able to JOIN over
         // it. Otherwise, JOIN would not be possible for RDBMS that speak
         // standard SQL.
-        if (AbstractBridge::SERVER_SQLSERVER === $builder->getServerFlavor()) {
+        if (Platform::SQLSERVER === $builder->getServerFlavor()) {
             // This is the only and single hack regarding the UPDATE clause
             // syntax, all RDBMS accept the following query:
             //
@@ -280,7 +280,7 @@ class Anonymizator
                 ),
                 AbstractAnonymizer::JOIN_TABLE
             );
-        } else if (AbstractBridge::SERVER_SQLITE === $builder->getServerFlavor()) {
+        } else if (Platform::SQLITE === $builder->getServerFlavor()) {
             // SQLite doesn't support DDL statements on tables, we cannot add
             // the join column with an int identifier. But, fortunately, it does
             // have a special ROWID column which is a unique int identifier for

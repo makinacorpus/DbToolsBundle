@@ -51,16 +51,7 @@ abstract class FunctionalTestCase extends UnitTestCase
     {
         $this->skipIfDatabase($database);
 
-        $serverVersion = $this->getDoctrineQueryBuilder()->getServerVersion();
-
-        if (null === $serverVersion) {
-            throw new \Exception(\sprintf("Database '%s', server version is null", $database));
-        }
-
-        $serverVersion = $this->normalizeVersion($version);
-        $version = $this->normalizeVersion($version);
-
-        if (0 <= \version_compare($serverVersion, $version)) {
+        if ($this->getDoctrineQueryBuilder()->isVersionGreaterOrEqualThan($version)) {
             self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version >= '%s'", $database, $version));
         }
     }
@@ -74,30 +65,9 @@ abstract class FunctionalTestCase extends UnitTestCase
             return;
         }
 
-        $serverVersion = $this->getDoctrineQueryBuilder()->getServerVersion();
-
-        if (null === $serverVersion) {
-            throw new \Exception(\sprintf("Database '%s', server version is null", $database));
-        }
-
-        $serverVersion = $this->normalizeVersion($serverVersion);
-        $version = $this->normalizeVersion($version);
-
-        if (0 > \version_compare($serverVersion, $version)) {
+        if ($this->getDoctrineQueryBuilder()->isVersionLessThan($version)) {
             self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version <= '%s'", $database, $version));
         }
-    }
-
-    /**
-     * Normalize version to an x.y.z semantic version string.
-     */
-    protected function normalizeVersion(string $version): string
-    {
-        $matches = [];
-        if (\preg_match('/(\d+)(\.\d+|)(\.\d+|).*/ims', $version, $matches)) {
-            return $matches[1] . ($matches[2] ?: '.0') . ($matches[3] ?: '.0');
-        }
-        throw new \Exception(\sprintf("Database version '%s', is not in 'x.y.z' semantic format", $version));
     }
 
     /**
@@ -272,6 +242,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         $middlewares = [];
 
         // @todo Option
+        /* @phpstan-ignore-next-line */
         if (false) {
             $middlewares[] = new Middleware(
                 new class () extends AbstractLogger
