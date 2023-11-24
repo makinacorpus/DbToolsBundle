@@ -11,6 +11,12 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - .github/workflows/continuous-integration.yml
+      - composer.*
+      - phpunit.xml.dist
+      - src/**
+      - tests/**
 
 env:
   fail-fast: true
@@ -37,6 +43,7 @@ jobs:
           - php-version: "8.1"
             symfony-version: 5.4.*
             postgres-version: "16"
+            extension: "pdo_pgsql"
 
     services:
       postgres:
