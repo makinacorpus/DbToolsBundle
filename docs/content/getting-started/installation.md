@@ -14,6 +14,7 @@ Currently supported database vendors:
 - PostgreSQL 10 or higher (previous versions from 9.5 are untested but should work)
 - MariaDB 11 or higher
 - MySQL 5.7 or higher
+- SQLite >= 3
 - SQL Server 2019 or higher (previous versions from 2015 are untested but should work)
 
 ::: info

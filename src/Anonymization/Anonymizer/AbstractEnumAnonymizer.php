@@ -60,14 +60,14 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
             ->range($targetCount) // Avoid duplicate rows.
         ;
 
-        $update->join(
+        $update->leftJoin(
             $join,
             $expr
                 ->where()
                 ->raw(
                     '? + 1 = ?',
                     [
-                        $expr->mod($expr->column(self::JOIN_ID, self::JOIN_TABLE), $sampleCount),
+                        $expr->mod($this->getJoinColumn(), $sampleCount),
                         $expr->column('rownum', $joinAlias),
                     ]
                 )

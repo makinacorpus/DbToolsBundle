@@ -10,6 +10,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
+use MakinaCorpus\QueryBuilder\Bridge\AbstractBridge;
 
 class Md5AnonymizerTest extends FunctionalTestCase
 {
@@ -44,6 +45,8 @@ class Md5AnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
+        $this->skipIfDatabase(AbstractBridge::SERVER_SQLITE, 'SQLite does not implement MD5() neither any other hash function.');
+
         $sample = ['sample1', 'sample2', 'sample3', 'sample4', 'sample5'];
 
         $config = new AnonymizationConfig();

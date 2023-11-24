@@ -68,6 +68,28 @@ abstract class AbstractAnonymizer
     }
 
     /**
+     * Get join column name.
+     *
+     * @internal
+     *   Public for unit tests only, otherwise protected.
+     */
+    final public function getJoinId(): string
+    {
+        return self::JOIN_ID;
+    }
+
+    /**
+     * Get join column expression.
+     *
+     * @internal
+     *   Public for unit tests only, otherwise protected.
+     */
+    protected function getJoinColumn(): Expression
+    {
+        return ExpressionFactory::column($this->getJoinId(), self::JOIN_TABLE);
+    }
+
+    /**
      * Initialize your anonymizer.
      *
      * Override this method for your needs, for example create a temporary
