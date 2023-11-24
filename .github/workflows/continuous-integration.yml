@@ -23,7 +23,7 @@ env:
 
 jobs:
   phpunit-smoke-tests:
-    name: "PHPUnit with Symfony et PHP version matrix"
+    name: "PHPUnit with PHP version matrix"
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
@@ -39,8 +39,8 @@ jobs:
         extension:
           - "pdo_pgsql"
         dependencies:
-            - "lowest"
-            - "highest"
+          - "lowest"
+          - "highest"
 
     services:
       postgres:
