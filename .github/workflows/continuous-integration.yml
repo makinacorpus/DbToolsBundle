@@ -2,8 +2,6 @@ name: "Continuous Integration"
 
 on:
   pull_request:
-    branches:
-      - "*.x"
     paths:
       - .github/workflows/continuous-integration.yml
       - composer.*
@@ -12,15 +10,7 @@ on:
       - tests/**
   push:
     branches:
-      - "*.x"
-    paths:
-      - .github/workflows/continuous-integration.yml
-      - composer.*
-      - phpunit.xml.dist
-      - src/**
-      - tests/**
-  schedule:
-    - cron: "42 3 * * *"
+      - "main"
 
 env:
   fail-fast: true
