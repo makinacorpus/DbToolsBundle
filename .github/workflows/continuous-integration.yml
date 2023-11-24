@@ -22,7 +22,7 @@ env:
   fail-fast: true
 
 jobs:
-  phpunit-smoke-test:
+  phpunit-smoke-tests:
     name: "PHPUnit with Symfony et PHP version matrix"
     runs-on: ubuntu-latest
     container:
@@ -34,22 +34,13 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
-        symfony-version:
-          - 6.3.*
-          - 6.4.*
         postgres-version:
           - "16"
         extension:
           - "pdo_pgsql"
-        include:
-          - php-version: "8.1"
-            symfony-version: 5.4.*
-            postgres-version: "16"
-            extension: "pdo_pgsql"
-
-    env:
-      SYMFONY_DEPRECATIONS_HELPER: max[self]=0
-      SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
+        dependencies:
+            - "lowest"
+            - "highest"
 
     services:
       postgres:
@@ -79,6 +70,7 @@ jobs:
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
         with:
+          dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--ignore-platform-req=php+"
 
       - name: "Run PHPUnit"
@@ -94,57 +86,68 @@ jobs:
           DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
         run: "vendor/bin/phpunit"
 
-  # phpunit-postgres:
-  #   name: "PHPUnit with PostgreSQL"
-  #   runs-on: "ubuntu-22.04"
+  phpunit-postgres:
+    name: "PHPUnit with PostgreSQL"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+    needs: "phpunit-smoke-tests"
 
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       postgres-version:
-  #         - "10"
-  #         - "15"
-  #         - "16"
-  #       extension:
-  #         - "pgsql"
-  #         - "pdo_pgsql"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+        postgres-version:
+          - "10"
+          - "15"
+          - "16"
+        extension:
+          - "pgsql"
+          - "pdo_pgsql"
 
-  #   services:
-  #     postgres:
-  #       image: "postgres:${{ matrix.postgres-version }}"
-  #       env:
-  #         POSTGRES_PASSWORD: "postgres"
+    services:
+      postgres:
+        image: "postgres:${{ matrix.postgres-version }}"
+        env:
+          POSTGRES_PASSWORD: "postgres"
 
-  #       options: >-
-  #         --health-cmd "pg_isready"
+        options: >-
+          --health-cmd "pg_isready"
 
-  #       ports:
-  #         - "5432:5432"
+        ports:
+          - "5432:5432"
 
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
 
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         extensions: "pgsql pdo_pgsql"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: "pgsql pdo_pgsql"
+          coverage: "pcov"
+          ini-values: "zend.assertions=1"
 
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
 
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "postgres"
+          DBAL_PASSWORD: "postgres"
+          DBAL_PORT: "5432"
+          DBAL_ROOT_PASSWORD: "postgres"
+          DBAL_ROOT_USER: "postgres"
+          DBAL_USER: "postgres"
+          DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
+        run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
 
   # phpunit-mariadb:
   #   name: "PHPUnit with MariaDB"
