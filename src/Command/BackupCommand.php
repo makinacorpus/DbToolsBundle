@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
+use MakinaCorpus\DbToolsBundle\DbToolsStorage;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperInterface;
-use MakinaCorpus\DbToolsBundle\DbToolsStorage;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,6 +65,7 @@ class BackupCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
         }
@@ -72,10 +74,16 @@ class BackupCommand extends Command
             $this->excludedTables[$this->connectionName] = \explode(',', $excludedTables);
         }
 
-        $created = $this->doBackup();
+        try {
+            $created = $this->doBackup();
 
-        if (!$input->getOption('no-cleanup')) {
-            $this->cleanupBackups($created);
+            if (!$input->getOption('no-cleanup')) {
+                $this->cleanupBackups($created);
+            }
+        } catch (NotImplementedException $e) {
+            $this->io->error($e->getMessage());
+
+            return NotImplementedException::CONSOLE_EXIT_STATUS;
         }
 
         return Command::SUCCESS;

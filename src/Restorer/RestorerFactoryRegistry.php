@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 
 class RestorerFactoryRegistry
 {
@@ -33,25 +34,17 @@ class RestorerFactoryRegistry
         $connection = $this->doctrineRegistry->getConnection($connectionName);
         $driver = $connection->getParams()['driver'];
 
-        if (!\array_key_exists($driver, $this->restorerBinaries)) {
-            throw new \InvalidArgumentException(\sprintf(
-                "There is no restorer binary provided for DBAL driver '%s'",
-                $driver
-            ));
-        }
-
-        foreach($this->restorerFactories as $restorerFactory) {
-            if ($restorerFactory->isSupported($driver)) {
-                return $restorerFactory->create(
-                    $this->restorerBinaries[$driver],
-                    $connection
-                );
+        if (\array_key_exists($driver, $this->restorerBinaries)) {
+            foreach ($this->restorerFactories as $restorerFactory) {
+                if ($restorerFactory->isSupported($driver)) {
+                    return $restorerFactory->create(
+                        $this->restorerBinaries[$driver],
+                        $connection
+                    );
+                }
             }
         }
 
-        throw new \InvalidArgumentException(\sprintf(
-            "No restorer found for connection '%s'",
-            $connectionName
-        ));
+        throw new NotImplementedException(\sprintf("Restore is not implemented or configured for driver '%s' while using connection '%s'", $driver, $connectionName));
     }
 }

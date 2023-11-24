@@ -43,6 +43,12 @@ do_checks() {
     docker compose -p db_tools_bundle_test exec phpunit composer checks
 }
 
+# Launch PHPUnit tests without any database vendor
+do_unittest() {
+    section_title "PHPUnit unit tests"
+    docker compose -p db_tools_bundle_test exec phpunit vendor/bin/phpunit
+}
+
 do_test_mysql57() {
     section_title "Running tests with MySQL 5.7"
     docker compose -p db_tools_bundle_test exec \
@@ -204,7 +210,7 @@ do_notice() {
     printf "\n  - build, up and down a complete docker stack with all database vendors"
     printf "\n    and versions that the DbToolsBundle supports"
     printf "\n  - run Code Style Fixer (with PHP CS Fixer) and launch Static Analysis (with PHPStan)"
-    printf "\n  - run PHPunit tests for all database vendors"
+    printf "\n  - run PHPUnit tests for all database vendors"
     printf "\n\n--\n"
     printf "\nLaunch the script with one of these available actions:"
     printf "\n"
@@ -212,9 +218,11 @@ do_notice() {
     printf "\n  - ${GREEN}up${NC}: Start docker containers"
     printf "\n  - ${GREEN}down${NC}: Stop docker containers"
     printf "\n  - ${GREEN}checks${NC}: Launch composer checks (for Static analysis & Code style fixer)"
-    printf "\n  - ${GREEN}test_all${NC}: Run PHPunit tests for all database vendors."
-    printf "\n              PHPUnit options can be used as usual: ${GREEN}./dev.sh test_all --filter AnonymizatorFactoryTest${NC}"
-    printf "\n  - ${GREEN}test${NC}: Run PHPunit tests for a specific database vendors or version"
+    printf "\n  - ${GREEN}test_all${NC}: Run PHPUnit tests for all database vendors."
+    printf "\n              PHPUnit options can be used as usual:"
+    printf "\n              ${GREEN}./dev.sh test_all --filter AnonymizatorFactoryTest${NC}"
+    printf "\n  - ${GREEN}test${NC}: Run PHPUnit tests for a specific database vendors or version"
+    printf "\n  - ${GREEN}unittest${NC}: Run PHPUnit tests without any database vendor"
     printf "\n  - ${GREEN}notice${NC}: Display this help"
     printf "\n\n"
 }
@@ -225,6 +233,6 @@ action=${1-}
 if [[ -n $@ ]];then shift;fi
 
 case $action in
-    build|up|down|checks|test_all|test|notice) do_$action "$@";;
+    build|up|down|checks|test_all|unittest|test|notice) do_$action "$@";;
     *) do_notice;;
 esac
