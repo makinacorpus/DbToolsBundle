@@ -24,7 +24,7 @@ env:
 jobs:
   phpunit-smoke-test:
     name: "PHPUnit with Symfony et PHP version matrix"
-    runs-on: "ubuntu-22.04"
+    runs-on: "./docker/php-ci"
 
     strategy:
       matrix:
