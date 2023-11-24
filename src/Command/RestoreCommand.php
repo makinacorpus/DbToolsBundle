@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
-use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use MakinaCorpus\DbToolsBundle\DbToolsStorage;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -81,19 +82,25 @@ class RestoreCommand extends Command
 
         $this->preventMistake($input);
 
-        $this->restorer = $this->restorerFactory->create($this->connectionName);
+        try {
+            $this->restorer = $this->restorerFactory->create($this->connectionName);
 
-        if (!$input->getOption('filename')) {
-            $this->chooseBackup();
-        } else {
-            $this->backupFilename = $input->getOption('filename');
+            if (!$input->getOption('filename')) {
+                $this->chooseBackup();
+            } else {
+                $this->backupFilename = $input->getOption('filename');
+            }
+
+            if (!$this->backupFilename) {
+                return Command::INVALID;
+            }
+
+            $this->doRestore();
+        } catch (NotImplementedException $e) {
+            $this->io->error($e->getMessage());
+
+            return Command::FAILURE;
         }
-
-        if (!$this->backupFilename) {
-            return Command::INVALID;
-        }
-
-        $this->doRestore();
 
         return Command::SUCCESS;
     }

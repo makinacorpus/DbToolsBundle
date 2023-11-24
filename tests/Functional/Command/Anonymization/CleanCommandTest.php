@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Command\Anonymization;
 
+use MakinaCorpus\DbToolsBundle\Tests\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class CleanCommandTest extends KernelTestCase
+class CleanCommandTest extends FunctionalKernelTestCase
 {
     public function testExecute(): void
     {
+        self::skipIfNoDatabase();
+
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -27,6 +29,6 @@ class CleanCommandTest extends KernelTestCase
             ]
         );
 
-        $commandTester->assertCommandIsSuccessful();
+        self::assertCommandIsSuccessful($commandTester);
     }
 }

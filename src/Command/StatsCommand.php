@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Stats\StatValue;
 use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
 use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactoryRegistry;
@@ -191,23 +192,29 @@ class StatsCommand extends Command
 
         $which = $input->getArgument('which');
 
-        $collections = match ($which) {
-            'table' => $this->statsProviderFactoryRegistry->get($connection)->getTableStats($tags),
-            'index' => $this->statsProviderFactoryRegistry->get($connection)->getIndexStats($tags),
-            'global' => $this->statsProviderFactoryRegistry->get($connection)->getGlobalStats($tags),
-            default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
-        };
+        try {
+            $collections = match ($which) {
+                'table' => $this->statsProviderFactoryRegistry->get($connection)->getTableStats($tags),
+                'index' => $this->statsProviderFactoryRegistry->get($connection)->getIndexStats($tags),
+                'global' => $this->statsProviderFactoryRegistry->get($connection)->getGlobalStats($tags),
+                default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
+            };
 
-        $hasValues = false;
+            $hasValues = false;
 
-        if ($input->getOption('flat')) {
-            $hasValues = $this->displayFlat($collections, $output);
-        } else {
-            $hasValues = $this->displayTable($collections, $output);
-        }
+            if ($input->getOption('flat')) {
+                $hasValues = $this->displayFlat($collections, $output);
+            } else {
+                $hasValues = $this->displayTable($collections, $output);
+            }
 
-        if (!$hasValues) {
-            $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connection));
+            if (!$hasValues) {
+                $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connection));
+            }
+        } catch (NotImplementedException $e) {
+            $io->error($e->getMessage());
+
+            return NotImplementedException::CONSOLE_EXIT_STATUS;
         }
 
         return Command::SUCCESS;

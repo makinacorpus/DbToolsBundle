@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -108,9 +109,15 @@ class GdprifyCommand extends Command
 
         $this->connectionName = $input->getOption('connection') ?? $this->connectionName;
 
-        $this->doRestore();
-        $this->doAnonymize();
-        $this->doBackup();
+        try {
+            $this->doRestore();
+            $this->doAnonymize();
+            $this->doBackup();
+        } catch (NotImplementedException $e) {
+            $this->io->error($e->getMessage());
+
+            return NotImplementedException::CONSOLE_EXIT_STATUS;
+        }
 
         return Command::SUCCESS;
     }

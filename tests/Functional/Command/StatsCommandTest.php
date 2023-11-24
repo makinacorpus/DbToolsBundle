@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Command;
 
+use MakinaCorpus\DbToolsBundle\Tests\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class StatsCommandTest extends KernelTestCase
+class StatsCommandTest extends FunctionalKernelTestCase
 {
     public function testExecute(): void
     {
+        self::skipIfNoDatabase();
+
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -19,6 +21,6 @@ class StatsCommandTest extends KernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
-        $commandTester->assertCommandIsSuccessful();
+        self::assertCommandIsSuccessful($commandTester);
     }
 }
