@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer;
 
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
 
 class AnonymizatorTest extends FunctionalTestCase
@@ -124,6 +125,14 @@ class AnonymizatorTest extends FunctionalTestCase
         $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
         $anonymizator->addAnonymizerIdColumn('table_test');
 
+        $platform = $this->getConnection()->getDatabasePlatform();
+
+        if ($platform instanceof SqlitePlatform) {
+            $query = 'select id, value, rowid as _db_tools_id from table_test order by id';
+        } else {
+            $query = 'select id, value, _db_tools_id from table_test order by id';
+        }
+
         // Some connectors will return string values for int.
         $actual = \array_map(
             fn (array $item) => [
@@ -131,12 +140,7 @@ class AnonymizatorTest extends FunctionalTestCase
                 'value' => $item['value'],
                 AbstractAnonymizer::JOIN_ID => (int) $item[AbstractAnonymizer::JOIN_ID],
             ],
-            $this
-                ->getConnection()
-                ->executeQuery(
-                    'select id, value, _db_tools_id from table_test order by id'
-                )
-                ->fetchAllAssociative(),
+            $this->getConnection()->executeQuery($query)->fetchAllAssociative(),
         );
 
         self::assertSame(

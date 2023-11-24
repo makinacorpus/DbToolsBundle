@@ -6,6 +6,15 @@ This page list all *Anonymizers* provided by *DbToolsBundle*.
 
 ## EmailAnonymizer
 
+EmailAnonymizer uses a hash function on the original value to make each unique email
+anonymization reproducible accross tables.
+
+:::warning
+SQLite does implement `MD5()` function, neither any hashing function: in order to get
+around this, the `rowid` value is used instead which prevent email values anonymization
+from being reproducible across tables.
+:::
+
 This *Anonymizer* will fill configured column with value looking like `[username]@[domain.tld]`
 where:
 * `[username]` is a md5 hash of the pre-anonymization value
@@ -212,6 +221,11 @@ user:
 :::
 
 ## Md5Anonymizer
+
+:::warning
+SQLite does implement `MD5()` function, neither any hashing function, this anonymizer
+cannot be used with SQLite.
+:::
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
 

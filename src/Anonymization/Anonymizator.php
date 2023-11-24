@@ -7,6 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Schema\TableDiff;
@@ -240,44 +241,58 @@ class Anonymizator
 
         $expr = $update->expression();
 
-        //
         // Add target table a second time into the FROM statement of the
         // UPDATE query, in order for anonymizers to be able to JOIN over
         // it. Otherwise, JOIN would not be possible for RDBMS that speak
         // standard SQL.
-        //
-        // This is the only and single hack regarding the UPDATE clause
-        // syntax, all RDBMS accept the following query:
-        //
-        //     UPDATE foo
-        //     SET val = bar.val
-        //     FROM foo AS foo_2
-        //     JOIN bar ON bar.id = foo_2.id
-        //     WHERE foo.id = foo_2.id
-        //
-        // Except for SQL Server, which cannot deambiguate the foo table
-        // reference in the WHERE clause, so we have to write it this
-        // way:
-        //
-        //     UPDATE foo
-        //     SET val = bar.val
-        //     FROM (
-        //         SELECT *
-        //         FROM foo
-        //     ) AS foo_2
-        //     JOIN bar ON bar.id = foo_2.id
-        //     WHERE foo.id = foo_2.id
-        //
-        // Which by the way also works with other RDBMS, but is an
-        // optimization fence for some, because the nested SELECT becomes
-        // a temporary table (especially for MySQL...). For those we need
-        // to keep the original query, even if semantically identical.
-        //
         if (AbstractBridge::SERVER_SQLSERVER === $builder->getServerFlavor()) {
+            // This is the only and single hack regarding the UPDATE clause
+            // syntax, all RDBMS accept the following query:
+            //
+            //     UPDATE foo
+            //     SET val = bar.val
+            //     FROM foo AS foo_2
+            //     JOIN bar ON bar.id = foo_2.id
+            //     WHERE foo.id = foo_2.id
+            //
+            // Except for SQL Server, which cannot deambiguate the foo table
+            // reference in the WHERE clause, so we have to write it this
+            // way:
+            //
+            //     UPDATE foo
+            //     SET val = bar.val
+            //     FROM (
+            //         SELECT *
+            //         FROM foo
+            //     ) AS foo_2
+            //     JOIN bar ON bar.id = foo_2.id
+            //     WHERE foo.id = foo_2.id
+            //
+            // Which by the way also works with other RDBMS, but is an
+            // optimization fence for some, because the nested SELECT becomes
+            // a temporary table (especially for MySQL...). For those we need
+            // to keep the original query, even if semantically identical.
             $update->join(
                 $builder->select($table),
                 $expr->where()->isEqual(
                     $expr->column(AbstractAnonymizer::JOIN_ID, $table),
+                    $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
+                ),
+                AbstractAnonymizer::JOIN_TABLE
+            );
+        } else if (AbstractBridge::SERVER_SQLITE === $builder->getServerFlavor()) {
+            // SQLite doesn't support DDL statements on tables, we cannot add
+            // the join column with an int identifier. But, fortunately, it does
+            // have a special ROWID column which is a unique int identifier for
+            // each row we can use instead.
+            // @see https://www.sqlite.org/lang_createtable.html#rowid
+            $update->join(
+                $builder
+                    ->select($table)
+                    ->column('*')
+                    ->column('rowid', AbstractAnonymizer::JOIN_ID),
+                $expr->where()->isEqual(
+                    $expr->column("rowid", $table),
                     $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
                 ),
                 AbstractAnonymizer::JOIN_TABLE
@@ -336,6 +351,17 @@ class Anonymizator
         }
 
         $platform = $this->connection->getDatabasePlatform();
+
+        if ($platform instanceof SqlitePlatform) {
+            // Do nothing, SQLite doesn't support DDL statements, you need to
+            // recreate a new table with the new schema, then copy all data.
+            // That's not what we want.
+            // SQLite has a ROWID special column that does exactly what we need
+            // i.e. having a unique int identifier for each row on which we can
+            // join on.
+            // @see https://www.sqlite.org/lang_createtable.html#rowid
+            return;
+        }
 
         if ($platform instanceof AbstractMySQLPlatform) {
             $this->addAnonymizerIdColumnMySql($table);

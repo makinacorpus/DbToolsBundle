@@ -121,6 +121,40 @@ MySQL has many limitations:
 In order to workaround this, we chose to create an index over the anonymizer
 identifier sequence, which wouldn't be necessary otherwise.
 
+### SQLite specifics
+
+SQLite does not permit DDL statements that alter tables, it forces you to
+create a new table with the new schema, copy data, then remove the previous
+version and rename the new one.
+
+In order to avoid data copy, we are going to use the `rowid` magic column
+instead for joining, which allows us to work without adding the unique
+identifier on tables.
+
+Hence the following SQL variant:
+
+```sql
+UPDATE
+    "client"
+SET
+    "nom" = "sample_1"."value",
+    "civilite" = "sample_2"."value"
+
+FROM (
+    SELECT
+        *,
+        "rowid" AS "_db_tools_id"
+    FROM "client"
+) AS "_target_table"
+
+-- ...
+
+WHERE
+    "client"."rowid" = "_target_table"."_db_tools_id"
+```
+
+Which then allows all anonymizers working consistently with SQLite.
+
 ### SQL Server specifics
 
 When using the same table as the updated one in the `FROM` clause, SQL Server
