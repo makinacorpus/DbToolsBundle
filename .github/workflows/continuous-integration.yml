@@ -210,7 +210,7 @@ jobs:
           DBAL_ROOT_PASSWORD: "password"
           DBAL_ROOT_USER: "root"
           DBAL_USER: "root"
-          DATABASE_URL: "mysql://root:password@mariadb11:3306/test_db"
+          DATABASE_URL: "mysql://root:password@mariadb11:3306/test_db?serverVersion=${{ matrix.mariadb-version }}-MariaDB"
 
         run: "vendor/bin/phpunit"
 
