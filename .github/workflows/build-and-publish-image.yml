@@ -1,7 +1,12 @@
 name: Build Docker image
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - .github/workflows/build-and-publish-image.yml
+      - docker/php-ci/Dockerfile
 
 env:
   REGISTRY: ghcr.io
