@@ -1,16 +1,15 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Documentation build
 
 on:
   pull_request:
     paths:
+      - .github/workflows/docs-build.yml
       - docs/**
   push:
     branches:
       - "main"
     paths:
+      - .github/workflows/docs-build.yml
       - docs/**
 
 jobs:
@@ -25,6 +24,6 @@ jobs:
       with:
         node-version: 18.12
         cache: 'npm'
-    - run: cd docs
-    - run: npm ci
-    - run: npm run docs:build
+        cache-dependency-path: ./docs
+    - run: cd docs && npm ci
+    - run: cd docs && npm run docs:build
