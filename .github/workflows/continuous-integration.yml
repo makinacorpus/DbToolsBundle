@@ -18,9 +18,6 @@ on:
       - src/**
       - tests/**
 
-env:
-  fail-fast: true
-
 jobs:
   phpunit-smoke-tests:
     name: "PHPUnit with PHP version matrix"
