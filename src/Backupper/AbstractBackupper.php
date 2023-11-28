@@ -7,7 +7,12 @@ namespace MakinaCorpus\DbToolsBundle\Backupper;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Process\Process;
 
-abstract class AbstractBackupper implements BackupperInterface
+/**
+ * Create backup into the given destination.
+ *
+ * If no destination is given, creates the backup in system temp directory.
+ */
+abstract class AbstractBackupper implements \IteratorAggregate
 {
     protected ?string $destination = null;
     protected bool $verbose = false;
@@ -24,6 +29,9 @@ abstract class AbstractBackupper implements BackupperInterface
         );
     }
 
+    /**
+     * Check that backup utility can be execute correctly.
+     */
     public function checkBinary(): string
     {
         $process = new Process([$this->binary, '--version']);
@@ -77,6 +85,11 @@ abstract class AbstractBackupper implements BackupperInterface
 
     abstract public function startBackup(): self;
 
+    /**
+     * Throw Exception if backup is not successful.
+     *
+     * @throws \Exception
+     */
     abstract public function checkSuccessful(): void;
 
     abstract public function getExtension(): string;

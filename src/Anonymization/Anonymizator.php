@@ -280,7 +280,7 @@ class Anonymizator
                 ),
                 AbstractAnonymizer::JOIN_TABLE
             );
-        } else if (Platform::SQLITE === $builder->getServerFlavor()) {
+        } elseif (Platform::SQLITE === $builder->getServerFlavor()) {
             // SQLite doesn't support DDL statements on tables, we cannot add
             // the join column with an int identifier. But, fortunately, it does
             // have a special ROWID column which is a unique int identifier for

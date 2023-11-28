@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
-use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,8 +31,8 @@ class GdprifyCommand extends Command
 
     public function __construct(
         string $defaultConnectionName,
-        private RestorerFactoryRegistry $restorerFactory,
-        private BackupperFactoryRegistry $backupperFactory,
+        private RestorerFactory $restorerFactory,
+        private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
     ) {
         parent::__construct();

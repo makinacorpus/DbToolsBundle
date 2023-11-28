@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Stats\AbstractStatsProvider;
 use MakinaCorpus\DbToolsBundle\Stats\StatValue;
 use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
 
-class MySQLStatsProvider extends AbstractStatsProvider
+class StatsProvider extends AbstractStatsProvider
 {
     /**
      * {@inheritdoc}

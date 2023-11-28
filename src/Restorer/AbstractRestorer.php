@@ -7,7 +7,10 @@ namespace MakinaCorpus\DbToolsBundle\Restorer;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Process\Process;
 
-abstract class AbstractRestorer implements RestorerInterface
+/**
+ * Restore backup a backup file.
+ */
+abstract class AbstractRestorer implements \IteratorAggregate
 {
     protected ?string $backupFilename = null;
     protected bool $verbose = false;
@@ -17,6 +20,9 @@ abstract class AbstractRestorer implements RestorerInterface
         protected Connection $connection,
     ) {}
 
+    /**
+     * Check that restore utility can be execute correctly.
+     */
     public function checkBinary(): string
     {
         $process = new Process([$this->binary, '--version']);
@@ -58,6 +64,11 @@ abstract class AbstractRestorer implements RestorerInterface
 
     abstract public function startRestore(): self;
 
+    /**
+     * Throw Exception if restore is not successful.
+     *
+     * @throws \Exception
+     */
     abstract public function checkSuccessful(): void;
 
     abstract public function getExtension(): string;

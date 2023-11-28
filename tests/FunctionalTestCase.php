@@ -191,7 +191,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         }
 
         $driverOptions = [];
-        if (\str_contains($driver,  'sqlsrv')) {
+        if (\str_contains($driver, 'sqlsrv')) {
             // https://stackoverflow.com/questions/71688125/odbc-driver-18-for-sql-serverssl-provider-error1416f086
             $driverOptions['TrustServerCertificate'] = "true";
         }
@@ -246,8 +246,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         /* @phpstan-ignore-next-line */
         if (false) {
             $middlewares[] = new Middleware(
-                new class () extends AbstractLogger
-                {
+                new class () extends AbstractLogger {
                     public function log($level, string|\Stringable $message, array $context = []): void
                     {
                         if (\str_contains($message, 'Executing statement')) {

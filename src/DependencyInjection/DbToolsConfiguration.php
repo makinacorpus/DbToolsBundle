@@ -29,17 +29,15 @@ final class DbToolsConfiguration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('backupper_binaries')
                         ->defaultValue([
-                            'pgsql' => 'pg_dump',
-                            'pdo_pgsql' => 'pg_dump',
-                            'pdo_mysql' => 'mysqldump'
+                            'postgresql' => 'pg_dump',
+                            'mysql' => 'mysqldump'
                         ])
                         ->scalarPrototype()->end()
                     ->end()
                     ->arrayNode('restorer_binaries')
                         ->defaultValue([
-                            'pgsql' => 'pg_restore',
-                            'pdo_pgsql' => 'pg_restore',
-                            'pdo_mysql' => 'mysql'
+                            'postgresql' => 'pg_restore',
+                            'mysql' => 'mysql'
                         ])
                         ->scalarPrototype()->end()
                     ->end()

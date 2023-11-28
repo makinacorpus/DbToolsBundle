@@ -6,8 +6,8 @@ namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\DbToolsStorage;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
-use MakinaCorpus\DbToolsBundle\Restorer\RestorerInterface;
+use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,13 +20,13 @@ class RestoreCommand extends Command
 {
     private SymfonyStyle $io;
     private string $connectionName;
-    private RestorerInterface $restorer;
+    private AbstractRestorer $restorer;
     private ?string $backupFilename = null;
     private $force = false;
 
     public function __construct(
         string $defaultConnectionName,
-        private RestorerFactoryRegistry $restorerFactory,
+        private RestorerFactory $restorerFactory,
         private DbToolsStorage $storage,
     ) {
         parent::__construct();
