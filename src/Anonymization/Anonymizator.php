@@ -20,7 +20,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\Query\DoctrineUpdate;
+use MakinaCorpus\QueryBuilder\Query\Update;
 
 class Anonymizator
 {
@@ -234,7 +234,7 @@ class Anonymizator
         }
     }
 
-    protected function createUpdateQuery(string $table): DoctrineUpdate
+    protected function createUpdateQuery(string $table): Update
     {
         $builder = $this->getQueryBuilder();
         $update = $builder->update($table);
