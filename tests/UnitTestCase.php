@@ -8,12 +8,13 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use MakinaCorpus\QueryBuilder\DefaultQueryBuilder;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\QueryBuilder;
+use MakinaCorpus\QueryBuilder\SqlString;
 use MakinaCorpus\QueryBuilder\Platform\Escaper\StandardEscaper;
 use MakinaCorpus\QueryBuilder\Writer\Writer;
 use PHPUnit\Framework\TestCase;
-use MakinaCorpus\QueryBuilder\SqlString;
 
 /**
  * Extends this class whenever you need either one of the connection or the
@@ -107,7 +108,7 @@ abstract class UnitTestCase extends TestCase
      */
     protected function getQueryBuilder(): QueryBuilder
     {
-        return new QueryBuilder();
+        return new DefaultQueryBuilder();
     }
 
     /**
