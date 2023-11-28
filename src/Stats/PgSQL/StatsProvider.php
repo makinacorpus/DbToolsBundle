@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Stats\AbstractStatsProvider;
 use MakinaCorpus\DbToolsBundle\Stats\StatValue;
 use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
 
-class PgSQLStatsProvider extends AbstractStatsProvider
+class StatsProvider extends AbstractStatsProvider
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class PgSQLStatsProvider extends AbstractStatsProvider
             <<<SQL
             SELECT * FROM (
                 SELECT
-                    -- Table information 
+                    -- Table information
                     concat(schemaname, '.', relname) as table_name,
                     -- Table and indices size
                     pg_total_relation_size(relid) as "size_total",
@@ -39,7 +39,7 @@ class PgSQLStatsProvider extends AbstractStatsProvider
                     n_live_tup,
                     n_dead_tup,
                     n_mod_since_analyze,
-                    -- VACUUM information 
+                    -- VACUUM information
                     last_vacuum,
                     last_autovacuum,
                     last_analyze,
@@ -51,7 +51,7 @@ class PgSQLStatsProvider extends AbstractStatsProvider
                 FROM pg_stat_user_tables
                 UNION
                 SELECT
-                    -- Table information 
+                    -- Table information
                     concat(stats.relname,  ' [', class2.relname, ']') as table_name,
                     -- Table and indices size
                     pg_total_relation_size(relid) as "size_total",
@@ -71,7 +71,7 @@ class PgSQLStatsProvider extends AbstractStatsProvider
                     n_live_tup,
                     n_dead_tup,
                     n_mod_since_analyze,
-                    -- VACUUM information 
+                    -- VACUUM information
                     last_vacuum,
                     last_autovacuum,
                     last_analyze,

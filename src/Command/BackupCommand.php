@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
+use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
 use MakinaCorpus\DbToolsBundle\DbToolsStorage;
-use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
-use MakinaCorpus\DbToolsBundle\Backupper\BackupperInterface;
+use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -21,12 +21,12 @@ class BackupCommand extends Command
 {
     private SymfonyStyle $io;
     private string $connectionName;
-    private BackupperInterface $backupper;
+    private AbstractBackupper $backupper;
 
     public function __construct(
         string $defaultConnectionName,
         private array $excludedTables,
-        private BackupperFactoryRegistry $backupperFactory,
+        private BackupperFactory $backupperFactory,
         private DbToolsStorage $storage,
     ) {
         parent::__construct();

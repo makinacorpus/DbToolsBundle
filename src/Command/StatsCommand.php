@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
+use MakinaCorpus\DbToolsBundle\Stats\AbstractStatsProvider;
 use MakinaCorpus\DbToolsBundle\Stats\StatValue;
 use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
-use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -25,7 +26,7 @@ class StatsCommand extends Command
 {
     public function __construct(
         private string $defaultConnectionName,
-        private StatsProviderFactoryRegistry $statsProviderFactoryRegistry,
+        private StatsProviderFactory $statsProviderFactory,
     ) {
         parent::__construct();
     }
@@ -80,6 +81,49 @@ class StatsCommand extends Command
                 [StatValue::TAG_INFO, StatValue::TAG_READ],
             )
         ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $connectionName = $input->getArgument('connection') ?? $this->defaultConnectionName;
+
+        $tags = null;
+        if (!$input->getOption('all') && ($rawTags = $input->getOption('tag'))) {
+            $tags = $rawTags;
+        }
+
+        $statsProvider = $this->statsProviderFactory->create($connectionName);
+
+        $which = $input->getArgument('which');
+
+        try {
+            $collections = match ($which) {
+                'table' => $statsProvider->getTableStats($tags),
+                'index' => $statsProvider->getIndexStats($tags),
+                'global' => $statsProvider->getGlobalStats($tags),
+                default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
+            };
+
+            $hasValues = false;
+
+            if ($input->getOption('flat')) {
+                $hasValues = $this->displayFlat($collections, $output);
+            } else {
+                $hasValues = $this->displayTable($collections, $output);
+            }
+
+            if (!$hasValues) {
+                $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connectionName));
+            }
+        } catch (NotImplementedException $e) {
+            $io->error($e->getMessage());
+
+            return NotImplementedException::CONSOLE_EXIT_STATUS;
+        }
+
+        return Command::SUCCESS;
     }
 
     private function displayFlat(iterable $collections, OutputInterface $output): bool
@@ -177,46 +221,5 @@ class StatsCommand extends Command
         $output->writeln("");
 
         return true;
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-
-        $connection = $input->getArgument('connection') ?? $this->defaultConnectionName;
-
-        $tags = null;
-        if (!$input->getOption('all') && ($rawTags = $input->getOption('tag'))) {
-            $tags = $rawTags;
-        }
-
-        $which = $input->getArgument('which');
-
-        try {
-            $collections = match ($which) {
-                'table' => $this->statsProviderFactoryRegistry->get($connection)->getTableStats($tags),
-                'index' => $this->statsProviderFactoryRegistry->get($connection)->getIndexStats($tags),
-                'global' => $this->statsProviderFactoryRegistry->get($connection)->getGlobalStats($tags),
-                default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
-            };
-
-            $hasValues = false;
-
-            if ($input->getOption('flat')) {
-                $hasValues = $this->displayFlat($collections, $output);
-            } else {
-                $hasValues = $this->displayTable($collections, $output);
-            }
-
-            if (!$hasValues) {
-                $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connection));
-            }
-        } catch (NotImplementedException $e) {
-            $io->error($e->getMessage());
-
-            return NotImplementedException::CONSOLE_EXIT_STATUS;
-        }
-
-        return Command::SUCCESS;
     }
 }

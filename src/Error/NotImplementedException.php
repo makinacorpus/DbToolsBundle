@@ -11,5 +11,5 @@ class NotImplementedException extends \InvalidArgumentException
      *
      * Number choice is arbitrary and in the 1-125 range.
      */
-    const CONSOLE_EXIT_STATUS = 9;
+    public const CONSOLE_EXIT_STATUS = 9;
 }

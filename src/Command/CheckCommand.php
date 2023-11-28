@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
-use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactoryRegistry;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,8 +19,8 @@ class CheckCommand extends Command
 {
     public function __construct(
         private string $defaultConnectionName,
-        private BackupperFactoryRegistry $backupperFactoryRegistry,
-        private RestorerFactoryRegistry $restorerFactoryRegistry,
+        private BackupperFactory $backupperFactory,
+        private RestorerFactory $restorerFactory,
     ) {
         parent::__construct();
     }
@@ -47,11 +47,11 @@ class CheckCommand extends Command
         $connection = $input->getArgument('connection') ?? $this->defaultConnectionName;
 
         try {
-            $backupper = $this->backupperFactoryRegistry->create($connection);
+            $backupper = $this->backupperFactory->create($connection);
             $response = $backupper->checkBinary();
             $io->success("Backupper binary ok : " . $response);
 
-            $restorer = $this->restorerFactoryRegistry->create($connection);
+            $restorer = $this->restorerFactory->create($connection);
             $response = $restorer->checkBinary();
             $io->success("Restorer binary ok : " . $response);
         } catch (NotImplementedException $e) {

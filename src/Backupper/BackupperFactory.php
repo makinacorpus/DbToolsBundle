@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Stats;
+namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
@@ -10,33 +10,37 @@ use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
 
-class StatsProviderFactory
+class BackupperFactory
 {
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
+        private array $backupperBinaries,
     ) {}
 
     /**
-     * Get stats provider for given connection.
+     * Get a Backupper for given connection
+     *
+     * @throws \InvalidArgumentException
      */
-    public function create(?string $connectionName = null): AbstractStatsProvider
+    public function create(?string $connectionName = null): AbstractBackupper
     {
         /** @var Connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
         $queryBuilder = new DoctrineQueryBuilder($connection);
         $platform = $queryBuilder->getServerFlavor();
 
-        $statsProvider = match ($platform) {
-            Platform::POSTGRESQL => PgSQL\StatsProvider::class,
-            Platform::MYSQL => MySQL\StatsProvider::class,
+        $backupper = match ($platform) {
+            Platform::POSTGRESQL => PgSQL\Backupper::class,
+            Platform::MYSQL => MySQL\Backupper::class,
             default => throw new NotImplementedException(\sprintf(
-                "Stat collection is not implemented for platform '%s' while using connection '%s'",
+                "Backup is not implemented or configured for platform '%s' while using connection '%s'",
                 $platform,
                 $connectionName
             )),
         };
 
-        return new $statsProvider(
+        return new $backupper(
+            $this->backupperBinaries[$platform],
             $connection
         );
     }

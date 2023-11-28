@@ -28,16 +28,16 @@ do_down() {
     docker compose -p db_tools_bundle_test down
 }
 
-do_composer_install() {
-    echo 'composer install'
-    docker compose -p db_tools_bundle_test exec phpunit composer install
+do_composer_update() {
+    echo 'composer update'
+    docker compose -p db_tools_bundle_test exec phpunit composer update
 }
 
 # Launch composer checks (for Static analysis & Code style fixer)
 do_checks() {
     section_title "Composer checks"
 
-    do_composer_install
+    do_composer_update
 
     echo 'composer checks'
     docker compose -p db_tools_bundle_test exec phpunit composer checks
@@ -168,7 +168,7 @@ do_test_sqlite() {
 
 # Run PHPunit tests for all database vendors
 do_test_all() {
-    do_composer_install
+    do_composer_update
 
     # @todo Temporary deactivated MySQL 5.7 due to a bug.
     # do_test_mysql57
@@ -207,7 +207,7 @@ do_test() {
     if [[ -n $@ ]];then shift;fi
 
     case $suit in
-        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv|sqlite) do_composer_install && do_test_$suit "$@";;
+        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv|sqlite) do_composer_update && do_test_$suit "$@";;
         *) do_test_notice;;
     esac
 }
