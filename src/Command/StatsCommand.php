@@ -94,33 +94,33 @@ class StatsCommand extends Command
             $tags = $rawTags;
         }
 
-        $statsProvider = $this->statsProviderFactory->create($connectionName);
-
-        $which = $input->getArgument('which');
-
         try {
-            $collections = match ($which) {
-                'table' => $statsProvider->getTableStats($tags),
-                'index' => $statsProvider->getIndexStats($tags),
-                'global' => $statsProvider->getGlobalStats($tags),
-                default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
-            };
-
-            $hasValues = false;
-
-            if ($input->getOption('flat')) {
-                $hasValues = $this->displayFlat($collections, $output);
-            } else {
-                $hasValues = $this->displayTable($collections, $output);
-            }
-
-            if (!$hasValues) {
-                $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connectionName));
-            }
+            $statsProvider = $this->statsProviderFactory->create($connectionName);
         } catch (NotImplementedException $e) {
             $io->error($e->getMessage());
 
             return NotImplementedException::CONSOLE_EXIT_STATUS;
+        }
+
+        $which = $input->getArgument('which');
+
+        $collections = match ($which) {
+            'table' => $statsProvider->getTableStats($tags),
+            'index' => $statsProvider->getIndexStats($tags),
+            'global' => $statsProvider->getGlobalStats($tags),
+            default => throw new InvalidArgumentException(\sprintf("'which' allowed values are: '%s'", \implode("', '", ['global', 'table', 'index']))),
+        };
+
+        $hasValues = false;
+
+        if ($input->getOption('flat')) {
+            $hasValues = $this->displayFlat($collections, $output);
+        } else {
+            $hasValues = $this->displayTable($collections, $output);
+        }
+
+        if (!$hasValues) {
+            $io->warning(\sprintf("Statistics for '%s' are not supported for the current '%s' connexion database driver.", $which, $connectionName));
         }
 
         return Command::SUCCESS;

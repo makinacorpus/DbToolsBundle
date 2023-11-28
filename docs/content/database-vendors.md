@@ -2,9 +2,14 @@
 
 Officially, supported database vendors are:
 
-- PostgreSQL 10 or higher
-- MariaDB 11 or higher
-- MySQL 5.7 or higher
+- PostgreSQL 10 and above
+- MySQL 5.7 and above
+
+Partially supported database vendors are:
+
+- MariaDB 10.11 and above
+- SQlite 3.0 and above
+- SQL Server 2019 and above
 
 But, some of the DbToolsBundle functionnalities could work with other vendors.
 
@@ -20,8 +25,8 @@ Here is a matrix of the current state of support:
 | Vendor                     | Backup/Restore  | Anonymization | Stats       |
 |----------------------------|----------------|---------------|-------------|
 | PostgreSQL 10 or higher    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
-| MariaDB 11 or higher    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | MySQL 5.7 or higher    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
+| MariaDB 10.11 or higher    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | SQLite    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
 | SQL Server    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
 

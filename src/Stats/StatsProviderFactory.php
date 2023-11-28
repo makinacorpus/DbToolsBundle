@@ -28,7 +28,7 @@ class StatsProviderFactory
 
         $statsProvider = match ($platform) {
             Platform::POSTGRESQL => PgSQL\StatsProvider::class,
-            Platform::MYSQL => MySQL\StatsProvider::class,
+            Platform::MYSQL, Platform::MARIADB => MySQL\StatsProvider::class,
             default => throw new NotImplementedException(\sprintf(
                 "Stat collection is not implemented for platform '%s' while using connection '%s'",
                 $platform,
