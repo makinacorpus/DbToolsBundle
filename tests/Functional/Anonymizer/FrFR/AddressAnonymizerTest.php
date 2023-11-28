@@ -42,7 +42,7 @@ class AddressAnonymizerTest extends FunctionalTestCase
                     'my_street_address' => 'Rue Jean Jaures',
                     'my_secondary_address' => 'Au dernier étage',
                     'my_postal_code' => '44000',
-                    'my_locality' => 'Nantes',
+                    'my_locality' => 'Toto-les-bains',
                     'my_region' => 'Pays de loire',
                     'my_country' => 'FRANCE',
                 ],
@@ -95,7 +95,7 @@ class AddressAnonymizerTest extends FunctionalTestCase
         $this->assertNotSame('Rue Jean Jaures', $datas[1]['my_street_address']);
         $this->assertNotSame('Au dernier étage', $datas[1]['my_secondary_address']);
         $this->assertNotSame('44000', $datas[1]['my_postal_code']);
-        $this->assertNotSame('Nantes', $datas[1]['my_locality']);
+        $this->assertNotSame('Toto-les-bains', $datas[1]['my_locality']);
         $this->assertNotSame('Pays de loire', $datas[1]['my_region']);
         /*
         $this->assertNull($datas[2]['my_street_address']);

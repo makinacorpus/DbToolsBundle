@@ -161,7 +161,6 @@ jobs:
         php-version:
           - "8.1"
         mariadb-version:
-          - "10.6"  # LTS (Jul 2026)
           - "10.11" # LTS (Feb 2028)
           - "11.0"  # STS (Jun 2024)
           - "11.1"  # STS (Aug 2024)
@@ -253,7 +252,6 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          coverage: "pcov"
           ini-values: "zend.assertions=1"
           extensions: "${{ matrix.extension }}"
 
@@ -284,24 +282,20 @@ jobs:
 
     strategy:
       matrix:
-        php-version:
-          - "8.1"
-        extension:
-          - "sqlsrv"
-          - "pdo_sqlsrv"
-        collation:
-          - "Latin1_General_100_CI_AS_SC_UTF8"
+        include:
+          - php-version: "8.1"
+            extension: "pdo_sqlsrv"
+            schema: "mssql"
 
     services:
       mssql:
         image: "mcr.microsoft.com/mssql/server:2019-latest"
         env:
           ACCEPT_EULA: "Y"
-          SA_PASSWORD: "password"
-          MSSQL_COLLATION: "${{ matrix.collation }}"
+          SA_PASSWORD: "P@ssword123"
 
         options: >-
-          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P test_db"
+          --health-cmd "echo quit | /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -l 1 -U sa -P P@ssword123"
 
         ports:
           - "1433:1433"
@@ -316,10 +310,8 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
-          coverage: "pcov"
           ini-values: "zend.assertions=1"
-          tools: "pecl"
-          extensions: "${{ matrix.extension }}-5.10.0beta1"
+          extensions: "${{ matrix.extension }}-5.10.0"
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
@@ -331,158 +323,55 @@ jobs:
           DBAL_DRIVER: "${{ matrix.extension }}"
           DBAL_DBNAME: "test_db"
           DBAL_HOST: "mssql"
-          DBAL_PASSWORD: "password"
-          DBAL_PORT: "3306"
-          DBAL_ROOT_PASSWORD: "password"
+          DBAL_PASSWORD: "P@ssword123"
+          DBAL_PORT: "1433"
+          DBAL_ROOT_PASSWORD: "P@ssword123"
           DBAL_ROOT_USER: "sa"
           DBAL_USER: "sa"
-          DATABASE_URL: "pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true"
+          DATABASE_URL: "${{ matrix.schema }}://sa:P%40ssword123@mssql:1433/test_db?serverVersion=2019&driverOptions[TrustServerCertificate]=true"
 
         run: "vendor/bin/phpunit"
 
-    #   phpunit-sqlite:
-    #     name: "PHPUnit with SQLite"
-    #     runs-on: "${{ matrix.os }}"
+  phpunit-sqlite:
+    name: "PHPUnit with SQLite"
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+    needs: "phpunit-smoke-tests"
 
-    #     strategy:
-    #       matrix:
-    #         os:
-    #           - "ubuntu-22.04"
-    #         php-version:
-    #           - "8.1"
-    #           - "8.2"
-    #           - "8.3"
-    #         dependencies:
-    #           - "highest"
-    #         extension:
-    #           - "pdo_sqlite"
-    #           - "sqlite3"
+    strategy:
+      matrix:
+        os:
+          - "ubuntu-22.04"
+        php-version:
+          - "8.1"
+        extension:
+          - "pdo_sqlite"
+          - "sqlite3"
 
-    #     steps:
-    #       - name: "Checkout"
-    #         uses: "actions/checkout@v4"
-    #         with:
-    #           fetch-depth: 2
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 2
 
-    #       - name: "Install PHP"
-    #         uses: "shivammathur/setup-php@v2"
-    #         with:
-    #           php-version: "${{ matrix.php-version }}"
-    #           coverage: "pcov"
-    #           ini-values: "zend.assertions=1"
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          extensions: "${{ matrix.extension }}"
+          ini-values: "zend.assertions=1"
 
-    #       - name: "Install dependencies with Composer"
-    #         uses: "ramsey/composer-install@v2"
-    #         with:
-    #           composer-options: "--ignore-platform-req=php+"
-    #           dependency-versions: "${{ matrix.dependencies }}"
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v2"
+        with:
+          composer-options: "--ignore-platform-req=php+"
 
-    #       - name: "Print SQLite version"
-    #         run: >
-    #           php -r 'printf("Testing with libsqlite version %s\n", (new PDO("sqlite::memory:"))->query("select sqlite_version()")->fetch()[0]);'
-    #         if: "${{ matrix.extension == 'pdo_sqlite' }}"
-
-    #       - name: "Print SQLite version"
-    #         run: >
-    #           php -r 'printf("Testing with libsqlite version %s\n", SQLite3::version()["versionString"]);'
-    #         if: "${{ matrix.extension == 'sqlite3' }}"
-
-    #       - name: "Run PHPUnit"
-    #         run: "vendor/bin/phpunit -c ci/github/phpunit/${{ matrix.extension }}.xml --coverage-clover=coverage.xml"
-  # phpunit-oci8:
-  #   name: "PHPUnit on OCI8"
-  #   runs-on: "ubuntu-22.04"
-
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       oracle-version:
-  #         - "21"
-  #         - "23"
-
-  #   services:
-  #     oracle:
-  #       image: gvenzl/oracle-${{ matrix.oracle-version < 23 && 'xe' || 'free'  }}:${{ matrix.oracle-version }}
-  #       env:
-  #         ORACLE_PASSWORD: oracle
-  #       ports:
-  #         - "1521:1521"
-  #       options: >-
-  #         --health-cmd healthcheck.sh
-  #         --health-interval 20s
-  #         --health-timeout 10s
-  #         --health-retries 10
-
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
-
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         extensions: "oci8"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
-
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
-
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/oci8${{ matrix.oracle-version < 23 && '-21' || ''  }}.xml --coverage-clover=coverage.xml"
-
-  # phpunit-pdo-oci:
-  #   name: "PHPUnit on PDO_OCI"
-  #   runs-on: "ubuntu-22.04"
-
-  #   strategy:
-  #     matrix:
-  #       php-version:
-  #         - "8.1"
-  #         - "8.2"
-  #         - "8.3"
-  #       oracle-version:
-  #         - "21"
-  #         - "23"
-
-  #   services:
-  #     oracle:
-  #       image: gvenzl/oracle-${{ matrix.oracle-version < 23 && 'xe' || 'free'  }}:${{ matrix.oracle-version }}
-  #       env:
-  #         ORACLE_PASSWORD: oracle
-  #       ports:
-  #         - "1521:1521"
-  #       options: >-
-  #         --health-cmd healthcheck.sh
-  #         --health-interval 20s
-  #         --health-timeout 10s
-  #         --health-retries 10
-
-  #   steps:
-  #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
-  #       with:
-  #         fetch-depth: 2
-
-  #     - name: "Install PHP"
-  #       uses: "shivammathur/setup-php@v2"
-  #       with:
-  #         php-version: "${{ matrix.php-version }}"
-  #         extensions: "pdo_oci"
-  #         coverage: "pcov"
-  #         ini-values: "zend.assertions=1"
-
-  #     - name: "Install dependencies with Composer"
-  #       uses: "ramsey/composer-install@v2"
-  #       with:
-  #         composer-options: "--ignore-platform-req=php+"
-
-  #     - name: "Run PHPUnit"
-  #       run: "vendor/bin/phpunit -c ci/github/phpunit/pdo_oci${{ matrix.oracle-version < 23 && '-21' || ''  }}.xml --coverage-clover=coverage.xml"
+      - name: "Run PHPUnit"
+        env:
+          DBAL_DRIVER: "${{ matrix.extension }}"
+          DBAL_DBNAME: "test_db"
+          DBAL_HOST: "127.0.0.1"
+          DBAL_PATH: ":memory:"
+          DATABASE_URL: "sqlite:///:memory:"
+        run: "vendor/bin/phpunit"

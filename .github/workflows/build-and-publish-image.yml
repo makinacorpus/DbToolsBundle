@@ -6,7 +6,7 @@ on:
       - "main"
     paths:
       - .github/workflows/build-and-publish-image.yml
-      - docker/php-ci/Dockerfile
+      - docker/ci-image/Dockerfile
 
 env:
   REGISTRY: ghcr.io

@@ -204,6 +204,7 @@ abstract class FunctionalTestCase extends UnitTestCase
             'password' => \getenv('DBAL_PASSWORD'),
             'port' => \getenv('DBAL_PORT'),
             'user' => \getenv('DBAL_USER'),
+            'path' => \getenv('DBAL_PATH'),
         ]);
 
         return $params;
