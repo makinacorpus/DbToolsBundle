@@ -1,8 +1,8 @@
 # Example of configuration to anonymize a table named `user`
 user:
     # Some Anonymizer does not require any option, you can use them like this
-    prenom: fr_fr.firstname
-    nom: fr_fr.lastname
+    prenom: fr-fr.firstname
+    nom: fr-fr.lastname
     # Some does require options, specify them like this
     age:
         anonymizer: integer
