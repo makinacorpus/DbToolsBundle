@@ -171,7 +171,7 @@ user:
 The DbToolsBundle provides a bunch of *Anonymizers* that should cover most of your needs. You can find a
 complete description of each one of them in the next section.
 
-You can also add *Anonymizers* from community packs. For example, to add the `PackFRFr` run:
+You can also add *Anonymizers* from [community packs](./packs). For example, to add the `pack-fr-fr` run:
 
 ```bash
 composer require dbtoolsbundle/pack-fr-fr

@@ -74,6 +74,7 @@ export default defineConfig({
           { text: 'Essentials', link: '/anonymization/essentials' },
           { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
+          { text: 'Extra packs', link: '/anonymization/packs' },
           { text: 'Internals', link: '/anonymization/internals' },
         ]
       },
@@ -83,7 +84,12 @@ export default defineConfig({
       },
       {
         text: 'Contribute',
-        link: '/contribute',
+        collapsed: false,
+        items: [
+          { text: 'How to help ?', link: '/contribute/contribute' },
+          { text: 'Development guide', link: '/contribute/guide' },
+          { text: 'Creating a pack of anonymizers', link: '/contribute/pack' },
+        ]
       },
     ]
   }
