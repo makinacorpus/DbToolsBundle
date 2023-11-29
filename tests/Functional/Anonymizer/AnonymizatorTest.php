@@ -46,14 +46,14 @@ class AnonymizatorTest extends FunctionalTestCase
                             ]
                         ),
                         new Column(
-                            'my_street',
+                            'my_iban',
                             Type::getType(Types::TEXT),
                             [
                                 'notnull' => null,
                             ]
                         ),
                         new Column(
-                            'my_city',
+                            'my_bic',
                             Type::getType(Types::TEXT),
                             [
                                 'notnull' => null,
@@ -84,10 +84,10 @@ class AnonymizatorTest extends FunctionalTestCase
         $config->add(new AnonymizerConfig(
             'table_test',
             'foo',
-            'fr_fr.address',
+            'iban-bic',
             new Options([
-                'street_address' => 'my_street',
-                'locality' => 'my_city',
+                'iban' => 'my_iban',
+                'bic' => 'my_bic',
             ]),
         ));
 

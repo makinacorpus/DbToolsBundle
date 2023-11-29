@@ -174,7 +174,7 @@ complete description of each one of them in the next section.
 You can also add *Anonymizers* from community packs. For example, to add the `PackFRFr` run:
 
 ```bash
-composer require db-tools-bundle/pack-fr-fr
+composer require dbtoolsbundle/pack-fr-fr
 ```
 
 If you can't find what you need from core anonymizers and in available packs, the *DbToolsBundle* allows
