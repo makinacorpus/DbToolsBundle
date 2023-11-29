@@ -23,7 +23,7 @@ jobs:
     name: "PHPUnit with PHP version matrix"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
 
     strategy:
       matrix:
@@ -87,7 +87,7 @@ jobs:
     name: "PHPUnit with PostgreSQL"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
     needs: "phpunit-smoke-tests"
 
     strategy:
@@ -150,7 +150,7 @@ jobs:
     name: "PHPUnit with MariaDB"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
     needs: "phpunit-smoke-tests"
 
     strategy:
@@ -216,7 +216,7 @@ jobs:
     name: "PHPUnit with MySQL"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
     needs: "phpunit-smoke-tests"
 
     strategy:
@@ -277,7 +277,7 @@ jobs:
     name: "PHPUnit with SQL Server"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
     needs: "phpunit-smoke-tests"
 
     strategy:
@@ -336,7 +336,7 @@ jobs:
     name: "PHPUnit with SQLite"
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/makinacorpus/dbtoolsbundle-ci:main
+      image: simonmellerin/db-tools-bundle-ci:main
     needs: "phpunit-smoke-tests"
 
     strategy:
