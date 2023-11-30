@@ -33,7 +33,7 @@ class Restorer extends AbstractRestorer
             $command,
             null,
             null,
-            null,// $this->backupFilename,
+            null,
             1800
         );
         $this->process->setTty(true);

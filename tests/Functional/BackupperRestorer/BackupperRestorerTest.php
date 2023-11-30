@@ -141,7 +141,7 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         try {
             $restorer = $restorerFactoy->create('');
-        }  catch (NotImplementedException $e) {
+        } catch (NotImplementedException $e) {
             $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
         }
 
