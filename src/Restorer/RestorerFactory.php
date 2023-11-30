@@ -32,6 +32,7 @@ class RestorerFactory
         $restorer = match ($platform) {
             Platform::POSTGRESQL => PgSQL\Restorer::class,
             Platform::MYSQL => MySQL\Restorer::class,
+            Platform::SQLITE => SQLite\Restorer::class,
             default => throw new NotImplementedException(\sprintf(
                 "Restore is not implemented or configured for platform '%s' while using connection '%s'",
                 $platform,

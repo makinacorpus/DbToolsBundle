@@ -70,7 +70,8 @@ db_tools:
 `db-tools:backup` and `db-tools:restore` need your system/environment to provide some extra binaries
 to be able to work. These binaries depend on the database vendor you use, you will need:
 * for PostgreSQL: `pg_dump` and `pg_restore`
-* for MariaDB/MySQL: `mysqldump` and `mysql`
+* for MySQL: `mysqldump` and `mysql`
+* for SQLite: `sqlite3`
 
 You can verify that binaries for your DBAL connection(s) are correctly found by the *DbToolsBundle* launching:
 
@@ -89,14 +90,16 @@ If the `db-tools:check` command returns you some errors:
 
       #...
 
+      # Specify here paths to binaries, only if the system can't find them by himself
+      # platform are 'mysql', 'postgresql', 'sqlite'
       backupper_binaries:
-          pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-          pdo_pgsql: 'usr/bin/pg_dump' # default 'pg_dump'
-          pdo_mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+          postgresql: 'usr/bin/pg_dump' # default 'pg_dump'
+          mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+          sqlite: 'usr/bin/sqlite3' # default 'sqlite3'
       restorer_binaries:
-          pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-          pdo_pgsql: 'usr/bin/pg_restore' # default 'pg_restore'
-          pdo_mysql: 'usr/bin/mysql' # default 'mysql'
+          postgresql: 'usr/bin/pg_restore' # default 'pg_restore'
+          mysql: 'usr/bin/mysql' # default 'mysql'
+          sqlite: 'usr/bin/sqlite3' # default 'sqlite3'
 
       #...
   ```
