@@ -11,11 +11,13 @@ you should not be lost if you are a regular Symfony developper.
 
 Currently supported database vendors:
 
-- PostgreSQL 10 or higher (previous versions from 9.5 are untested but should work)
-- MariaDB 11 or higher
-- MySQL 5.7 or higher
-- SQLite >= 3
-- SQL Server 2019 or higher (previous versions from 2015 are untested but should work)
+- PostgreSQL 10 and above
+  <br><small>(previous versions from 9.5 are untested but should work)</small>
+- MySQL 8.0 and above
+- SQLite 3.0 and above
+- MariaDB 10.11 and above
+- SQL Server 2019 and above
+  <br><small>(previous versions from 2015 are untested but should work)</small>
 
 ::: info
 The bundle could also work with other database vendors. Check out the [database vendors support page](../database-vendors).

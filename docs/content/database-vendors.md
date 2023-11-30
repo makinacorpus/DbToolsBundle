@@ -3,13 +3,15 @@
 Fully supported database vendors are:
 
 - PostgreSQL 10 and above
-- MySQL 5.7 and above
+  <br><small>(previous versions from 9.5 are untested but should work)</small>
+- MySQL 8.0 and above
 
 Partially supported database vendors are:
 
 - MariaDB 10.11 and above
 - SQlite 3.0 and above
 - SQL Server 2019 and above
+  <br><small>(previous versions from 2015 are untested but should work)</small>
 
 Some of those vendors are only unit-tested and have never been really experienced in production. If you use one of
 them in production and think it should/could be marked as "Working", feel free to [open an issue on Github](https://github.com/makinacorpus/DbToolsBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22Database+vendor+support%22).
