@@ -36,7 +36,7 @@ class Restorer extends AbstractRestorer
             null,
             1800
         );
-        $this->process->setTty(true);
+
         $this->process->start();
 
         return $this;
