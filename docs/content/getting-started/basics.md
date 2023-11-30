@@ -9,7 +9,7 @@ cases that it addresses:
 
 During your project life cycle, you will need to deploy new versions on one or
 many production environments. We all know that we can't prevent problems to
-happenned and ideally, you always backup your database before you upgrade.
+happen and ideally, you always backup your database before you upgrade.
 
 You can use `pg_dump` or `mysqldump` to do so, but why not use the *DbToolsBundle*
 and let it define the correct parameters to use ? After all, Symfony already knows

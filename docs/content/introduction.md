@@ -7,9 +7,9 @@ The idea of this bundle is to make life easier for Symfony developers when manag
 database backup and restoration workflows on one hand, and production data import
 and anonymization on the other.
 
-* To learn more about what you can do with this bundle, jump to [the Basics section](./getting-started/basics.md)
-* To dive into anonymization, go to the [Anonymization > Essentials section](./anonymization/essentials.md)
-* To share some of your anonymizers with the community, read the [Contribute section](./contribute.md)
+* To learn more about what you can do with this bundle, jump to [the Basics section](./getting-started/basics)
+* To dive into anonymization, go to the [Anonymization > Essentials section](./anonymization/essentials)
+* To share some of your anonymizers with the community, read the [Contribute section](./contribute/pack)
 
 ---
 

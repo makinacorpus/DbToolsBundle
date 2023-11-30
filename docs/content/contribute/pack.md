@@ -10,7 +10,7 @@ follow these steps to set up your pack:
 
 [[toc]]
 
-## 1. Adapting the pack to your repository
+## 1. Adapting template to your repository
 
 Now you have your repository. Let's say its name is `my-vendor/pack-awesome`.
 
@@ -161,11 +161,21 @@ Learn more about how to develop them reading the [Custom Anonymizers section](..
 
 After you built your Anonymizer, don't forget to test them. We recommend doing at least one functionnal test.
 
-## 4. Sharing it on packagist
+To help you launchning these tests, you can use provided `dev.sh` script, see [Development guide section](./guide).
+
+## 4. Continuous Integration
+
+The pack-template comes with preconfigured Github Actions. These actions will:
+
+* Check Coding standards (with PHP CS Fixer)
+* Launch a Static Analysis (with PHPStan)
+* Launch PHPUnit tests on different database vendors and PHP versions
+
+## 5. Sharing it on packagist
 
 If you want to share it and make it easily installable, share your package on [Packagist](https://packagist.org/).
 
-## 5. Making it an official pack
+## 6. Making it an official pack
 
 If you find your package good enough and if it's well tested, you should consider to add it to the official packs list.
 

@@ -9,12 +9,6 @@ This page list all *Anonymizers* provided by *DbToolsBundle*.
 EmailAnonymizer uses a hash function on the original value to make each unique email
 anonymization reproducible accross tables.
 
-:::warning
-SQLite does implement `MD5()` function, neither any hashing function: in order to get
-around this, the `rowid` value is used instead which prevent email values anonymization
-from being reproducible across tables.
-:::
-
 This *Anonymizer* will fill configured column with value looking like `[username]@[domain.tld]`
 where:
 * `[username]` is a md5 hash of the pre-anonymization value
@@ -85,6 +79,12 @@ user:
         options: {domain: 'custom-domain.com'}
 #...
 ```
+:::
+
+:::warning
+SQLite does implement `MD5()` function, neither any hashing function: in order to get
+around this, the `rowid` value is used instead which prevent email values anonymization
+from being reproducible across tables.
 :::
 
 ## PasswordAnonymizer
@@ -222,11 +222,6 @@ user:
 
 ## Md5Anonymizer
 
-:::warning
-SQLite does implement `MD5()` function, neither any hashing function, this anonymizer
-cannot be used with SQLite.
-:::
-
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
 
 ::: code-group
@@ -257,6 +252,11 @@ user:
     my_dirty_secret: md5
 #...
 ```
+:::
+
+:::warning
+SQLite does implement `MD5()` function, neither any hashing function, this anonymizer
+cannot be used with SQLite.
 :::
 
 ## StringAnonymizer
@@ -294,7 +294,7 @@ user:
 ```
 :::
 
-:::warning
+:::tip
 If you use the same sample multiple times, if you use a large sample or if you use a generated one, it could be
 more efficient and convinient to create your own custom anonymizer, see the [Custom Anonymizers](/anonymization/custom-anonymizers)
 section to learn how to do that.
