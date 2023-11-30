@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
+use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Backupper\MySQL\Backupper as MysqlBackupper;
 use MakinaCorpus\DbToolsBundle\Backupper\PgSQL\Backupper as PgSQLBackupper;
+use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\MySQL\Restorer as MysqlRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\PgSQL\Restorer as PgSQLRestorer;
+use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
 
 /**
@@ -21,8 +25,6 @@ use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
  */
 class BackupperRestorerTest extends FunctionalTestCase
 {
-    protected string $backupFilename = '/tmp/backup_test.';
-
     protected array $initialData = [
         [
             'id' => '1',
@@ -73,26 +75,29 @@ class BackupperRestorerTest extends FunctionalTestCase
 
     public function testBackupper(): void
     {
-        $connection = $this->getConnection();
+        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
+        $mockDoctrineRegistry
+            ->method('getConnection')
+            ->willReturn($this->getConnection())
+        ;
 
-        $binary = match (\getenv('DBAL_DRIVER')) {
-            'pdo_mysql' => 'mysqldump',
-            'pdo_pgsql' => 'pg_dump',
-            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
-        };
+        $backupperFactoy = new BackupperFactory($mockDoctrineRegistry, [
+            'postgresql' => 'pg_dump',
+            'mysql' => 'mysqldump',
+            'sqlite' => 'sqlite3',
+        ]);
 
-        $backupper = match (\getenv('DBAL_DRIVER')) {
-            'pdo_mysql' => new MysqlBackupper($binary, $connection),
-            'pdo_pgsql' => new PgSQLBackupper($binary, $connection),
-            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
-        };
+        try {
+            $backupper = $backupperFactoy->create('');
+        } catch (NotImplementedException $e) {
+            $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
+        }
 
-        $output = $backupper->checkBinary();
-        self::assertStringContainsString($binary, $output);
-
+        $backupper->checkBinary();
+        $backupFilename = $this->prepareAndGetBackupFilename($backupper->getExtension());
 
         $backupper
-            ->setDestination($this->backupFilename . $backupper->getExtension())
+            ->setDestination($backupFilename)
             ->setVerbose(true)
             ->startBackup()
         ;
@@ -100,7 +105,10 @@ class BackupperRestorerTest extends FunctionalTestCase
         foreach ($backupper as $data) {
             // Nothing to do there.
         }
+
         $backupper->checkSuccessful();
+
+        self::assertFileExists($backupFilename);
     }
 
     /**
@@ -109,6 +117,11 @@ class BackupperRestorerTest extends FunctionalTestCase
     public function testRestorer(): void
     {
         $connection = $this->getConnection();
+        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
+        $mockDoctrineRegistry
+            ->method('getConnection')
+            ->willReturn($connection)
+        ;
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
@@ -120,25 +133,24 @@ class BackupperRestorerTest extends FunctionalTestCase
             ->executeStatement()
         ;
 
-        $binary = match (\getenv('DBAL_DRIVER')) {
-            'pdo_mysql' => 'mysql',
-            'pdo_pgsql' => 'pg_restore',
-            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
-        };
+        $restorerFactoy = new RestorerFactory($mockDoctrineRegistry, [
+            'postgresql' => 'pg_restore',
+            'mysql' => 'mysql',
+            'sqlite' => 'sqlite3',
+        ]);
 
-        $restorer = match (\getenv('DBAL_DRIVER')) {
-            'pdo_mysql' => new MysqlRestorer($binary, $connection),
-            'pdo_pgsql' => new PgSQLRestorer($binary, $connection),
-            default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'))
-        };
+        try {
+            $restorer = $restorerFactoy->create('');
+        } catch (NotImplementedException $e) {
+            $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
+        }
 
-        $output = $restorer->checkBinary();
-        self::assertStringContainsString($binary, $output);
+        $restorer->checkBinary();
 
         $connection->close();
 
         $restorer
-            ->setBackupFilename($this->backupFilename . $restorer->getExtension())
+            ->setBackupFilename($this->prepareAndGetBackupFilename($restorer->getExtension()))
             ->setVerbose(true)
             ->startRestore()
         ;
@@ -160,6 +172,24 @@ class BackupperRestorerTest extends FunctionalTestCase
         $this->assertSame(
             6,
             $this->getConnection()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
+        );
+    }
+
+    private function prepareAndGetBackupFilename(string $extension): string
+    {
+        $dir = \sprintf(
+            '/tmp/%s',
+            \getenv('DBAL_DRIVER')
+        );
+
+        if (!\is_dir($dir)) {
+            \mkdir($dir, 777, true);
+        }
+
+        return \sprintf(
+            '%s/backup_test.%s',
+            $dir,
+            $extension
         );
     }
 }

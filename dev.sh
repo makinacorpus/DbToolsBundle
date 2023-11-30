@@ -95,9 +95,9 @@ do_test_mariadb11() {
 }
 
 do_test_mysql() {
-    do_test_mysql57
-    do_test_mysql80
-    do_test_mariadb11
+    do_test_mysql57 $@
+    do_test_mysql80 $@
+    do_test_mariadb11 $@
 }
 
 do_test_postgresql10() {
@@ -131,8 +131,8 @@ do_test_postgresql16() {
 }
 
 do_test_postgresql() {
-    do_test_postgresql10
-    do_test_postgresql16
+    do_test_postgresql10 $@
+    do_test_postgresql16 $@
 }
 
 do_test_sqlsrv2019() {
@@ -151,7 +151,7 @@ do_test_sqlsrv2019() {
 }
 
 do_test_sqlsrv() {
-    do_test_sqlsrv2019
+    do_test_sqlsrv2019 $@
 }
 
 # SQLite version depends upon the PHP embeded version or linked
@@ -162,7 +162,8 @@ do_test_sqlite() {
         -e DBAL_DRIVER=pdo_sqlite \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=127.0.0.1 \
-        -e DATABASE_URL="pdo-sqlite:///:memory:" \
+        -e DBAL_PATH="test_db.sqlite" \
+        -e DATABASE_URL="pdo-sqlite:///test_db.sqlite" \
         phpunit vendor/bin/phpunit $@
 }
 
@@ -172,12 +173,12 @@ do_test_all() {
 
     # @todo Temporary deactivated MySQL 5.7 due to a bug.
     # do_test_mysql57
-    do_test_mysql80
-    do_test_mariadb11
-    do_test_postgresql10
-    do_test_postgresql16
-    do_test_sqlsrv2019
-    do_test_sqlite
+    do_test_mysql80 $@
+    do_test_mariadb11 $@
+    do_test_postgresql10 $@
+    do_test_postgresql16 $@
+    do_test_sqlsrv2019 $@
+    do_test_sqlite $@
 }
 
 do_test_notice() {

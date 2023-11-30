@@ -27,7 +27,7 @@ Here is a matrix of the current state of support:
 | PostgreSQL    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | MySQL    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | MariaDB    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
-| SQLite    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
+| SQLite    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
 | SQL Server    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
 
 <Badge type="tip" text="✔" /> Working - <Badge type="warning" text="~" /> Only unit-tested - <Badge type="danger" text="✘" /> Unsupported

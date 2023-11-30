@@ -30,14 +30,16 @@ final class DbToolsConfiguration implements ConfigurationInterface
                     ->arrayNode('backupper_binaries')
                         ->defaultValue([
                             'postgresql' => 'pg_dump',
-                            'mysql' => 'mysqldump'
+                            'mysql' => 'mysqldump',
+                            'sqlite' => 'sqlite3',
                         ])
                         ->scalarPrototype()->end()
                     ->end()
                     ->arrayNode('restorer_binaries')
                         ->defaultValue([
                             'postgresql' => 'pg_restore',
-                            'mysql' => 'mysql'
+                            'mysql' => 'mysql',
+                            'sqlite' => 'sqlite3',
                         ])
                         ->scalarPrototype()->end()
                     ->end()

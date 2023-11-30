@@ -5,3 +5,4 @@
 /phpstan.neon
 /phpunit.xml
 /vendor/
+test_db*

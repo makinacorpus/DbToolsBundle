@@ -372,6 +372,6 @@ jobs:
           DBAL_DRIVER: "${{ matrix.extension }}"
           DBAL_DBNAME: "test_db"
           DBAL_HOST: "127.0.0.1"
-          DBAL_PATH: ":memory:"
-          DATABASE_URL: "sqlite:///:memory:"
+          DBAL_PATH: "test_db.sqlite"
+          DATABASE_URL: "sqlite:///test_db.sqlite"
         run: "vendor/bin/phpunit"

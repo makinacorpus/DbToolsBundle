@@ -11,13 +11,15 @@ db_tools:
         #- default: ['table1', 'table2']
 
     # Specify here paths to binaries, only if the system can't find them by himself
-    # platform are 'mysql', 'postgresql'
+    # platform are 'mysql', 'postgresql', 'sqlite'
     #backupper_binaries:
         #postgresql: 'usr/bin/pg_dump' # default 'pg_dump'
         #mysql: 'usr/bin/mysqldump' # default 'mysqldump'
+        #sqlite: 'usr/bin/sqlite3' # default 'sqlite3'
     #restorer_binaries:
         #postgresql: 'usr/bin/pg_restore' # default 'pg_restore'
         #mysql: 'usr/bin/mysql' # default 'mysql'
+        #sqlite3: 'usr/bin/sqlite3' # default 'sqlite3'
 
     # Update this configuration if you want to look for anonymizers in a custom folder.
     # These are default paths that will always be registered even if you override the
