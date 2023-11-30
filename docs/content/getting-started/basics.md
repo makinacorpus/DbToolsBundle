@@ -11,11 +11,8 @@ During your project life cycle, you will need to deploy new versions on one or
 many production environments. We all know that we can't prevent problems to
 happen and ideally, you always backup your database before you upgrade.
 
-You can use `pg_dump` or `mysqldump` to do so, but why not use the *DbToolsBundle*
-and let it define the correct parameters to use ? After all, Symfony already knows
-all it need to connect to your database.
-
-Juste type:
+The *DbToolsBundle* will use `pg_dump`, `mysqldump` or other with the correct parameters,
+just run:
 
 ```sh
 console db-tools:backup
@@ -35,8 +32,7 @@ Run:
 console db-tools:restore
 ```
 
-It will list you all the backups present on your disk, and you will just have
-to choose the one you want to restore!
+It will list you all the backups present on your disk, choose the one you want to restore!
 
 These commands are only kinds of shortcut for `pg_dump`/`pg_restore` or
 `mysqldump`/`mysql` but much more handy to use. They find the correct binaries
@@ -58,7 +54,7 @@ don't want to know personnal data from your (or your client's) customers.
 To avoid that, you need a proper **anonymization**. It could be tricky and time consumming to try to
 nicely anonymize data: the *DbToolsBundle* get rid of that for you.
 
-With just some PHP attributes on your Doctrine Entities, you can configure a complete anonymization
+With some PHP attributes on your Doctrine Entities, you can configure a complete anonymization
 for your sensitive data.
 
 ::: info

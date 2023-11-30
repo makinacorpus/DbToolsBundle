@@ -59,7 +59,7 @@ Feel free to read this configuration file, it will learn you basics about this b
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
-But before starting to use it, just check the *DbToolsBundle* can find backup and restore binaries for
+But before starting to use it, check the *DbToolsBundle* can find backup and restore binaries for
 your(s) doctrine connection(s):
 
 ```sh
