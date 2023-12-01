@@ -27,7 +27,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     /**
      * {@inheritdoc}
      */
-    public function addViolation(string $message, array $params = [])
+    public function addViolation(string $message, array $params = []): void
     {
         $this->violationList->add(new ConstraintViolation($message, null, $params, null, null, null));
     }

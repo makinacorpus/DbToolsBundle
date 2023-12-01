@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-bookworm
+FROM php:8.2-fpm-bookworm
 
 # Basic requirements
 RUN apt-get update

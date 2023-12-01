@@ -29,7 +29,7 @@ do_down() {
 }
 
 do_composer_update() {
-    echo 'composer update'
+    echo 'composer update --prefere-lowest --prefere-stable'
     docker compose -p db_tools_bundle_test exec phpunit composer update
 }
 
@@ -249,6 +249,6 @@ action=${1-}
 if [[ -n $@ ]];then shift;fi
 
 case $action in
-    build|up|down|checks|test_all|unittest|test|notice) do_$action "$@";;
+    build|up|down|checks|test_all|unittest|test|composer_update|notice) do_$action "$@";;
     *) do_notice;;
 esac
