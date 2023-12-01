@@ -5,7 +5,8 @@ hero:
   name: DbToolsBundle
   text: a set of Symfony Console Commands to interact with your database
   image:
-    src: ./logo.svg
+    light: ./logo.svg
+    dark: ./logo-d.svg
     alt: DbToolsBundle by Makina Corpus
   actions:
     - theme: brand

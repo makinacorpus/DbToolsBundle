@@ -1,6 +1,6 @@
 # Create and share your own pack of anonymizers
 
-We created a bunch of anonymizers and want to reuse them easily ? May be you
+You created a bunch of anonymizers and want to reuse them easily ? May be you
 also want to share them with the community ?
 
 The DbToolsBundle help you to do so with the [pack-template](https://github.com/DbToolsBundle/pack-template).
@@ -95,7 +95,7 @@ And adapt it:
 
 
 # DbToolsBundle - Pack [your pack name]// [!code --]
-# DbToolsBundle - Pack awesome// [!code ++]
+# DbToolsBundle - Awesome pack// [!code ++]
 [a short description]// [!code --]
 An awesome pack for anonymizing many things!// [!code ++]
 
@@ -104,7 +104,7 @@ This pack provides:
 * `my-pack:anonymizer-1`: a short description of this anonymizer // [!code --]
 * `my-pack:anonymizer-2`: a short description of this anonymizer // [!code --]
 * `my-pack:anonymizer-3`: a short description of this anonymizer // [!code --]
-Fill this lsit later // [!code ++]
+Fill this later // [!code ++]
 
 ## Installation
 
