@@ -12,7 +12,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Tests\Mock\TestingAnonymizationLoader;
-use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class AnonymizatorFactoryTest extends UnitTestCase
 {

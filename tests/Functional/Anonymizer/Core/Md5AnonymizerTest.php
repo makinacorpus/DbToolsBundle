@@ -9,7 +9,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
+use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 use MakinaCorpus\QueryBuilder\Platform;
 
 class Md5AnonymizerTest extends FunctionalTestCase

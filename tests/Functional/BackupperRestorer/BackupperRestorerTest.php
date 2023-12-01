@@ -6,13 +6,9 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
-use MakinaCorpus\DbToolsBundle\Backupper\MySQL\Backupper as MysqlBackupper;
-use MakinaCorpus\DbToolsBundle\Backupper\PgSQL\Backupper as PgSQLBackupper;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\DbToolsBundle\Restorer\MySQL\Restorer as MysqlRestorer;
-use MakinaCorpus\DbToolsBundle\Restorer\PgSQL\Restorer as PgSQLRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
-use MakinaCorpus\DbToolsBundle\Tests\FunctionalTestCase;
+use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 /**
  * This class will successivly test Backupper and Restorer.

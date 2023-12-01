@@ -6,7 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\EmailAnonymizer;
-use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class EmailAnonymizerTest extends UnitTestCase
 {

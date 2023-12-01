@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Tests;
+namespace MakinaCorpus\DbToolsBundle\Test;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;

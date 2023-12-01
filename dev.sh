@@ -29,7 +29,7 @@ do_down() {
 }
 
 do_composer_update() {
-    echo 'composer update --prefere-lowest --prefere-stable'
+    echo 'composer update'
     docker compose -p db_tools_bundle_test exec phpunit composer update
 }
 

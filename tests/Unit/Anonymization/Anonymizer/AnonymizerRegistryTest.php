@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
-use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 class AnonymizerRegistryTest extends UnitTestCase
 {
     public function testAnonymizerRegistryWithTestPack(): void
     {
-        $projectDir = $this->perpareDumbProjectDir();
+        $projectDir = $this->prepareDumbProjectDir();
 
         $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
 
@@ -35,7 +35,7 @@ class AnonymizerRegistryTest extends UnitTestCase
 
     public function testAnonymizerRegistryWithoutTestPack(): void
     {
-        $projectDir = $this->perpareDumbProjectDir(false);
+        $projectDir = $this->prepareDumbProjectDir(false);
 
         $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
 
@@ -52,7 +52,7 @@ class AnonymizerRegistryTest extends UnitTestCase
         $anonymizerRegistry->get('test.my_anonymizer');
     }
 
-    private function perpareDumbProjectDir(bool $withTestVendor = true): string
+    private function prepareDumbProjectDir(bool $withTestVendor = true): string
     {
         $projectDir = sys_get_temp_dir().'/'.uniqid('db_tools_', true);
 

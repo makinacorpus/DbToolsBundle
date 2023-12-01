@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Command;
 
-use MakinaCorpus\DbToolsBundle\Tests\FunctionalKernelTestCase;
+use MakinaCorpus\DbToolsBundle\Test\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 

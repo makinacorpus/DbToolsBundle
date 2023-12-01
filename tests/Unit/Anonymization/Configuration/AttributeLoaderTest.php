@@ -14,7 +14,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
-use MakinaCorpus\DbToolsBundle\Tests\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class AttributeLoaderTest extends UnitTestCase
 {
