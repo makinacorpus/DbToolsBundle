@@ -18,7 +18,7 @@ First, you will need to adapt the provided `composer.json`:
 
 ```json
 {
-    "name": "dbtoolsbundle/pack-template",// [!code --]
+    "name": "db-tools-bundle/pack-template",// [!code --]
     "name": "my-vendor/pack-awesome",// [!code ++]
     "description": "An example pack of anonymizers for the DbToolsBundle",// [!code --]
     "description": "An awesome pack for anonymizing many things!",// [!code ++]
@@ -107,7 +107,7 @@ Fill this later // [!code ++]
 Run the following command to add this pack to your application:
 
 \```sh
-composer require dbtoolsbundle/pack-[your pack]// [!code --]
+composer require db-tools-bundle/pack-[your pack]// [!code --]
 composer require my-vendor/pack-awesome// [!code ++]
 \```
 
