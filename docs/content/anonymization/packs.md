@@ -11,9 +11,12 @@ we won't add too specific ones to it.
 Instead we added the possibility to create and include **extra packs of anonymizers**.
 
 If you can't find what you need with anonymizers provided by the core, look at these packs.
+
+:::tip
 And if you can't find it with them either, then it's may be time to
 [create your own ones](./custom-anonymizers), and may be to
 [share them with the community](../contribute/pack)!
+:::
 
 Here is a list of official packs:
 
@@ -32,6 +35,10 @@ composer require dbtoolsbundle/pack-fr-fr
 
 
 <VPSocialLink icon="github" link="https://github.com/DbToolsBundle/pack-fr-fr"/>
+:::
+
+:::info
+All official packs are weekly tested, see all pack status on the [DbToolsBundle/packs-status repository](https://github.com/DbToolsBundle/packs-status)
 :::
 
 :::tip

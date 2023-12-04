@@ -1,16 +1,16 @@
 # Create and share your own pack of anonymizers
 
-You created a bunch of anonymizers and want to reuse them easily ? May be you
-also want to share them with the community ?
+You created a bunch of anonymizers and want to reuse them easily? May be you
+also want to share them with the community?
 
-The DbToolsBundle help you to do so with the [pack-template](https://github.com/DbToolsBundle/pack-template).
+The DbToolsBundle help you to do so with [a github template repository](https://github.com/DbToolsBundle/pack-template).
 
 After [you created a fresh repository from this template](https://github.com/new?template_name=pack-template&template_owner=DbToolsBundle),
 follow these steps to set up your pack:
 
 [[toc]]
 
-## 1. Adapting template to your repository
+## 1. Adapt the template to your repository
 
 Now you have your repository. Let's say its name is `my-vendor/pack-awesome`.
 
@@ -34,7 +34,7 @@ First, you will need to adapt the provided `composer.json`:
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
-        "makinacorpus/db-tools-bundle": "^0.2"
+        "makinacorpus/db-tools-bundle": "^0.3"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.34",
@@ -90,10 +90,6 @@ mv README.md.example README.md
 And adapt it:
 
 ```md
-[![Coding standards](https://github.com/DbToolsBundle/[your-pack]/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/DbToolsBundle/[your-pack]//actions/workflows/coding-standards.yml) [![Static Analysis](https://github.com/DbToolsBundle/[your-pack]/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/DbToolsBundle/[your-pack]/actions/workflows/static-analysis.yml) [![Continuous Integration](https://github.com/DbToolsBundle/[your-pack]/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/DbToolsBundle/[your-pack]/actions/workflows/continuous-integration.yml)// [!code --]
-[![Coding standards](https://github.com/my-vendor/pack-awesome/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/my-vendor/pack-awesome//actions/workflows/coding-standards.yml) [![Static Analysis](https://github.com/my-vendor/pack-awesome/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/my-vendor/pack-awesome/actions/workflows/static-analysis.yml) [![Continuous Integration](https://github.com/my-vendor/pack-awesome/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/my-vendor/pack-awesome/actions/workflows/continuous-integration.yml)// [!code ++]
-
-
 # DbToolsBundle - Pack [your pack name]// [!code --]
 # DbToolsBundle - Awesome pack// [!code ++]
 [a short description]// [!code --]
@@ -123,33 +119,7 @@ This software is published under the [MIT License](./LICENCE.md).
 
 ```
 
-Finally, adapt the `tests/*TestCase.php` classes:
-
-```php
-// tests/FunctionalTestCase.php
-<?php
-
-declare(strict_types=1);
-
-namespace DbToolsBundle\PackExample\Tests;// [!code --]
-namespace DbToolsBundle\PackAwesome\Tests;// [!code ++]
-
-//...
-```
-
-```php
-// tests/UnitTestCase.php
-<?php
-
-declare(strict_types=1);
-
-namespace DbToolsBundle\PackExample\Tests;// [!code --]
-namespace DbToolsBundle\PackAwesome\Tests;// [!code ++]
-
-//...
-```
-
-## 2. Developing your anonymizers
+## 2. Develop your anonymizers
 
 Now you are ready to add your own anonymizers. Put them in `src/Anonymizer`.
 
@@ -157,29 +127,40 @@ Now you are ready to add your own anonymizers. Put them in `src/Anonymizer`.
 Learn more about how to develop them reading the [Custom Anonymizers section](../anonymization/custom-anonymizers).
 :::
 
-## 3. Testing your anonymizers
+## 3. Test your anonymizers
 
-After you built your Anonymizer, don't forget to test them. We recommend doing at least one functionnal test.
+After you built your anonymizers, don't forget to test them. We recommend doing at least one functionnal test per anonymizer.
+To inspire you doing these tests, read [existing tests in the DbToolsBundle](https://github.com/makinacorpus/DbToolsBundle/tree/main/tests/Functional/Anonymizer/Core)
+or in official packs.
 
-To help you launchning these tests, you can use provided `dev.sh` script, see [Development guide section](./guide).
+To help you launchning these tests, use provided `dev.sh` script, see [Development guide section](./guide) to learn how to use it.
 
-## 4. Continuous Integration
 
-The pack-template comes with preconfigured Github Actions. These actions will:
+## 5. Share your pack on packagist
+
+If you want to share it and make it easily installable, share your package on [Packagist](https://packagist.org/).
+
+## 6. Make it an official pack
+
+If:
+
+* you find your package good enough,
+* it is well tested,
+* you think it is generic enough to interest a large number of people,
+
+Then, you should consider to add it to the official packs list.
+
+Doing so, your package will be more visible (it will be added to this documentation) but it will also be automatically tested
+by a CI every week from the [packs-status repository](https://github.com/DbToolsBundle/packs-status).
+
+This CI will:
 
 * Check Coding standards (with PHP CS Fixer)
 * Launch a Static Analysis (with PHPStan)
 * Launch PHPUnit tests on different database vendors and PHP versions
+* Will, on every fail, create an issue on your pack repository to warn you
 
-## 5. Sharing it on packagist
-
-If you want to share it and make it easily installable, share your package on [Packagist](https://packagist.org/).
-
-## 6. Making it an official pack
-
-If you find your package good enough and if it's well tested, you should consider to add it to the official packs list.
-
-To do so, [open an issue](https://github.com/makinacorpus/DbToolsBundle/issues) to ask it :wink:.
+To ask your package to be part of official list, [open an issue on the packs-status repository](https://github.com/DbToolsBundle/packs-status/issues).
 
 :::info
 Note that to have your pack becoming an official one, you will need to transfere the repository to the [DbToolsBundle Organization](https://github.com/DbToolsBundle).
