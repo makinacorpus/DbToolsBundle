@@ -54,20 +54,13 @@ export default defineConfig({
     ],
     sidebar: [
       {
-        text: 'Reference',
+        text: 'Getting Started',
         collapsed: false,
         items: [
-          { text: 'Introduction', link: '/introduction' },
-          {
-            text: 'Getting Started',
-            collapsed: false,
-            items: [
-              { text: 'Installation', link: '/getting-started/installation' },
-              { text: 'Basics', link: '/getting-started/basics' },
-            ]
-          },
-          { text: 'Bundle configuration', link: '/configuration' },
-          { text: 'Database vendors support', link: '/database-vendors' },
+          { text: 'Introduction', link: '/getting-started/introduction' },
+          { text: 'Installation', link: '/getting-started/installation' },
+          { text: 'Basics', link: '/getting-started/basics' },
+          { text: 'Supported databases', link: '/getting-started/database-vendors' },
         ]
       },
       {
@@ -82,8 +75,13 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Statistics',
-        link: '/stats',
+        text: 'Going further',
+        collapsed: false,
+        items: [
+          { text: 'Backup & Restore', link: '/backup_restore' },
+          { text: 'Statistics', link: '/stats' },
+          { text: 'Bundle configuration', link: '/configuration' },
+        ]
       },
       {
         text: 'Contribute',
