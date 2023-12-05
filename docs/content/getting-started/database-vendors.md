@@ -1,4 +1,4 @@
-# Database vendors support
+# Supported database vendors
 
 Fully supported database vendors are:
 

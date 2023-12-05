@@ -20,7 +20,7 @@ Currently supported database vendors:
   <br><small>(previous versions from 2015 are untested but should work)</small>
 
 ::: info
-The bundle could also work with other database vendors. Check out the [database vendors support page](../database-vendors).
+The bundle could also work with other database vendors. Check out the [database vendors support page](../getting-started/database-vendors).
 :::
 
 ## Installation
