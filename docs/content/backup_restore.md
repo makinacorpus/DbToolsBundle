@@ -6,13 +6,20 @@ files for you.
 
 ## Backup command
 
-The backup command will use [defined binary]('./configuration#binaries') for your database vendor with correct parameters
+The backup command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
 to dump your database.
+
+Each time you launch the backup command, [backup file is store in a directory](./configuration#storage-directory) (See
+[Storage section](#storage) below for more information on how backup files are stored).
+
+With time, this directory will grow, that's why a [backup expiration age](./configuration#storage-directory#backup-expiration-age)
+was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
+backup files (ie files that have pasted their expiration date).
 
 ```sh
 console db-tools:backup
 ```
-You can specify the behaviour of the command with some options:
+You can specify the behaviour of the command with some options.
 
 ### Connection
 
@@ -42,13 +49,7 @@ console db-tools:backup --excluded-table table_to_exclude_1 --excluded-table tab
 
 ### No cleanup
 
-Each time you launch the backup command, [backup file is store in a directory](./configuration#storage-directory).
-
-With time, this directory will grow, that's why a [backup expiration age](./configuration#storage-directory#backup-expiration-age)
-was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
-backup files (ie files that have pasted their expiration date).
-
-If you want to skip this step, launch it with option `--no-cleanup':
+If you want to skip the cleanup step, launch it with option `--no-cleanup':
 
 ```sh
 console db-tools:backup --no-cleanup
@@ -60,7 +61,7 @@ Note that using this option, backup files will never be cleaned up
 
 ## Restore command
 
-The restore command will use [defined binary]('./configuration#binaries') for your database vendor with correct parameters
+The restore command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
 to restore your database from existing backup files.
 
 
