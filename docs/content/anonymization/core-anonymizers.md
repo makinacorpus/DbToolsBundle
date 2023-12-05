@@ -12,7 +12,7 @@ anonymization reproducible accross tables.
 This *Anonymizer* will fill configured column with value looking like `[username]@[domain.tld]`
 where:
 * `[username]` is a md5 hash of the pre-anonymization value
-* `[domain.tld]` is the given domain option (or `example.com` per default)
+* `[domain.tld]` is the given domain option (or `example.com` by default)
 
 For example `contact@makina-corpus.com` will give `826464d916e6052ad209037ca71ce324@example.com` after anonymization.
 
