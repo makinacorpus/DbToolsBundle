@@ -4,13 +4,6 @@
 # DbToolsBundle
 A set of Symfony Console Commands to interact with your database
 
----
-<p align="center" style="margin: auto">
-<strong>⚠️⚠️⚠️ Work in progress ⚠️⚠️⚠️</strong>
-</p>
-
----
-
 <p align="center" style="margin: auto">
     <img style="height:160px;" src="/docs/content/public/logo.svg">
 </p>
