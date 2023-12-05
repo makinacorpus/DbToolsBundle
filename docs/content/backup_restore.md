@@ -124,7 +124,7 @@ but [you can choose the directory you want](./configuration#storage-directory).
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
 is generated from the backup date and the DBAL connection name of the database.
 
-For a backup made the 15/05/2023 at 12:22:35 for the default connection, the filename will be :
+For a backup made the 2023-05-15 at 12:22:35 for the default connection, the filename will be :
 `%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`.
 
 Note that the file extension may vary depending on the database vendor.
