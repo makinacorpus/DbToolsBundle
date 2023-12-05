@@ -69,7 +69,7 @@ to restore your database from existing backup files.
 console db-tools:restore
 ```
 
-You can specify the behaviour of the command with some options:
+You can specify the behaviour of the command with some options.
 
 ### Connection
 
