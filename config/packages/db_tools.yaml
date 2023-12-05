@@ -1,6 +1,6 @@
 db_tools:
     # Where to put generated backups
-    #storage_directory: '%kernel.project_dir%/var/private/db_tools'
+    #storage_directory: '%kernel.project_dir%/var/db_tools'
 
     # When old backups are considered obsolete
     # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
