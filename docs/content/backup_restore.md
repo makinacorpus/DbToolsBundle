@@ -115,11 +115,11 @@ really want to do so.
 
 ## Storage
 
-As mentioned earlier on this page, the *DbToolsBundle* stores can list existing backup files
+As mentioned earlier on this page, the *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
 All backups are stored in a directory. By default this directory is `%kernel.project_dir%/var/db_tools`
-but [it could be configured](./configuration#storage-directory).
+but [you can choose the directory you want](./configuration#storage-directory).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
 is generated from the backup date and the DBAL connection name of the database.
