@@ -9,17 +9,17 @@ files for you.
 The backup command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
 to dump your database.
 
-Each time you launch the backup command, [backup file is store in a directory](./configuration#storage-directory) (See
+Each time you launch the backup command, [a backup file is stored in a directory](./configuration#storage-directory) (See
 [Storage section](#storage) below for more information on how backup files are stored).
 
 With time, this directory will grow, that's why a [backup expiration age](./configuration#storage-directory#backup-expiration-age)
 was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
-backup files (ie files that have pasted their expiration date).
+backup files (i.e. files that have passed their expiration date).
 
 ```sh
 console db-tools:backup
 ```
-You can specify the behaviour of the command with some options.
+You can specify the behaviour of the command with some options detailed below.
 
 ### Connection
 
@@ -56,20 +56,20 @@ console db-tools:backup --no-cleanup
 ```
 
 :::warning
-Note that using this option, backup files will never be cleaned up
+Note that using this option, backup files will never be cleaned up.
 :::
 
 ## Restore command
 
 The restore command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
-to restore your database from existing backup files.
+to restore your database from an existing backup files.
 
 
 ```sh
 console db-tools:restore
 ```
 
-You can specify the behaviour of the command with some options.
+You can specify the behaviour of the command with some options detailed below.
 
 ### Connection
 
@@ -95,7 +95,7 @@ console db-tools:restore --filename /path/to/my/backup.sql
 
 ### Force
 
-Each time you ru this command, as it is not a sensitive operation, a confirmation will
+Each time you run this command, as it is a sensitive operation, a confirmation will
 be asked. If you want to skip it, use the `--force` option.
 
 ```sh
