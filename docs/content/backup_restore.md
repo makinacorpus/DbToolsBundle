@@ -16,7 +16,7 @@ You can specify the behaviour of the command with some options:
 
 ### Connection
 
-Per default, the command will backup the database from the default DBAL connection.
+By default, the command will backup the database from the default DBAL connection.
 
 You can choose to backup a database from another connection with `--connection` option:
 
@@ -72,7 +72,7 @@ You can specify the behaviour of the command with some options:
 
 ### Connection
 
-Per default, the command will restore the database from the default DBAL connection.
+By default, the command will restore the database from the default DBAL connection.
 
 You can choose to restore a database from another connection with `--connection` option:
 
@@ -102,7 +102,7 @@ console db-tools:restore --force
 ```
 
 :::danger
-Per default, this command does not allow to restore a database when used in **production environment**.
+By default, this command does not allow to restore a database when used in **production environment**.
 Even if you use it with `--force`.
 
 If you know what you are doing and want to restore a
@@ -117,7 +117,7 @@ really want to do so.
 As mentioned earlier on this page, the *DbToolsBundle* stores can list existing backup files
 when you want to restore a previous one with the restore command.
 
-All backups are stored in a directory. Per default this directory is `%kernel.project_dir%/var/db_tools`
+All backups are stored in a directory. By default this directory is `%kernel.project_dir%/var/db_tools`
 but [it could be configured](./configuration#storage-directory).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
