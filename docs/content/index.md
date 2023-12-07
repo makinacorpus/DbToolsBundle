@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: DbToolsBundle
-  text: a set of Symfony Console Commands to interact with your database
+  text: A set of Symfony Console Commands to interact with your database
   image:
     light: ./logo.svg
     dark: ./logo-d.svg
@@ -43,7 +43,7 @@ features:
   - icon:
       light: '/stats.svg'
       dark: '/stats-d.svg'
-    title: Display stats
+    title: Display statistics
     details: Calculate and summarize database statistics.
   - icon:
       light: '/database.svg'
@@ -51,6 +51,6 @@ features:
     title: PostgreSQL, MySQL & SQLite ready
     details:
       Work on top of Doctrine DBAL connections with PostgreSQL, MySQL & SQLite.<br>
-      <small>(Partially works with others database vendors too)</small>
+      <small>(Partially works with other database vendors too.)</small>
 
 ---

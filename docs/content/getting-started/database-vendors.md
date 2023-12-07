@@ -13,14 +13,15 @@ Partially supported database vendors are:
 - SQL Server 2019 and above
   <br><small>(previous versions from 2015 are untested but should work)</small>
 
-Some of those vendors are only unit-tested and have never been really experienced in production. If you use one of
-them in production and think it should/could be marked as "Working", feel free to [open an issue on Github](https://github.com/makinacorpus/DbToolsBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22Database+vendor+support%22).
+Some of those vendors are only unit-tested and have never been really experienced in production.
+If you use one of them in production and think it should/could be marked as "Working",
+feel free to [open an issue on GitHub](https://github.com/makinacorpus/DbToolsBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22Database+vendor+support%22).
 
-If the vendor you use is unsupported and you want it to be added to this list, feel free to [open an issue on Github](https://github.com/makinacorpus/DbToolsBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22Database+vendor+support%22).
+If the vendor you use is unsupported and you want it to be added to this list,
+feel free to [open an issue on GitHub](https://github.com/makinacorpus/DbToolsBundle/issues?q=is%3Aopen+is%3Aissue+label%3A%22Database+vendor+support%22).
 If there is enough people interested, we could consider to add it.
 
 Here is a matrix of the current state of support:
-
 
 | Vendor                     | Backup/Restore  | Anonymization | Stats       |
 |----------------------------|----------------|---------------|-------------|

@@ -1,7 +1,7 @@
 # Installation
 
 The DbToolsBundle follows [Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
-you should not be lost if you are a regular Symfony developper.
+you should not be lost if you are a regular Symfony developer.
 
 ## Requirements & Dependencies
 
@@ -20,7 +20,8 @@ Currently supported database vendors:
   <br><small>(previous versions from 2015 are untested but should work)</small>
 
 ::: info
-The bundle could also work with other database vendors. Check out the [database vendors support page](../getting-started/database-vendors).
+The bundle could also work with other database vendors.
+Check out the [supported database vendors](../getting-started/database-vendors) page.
 :::
 
 ## Installation
@@ -38,37 +39,33 @@ Then, activate the bundle:
 
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
-
     //...
-
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
     Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
-
     // ...
-
     MakinaCorpus\DbToolsBundle\DbToolsBundle::class => ['all' => true], // [!code ++]
 ];
 ```
 
-And copy provided default configuration from vendor:
+Finally, copy the default configuration file from the vendor directory:
 
 ```sh
 cd your_project_dir
-cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/packages/.
+cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/packages/
 ```
 
 Feel free to read this configuration file, it will learn you basics about this bundle.
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
-But before starting to use it, check the *DbToolsBundle* can find backup and restore binaries for
-your(s) doctrine connection(s):
+But before starting to use it, check if the *DbToolsBundle* succeeds to find
+backup and restore binaries for your(s) Doctrine connection(s):
 
 ```sh
 php bin/console db-tools:check
 ```
 
 :::tip
-If this command returns errors, get to the [binaries configuration section](../configuration#binaries)
-to understand how to solve them.
+If this command returns some errors, go to the [binaries configuration](../configuration#binaries)
+section to understand how to solve them.
 :::
