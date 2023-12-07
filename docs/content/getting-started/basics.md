@@ -38,7 +38,7 @@ These commands are only kinds of shortcut for `pg_dump`/`pg_restore` or
 `mysqldump`/`mysql` but much more handy to use. They find the correct binaries
 and execute them with the correct options for you.
 
-## Use case 2 - Working with anonymized production data on your local environment
+## Use case 2 - Anonymizing production data to use them on your local environment
 
 *You need to retrieve data from your production environment, but you don't want to
 have sensitive data on your local environment.*
@@ -88,7 +88,7 @@ class User
 }
 ```
 
-With this configuration above, after you launched `console db-tools:anonymize`,
+With the above configuration, after you launched `console db-tools:anonymize`,
 all your user's email addresses will be gone and replaced with hashed ones.
 
 ::: tip
