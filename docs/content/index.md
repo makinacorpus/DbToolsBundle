@@ -38,7 +38,7 @@ features:
   - icon:
       light: '/gdpr.svg'
       dark: '/gdpr-d.svg'
-    title: Set up a GRDP-friendly workflow
+    title: Set up a GDPR-friendly workflow
     details: Make it easier to follow GDPR best practices when importing production dump to other environments.
   - icon:
       light: '/stats.svg'

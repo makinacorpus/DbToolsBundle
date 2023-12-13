@@ -69,7 +69,7 @@ Anonymization does not only work with Doctrine Entities. You can use it with
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize; // [!code ++]
 
 #[ORM\Entity()]
 #[ORM\Table(name: '`user`')]
