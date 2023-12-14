@@ -2,7 +2,7 @@
 
 The *DbToolsBundle* provides a command to run a *GDPR-friendly* workflow.
 
-The idea behind this command was to provide a way to import production data to another environment
+The idea behind this command is to provide a way to import production data to another environment
 while ensuring not keeping sensitive data.
 
 After you got back a backup file from your production environment, run:
@@ -25,11 +25,11 @@ this way, no sensitive data remain on your disk.
 :::danger
 It has to be noted that this workflow could be considered as problematic.
 
-To stricly follow GDPR recommendations, **you should not get back a production backup
-file on you own computer**. Event if this backup file will quickly disappear from
+To strictly follow GDPR recommendations, **you should not download a production backup
+file on your own computer**. Even if this backup file will quickly disappear from
 your disk. Sensitive data should not transit on your machine.
 
-So the next question is: why do we provide such a worflow ?
+So the next question is: why do we provide such a worflow?
 
 Well, it is the least worst we found.
 
