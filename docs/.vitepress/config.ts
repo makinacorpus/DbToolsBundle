@@ -71,6 +71,7 @@ export default defineConfig({
           { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
           { text: 'Extra packs', link: '/anonymization/packs' },
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
+          { text: 'GDPRify', link: '/anonymization/gdprify' },
           { text: 'Internals', link: '/anonymization/internals' },
         ]
       },

@@ -31,7 +31,7 @@ In others word, all you need to do to configure Anonymization is map each column
 
 ## Example
 
-The best way to understand how it works is to see a simple example: let's take an entity `User`.
+The best way to understand how it works is to see a simple example: let's take an entity `Customer`.
 
 This entity has several fields we want to anonymize, and others that we don't:
 
@@ -52,8 +52,8 @@ use Doctrine\ORM\Mapping as ORM;
 use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
 #[ORM\Entity()]
-#[ORM\Table(name: '`user`')]
-class User
+#[ORM\Table(name: 'customer')]
+class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -85,7 +85,7 @@ class User
 
 ```yaml [YAML]
 # config/anonymization.yaml
-user:
+customer:
     email_address: email
     level:
         anonymizer: string
@@ -114,7 +114,7 @@ use Doctrine\ORM\Mapping as ORM;
 use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
 #[ORM\Entity()]
-#[ORM\Table(name: '`user`')]
+#[ORM\Table(name: 'customer')]
 #[Anonymize(type: 'address', options: [ // [!code ++]
     'street_address' => 'street', // [!code ++]
     'secondary_address': 'street_second_line' // [!code ++]
@@ -123,7 +123,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
     'region' => 'region' // [!code ++]
     'country' => 'country', // [!code ++]
 ])] // [!code ++]
-class User
+class Customer
 {
     // ...
 
@@ -151,7 +151,7 @@ class User
 
 ```yaml [YAML]
 # config/anonymization.yaml
-user:
+customer:
     address:
         target: table
         anonymizer: address
