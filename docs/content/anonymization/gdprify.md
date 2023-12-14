@@ -1,15 +1,15 @@
 # A GDPR-friendly workflow
 
-The *DbToolsBundle* provide a command to run a *GDPR-friendly* workflow.
+The *DbToolsBundle* provides a command to run a *GDPR-friendly* workflow.
 
-After you got back a backup file from your production, run:
+The idea behind this command was to provide a way to import production data to another environment
+while ensuring not keeping sensitive data.
+
+After you got back a backup file from your production environment, run:
 
 ```sh
 console db-tools:gdprify path/to/your/production/backup
 ```
-
-The idea here was to provide a way to import production data to another environment
-while ensuring not importing sensitive data.
 
 This command successively:
 
