@@ -23,7 +23,7 @@ this way, no sensitive data remain on your disk.
 :::
 
 :::danger
-It has to be noted that this workflow could be consider as problematic.
+It has to be noted that this workflow could be considered as problematic.
 
 To stricly follow GDPR recommendations, **you should not get back a production backup
 file on you own computer**. Event if this backup file will quickly disappear from
@@ -46,7 +46,7 @@ as your preproduction. The complete workflow will then be:
    backup the current state of your preproduction
 4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data
-5. Restore the previous state of your preproductin with `console db-tools:restore`
+5. Restore the previous state of your preproduction with `console db-tools:restore`
 6. Get back the cleaned backup to your local machine
 7. Restore the backup with `console db-tools:restore --filename path/to/your/cleaned/backup`
 :::
