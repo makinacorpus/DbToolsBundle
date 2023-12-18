@@ -21,7 +21,7 @@ class AnonymizeCommandTest extends FunctionalKernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [
-                '--force' => true
+                '--current-database' => true
             ],
             [
                 'interactive' => false,
