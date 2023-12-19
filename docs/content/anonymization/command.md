@@ -40,27 +40,27 @@ data on your local environement.
 
 ### Prerequisites
 
-* You have 2 secured environments : *production* and *env2* (such as a preproduction)
+* You have 2 secured environments : *production* and *another_env* (such as a preproduction)
   and you can securely copy files from one to another,
-* You can stop your service on preproduction,
+* You can stop your service on *another_env*,
 * Your anonymization is well configured, every sensitive data has been
   mapped to an anonymizer to erased/hashed/randomized it.
 
 ::: note
-Note that *env2* could be any environment, not even preproduction, all it needs is the CLI to work
-and a database, it doesn't even need to be a complete working env.
+Note that *another_env* could be any environment, not only preproduction, all it needs is the
+the Symfony Console to work and a database. It doesn't need to be a complete working env.
 :::
 
 ### Workflow
 
 1. Run `console db-tools:backup` on your production environment or
    choose an existing backup with `console db-tools:restore --list`,
-2. Securly download your backup file from your *production* to your *env2* environment,
-3. Stop services on your preproduction to ensure no one is using it,
+2. Securly download your backup file from your *production* to your *another_env* environment,
+3. Stop services on your *another_env* to ensure no one is using it,
 4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
-5. Restart services on your preproduction,
-6. Download the anonymized backup to your local machine
+5. Restart services on your *another_env*,
+6. Download the anonymized backup from *another_env* to your local machine
 7. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
 ## Options
