@@ -99,7 +99,7 @@ class AnonymizeCommand extends Command
             )
             ->addOption(
                 'split-per-column',
-                's',
+                null,
                 InputOption::VALUE_NONE,
                 'During anonymization, when not set, a single UPDATE statement ' .
                 'will be issued per table, when set, every target will issue its ' .

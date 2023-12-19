@@ -54,6 +54,12 @@ class RestoreCommand extends Command
                 'Skip backup file choice and restore given backup file'
             )
             ->addOption(
+                'list',
+                'l',
+                InputOption::VALUE_NONE,
+                'Only list existing backup files'
+            )
+            ->addOption(
                 'force',
                 null,
                 InputOption::VALUE_NONE,
@@ -70,15 +76,19 @@ class RestoreCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->io = new SymfonyStyle($input, $output);
+
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
+        }
+
+        if ($input->getOption('list')) {
+            return $this->listBackup();
         }
 
         if ($this->force = $input->getOption('force')) {
             $input->setInteractive(false);
         }
-
-        $this->io = new SymfonyStyle($input, $output);
 
         $this->preventMistake($input);
 
@@ -155,8 +165,7 @@ class RestoreCommand extends Command
 
         $backupLists = $this->storage->listBackups(
             $this->connectionName,
-            $this->restorer->getExtension(),
-            true
+            $this->restorer->getExtension()
         );
 
         if (\count($backupLists)) {
@@ -170,6 +179,31 @@ class RestoreCommand extends Command
                 $options,
                 \array_key_last($options)
             );
+        } else {
+            $this->io->warning("There is no backup files available in " . $this->storage->getStoragePath());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function listBackup()
+    {
+        $this->io->section('Backup list');
+
+        $backupLists = $this->storage->listBackups(
+            $this->connectionName,
+            $this->restorer->getExtension()
+        );
+
+        if (\count($backupLists)) {
+            $options = \array_map(
+                fn ($data) => (string)$data[1] . ' (' . $data[0] . ')',
+                $backupLists
+            );
+
+            $this->backupFilename = $this->io->listing($options);
         } else {
             $this->io->warning("There is no backup files available in " . $this->storage->getStoragePath());
 
