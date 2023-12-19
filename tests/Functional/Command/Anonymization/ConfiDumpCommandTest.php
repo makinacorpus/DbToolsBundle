@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Test\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ConfigCheckCommandTest extends FunctionalKernelTestCase
+class ConfiDumpCommandTest extends FunctionalKernelTestCase
 {
     public function testExecute(): void
     {
@@ -17,7 +17,7 @@ class ConfigCheckCommandTest extends FunctionalKernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $command = $application->find('db-tools:anonymization:config-check');
+        $command = $application->find('db-tools:anonymization:dump-config');
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [],
