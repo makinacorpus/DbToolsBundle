@@ -203,13 +203,11 @@ class RestoreCommand extends Command
                 $backupLists
             );
 
-            $this->backupFilename = $this->io->listing($options);
+            $this->io->listing($options);
         } else {
             $this->io->warning("There is no backup files available in " . $this->storage->getStoragePath());
-
-            return false;
         }
 
-        return true;
+        return self::SUCCESS;
     }
 }

@@ -139,7 +139,7 @@ class AnonymizeCommand extends Command
         $this->doAnonymizeCurrentDatabase = !!$input->getOption('current-database');
 
         if ($input->getOption('no-restore')) {
-            $this->doBackupAndRestoreInitial= false;
+            $this->doBackupAndRestoreInitial = false;
         }
 
         if (!$input->isInteractive()) {
