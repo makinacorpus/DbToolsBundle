@@ -28,15 +28,15 @@ It depends on:
 * How you correctly configured your anonymization (obviously),
 * Where you run this command: you are going to anonymized a backup file,
   this backup file contains sensitive data. Thus, following GDPR recommendations
-  this **backup file should never transit on an unsecured envrionment**.
+  this **backup file should never transit on an unsecured environment**.
 
 Read the next section to learn more about a proper workflow.
 :::
 
 ## A GDPR-friendly workflow
 
-Here is an exemple of workflow to retrieve anonymized production
-data on your local environement and that follows GDPR recommendations.
+Here is an exemple of workflow - that follows GDPR recommendations - to retrieve anonymized production
+data on your local environement.
 
 ### Hypotheses
 
@@ -63,7 +63,7 @@ You can specify the behaviour of the  `db-tools:anonymize`command with some opti
 
 ### Anonymizing current database
 
-The main purpose this command is to provide a way to anonymize a backup file. But
+The main purpose of this command is to provide a way to anonymize a backup file. But
 it could also be used to anonymized current database with `--current-database`.
 
 ```sh
@@ -93,7 +93,7 @@ console db-tools:anonymize --t target_1 --t target_2
 To know all your available targets, launch `db-tools:anonymization:dump-config`
 :::
 
-### Excluded targets from anonymization
+### Exclude targets from anonymization
 
 Use this option if you want to exclude some specific targets from anonymization.
 

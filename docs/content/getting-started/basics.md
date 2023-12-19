@@ -95,10 +95,10 @@ all your user's email addresses will be gone and replaced with hashed ones.
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
-You can directly run the anonymization on your local machine, to follow GDPR recommendations,
+You can't directly run the anonymization on your local machine, to follow GDPR recommendations,
 sensitive data should never transit on an unsecured environment.
 
-We will thus use the preproduction environment to perform anonymization.
+We will therefore use the preproduction environment to perform anonymization.
 
 ```sh
 console db-tools:anonymize path/to/my_backup.dump
@@ -110,6 +110,7 @@ environnement.
 ::: tip
 [Learn more about a good GDPR-friendly workflow](../anonymization/command#a-gdpr-friendly-workflow).
 :::
+
 ## Use case 3 - Getting basic stats on your database without proper monitoring
 
 In a small project, you can't always have a nice monitoring for your database.
