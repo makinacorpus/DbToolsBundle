@@ -83,7 +83,7 @@ class RestoreCommand extends Command
         }
 
         if ($input->getOption('list')) {
-            return $this->listBackup();
+            return $this->listBackups();
         }
 
         if ($this->force = $input->getOption('force')) {
@@ -188,9 +188,9 @@ class RestoreCommand extends Command
         return true;
     }
 
-    private function listBackup()
+    private function listBackups()
     {
-        $this->io->section('Backup list');
+        $this->io->section('Backups list');
 
         $backupLists = $this->storage->listBackups(
             $this->connectionName,
