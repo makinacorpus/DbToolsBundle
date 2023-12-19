@@ -26,7 +26,7 @@ The `db-tools:anonymize` command alone is not enought to ensure you follow GDPR 
 It depends on:
 
 * How you correctly configured your anonymization (obviously),
-* Where you run this command: you are going to anonymized a backup file,
+* Where you run this command: you are going to anonymize a backup file,
   this backup file contains sensitive data. Thus, following GDPR recommendations
   this **backup file should never transit on an unsecured environment**.
 
@@ -38,18 +38,24 @@ Read the next section to learn more about a proper workflow.
 Here is an exemple of workflow - that follows GDPR recommendations - to retrieve anonymized production
 data on your local environement.
 
-### Hypotheses
+### Prerequisites
 
-* You have 2 secured environments : *production* and *preproduction*,
+* You have 2 secured environments : *production* and *env2* (such as a preproduction)
+  and you can securely copy files from one to another,
 * You can stop your service on preproduction,
 * Your anonymization is well configured, every sensitive data has been
   mapped to an anonymizer to erased/hashed/randomized it.
+
+::: note
+Note that *env2* could be any environment, not even preproduction, all it needs is the CLI to work
+and a database, it doesn't even need to be a complete working env.
+:::
 
 ### Workflow
 
 1. Run `console db-tools:backup` on your production environment or
    choose an existing backup with `console db-tools:restore --list`,
-2. Securly download your backup file from your *production* to your *preproduction* environment,
+2. Securly download your backup file from your *production* to your *env2* environment,
 3. Stop services on your preproduction to ensure no one is using it,
 4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
@@ -64,7 +70,7 @@ You can specify the behaviour of the  `db-tools:anonymize`command with some opti
 ### Anonymizing current database
 
 The main purpose of this command is to provide a way to anonymize a backup file. But
-it could also be used to anonymized current database with `--current-database`.
+it could also be used to anonymize current database with `--current-database`.
 
 ```sh
 console db-tools:anonymize --current-database
@@ -81,7 +87,7 @@ console db-tools:anonymize --no-restore
 
 ### Only anonymize specific targets
 
-Use this option if you want to anonymized only some specific targets during the process.
+Use this option if you want to anonymize only some specific targets during the process.
 
 ```sh
 console db-tools:anonymize --target target_1 --taget target_2
