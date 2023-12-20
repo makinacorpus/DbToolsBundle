@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Test\FunctionalKernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ConfiDumpCommandTest extends FunctionalKernelTestCase
+class ConfigDumpCommandTest extends FunctionalKernelTestCase
 {
     public function testExecute(): void
     {
