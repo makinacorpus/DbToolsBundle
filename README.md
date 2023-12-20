@@ -5,7 +5,9 @@
 A set of Symfony Console Commands to interact with your database
 
 <p align="center" style="margin: auto">
-    <img style="height:160px;" src="/docs/content/public/logo.svg">
+    <a href="https://dbtoolsbundle.readthedocs.io/" target="_blank">
+        <img style="height:160px;" src="/docs/content/public/logo.svg">
+    </a>
 </p>
 
 * **Backup**: Backup your database and manage your dumps with a simple command.
