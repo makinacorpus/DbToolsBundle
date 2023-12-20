@@ -101,7 +101,7 @@ If the `db-tools:check` command returns you some errors:
       restorer_binaries:
           mariadb: '/usr/bin/mariadb' # default 'mariadb'
           mysql: '/usr/bin/mysql' # default 'mysql'
-          postgresql: 'usr/bin/pg_restore' # default 'pg_restore'
+          postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
           sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
 
       #...
