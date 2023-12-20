@@ -30,8 +30,9 @@ class RestorerFactory
         $platform = $queryBuilder->getServerFlavor();
 
         $restorer = match ($platform) {
-            Platform::POSTGRESQL => PgSQL\Restorer::class,
+            Platform::MARIADB => MariaDB\Restorer::class,
             Platform::MYSQL => MySQL\Restorer::class,
+            Platform::POSTGRESQL => PgSQL\Restorer::class,
             Platform::SQLITE => SQLite\Restorer::class,
             default => throw new NotImplementedException(\sprintf(
                 "Restore is not implemented or configured for platform '%s' while using connection '%s'",
