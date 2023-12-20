@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Restorer\SQLite;
+namespace MakinaCorpus\DbToolsBundle\Restorer\MariaDB;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -19,14 +19,35 @@ class Restorer extends AbstractRestorer
     {
         $dbParams = $this->connection->getParams();
 
-        if (!\file_exists($this->backupFilename)) {
-            throw new \Exception(\sprintf('Backup file not found (%s)', $this->backupFilename));
+        $args = [
+            $this->binary,
+        ];
+
+        if (isset($dbParams['host'])) {
+            $args[] = '-h';
+            $args[] = $dbParams['host'];
         }
 
-        // Remove existing database to restore file in an empty one
-        \unlink($dbParams['path']);
-        $command = $this->binary . ' ' . $dbParams['path'];
-        $command .= ' < "' . \addcslashes($this->backupFilename, '\\"') . '"';
+        if (isset($dbParams['user'])) {
+            $args[] = '-u';
+            $args[] = $dbParams['user'];
+        }
+
+        if (isset($dbParams['port'])) {
+            $args[] = '-P';
+            $args[] = $dbParams['port'];
+        }
+
+        if (isset($dbParams['password'])) {
+            $args[] = '-p' . $dbParams['password'];
+        }
+
+        $args[] = $dbParams['dbname'];
+
+        if ($this->verbose) {
+            $args[] = '-v';
+        }
+
         $this->backupStream = \fopen($this->backupFilename, 'r');
 
         if (false === $this->backupStream) {
@@ -36,11 +57,11 @@ class Restorer extends AbstractRestorer
             ));
         }
 
-        $this->process = Process::fromShellCommandline(
-            $command,
+        $this->process = new Process(
+            $args,
             null,
             null,
-            null,
+            $this->backupStream,
             1800
         );
 

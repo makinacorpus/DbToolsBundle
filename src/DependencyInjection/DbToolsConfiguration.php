@@ -29,16 +29,18 @@ final class DbToolsConfiguration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('backupper_binaries')
                         ->defaultValue([
-                            'postgresql' => 'pg_dump',
+                            'mariadb' => 'mariadb-dump',
                             'mysql' => 'mysqldump',
+                            'postgresql' => 'pg_dump',
                             'sqlite' => 'sqlite3',
                         ])
                         ->scalarPrototype()->end()
                     ->end()
                     ->arrayNode('restorer_binaries')
                         ->defaultValue([
-                            'postgresql' => 'pg_restore',
+                            'mariadb' => 'mariadb',
                             'mysql' => 'mysql',
+                            'postgresql' => 'pg_restore',
                             'sqlite' => 'sqlite3',
                         ])
                         ->scalarPrototype()->end()

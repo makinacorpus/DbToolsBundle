@@ -78,8 +78,9 @@ class BackupperRestorerTest extends FunctionalTestCase
         ;
 
         $backupperFactoy = new BackupperFactory($mockDoctrineRegistry, [
-            'postgresql' => 'pg_dump',
+            'mariadb' => 'mariadb-dump',
             'mysql' => 'mysqldump',
+            'postgresql' => 'pg_dump',
             'sqlite' => 'sqlite3',
         ]);
 
@@ -130,8 +131,9 @@ class BackupperRestorerTest extends FunctionalTestCase
         ;
 
         $restorerFactoy = new RestorerFactory($mockDoctrineRegistry, [
-            'postgresql' => 'pg_restore',
+            'mariadb' => 'mariadb',
             'mysql' => 'mysql',
+            'postgresql' => 'pg_restore',
             'sqlite' => 'sqlite3',
         ]);
 
