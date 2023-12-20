@@ -18,8 +18,8 @@ This command will successively:
 1. Backup your local database,
 2. Restore the given backup file,
 3. Anonymize the data from the given backup file,
-4. Backup the newly anonymized database, **overwritting the given backup file**,
-5. Restore your database to its original state from the backup done in step 1.
+4. Backup the newly anonymized database, **by overwritting the given backup file**,
+5. Restore your database to its original state from the backup produced at step 1.
 
 ::: warning
 The `db-tools:anonymize` command alone is not enought to ensure you follow GDPR best practices.

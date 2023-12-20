@@ -66,9 +66,9 @@ class AnonymizeCommand extends Command
                 This command will successively perform these steps:
                     1/ Backup the local database,
                     2/ Restore the given backup file,
-                    3/ Anonymize the database,
-                    4/ Backup the anonymized database by overwriting the given backup file,
-                    5/ Restore the backup file produced at step 1.
+                    3/ Anonymize the data from the given backup file,
+                    4/ Backup the newly anonymized database by overwritting the given backup file,
+                    5/ Restore your database to its original state from the backup produced at step 1.
 
                 If called with the --local-database option, step 2 is skipped.
                 If called with the --no-restore option, step 1 and 4 are skipped.
