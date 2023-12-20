@@ -48,9 +48,8 @@ features:
   - icon:
       light: '/database.svg'
       dark: '/database-d.svg'
-    title: PostgreSQL, MySQL & SQLite ready
+    title: PostgreSQL, MySQL, MariaDB & SQLite ready
     details:
-      Work on top of Doctrine DBAL connections with PostgreSQL, MySQL & SQLite.<br>
-      <small>(Partially works with other database vendors too.)</small>
+      Work on top of Doctrine DBAL connections with PostgreSQL, MySQL, MariaDB & SQLite.
 
 ---
