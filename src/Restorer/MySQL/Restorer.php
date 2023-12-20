@@ -6,7 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Restorer\MySQL;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\Process;
 
 class Restorer extends AbstractRestorer
@@ -50,6 +49,13 @@ class Restorer extends AbstractRestorer
         }
 
         $this->backupStream = \fopen($this->backupFilename, 'r');
+
+        if (false === $this->backupStream) {
+            throw new \InvalidArgumentException(\sprintf(
+                "Backup file '%s' can't be read",
+                $this->backupFilename
+            ));
+        }
 
         $this->process = new Process(
             $args,

@@ -29,6 +29,13 @@ class Restorer extends AbstractRestorer
         $command .= ' < "' . \addcslashes($this->backupFilename, '\\"') . '"';
         $this->backupStream = \fopen($this->backupFilename, 'r');
 
+        if (false === $this->backupStream) {
+            throw new \InvalidArgumentException(\sprintf(
+                "Backup file '%s' can't be read",
+                $this->backupFilename
+            ));
+        }
+
         $this->process = Process::fromShellCommandline(
             $command,
             null,
