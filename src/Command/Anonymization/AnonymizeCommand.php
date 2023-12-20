@@ -59,19 +59,21 @@ class AnonymizeCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setHelp(<<<TXT
-            Anonymize a given backup file or the current database.
+            ->setHelp(
+                <<<TXT
+                Anonymize a given backup file or the current database.
 
-            This command will successively perfom these steps:
-                1/ Backup current database,
-                2/ Restore of the given backup file,
-                3/ Anonymize the database,
-                4/ Backup of the anonymized database overwritting the given backup file,
-                5/ Restore backup file from step 1.
+                This command will successively perform these steps:
+                    1/ Backup the current database,
+                    2/ Restore the given backup file,
+                    3/ Anonymize the database,
+                    4/ Backup the anonymized database by overwriting the given backup file,
+                    5/ Restore the backup file produced at step 1.
 
-                If used with --current-database option, step 2 is skipped.
-                If used with with --no-restore option, step 1 and 4 are skipped.
-            TXT)
+                If called with the --current-database option, step 2 is skipped.
+                If called with the --no-restore option, step 1 and 4 are skipped.
+                TXT
+            )
             ->addUsage('/path/to/backup/to/anonymize')
             ->addUsage('--current-database')
             ->addArgument(
@@ -165,13 +167,13 @@ class AnonymizeCommand extends Command
 
             $this->io->caution([
                 'You should either provide a backup file or use the --current-database option.',
-                'For more informations, Launch this command with --help.'
+                'For more information, launch this command with --help.'
             ]);
 
             return;
         }
 
-        if ('prod' == $input->getOption('env') && !$this->io->confirm("You on a production environment, are you sure you want to continue?", false)) {
+        if ('prod' == $input->getOption('env') && !$this->io->confirm("You are currently on a production environment. Are you sure you want to continue?", false)) {
             $this->doCancel = true;
 
             return;
@@ -245,7 +247,7 @@ class AnonymizeCommand extends Command
         $this->io->text($backupper->getOutput());
 
         $this->io->newLine();
-        $this->io->info("Backup of current database done : " . $this->backupFilename);
+        $this->io->info("Backup of current database done: " . $this->backupFilename);
     }
 
     private function doRestoreGivenBackup(): void
@@ -299,7 +301,7 @@ class AnonymizeCommand extends Command
         }
 
         $this->io->newLine();
-        $this->io->info("Database anonymized !");
+        $this->io->info("Database anonymized!");
     }
 
     private function doBackupAnonymizedDatabase(): void
