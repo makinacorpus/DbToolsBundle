@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'db-tools:anonymization:run',
-    description: 'Anonymize given backup file or the current database.',
+    description: 'Anonymize given backup file or the local database.',
     aliases: ['db-tools:anonymize']
 )]
 class AnonymizeCommand extends Command
@@ -61,37 +61,37 @@ class AnonymizeCommand extends Command
         $this
             ->setHelp(
                 <<<TXT
-                Anonymize a given backup file or the current database.
+                Anonymize a given backup file or the local database.
 
                 This command will successively perform these steps:
-                    1/ Backup the current database,
+                    1/ Backup the local database,
                     2/ Restore the given backup file,
                     3/ Anonymize the database,
                     4/ Backup the anonymized database by overwriting the given backup file,
                     5/ Restore the backup file produced at step 1.
 
-                If called with the --current-database option, step 2 is skipped.
+                If called with the --local-database option, step 2 is skipped.
                 If called with the --no-restore option, step 1 and 4 are skipped.
                 TXT
             )
             ->addUsage('/path/to/backup/to/anonymize')
-            ->addUsage('--current-database')
+            ->addUsage('--local-database')
             ->addArgument(
                 'filename',
                 InputArgument::OPTIONAL,
                 'Backup file to anonymize'
             )
             ->addOption(
-                'current-database',
+                'local-database',
                 null,
                 InputOption::VALUE_NONE,
-                'Anonymize current database instead of a given backup file'
+                'Anonymize local database instead of a given backup file'
             )
             ->addOption(
                 'no-restore',
                 null,
                 InputOption::VALUE_NONE,
-                'Do not restore current database after anonymization (skip step 1 and 4).'
+                'Do not restore local database after anonymization (skip step 1 and 4).'
             )
             ->addOption(
                 'connection',
@@ -138,7 +138,7 @@ class AnonymizeCommand extends Command
         ]);
 
 
-        $this->doAnonymizeCurrentDatabase = !!$input->getOption('current-database');
+        $this->doAnonymizeCurrentDatabase = !!$input->getOption('local-database');
 
         if ($input->getOption('no-restore')) {
             $this->doBackupAndRestoreInitial = false;
@@ -166,25 +166,36 @@ class AnonymizeCommand extends Command
             $this->doCancel = true;
 
             $this->io->caution([
-                'You should either provide a backup file or use the --current-database option.',
+                'You should either provide a backup file or use the --local-database option.',
                 'For more information, launch this command with --help.'
             ]);
 
             return;
         }
 
-        if ('prod' == $input->getOption('env') && !$this->io->confirm("You are currently on a production environment. Are you sure you want to continue?", false)) {
+
+        if (null === $this->doBackupAndRestoreInitial) {
+            $this->doBackupAndRestoreInitial = $this->io->confirm("Do you want to backup local database and restore it at the end of this process?", true);
+        }
+
+        if (false === $this->doBackupAndRestoreInitial && 'prod' === $input->getOption('env')) {
+            $this->io->caution([
+                "You are currently on a production environment.",
+                "Anonymizing a local database in production is not allowed.",
+            ]);
             $this->doCancel = true;
 
             return;
         }
 
-        if (null === $this->doBackupAndRestoreInitial) {
-            $this->doBackupAndRestoreInitial = $this->io->confirm("Do you want to backup current database and restore it at the end of this process?", true);
+        if ('prod' === $input->getOption('env') && !$this->io->confirm("You are currently on a production environment. Are you sure you want to continue?", false)) {
+            $this->doCancel = true;
+
+            return;
         }
 
         if (!$this->doBackupAndRestoreInitial) {
-            $this->doCancel = $this->io->confirm("You are about to erase your current database. Are you sure you want to continue?", true);
+            $this->doCancel = $this->io->confirm("You are about to erase your local database. Are you sure you want to continue?", true);
         }
     }
 
@@ -225,7 +236,7 @@ class AnonymizeCommand extends Command
 
     private function doBackupInitialDatabase(): void
     {
-        $this->io->section('Start backuping current database');
+        $this->io->section('Start backuping local database');
 
         $backupper = $this->backupperFactory->create($this->connectionName);
 
@@ -247,7 +258,7 @@ class AnonymizeCommand extends Command
         $this->io->text($backupper->getOutput());
 
         $this->io->newLine();
-        $this->io->info("Backup of current database done: " . $this->backupFilename);
+        $this->io->info("Backup of local database done: " . $this->backupFilename);
     }
 
     private function doRestoreGivenBackup(): void

@@ -15,7 +15,7 @@ console db-tools:anonymize path/to/your/backup/to/anonymized
 
 This command will successively:
 
-1. Backup your current database,
+1. Backup your local database,
 2. Restore the given backup file,
 3. Anonymize the data from the given backup file,
 4. Backup the newly anonymized database, **overwritting the given backup file**,
@@ -67,13 +67,13 @@ the Symfony Console to work and a database. It doesn't need to be a complete wor
 
 You can specify the behaviour of the  `db-tools:anonymize`command with some options detailed below.
 
-### Anonymizing current database
+### Anonymizing local database
 
 The main purpose of this command is to provide a way to anonymize a backup file. But
-it could also be used to anonymize current database with `--current-database`.
+it could also be used to anonymize local database with `--local-database`.
 
 ```sh
-console db-tools:anonymize --current-database
+console db-tools:anonymize --local-database
 ```
 
 ### Do not restore initial state after anonymization
