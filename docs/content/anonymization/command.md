@@ -7,7 +7,7 @@ outline:
 # Anonymization command
 
 Considering your anonymization has been configured, you can
-now anonymize a backup file running:
+now anonymize a backup file by running:
 
 ```sh
 console db-tools:anonymize path/to/your/backup/to/anonymized
@@ -22,13 +22,13 @@ This command will successively:
 5. Restore your database to its original state from the backup produced at step 1.
 
 ::: warning
-The `db-tools:anonymize` command alone is not enought to ensure you follow GDPR best practices.
+The `db-tools:anonymize` command alone is not enough to ensure you follow GDPR best practices.
 It depends on:
 
 * How you correctly configured your anonymization (obviously),
-* Where you run this command: you are going to anonymize a backup file,
-  this backup file contains sensitive data. Thus, following GDPR recommendations
-  this **backup file should never transit on an unsecured environment**.
+* Where you run this command: anonymizing a backup file means it contains
+  sensitive data, hence, following GDPR recommendations, this **backup file
+  should never transit on an unsecured environment**.
 
 Read the next section to learn more about a proper workflow.
 :::
