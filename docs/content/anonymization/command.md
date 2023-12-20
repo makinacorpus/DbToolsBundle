@@ -46,7 +46,7 @@ data on your local environment.
 * Your anonymization is well configured: every sensitive data has been
   mapped to an anonymizer that will erase/hash/randomize it.
 
-::: note
+::: info
 Note that the second environment could be any environment, not only a preproduction. All it needs to work
 is the Symfony Console and a database. It doesn't need to be a complete working env.
 :::
