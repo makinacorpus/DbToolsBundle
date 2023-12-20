@@ -40,22 +40,24 @@ data on your local environment.
 
 ### Prerequisites
 
-* You have 2 secured environments : *production* and *another_env* (such as a preproduction)
+* You have a second secured environment besides your *production* (such as a preproduction)
   and you can securely copy files from one to another,
-* You can stop your service on *another_env*,
-* Your anonymization is well configured, every sensitive data has been
-  mapped to an anonymizer to erased/hashed/randomized it.
+* You can shut down your service on this second environment,
+* Your anonymization is well configured: every sensitive data has been
+  mapped to an anonymizer that will erase/hash/randomize it.
 
 ::: note
-Note that *another_env* could be any environment, not only preproduction, all it needs is the
-the Symfony Console to work and a database. It doesn't need to be a complete working env.
+Note that the second environment could be any environment, not only a preproduction. All it needs to work
+is the Symfony Console and a database. It doesn't need to be a complete working env.
 :::
 
 ### Workflow
 
+Let's call *another_env* the environment we have besides the production one.
+
 1. Run `console db-tools:backup` on your production environment or
    choose an existing backup with `console db-tools:restore --list`,
-2. Securly download your backup file from your *production* to your *another_env* environment,
+2. Securely download your backup file from your *production* to your *another_env* environment,
 3. Stop services on your *another_env* to ensure no one is using it,
 4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
