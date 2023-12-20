@@ -173,19 +173,8 @@ class AnonymizeCommand extends Command
             return;
         }
 
-
         if (null === $this->doBackupAndRestoreInitial) {
             $this->doBackupAndRestoreInitial = $this->io->confirm("Do you want to backup local database and restore it at the end of this process?", true);
-        }
-
-        if (false === $this->doBackupAndRestoreInitial && 'prod' === $input->getOption('env')) {
-            $this->io->caution([
-                "You are currently on a production environment.",
-                "Anonymizing a local database in production is not allowed.",
-            ]);
-            $this->doCancel = true;
-
-            return;
         }
 
         if ('prod' === $input->getOption('env') && !$this->io->confirm("You are currently on a production environment. Are you sure you want to continue?", false)) {
@@ -204,6 +193,15 @@ class AnonymizeCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ((false === $this->doBackupAndRestoreInitial) && ('prod' === $input->getOption('env'))) {
+            $this->io->caution([
+                "You are currently on a production environment.",
+                "Anonymizing a local database in production is not allowed.",
+            ]);
+
+            return self::SUCCESS;
+        }
+
         if ($this->doCancel) {
             $this->io->info("Action cancelled.");
 
