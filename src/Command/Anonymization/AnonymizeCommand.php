@@ -218,7 +218,10 @@ class AnonymizeCommand extends Command
             }
 
             $this->doAnonymizeDatabase();
-            $this->doBackupAnonymizedDatabase();
+
+            if (!$this->doAnonymizeCurrentDatabase && !$this->doBackupAndRestoreInitial) {
+                $this->doBackupAnonymizedDatabase();
+            }
 
             if ($this->doBackupAndRestoreInitial) {
                 $this->doRestoreInitialDatabase();
