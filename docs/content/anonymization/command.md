@@ -53,15 +53,15 @@ is the Symfony Console and a database. It doesn't need to be a complete working 
 
 ### Workflow
 
-Let's call *another_env* the environment we have besides the production one.
+Let's assume the environment we have besides *production* is called *another_env*.
 
-1. Run `console db-tools:backup` on your production environment or
+1. Run `console db-tools:backup` on *production* environment or
    choose an existing backup with `console db-tools:restore --list`,
-2. Securely download your backup file from your *production* to your *another_env* environment,
-3. Stop services on your *another_env* to ensure no one is using it,
+2. Securely download your backup file from *production* to *another_env* environment,
+3. Stop services on *another_env* to ensure no one is using it,
 4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
-5. Restart services on your *another_env*,
+5. Restart services on *another_env*,
 6. Download the anonymized backup from *another_env* to your local machine
 7. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
@@ -81,7 +81,7 @@ console db-tools:anonymize --local-database
 ### Do not restore initial state after anonymization
 
 You can choose to not restore initial database with the `--no-restore` option.
-With this option, step 1 and 5 will be skipped during execution.
+With this option, steps 1 and 5 will be skipped during execution.
 
 ```sh
 console db-tools:anonymize --no-restore
@@ -94,7 +94,7 @@ Use this option if you want to anonymize only some specific targets during the p
 ```sh
 console db-tools:anonymize --target target_1 --taget target_2
 # or
-console db-tools:anonymize --t target_1 --t target_2
+console db-tools:anonymize -t target_1 -t target_2
 ```
 
 ::: tip
@@ -108,7 +108,7 @@ Use this option if you want to exclude some specific targets from anonymization.
 ```sh
 console db-tools:anonymize --exclude target_1 --exclude target_2
 # or
-console db-tools:anonymize --x target_1 --x target_2
+console db-tools:anonymize -x target_1 -x target_2
 ```
 
 ::: tip
@@ -122,6 +122,6 @@ For debug purpose, it could be usefull to run not only one update query per tabl
 but one update query per target. To do so, use the `--split-per-column` option.
 
 ::: info
-Learn more about how the anonymization process build these update queries reading
+Learn more about how the anonymization process builds these update queries reading
 the [Internals section](./internals).
 :::
