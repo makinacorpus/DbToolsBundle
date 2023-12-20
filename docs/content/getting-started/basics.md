@@ -88,36 +88,28 @@ class User
 }
 ```
 
-With the above configuration, after you launched `console db-tools:anonymize`,
+With the above configuration, after you used `console db-tools:anonymize` on a backup file,
 all your user's email addresses will be gone and replaced with hashed ones.
 
 ::: tip
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
-Now, data you previously imported are anonymized, but the backup file remains
-on your disk, and its sensitive data with it.
+You can't directly run the anonymization on your local machine as to follow GDPR recommendations,
+sensitive data should never transit on an unsecured environment.
 
-To avoid this, the *DbToolsBundle* provides a second command to perform
-a complete *GDPR-friendly* workflow:
+We will therefore use the preproduction environment to perform anonymization.
 
 ```sh
-console db-tools:gdprify path/to/my_backup.dump
+console db-tools:anonymize path/to/my_backup.dump
 ```
 
-This will successively:
+You now have a fully anonymized backup file that you can download and restore on your local
+environment.
 
-1. **import** the given backup file,
-2. **anonymize** the database,
-3. **backup** the newly anonymized database.
-
-::: warning
-The last step of this workflow will **overwrite** the given backup file:
-this way, no sensitive data remain on your disk.
+::: tip
+[Learn more about a good GDPR-friendly workflow](../anonymization/command#a-gdpr-friendly-workflow).
 :::
-
-You now have a fully anonymized backup file that you can share with
-your colleagues.
 
 ## Use case 3 - Getting basic stats on your database without proper monitoring
 

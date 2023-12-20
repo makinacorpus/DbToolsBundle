@@ -46,7 +46,7 @@ class DbToolsStorage
         return $list;
     }
 
-    public function generateFilename(string $connectionName = 'default', string $extension = 'sql'): string
+    public function generateFilename(string $connectionName = 'default', string $extension = 'sql', bool $anonymized = false): string
     {
         $filesystem = new Filesystem();
         $now = new \DateTimeImmutable();
@@ -60,9 +60,10 @@ class DbToolsStorage
         $filesystem->mkdir($dir);
 
         return \sprintf(
-            '%s/%s-%s.%s',
+            '%s/%s%s-%s.%s',
             $dir,
             $connectionName,
+            $anonymized ? '-anonymized' : '',
             $now->format('YmdHis'),
             $extension
         );

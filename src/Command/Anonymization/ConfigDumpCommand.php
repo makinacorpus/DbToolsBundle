@@ -13,8 +13,8 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymization:config-check', description: 'Check and dump anonymization configuration.')]
-class ConfigCheckCommand extends Command
+#[AsCommand(name: 'db-tools:anonymization:dump-config', description: 'Dump anonymization configuration.')]
+class ConfigDumpCommand extends Command
 {
     public function __construct(
         private AnonymizatorFactory $anonymizatorFactory,

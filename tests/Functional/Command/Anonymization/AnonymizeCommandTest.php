@@ -21,7 +21,7 @@ class AnonymizeCommandTest extends FunctionalKernelTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [
-                '--force' => true
+                '--local-database' => true
             ],
             [
                 'interactive' => false,
@@ -30,5 +30,32 @@ class AnonymizeCommandTest extends FunctionalKernelTestCase
         );
 
         self::assertCommandIsSuccessful($commandTester);
+    }
+
+    public function testExecuteOnLocalDatabaseInProdIsForbidden(): void
+    {
+        self::skipIfNoDatabase();
+
+        $kernel = self::bootKernel(['environment' => 'prod']);
+        $application = new Application($kernel);
+
+        $command = $application->find('db-tools:anonymization:run');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            [
+                '--local-database' => true,
+                '--no-restore' => true,
+            ],
+            [
+                'interactive' => false,
+                'capture_stderr_separately' => true
+            ]
+        );
+
+        self::assertCommandIsSuccessful($commandTester);
+
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('CAUTION', $output);
+        $this->assertStringContainsString('local database in production', $output);
     }
 }
