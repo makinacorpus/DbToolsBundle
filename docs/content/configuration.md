@@ -94,15 +94,15 @@ If the `db-tools:check` command returns you some errors:
       # Specify here paths to binaries, only if the system can't find them by himself
       # platform are 'mysql', 'postgresql', 'sqlite'
       backupper_binaries:
-          mariadb: 'usr/bin/mariadb-dump' # default 'mariadb-dump'
-          mysql: 'usr/bin/mysqldump' # default 'mysqldump'
-          postgresql: 'usr/bin/pg_dump' # default 'pg_dump'
-          sqlite: 'usr/bin/sqlite3' # default 'sqlite3'
+          mariadb: '/usr/bin/mariadb-dump' # default 'mariadb-dump'
+          mysql: '/usr/bin/mysqldump' # default 'mysqldump'
+          postgresql: '/usr/bin/pg_dump' # default 'pg_dump'
+          sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
       restorer_binaries:
-          mariadb: 'usr/bin/mariadb' # default 'mariadb'
-          mysql: 'usr/bin/mysql' # default 'mysql'
+          mariadb: '/usr/bin/mariadb' # default 'mariadb'
+          mysql: '/usr/bin/mysql' # default 'mysql'
           postgresql: 'usr/bin/pg_restore' # default 'pg_restore'
-          sqlite: 'usr/bin/sqlite3' # default 'sqlite3'
+          sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
 
       #...
   ```
