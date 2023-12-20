@@ -35,8 +35,8 @@ Read the next section to learn more about a proper workflow.
 
 ## A GDPR-friendly workflow
 
-Here is an exemple of workflow - that follows GDPR recommendations - to retrieve anonymized production
-data on your local environement.
+Here is an example of workflow - that follows GDPR recommendations - to retrieve anonymized production
+data on your local environment.
 
 ### Prerequisites
 
