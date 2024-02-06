@@ -13,7 +13,7 @@ A set of Symfony Console Commands to interact with your database
 * **Backup**: Backup your database and manage your dumps with a simple command.
 * **Restore**: Easily restore a previous dump of your database.
 * **Anonymize**: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
-* Set up a **GRDP-friendly** workflow: Make it easier to follow GDPR best practices when importing production dump to other environments.
+* Set up a **GDPR-friendly** workflow: Make it easier to follow GDPR best practices when importing production dump to other environments.
 
 ## Installation
 
