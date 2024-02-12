@@ -89,16 +89,15 @@ class User
 ```
 
 With the above configuration, after you used `console db-tools:anonymize` on a backup file,
-all your user's email addresses will be gone and replaced with hashed ones.
+all your user's email addresses in it will be gone and replaced with hashed ones.
 
 ::: tip
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
-You can't directly run the anonymization on your local machine as to follow GDPR recommendations,
-sensitive data should never transit on an unsecured environment.
-
-We will therefore use the preproduction environment to perform anonymization.
+To follow GDPR recommendations, sensitive data should never transit on an unsecured environment, so
+you can't directly run the anonymization on your local machine. We will therefore, for example,
+use the preproduction environment to perform anonymization.
 
 ```sh
 console db-tools:anonymize path/to/my_backup.dump
