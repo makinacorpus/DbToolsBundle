@@ -33,7 +33,7 @@ class AnonymizeCommand extends Command
 
     // Command behavior
     private bool $doAnonymizeCurrentDatabase = false;
-    private ?bool $doBackupAndRestoreInitial = true;
+    private bool $doBackupAndRestoreInitial = true;
     private bool $doCancel = false;
 
     // Anonmyzation options
@@ -173,7 +173,7 @@ class AnonymizeCommand extends Command
             return;
         }
 
-        if (false !== $this->doBackupAndRestoreInitial) {
+        if ($this->doBackupAndRestoreInitial) {
             $this->doBackupAndRestoreInitial = $this->io->confirm("Do you want to backup local database and restore it at the end of this process?", true);
         }
 
