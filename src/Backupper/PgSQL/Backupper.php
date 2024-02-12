@@ -43,8 +43,9 @@ class Backupper extends AbstractBackupper
         $args[] = '-Z'; // compression level 0-9
         $args[] = '5';
         $args[] = '--lock-wait-timeout=120';
-        $args[] = '--exclude-table-data=' . \implode('|', $this->excludedTables);
-        $args[] = '--blobs';
+        if (\count($this->excludedTables)) {
+            $args[] = '--exclude-table-data=' . \implode('|', $this->excludedTables);
+        }
         $args[] = $dbParams['dbname'];
 
         if ($this->verbose) {
