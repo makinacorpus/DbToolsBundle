@@ -11,11 +11,80 @@ A complete example of this file can be found in the bundle sources in: `vendor/m
 
 Some options are available to customize how the `db-tools:backup` command works.
 
-### Storage directory
+### Storage
 
-The `storage_directory` parameter let you choose where to put the generated dumps
+#### Root directory
+
+The `db_tools.storage.root_dir` parameter let you choose where to put the generated dumps.
 
 Default value is `'%kernel.project_dir%/var/private/db_tools'`.
+
+#### File and directory naming strategy
+
+Default behavior will store your backup using this strategy:
+`%db_tools.storage.root_dir%/<YEAR>/<MONTH>/<CONNECTION-NAME>-<YEAR><MONTH><DAY><HOUR><MINUTES><SECOND>.<EXT>`
+where `<EXT>` is the file extension depending upon the database backend (mostly `.sql` or `.dump`).
+
+Custom strategy can be implemented by extending the
+`MakinaCorpus\DbToolsBundle\Storage\AbstractFilenameStrategy` abstract class:
+
+```php
+namespace App\DbTools\Storage;
+
+use MakinaCorpus\DbToolsBundle\Storage\AbstractFilenameStrategy;
+
+class FooFilenameStrategy extends AbstractFilenameStrategy
+{
+    #[\Override]
+    public function generateFilename(
+        string $connectionName = 'default',
+        string $extension = 'sql',
+        bool $anonymized = false
+    ): string {
+        return '/some_folder/' . $connectionName . '.' . $extension;
+    }
+}
+```
+
+Then registered this way, on a per-connection basis:
+
+```yaml
+# config/packages/db_tools.yaml
+
+db_tools:
+    storage:
+        filename_strategy:
+            connection_name: App\DbTools\Storage\FooFilenameStrategy
+```
+
+Value can be a container service identifier, or directly a class name in case this
+has no constructor arguments.
+
+If you need to store your dumps outside of the `%db_tools.storage.root_dir%` directory,
+then implement the `MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface` directly
+and add the following method:
+
+```php
+namespace App\DbTools\Storage;
+
+use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
+
+class FooFilenameStrategy implements FilenameStrategyInterface
+{
+    #[\Override]
+    public function generateFilename(/* ... */): string {}
+
+    #[\Override]
+    public function getRootDir(
+        string $defaultRootDir,
+        string $connectionName = 'default',
+    ): ?string {
+        return '/some/path/' . $connectionName . '/foo';
+    }
+}
+```
+
+This will allow the restore command to find your backups.
 
 ### Excluded tables
 

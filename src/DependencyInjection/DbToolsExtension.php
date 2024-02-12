@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
 
+use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 final class DbToolsExtension extends Extension
@@ -23,7 +26,12 @@ final class DbToolsExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/../config'));
         $loader->load('services.yaml');
 
-        $container->setParameter('db_tools.storage_directory', $config['storage_directory']);
+        if (isset($config['storage_directory'])) {
+            \trigger_deprecation('makinacorpus/db-tools-bundle', '1.0.1', '"db_tools.storage_directory" configuration option is deprecated and renamed "db_tools.storage.root_dir"');
+            $container->setParameter('db_tools.storage.root_dir', $config['storage_directory']);
+        } else {
+            $container->setParameter('db_tools.storage.root_dir', $config['storage']['root_dir']);
+        }
 
         // Backupper
         $container->setParameter('db_tools.backupper.binaries', $config['backupper_binaries']);
@@ -50,6 +58,30 @@ final class DbToolsExtension extends Extension
         $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymization/Anonymizer';
 
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
+
+        // Register filename strategies.
+        $strategies = [];
+        foreach (($config['storage']['filename_strategy'] ?? []) as $connectioName => $strategyId) {
+            // Default is handled directly by the storage service.
+            if ($strategyId !== null && $strategyId !== 'default' && $strategyId !== 'datetime') {
+                if ($container->hasDefinition($strategyId)) {
+                    $strategies[$connectioName] = new Reference($strategyId);
+                } else if (\class_exists($strategyId)) {
+                    if (!\is_subclass_of($strategyId, FilenameStrategyInterface::class)) {
+                        throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class "%s" does not implement "%s"', $connectioName, $strategyId, FilenameStrategyInterface::class));
+                    }
+                    $serviceId = '.db_tools.filename_strategy.' . \sha1($strategyId);
+                    $container->setDefinition($serviceId, (new Definition())->setClass($strategyId));
+                    $strategies[$connectioName] = new Reference($serviceId);
+                } else {
+                    throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class or service "%s" does not exist or is not registered in container', $connectioName, $strategyId));
+                }
+                break;
+            }
+        }
+        if ($strategies) {
+            $container->getDefinition('db_tools.storage')->setArgument(2, $strategies);
+        }
     }
 
     /**

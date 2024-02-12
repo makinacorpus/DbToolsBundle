@@ -2,16 +2,21 @@
 
 declare (strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle;
+namespace MakinaCorpus\DbToolsBundle\Storage;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
-class DbToolsStorage
+/**
+ * @internal
+ *   Do not use class as it may change in future releases.
+ */
+class Storage
 {
     public function __construct(
         private string $storagePath,
         private string $expirationAge,
+        private ?array $filenameStrategies = null,
     ) {
         $this->storagePath = \rtrim($storagePath, '/');
     }
@@ -22,10 +27,21 @@ class DbToolsStorage
         bool $onlyExpired = false,
         string $preserveFile = null
     ): array {
+        // In order to avoid listing dumps from other connections, we must
+        // filter files using the connection name infix. When a custom strategy
+        // is provided, there is no way to reproduce this filtering, it's up to
+        // the user to give a restricted folder name.
+        $rootDir = $this->getFilenameStrategy($connectionName)->getRootDir($this->storagePath, $connectionName);
+
+        if (!(new Filesystem())->exists($rootDir)) {
+            return [];
+        }
+
         $finder = (new Finder())
             ->files()
-            ->in($this->storagePath)
-            ->name(\sprintf('%s*.%s', $connectionName, $extension))
+            ->depth('< 10')
+            ->in($rootDir)
+            ->name('*.' . $extension)
             ->sortByName()
         ;
 
@@ -48,29 +64,23 @@ class DbToolsStorage
 
     public function generateFilename(string $connectionName = 'default', string $extension = 'sql', bool $anonymized = false): string
     {
-        $filesystem = new Filesystem();
-        $now = new \DateTimeImmutable();
+        $strategy = $this->getFilenameStrategy($connectionName);
+        $rootDir = $strategy->getRootDir($this->storagePath, $connectionName);
 
-        $dir = \sprintf(
-            '%s/%s/%s',
-            $this->storagePath,
-            $now->format('Y'),
-            $now->format('m')
-        );
-        $filesystem->mkdir($dir);
+        $filename = \rtrim($rootDir, '/') . '/' . $strategy->generateFilename($connectionName, $extension, $anonymized);
 
-        return \sprintf(
-            '%s/%s%s-%s.%s',
-            $dir,
-            $connectionName,
-            $anonymized ? '-anonymized' : '',
-            $now->format('YmdHis'),
-            $extension
-        );
+        (new Filesystem())->mkdir(\dirname($filename));
+
+        return $filename;
     }
 
     public function getStoragePath(): string
     {
         return $this->storagePath;
+    }
+
+    protected function getFilenameStrategy(string $connectionName): FilenameStrategyInterface
+    {
+        return $this->filenameStrategies[$connectionName] ?? new DefaultFilenameStrategy();
     }
 }
