@@ -89,7 +89,7 @@ class User
 ```
 
 With the above configuration, after you used `console db-tools:anonymize` on a backup file,
-all your user's email addresses in it will be gone and replaced with hashed ones.
+all the user email addresses it contains will be replaced with hashed ones.
 
 ::: tip
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
