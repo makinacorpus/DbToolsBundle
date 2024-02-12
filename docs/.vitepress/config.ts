@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   lang: 'en',
   title: 'DbToolsBundle',
-  description: 'a set of Symfony Console Commands to interact with your database',
+  description: 'A Symfony bundle to backup, restore and anonymize your data',
   srcDir: "content",
   base: "/",
   metaChunk: false,

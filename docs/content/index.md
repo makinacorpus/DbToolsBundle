@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: DbToolsBundle
-  text: A set of Symfony Console Commands to interact with your database
+  text: Backup, restore and anonymize your data
   image:
     light: ./logo.svg
     dark: ./logo-d.svg
