@@ -184,7 +184,7 @@ class AnonymizeCommand extends Command
         }
 
         if (!$this->doBackupAndRestoreInitial) {
-            $this->doCancel = $this->io->confirm("You are about to erase your local database. Are you sure you want to continue?", true);
+            $this->doCancel = !$this->io->confirm("You are about to erase your local database. Are you sure you want to continue?", true);
         }
     }
 
