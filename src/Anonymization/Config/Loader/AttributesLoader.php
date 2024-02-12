@@ -31,6 +31,10 @@ class AttributesLoader implements LoaderInterface
 
         foreach ($metadatas as $metadata) {
             \assert($metadata instanceof ClassMetadata);
+            if ($metadata->isMappedSuperclass) {
+                continue;
+            }
+
             $reflexionClass = $metadata->getReflectionClass();
             if ($attributes = $reflexionClass->getAttributes(Anonymize::class)) {
                 foreach ($attributes as $key => $attribute) {
