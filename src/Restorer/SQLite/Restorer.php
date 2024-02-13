@@ -11,7 +11,7 @@ use Symfony\Component\Process\Process;
 class Restorer extends AbstractRestorer
 {
     private ?Process $process = null;
-    private mixed $backupStream = null;
+
     /**
      * {@inheritdoc}
      */
@@ -27,14 +27,6 @@ class Restorer extends AbstractRestorer
         \unlink($dbParams['path']);
         $command = $this->binary . ' ' . $dbParams['path'];
         $command .= ' < "' . \addcslashes($this->backupFilename, '\\"') . '"';
-        $this->backupStream = \fopen($this->backupFilename, 'r');
-
-        if (false === $this->backupStream) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Backup file '%s' can't be read",
-                $this->backupFilename
-            ));
-        }
 
         $this->process = Process::fromShellCommandline(
             $command,
@@ -55,7 +47,8 @@ class Restorer extends AbstractRestorer
             throw new ProcessFailedException($this->process);
         }
 
-        \fclose($this->backupStream);
+        $this->connection->close();
+        $this->connection->connect();
     }
 
     public function getExtension(): string
