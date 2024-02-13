@@ -103,7 +103,7 @@ db_tools:
     #...
 
     excluded_tables:
-        - default: ['table1', 'table2']
+        default: ['table1', 'table2']
 
     #...
 ```
