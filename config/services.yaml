@@ -57,8 +57,8 @@ services:
 
     # Utilities
     db_tools.storage:
-        class: MakinaCorpus\DbToolsBundle\DbToolsStorage
-        arguments: ['%db_tools.storage_directory%', '%db_tools.backup_expiration_age%']
+        class: MakinaCorpus\DbToolsBundle\Storage\Storage
+        arguments: ['%db_tools.storage.root_dir%', '%db_tools.backup_expiration_age%']
 
     # Backuppers
     db_tools.backupper.factory:

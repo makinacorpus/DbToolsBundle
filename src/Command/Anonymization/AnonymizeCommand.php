@@ -6,9 +6,9 @@ namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
-use MakinaCorpus\DbToolsBundle\DbToolsStorage;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
+use MakinaCorpus\DbToolsBundle\Storage\Storage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,7 +46,7 @@ class AnonymizeCommand extends Command
         private RestorerFactory $restorerFactory,
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
-        private DbToolsStorage $storage,
+        private Storage $storage,
     ) {
         parent::__construct();
 

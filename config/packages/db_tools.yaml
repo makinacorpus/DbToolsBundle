@@ -1,6 +1,28 @@
 db_tools:
-    # Where to put generated backups
-    #storage_directory: '%kernel.project_dir%/var/db_tools'
+    # Where to put generated backups.
+    #storage:
+        # Root directory of the backup storage manager. Default filename
+        # strategy will always use this folder as root path.
+        #root_dir: '%kernel.project_dir%/var/db_tools'
+
+        # Filename strategies. You may specify one strategy for each doctrine
+        # connection. Keys are doctrine connection names. Values are strategy
+        # names, "default" (or null) or omiting the connection will use the
+        # default implementation.
+        # If you created and registered a custom one into the container as a
+        # service, you may simply set the service identifier. If no service
+        # exists, and your implementation does not require parameters, simply
+        # set the class name.
+        #filename_strategy:
+            # Backup filename strategy.
+            # "default" is an alias of "datetime"
+            #default: default
+            # "datetime" implementation is "%db_tools.storage.root_dir%/YYYY/MM/<connection-name>-<datestamp>.<ext>"
+            #other_connection_strategy: datetime
+            # Example of using a service name:
+            #yet_another_connection app.db_tools.filename.custom_strategy
+            # Or a classe name:
+            #another_one: App\DbTools\Storage\MyCustomStrategy
 
     # When old backups are considered obsolete
     # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)

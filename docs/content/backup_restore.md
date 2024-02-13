@@ -1,8 +1,7 @@
 # Backup and Restore
 
 The *DbToolsBundle* comes with two Symfony Console commands to backup and restore
-your database but also a tiny backups manager (`DbToolsStorage`) which handle backup
-files for you.
+your database but also a tiny backups manager which handle backup files for you.
 
 ## Backup command
 
@@ -86,8 +85,8 @@ console db-tools:restore --connection other_connection_name
 When you launch this command, existing backup files will be listed and it
 will be asked you to choose one to restore.
 
-If you want to skip this step, or if your backup file is unknown to the DbToolsStorage,
-you can specify a file to restore with the `--filename` option:
+If you want to skip this step, or if your backup file is unknown to the storage
+manager, you can specify a file to restore with the `--filename` option:
 
 ```sh
 console db-tools:restore --filename /path/to/my/backup.sql

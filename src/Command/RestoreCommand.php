@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
-use MakinaCorpus\DbToolsBundle\DbToolsStorage;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
+use MakinaCorpus\DbToolsBundle\Storage\Storage;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +27,7 @@ class RestoreCommand extends Command
     public function __construct(
         string $defaultConnectionName,
         private RestorerFactory $restorerFactory,
-        private DbToolsStorage $storage,
+        private Storage $storage,
     ) {
         parent::__construct();
 
