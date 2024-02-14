@@ -6,9 +6,10 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
-use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Schema\TableDiff;
 use Doctrine\DBAL\Types\Type;
@@ -18,8 +19,8 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
-use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
+use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 class Anonymizator
@@ -402,6 +403,16 @@ class Anonymizator
     {
         $schemaManager = $this->connection->createSchemaManager();
 
+        // Remove index first, this solves problems with SQL Server, since
+        // it doesn't support dropping a column while an index exists.
+        foreach ($schemaManager->listTableIndexes($tableName) as $index) {
+            \assert($index instanceof Index);
+
+            if (AbstractAnonymizer::JOIN_ID_INDEX === $index->getName()) {
+                $this->dropIndex($tableName, $index->getName());
+            }
+        }
+
         foreach ($schemaManager->listTableColumns($tableName) as $column) {
             \assert($column instanceof Column);
 
@@ -522,7 +533,7 @@ class Anonymizator
                 ],
             );
 
-            $this->createIndex($table, AbstractAnonymizer::JOIN_ID);
+            $this->createNamedIndex(AbstractAnonymizer::JOIN_ID_INDEX, $table, AbstractAnonymizer::JOIN_ID);
         } finally {
             $queryBuilder->executeStatement(
                 <<<SQL
@@ -599,8 +610,120 @@ class Anonymizator
         // we must find its auto generated identifier. Removing the constraint
         // at this stade is mandatory otherwise column will not be deletable
         // later when anonymizator will proceed to cleanup.
-        // @see https://stackoverflow.com/questions/1364526/how-do-you-drop-a-default-value-from-a-column-in-a-table
+        $this->dropColumnConstraintsSqlServer($table, AbstractAnonymizer::JOIN_ID);
+
         $queryBuilder->executeStatement(
+            <<<SQL
+            DROP SEQUENCE IF EXISTS ?::identifier;
+            SQL,
+            [$sequenceName],
+        );
+
+        $this->createNamedIndex(AbstractAnonymizer::JOIN_ID_INDEX, $table, AbstractAnonymizer::JOIN_ID);
+    }
+
+    /**
+     * Create an index with given name.
+     */
+    protected function createNamedIndex(string $indexName, string $table, string...$column): void
+    {
+        $columnList = \implode(', ', \array_map(fn ($value) => '?::column', $column));
+
+        $this
+            ->getQueryBuilder()
+            ->executeStatement(
+                <<<SQL
+                CREATE INDEX ?::identifier ON ?::table ({$columnList})
+                SQL,
+                [$indexName, $table, ...$column]
+            )
+        ;
+    }
+
+    /**
+     * Create an index.
+     */
+    protected function createIndex(string $table, string...$column): void
+    {
+        $indexName = $table . '_' . \implode('_', $column) . '_idx';
+
+        $this->createNamedIndex($indexName, $table, ...$column);
+    }
+
+    /**
+     * Drop an index.
+     */
+    protected function dropIndex(string $table, string $indexName): void
+    {
+        $platform = $this->connection->getDatabasePlatform();
+
+        if ($platform instanceof AbstractMySQLPlatform || $platform instanceof SQLServerPlatform) {
+            $this
+                ->getQueryBuilder()
+                ->executeStatement(
+                    <<<SQL
+                    DROP INDEX ?::identifier ON ?::table
+                    SQL,
+                    [$indexName, $table]
+                )
+            ;
+
+            return;
+        }
+
+        $this
+            ->getQueryBuilder()
+            ->executeStatement(
+                <<<SQL
+                DROP INDEX ?::identifier
+                SQL,
+                [$indexName]
+            )
+        ;
+    }
+
+    /**
+     * Drop a single table column.
+     */
+    protected function dropColumn(string $tableName, string $columnName): void
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+        $platform = $this->connection->getDatabasePlatform();
+
+        foreach ($schemaManager->listTableColumns($tableName) as $column) {
+            \assert($column instanceof Column);
+
+            if ($column->getName() === $columnName) {
+
+                if ($platform instanceof SQLServerPlatform) {
+                    // SQL server requires that you drop constraints on column
+                    // prior to deleting the column. So let's do that.
+                    $this->dropColumnConstraintsSqlServer($tableName, $columnName);
+                }
+
+                $schemaManager
+                    ->alterSchema(
+                        new SchemaDiff(
+                            changedTables: [
+                                new TableDiff(
+                                    tableName: $tableName,
+                                    droppedColumns: [$column],
+                                ),
+                            ],
+                        ),
+                    )
+                ;
+            }
+        }
+    }
+
+    /**
+     * Drop all columns constraints on SQL Server.
+     */
+    protected function dropColumnConstraintsSqlServer(string $tableName, string $columnName): void
+    {
+        // @see https://stackoverflow.com/questions/1364526/how-do-you-drop-a-default-value-from-a-column-in-a-table
+        $this->getQueryBuilder()->executeStatement(
             <<<SQL
             DECLARE @ConstraintName nvarchar(200)
             SELECT @ConstraintName = Name
@@ -616,64 +739,12 @@ class Anonymizator
             EXEC('ALTER TABLE ' + ? + ' DROP CONSTRAINT ' + @ConstraintName)
             SQL,
             [
-                $table,
-                AbstractAnonymizer::JOIN_ID,
-                $table,
-                $table,
+                $tableName,
+                $columnName,
+                $tableName,
+                $tableName,
             ],
         );
-
-        $queryBuilder->executeStatement(
-            <<<SQL
-            DROP SEQUENCE IF EXISTS ?::identifier;
-            SQL,
-            [$sequenceName],
-        );
-
-        $this->createIndex($table, AbstractAnonymizer::JOIN_ID);
-    }
-
-    /**
-     * Create an index.
-     */
-    protected function createIndex(string $table, string...$column): void
-    {
-        $indexName = $table . '_' . \implode('_', $column) . '_idx';
-        $columnList = \implode(', ', \array_map(fn ($value) => '?', $column));
-
-        $this->getQueryBuilder()->raw(
-            <<<SQL
-            CREATE INDEX ?::identifier ON ?::table ({$columnList})
-            SQL,
-            [$indexName, $table, ...$column]
-        );
-    }
-
-    /**
-     * Drop a single table column.
-     */
-    protected function dropColumn(string $tableName, string $columnName): void
-    {
-        $schemaManager = $this->connection->createSchemaManager();
-
-        foreach ($schemaManager->listTableColumns($tableName) as $column) {
-            \assert($column instanceof Column);
-
-            if ($column->getName() === $columnName) {
-                $schemaManager
-                    ->alterSchema(
-                        new SchemaDiff(
-                            changedTables: [
-                                new TableDiff(
-                                    tableName: $tableName,
-                                    droppedColumns: [$column],
-                                ),
-                            ],
-                        ),
-                    )
-                ;
-            }
-        }
     }
 
     public function getConnectionName(): string

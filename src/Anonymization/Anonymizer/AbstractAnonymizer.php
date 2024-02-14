@@ -18,6 +18,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 abstract class AbstractAnonymizer
 {
     public const JOIN_ID = '_db_tools_id';
+    public const JOIN_ID_INDEX = 'target_table_db_tools_id_idx';
     public const JOIN_TABLE = '_target_table';
     public const TEMP_TABLE_PREFIX = '_db_tools_sample_';
 

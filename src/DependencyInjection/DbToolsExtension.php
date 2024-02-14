@@ -66,7 +66,7 @@ final class DbToolsExtension extends Extension
             if ($strategyId !== null && $strategyId !== 'default' && $strategyId !== 'datetime') {
                 if ($container->hasDefinition($strategyId)) {
                     $strategies[$connectioName] = new Reference($strategyId);
-                } else if (\class_exists($strategyId)) {
+                } elseif (\class_exists($strategyId)) {
                     if (!\is_subclass_of($strategyId, FilenameStrategyInterface::class)) {
                         throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class "%s" does not implement "%s"', $connectioName, $strategyId, FilenameStrategyInterface::class));
                     }
