@@ -62,7 +62,7 @@ db_tools:
         # 1/ If you want to configure anonymization only for the default
         # DBAL connection, declare it like this:
         #yaml: '%kernel.project_dir%/config/anonymizations.yaml'
-        # 2/ If you use multiple connection, declare each configuration like this:
+        # 2/ If you use multiple connections, declare each configuration like this:
         #yaml:
             #- connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
             #- connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
