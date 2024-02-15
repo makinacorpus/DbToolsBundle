@@ -7,7 +7,7 @@ db_tools:
 
         # Filename strategies. You may specify one strategy for each doctrine
         # connection. Keys are doctrine connection names. Values are strategy
-        # names, "default" (or null) or omiting the connection will use the
+        # names, "default" (or null) or omitting the connection will use the
         # default implementation.
         # If you created and registered a custom one into the container as a
         # service, you may simply set the service identifier. If no service
@@ -20,7 +20,7 @@ db_tools:
             # "datetime" implementation is "%db_tools.storage.root_dir%/YYYY/MM/<connection-name>-<datestamp>.<ext>"
             #other_connection_strategy: datetime
             # Example of using a service name:
-            #yet_another_connection app.db_tools.filename.custom_strategy
+            #yet_another_connection: app.db_tools.filename.custom_strategy
             # Or a classe name:
             #another_one: App\DbTools\Storage\MyCustomStrategy
 
@@ -30,7 +30,7 @@ db_tools:
 
     # List here tables (per connection) you don't want in your backups
     #excluded_tables:
-        #- default: ['table1', 'table2']
+        #default: ['table1', 'table2']
 
     # Specify here paths to binaries, only if the system can't find them by himself
     # platform are 'mysql', 'postgresql', 'sqlite'
@@ -46,7 +46,7 @@ db_tools:
         #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
 
     # Update this configuration if you want to look for anonymizers in a custom folder.
-    # These are default paths that will always be registered even if you override the
+    # These are default paths that will always be registered even if you override
     # the setting and don't repeat them:
     #anonymizer_paths:
         #- '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'

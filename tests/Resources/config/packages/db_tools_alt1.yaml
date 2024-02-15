@@ -1,0 +1,23 @@
+db_tools:
+    storage_directory: '%kernel.project_dir%/var/backup'
+    backup_expiration_age: '6 months ago'
+    excluded_tables:
+        default: ['table1', 'table2']
+
+    backupper_binaries:
+        mariadb: '/usr/bin/mariadb-dump'
+        mysql: '/usr/bin/mysqldump'
+        postgresql: '/usr/bin/pg_dump'
+        sqlite: '/usr/bin/sqlite3'
+    restorer_binaries:
+        mariadb: '/usr/bin/mariadb'
+        mysql: '/usr/bin/mysql'
+        postgresql: '/usr/bin/pg_restore'
+        sqlite: '/usr/bin/sqlite3'
+
+    anonymizer_paths:
+        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
+        - '%kernel.project_dir%/src/Anonymization/Anonymizer'
+
+    anonymization:
+        yaml: '%kernel.project_dir%/config/anonymization.yaml'
