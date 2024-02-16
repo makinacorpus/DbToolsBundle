@@ -21,9 +21,9 @@ class CommandLine
         }
 
         \array_walk($arg, function ($item) use ($escape) {
-            if (!\is_string($item)) {
+            if (!(\is_string($item) || \is_int($item) || \is_float($item) || \is_null($item))) {
                 throw new \InvalidArgumentException(
-                    "Each command line argument must be a string."
+                    "Each command line argument must be a string, an integer, a float or null."
                 );
             }
 
@@ -35,10 +35,10 @@ class CommandLine
      * Add one or more arguments to the command line. These arguments will be
      * escaped in the final command line.
      */
-    public function addArg(string ...$arg): self
+    public function addArg(string|int|float|null ...$arg): self
     {
         foreach ($arg as $item) {
-            $this->args[] = $this->escapeArgument($item);
+            $this->args[] = $this->escapeArg((string) $item);
         }
 
         return $this;
@@ -84,23 +84,23 @@ class CommandLine
      *
      * @see \Symfony\Component\Process\Process::escapeArgument()
      */
-    private function escapeArgument(?string $argument): string
+    private function escapeArg(?string $argument): string
     {
         if ('' === $argument || null === $argument) {
             return '""';
         }
         if (!$this->osIsWindows()) {
-            return "'".str_replace("'", "'\\''", $argument)."'";
+            return "'" . \str_replace("'", "'\\''", $argument) . "'";
         }
-        if (str_contains($argument, "\0")) {
-            $argument = str_replace("\0", '?', $argument);
+        if (\str_contains($argument, "\0")) {
+            $argument = \str_replace("\0", '?', $argument);
         }
-        if (!preg_match('/[\/()%!^"<>&|\s]/', $argument)) {
+        if (!\preg_match('/[\/()%!^"<>&|\s]/', $argument)) {
             return $argument;
         }
-        $argument = preg_replace('/(\\\\+)$/', '$1$1', $argument);
+        $argument = \preg_replace('/(\\\\+)$/', '$1$1', $argument);
 
-        return '"'.str_replace(['"', '^', '%', '!', "\n"], ['""', '"^^"', '"^%"', '"^!"', '!LF!'], $argument).'"';
+        return '"' . \str_replace(['"', '^', '%', '!', "\n"], ['""', '"^^"', '"^%"', '"^!"', '!LF!'], $argument) . '"';
     }
 
     private function osIsWindows(): bool
