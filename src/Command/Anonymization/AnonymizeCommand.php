@@ -218,16 +218,17 @@ class AnonymizeCommand extends Command
             }
 
             $this->doAnonymizeDatabase();
-
-            if (!$this->doAnonymizeCurrentDatabase && !$this->doBackupAndRestoreInitial) {
-                $this->doBackupAnonymizedDatabase();
-            }
+            $this->doBackupAnonymizedDatabase();
 
             if ($this->doBackupAndRestoreInitial) {
                 $this->doRestoreInitialDatabase();
             }
 
-            $this->io->success($this->backupFilename . " has been anonymized!");
+            if ($this->doAnonymizeCurrentDatabase) {
+                $this->io->success("Anonymized backup from current database has been generated: " . $this->backupFilename);
+            } else {
+                $this->io->success($this->backupFilename . " has been anonymized!");
+            }
         } catch (NotImplementedException $e) {
             $this->io->error($e->getMessage());
 
@@ -270,7 +271,7 @@ class AnonymizeCommand extends Command
             $this->io->newLine();
             $this->io->info("Local database backed up: " . $this->backupFilename);
         } else {
-            $this->io->writeln(" ok");
+            $this->io->writeln(" ok (" . $this->initialDatabaseBackupFilename . ')');
         }
     }
 
@@ -357,9 +358,9 @@ class AnonymizeCommand extends Command
         // If we are not anomymizing a database from a given backup file, we put
         // anonymized database backup in classic storage dir but we specify
         // it's anonymized.
-        $destination = $this->backupFilename ?? $this->storage->generateFilename($this->connectionName, $backupper->getExtension(), true);
+        $this->backupFilename = $this->backupFilename ?? $this->storage->generateFilename($this->connectionName, $backupper->getExtension(), true);
         $backupper
-            ->setDestination($destination)
+            ->setDestination($this->backupFilename)
             ->setVerbose($this->io->isVerbose())
             ->startBackup()
         ;
@@ -379,7 +380,7 @@ class AnonymizeCommand extends Command
             $this->io->newLine();
             $this->io->info("Anonymized backup done : " . $this->backupFilename);
         } else {
-            $this->io->writeln(" ok");
+            $this->io->writeln(" ok (" . $this->backupFilename . ')');
         }
     }
 
