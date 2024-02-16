@@ -17,7 +17,7 @@ Some options are available to customize how the `db-tools:backup` command works.
 
 The `db_tools.storage.root_dir` parameter let you choose where to put the generated dumps.
 
-Default value is `'%kernel.project_dir%/var/private/db_tools'`.
+Default value is `'%kernel.project_dir%/var/db_tools'`.
 
 #### File and directory naming strategy
 
@@ -78,7 +78,7 @@ class FooFilenameStrategy implements FilenameStrategyInterface
     public function getRootDir(
         string $defaultRootDir,
         string $connectionName = 'default',
-    ): ?string {
+    ): string {
         return '/some/path/' . $connectionName . '/foo';
     }
 }
@@ -210,16 +210,21 @@ By default, the *DbToolsBundle* will look for *anonymizers* in 2 directories
 * `%kernel.project_dir%/src/Anonymizer`
 
 If you want to put custom anonymizers in another directory or if you want to load
-a pack of anonymizers from en external library, you can modify/add paths:
+a pack of anonymizers from an external library, you can modify/add paths:
 
 
 ```yml
 # config/packages/db_tools.yaml
 
- anonymizer_paths:
+db_tools:
+    # ...
+
+    anonymizer_paths:
         - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer'
         - '%kernel.project_dir%/src/Anonymizer'
         - '%kernel.project_dir%/vendor/myAnonymizerProvider/anonymizers/src'
+
+    # ...
 ```
 
 ## Anonymization
@@ -227,7 +232,7 @@ a pack of anonymizers from en external library, you can modify/add paths:
 Per default, the **DbToolsBundle** will only look for anonymization configurations from PHP attributes on Doctrine Entities.
 
 But the **DbToolsBundle** does not necessary need Doctrine ORM to anonymize your data, it can do it just with a DBAL connection.
-In this case (or if your prefere YAML over attributes): you can configure the DbToolsBundle to look for anonymization
+In this case (or if you prefer YAML over attributes): you can configure the DbToolsBundle to look for anonymization
 configurations in a YAML file:
 
 ```yml
@@ -236,13 +241,12 @@ configurations in a YAML file:
 db_tools:
     # ...
 
-    # Anonymization configuration.
     anonymization:
         # If you want to load configuration from a yaml:
         # 1/ If you want to configure anonymization only for the default
         # DBAL connection, declare it like this:
         yaml: '%kernel.project_dir%/config/anonymizations.yaml'
-        # 2/ If you use multiple connection, declare each configuration like this:
+        # 2/ If you use multiple connections, declare each configuration like this:
         #yaml:
             #- connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
             #- connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
@@ -251,5 +255,5 @@ db_tools:
 ```
 
 :::tip
-For more information about anonymization, refere to the [Anonymization section](./anonymization/essentials).
+For more information about anonymization, refer to the [Anonymization section](./anonymization/essentials).
 :::

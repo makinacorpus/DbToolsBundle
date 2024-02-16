@@ -32,10 +32,10 @@ console db-tools:backup --connection other_connection_name
 
 ### Excluded tables
 
-You may have configured [tables to be excluded in the bundle configuration](./configuration#excluded-tables).
+You may have configured [tables to be exclude in the bundle configuration](./configuration#excluded-tables).
 If so, these tables will be automatically excluded each time you launch the command.
 
-But if you want to temporary exclude some tables, run the command with the `--excluded-table` option:
+But if you want to temporarily exclude some tables, run the command with the `--excluded-table` option:
 
 
 ```sh
@@ -83,7 +83,7 @@ console db-tools:restore --connection other_connection_name
 ### Filename
 
 When you launch this command, existing backup files will be listed and it
-will be asked you to choose one to restore.
+will be asked you to choose the one to restore.
 
 If you want to skip this step, or if your backup file is unknown to the storage
 manager, you can specify a file to restore with the `--filename` option:
