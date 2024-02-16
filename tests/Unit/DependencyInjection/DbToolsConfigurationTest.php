@@ -47,6 +47,8 @@ class DbToolsConfigurationTest extends TestCase
                     'postgresql' => 'pg_restore',
                     'sqlite' => 'sqlite3',
                 ],
+                'backupper_options' => [],
+                'restorer_options' => [],
                 'anonymizer_paths' => [],
             ],
             $result
@@ -79,6 +81,12 @@ class DbToolsConfigurationTest extends TestCase
                     'mysql' => '/usr/bin/mysql',
                     'postgresql' => '/usr/bin/pg_restore',
                     'sqlite' => '/usr/bin/sqlite3',
+                ],
+                'backupper_options' => [
+                    'default' => '--opt1 val1 -x -y -z --opt2 val2',
+                ],
+                'restorer_options' => [
+                    'default' => '-abc -x val1 -y val2',
                 ],
                 'anonymizer_paths' => [
                     '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer',
@@ -116,7 +124,7 @@ class DbToolsConfigurationTest extends TestCase
                 ],
                 'backup_expiration_age' => '6 months ago',
                 'excluded_tables' => [
-                    'default' => ['table1', 'table2'],
+                    'connection_two' => ['table1', 'table2'],
                 ],
                 'backupper_binaries' => [
                     'mariadb' => '/usr/bin/mariadb-dump',
@@ -129,6 +137,13 @@ class DbToolsConfigurationTest extends TestCase
                     'mysql' => '/usr/bin/mysql',
                     'postgresql' => '/usr/bin/pg_restore',
                     'sqlite' => '/usr/bin/sqlite3',
+                ],
+                'backupper_options' => [
+                    'connection_one' => '--opt1 val1 -x -y -z --opt2 val2',
+                ],
+                'restorer_options' => [
+                    'connection_one' => '-abc -x val1 -y val2',
+                    'connection_two' => '-a "Value 1" -bc -d val2 --end',
                 ],
                 'anonymizer_paths' => [
                     '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer',
