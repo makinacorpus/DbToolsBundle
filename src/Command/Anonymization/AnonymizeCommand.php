@@ -71,7 +71,7 @@ class AnonymizeCommand extends Command
                     5/ Restore your database to its original state from the backup produced at step 1.
 
                 If called with the --local-database option, step 2 is skipped.
-                If called with the --no-restore option, step 1 and 4 are skipped.
+                If called with the --no-restore option, step 1 and 5 are skipped.
                 TXT
             )
             ->addUsage('/path/to/backup/to/anonymize')
