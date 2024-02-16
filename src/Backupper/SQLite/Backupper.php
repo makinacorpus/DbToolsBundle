@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper\SQLite;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Where;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -20,27 +21,22 @@ class Backupper extends AbstractBackupper
     public function startBackup(): self
     {
         $dbParams = $this->connection->getParams();
+        $tablesToBackup = \implode(' ', $this->getTablesToBackup());
 
-        $includeTables = \implode(' ', $this->getTablesToBackup());
-
-        $dumpInSqlite = "echo 'BEGIN IMMEDIATE;\n.dump {$includeTables}'";
-
-        $command = sprintf(
-            "{$dumpInSqlite} | %s --bail %s",
-            $this->binary,
-            $dbParams['path']
+        $command = new CommandLine(
+            \sprintf(
+                "echo 'BEGIN IMMEDIATE;\n.dump %s' | %s -bail %s%s  > \"%s\"",
+                $tablesToBackup,
+                $this->binary,
+                $this->extraOptions ? $this->extraOptions . ' ' : '',
+                $dbParams['path'],
+                \addcslashes($this->destination, '\\"')
+            ),
+            false
         );
 
-        $command .= ' > "' . \addcslashes($this->destination, '\\"') . '"';
-
-        $this->process = Process::fromShellCommandline(
-            $command,
-            null,
-            null,
-            null,
-            600
-        );
-
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setTimeout(600);
         $this->process->start();
 
         return $this;

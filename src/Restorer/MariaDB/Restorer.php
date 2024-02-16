@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer\MariaDB;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -18,38 +19,30 @@ class Restorer extends AbstractRestorer
     public function startRestore(): self
     {
         $dbParams = $this->connection->getParams();
-
-        $args = [
-            $this->binary,
-        ];
+        $command = new CommandLine($this->binary);
 
         if (isset($dbParams['host'])) {
-            $args[] = '-h';
-            $args[] = $dbParams['host'];
+            $command->addArg('-h', $dbParams['host']);
         }
-
         if (isset($dbParams['user'])) {
-            $args[] = '-u';
-            $args[] = $dbParams['user'];
+            $command->addArg('-u', $dbParams['user']);
         }
-
         if (isset($dbParams['port'])) {
-            $args[] = '-P';
-            $args[] = $dbParams['port'];
+            $command->addArg('-P', $dbParams['port']);
         }
-
         if (isset($dbParams['password'])) {
-            $args[] = '-p' . $dbParams['password'];
+            $command->addArg('-p' . $dbParams['password']);
         }
-
-        $args[] = $dbParams['dbname'];
-
         if ($this->verbose) {
-            $args[] = '-v';
+            $command->addArg('-v');
         }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
+        }
+
+        $command->addArg($dbParams['dbname']);
 
         $this->backupStream = \fopen($this->backupFilename, 'r');
-
         if (false === $this->backupStream) {
             throw new \InvalidArgumentException(\sprintf(
                 "Backup file '%s' can't be read",
@@ -57,14 +50,9 @@ class Restorer extends AbstractRestorer
             ));
         }
 
-        $this->process = new Process(
-            $args,
-            null,
-            null,
-            $this->backupStream,
-            1800
-        );
-
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setInput($this->backupStream);
+        $this->process->setTimeout(1800);
         $this->process->start();
 
         return $this;

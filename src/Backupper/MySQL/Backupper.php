@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -18,52 +19,41 @@ class Backupper extends AbstractBackupper
     public function startBackup(): self
     {
         $dbParams = $this->connection->getParams();
-
-        $args = [
-            $this->binary,
-        ];
+        $command = new CommandLine($this->binary);
 
         if (isset($dbParams['host'])) {
-            $args[] = '-h';
-            $args[] = $dbParams['host'];
+            $command->addArg('-h', $dbParams['host']);
         }
-
         if (isset($dbParams['user'])) {
-            $args[] = '-u';
-            $args[] = $dbParams['user'];
+            $command->addArg('-u', $dbParams['user']);
         }
-
         if (isset($dbParams['port'])) {
-            $args[] = '-P';
-            $args[] = $dbParams['port'];
+            $command->addArg('-P', $dbParams['port']);
         }
-
         if (isset($dbParams['password'])) {
-            $args[] = '-p' . $dbParams['password'];
+            $command->addArg('-p' . $dbParams['password']);
         }
-
-        $args[] = '-r';
-        $args[] = $this->destination;
-        $args[] = $dbParams['dbname'];
-        $args[] = '--no-tablespaces';
 
         foreach ($this->excludedTables as $table) {
-            $args[] = '--ignore-table';
-            $args[] = $dbParams['dbname'] . '.' . $table;
+            $command->addArg('--ignore-table', $dbParams['dbname'] . '.' . $table);
         }
 
         if ($this->verbose) {
-            $args[] = '-v';
+            $command->addArg('-v');
+        }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
+        } else {
+            $command->addArg('--no-tablespaces');
+        }
+        if ($this->destination) {
+            $command->addArg('-r', $this->destination);
         }
 
-        $this->process = new Process(
-            $args,
-            null,
-            null,
-            null,
-            600
-        );
+        $command->addArg($dbParams['dbname']);
 
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setTimeout(600);
         $this->process->start();
 
         return $this;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -18,48 +19,37 @@ class Restorer extends AbstractRestorer
     public function startRestore(): AbstractRestorer
     {
         $dbParams = $this->connection->getParams();
-        $args = [
-            $this->binary,
-        ];
-
+        $command = new CommandLine($this->binary);
 
         if (isset($dbParams['host'])) {
-            $args[] = '-h';
-            $args[] = $dbParams['host'];
+            $command->addArg('-h', $dbParams['host']);
         }
-
         if (isset($dbParams['user'])) {
-            $args[] = '-U';
-            $args[] = $dbParams['user'];
+            $command->addArg('-U', $dbParams['user']);
         }
-
         if (isset($dbParams['port'])) {
-            $args[] = '-p';
-            $args[] = $dbParams['port'];
+            $command->addArg('-p', $dbParams['port']);
         }
 
-        $args[] = '-w';
-        $args[] = '--clean';
-        $args[] = '-d';
-        $args[] = $dbParams['dbname'];
-        $args[] = '-j';
-        $args[] = 2;
-        $args[] = '--if-exists';
-        $args[] = '--disable-triggers';
-        $args[] = $this->backupFilename;
+        $command->addArg('-w');
+        $command->addArg('--clean');
+        $command->addArg('-j', '2');
+        $command->addArg('--if-exists');
+        $command->addArg('--disable-triggers');
 
         if ($this->verbose) {
-            $args[] = '-v';
+            $command->addArg('-v');
+        }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
         }
 
-        $this->process = new Process(
-            $args,
-            null,
-            ['PGPASSWORD' => $dbParams['password'] ?? ''],
-            null,
-            1800
-        );
+        $command->addArg('-d', $dbParams['dbname']);
+        $command->addArg($this->backupFilename);
 
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
+        $this->process->setTimeout(1800);
         $this->process->start();
 
         return $this;
