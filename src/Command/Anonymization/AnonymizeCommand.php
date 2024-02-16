@@ -226,6 +226,8 @@ class AnonymizeCommand extends Command
             if ($this->doBackupAndRestoreInitial) {
                 $this->doRestoreInitialDatabase();
             }
+
+            $this->io->success($this->backupFilename . " has been anonymized!");
         } catch (NotImplementedException $e) {
             $this->io->error($e->getMessage());
 
@@ -237,7 +239,11 @@ class AnonymizeCommand extends Command
 
     private function doBackupInitialDatabase(): void
     {
-        $this->io->section('Start backuping local database');
+        if ($this->io->isVerbose()) {
+            $this->io->section('Start backing up local database');
+        } else {
+            $this->io->write("Backing up local database ...");
+        }
 
         $backupper = $this->backupperFactory->create($this->connectionName);
 
@@ -256,15 +262,25 @@ class AnonymizeCommand extends Command
         }
 
         $backupper->checkSuccessful();
-        $this->io->text($backupper->getOutput());
+        if ($this->io->isVerbose()) {
+            $this->io->text($backupper->getOutput());
+        }
 
-        $this->io->newLine();
-        $this->io->info("Backup of local database done: " . $this->backupFilename);
+        if ($this->io->isVerbose()) {
+            $this->io->newLine();
+            $this->io->info("Local database backed up: " . $this->backupFilename);
+        } else {
+            $this->io->writeln(" ok");
+        }
     }
 
     private function doRestoreGivenBackup(): void
     {
-        $this->io->section('Start restoring given backup');
+        if ($this->io->isVerbose()) {
+            $this->io->section('Start restoring given backup');
+        } else {
+            $this->io->write("Restoring given backup ...");
+        }
 
         $restorer = $this->restorerFactory->create($this->connectionName);
 
@@ -281,16 +297,25 @@ class AnonymizeCommand extends Command
         }
 
         $restorer->checkSuccessful();
+        if ($this->io->isVerbose()) {
+            $this->io->text($restorer->getOutput());
+        }
 
-        $this->io->text($restorer->getOutput());
-
-        $this->io->newLine();
-        $this->io->info("Restoration of given backup file done");
+        if ($this->io->isVerbose()) {
+            $this->io->newLine();
+            $this->io->info("Restoration of given backup file done");
+        } else {
+            $this->io->writeln(" ok");
+        }
     }
 
     private function doAnonymizeDatabase(): void
     {
-        $this->io->section('Start anonymizing database');
+        if ($this->io->isVerbose()) {
+            $this->io->section('Start anonymizing database');
+        } else {
+            $this->io->write("Anonymizing database ...");
+        }
 
         $anonymizator = $this->anonymizatorFactory->getOrCreate($this->connectionName);
 
@@ -312,13 +337,21 @@ class AnonymizeCommand extends Command
             $this->io->writeln("");
         }
 
-        $this->io->newLine();
-        $this->io->info("Database anonymized!");
+        if ($this->io->isVerbose()) {
+            $this->io->newLine();
+            $this->io->info("Database anonymized!");
+        } else {
+            $this->io->writeln(" ok");
+        }
     }
 
     private function doBackupAnonymizedDatabase(): void
     {
-        $this->io->section('Start backuping anonymized database');
+        if ($this->io->isVerbose()) {
+            $this->io->section('Start backing up anonymized database');
+        } else {
+            $this->io->write("Backing up anonymized database ...");
+        }
 
         $backupper = $this->backupperFactory->create($this->connectionName);
         // If we are not anomymizing a database from a given backup file, we put
@@ -338,15 +371,25 @@ class AnonymizeCommand extends Command
         }
 
         $backupper->checkSuccessful();
-        $this->io->text($backupper->getOutput());
+        if ($this->io->isVerbose()) {
+            $this->io->text($backupper->getOutput());
+        }
 
-        $this->io->newLine();
-        $this->io->success("Anonymized backup done : " . $this->backupFilename);
+        if ($this->io->isVerbose()) {
+            $this->io->newLine();
+            $this->io->info("Anonymized backup done : " . $this->backupFilename);
+        } else {
+            $this->io->writeln(" ok");
+        }
     }
 
     private function doRestoreInitialDatabase(): void
     {
-        $this->io->section('Start restoring initial database');
+        if ($this->io->isVerbose()) {
+            $this->io->section('Start restoring initial database');
+        } else {
+            $this->io->write("Restoring initial database ...");
+        }
 
         $restorer = $this->restorerFactory->create($this->connectionName);
 
@@ -364,9 +407,15 @@ class AnonymizeCommand extends Command
 
         $restorer->checkSuccessful();
 
-        $this->io->text($restorer->getOutput());
+        if ($this->io->isVerbose()) {
+            $this->io->text($restorer->getOutput());
+        }
 
-        $this->io->newLine();
-        $this->io->info("Restoration done");
+        if ($this->io->isVerbose()) {
+            $this->io->newLine();
+            $this->io->info("Restoration done");
+        } else {
+            $this->io->writeln(" ok");
+        }
     }
 }
