@@ -30,6 +30,7 @@ services:
         arguments:
             - '%doctrine.default_connection%'
             - '%db_tools.excluded_tables%'
+            - '%db_tools.backupper.options%'
             - '@db_tools.backupper.factory'
             - '@db_tools.storage'
         tags: ['console.command']
@@ -40,11 +41,11 @@ services:
             - '@db_tools.backupper.factory'
             - '@db_tools.restorer.factory'
         tags: ['console.command']
-
     db_tools.command.restore:
         class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
         arguments:
             - '%doctrine.default_connection%'
+            - '%db_tools.restorer.options%'
             - '@db_tools.restorer.factory'
             - '@db_tools.storage'
         tags: ['console.command']

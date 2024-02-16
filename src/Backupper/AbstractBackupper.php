@@ -15,8 +15,9 @@ use Symfony\Component\Process\Process;
 abstract class AbstractBackupper implements \IteratorAggregate
 {
     protected ?string $destination = null;
-    protected bool $verbose = false;
     protected array $excludedTables = [];
+    protected ?string $extraOptions = null;
+    protected bool $verbose = false;
 
     public function __construct(
         protected string $binary,
@@ -30,7 +31,7 @@ abstract class AbstractBackupper implements \IteratorAggregate
     }
 
     /**
-     * Check that backup utility can be execute correctly.
+     * Check that backup utility can be executed correctly.
      */
     public function checkBinary(): string
     {
@@ -66,6 +67,23 @@ abstract class AbstractBackupper implements \IteratorAggregate
         return $this;
     }
 
+    public function getExcludedTables(): array
+    {
+        return $this->excludedTables;
+    }
+
+    public function setExtraOptions(?string $options): self
+    {
+        $this->extraOptions = $options;
+
+        return $this;
+    }
+
+    public function getExtraOptions(?string $options): ?string
+    {
+        return $this->extraOptions;
+    }
+
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -76,11 +94,6 @@ abstract class AbstractBackupper implements \IteratorAggregate
     public function isVerbose(): bool
     {
         return $this->verbose;
-    }
-
-    public function getExcludedTables(): array
-    {
-        return $this->excludedTables;
     }
 
     abstract public function startBackup(): self;

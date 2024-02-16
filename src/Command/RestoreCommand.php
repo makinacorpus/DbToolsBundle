@@ -26,6 +26,7 @@ class RestoreCommand extends Command
 
     public function __construct(
         string $defaultConnectionName,
+        private array $extraOptions,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
     ) {
@@ -60,6 +61,12 @@ class RestoreCommand extends Command
                 'Only list existing backup files'
             )
             ->addOption(
+                'extra-options',
+                'o',
+                InputOption::VALUE_REQUIRED,
+                'Additional options to pass to the binary to perform the restoration. If given, overrides the entire list of options defined in the bundle configuration.'
+            )
+            ->addOption(
                 'force',
                 null,
                 InputOption::VALUE_NONE,
@@ -81,11 +88,12 @@ class RestoreCommand extends Command
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
         }
-
         if ($input->getOption('list')) {
             return $this->listBackups();
         }
-
+        if ($extraOptions = $input->getOption('extra-options')) {
+            $this->extraOptions[$this->connectionName] = $extraOptions;
+        }
         if ($this->force = $input->getOption('force')) {
             $input->setInteractive(false);
         }
@@ -144,6 +152,7 @@ class RestoreCommand extends Command
 
         $this->restorer
             ->setBackupFilename($this->backupFilename)
+            ->setExtraOptions($this->extraOptions[$this->connectionName] ?? null)
             ->setVerbose($this->io->isVerbose())
             ->startRestore()
         ;
@@ -155,7 +164,6 @@ class RestoreCommand extends Command
         $this->restorer->checkSuccessful();
 
         $this->io->success("Restoration done");
-
         $this->io->text($this->restorer->getOutput());
     }
 
@@ -175,7 +183,7 @@ class RestoreCommand extends Command
             );
 
             $this->backupFilename = $this->io->choice(
-                "Which backup do you want to retore ?",
+                "Which backup do you want to restore?",
                 $options,
                 \array_key_last($options)
             );
