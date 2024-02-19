@@ -25,10 +25,10 @@ class Backupper extends AbstractBackupper
 
         $command = new CommandLine(
             \sprintf(
-                "echo 'BEGIN IMMEDIATE;\n.dump %s' | %s -bail %s%s  > \"%s\"",
+                "echo 'BEGIN IMMEDIATE;\n.dump %s' | %s %s %s  > \"%s\"",
                 $tablesToBackup,
                 $this->binary,
-                $this->extraOptions ? $this->extraOptions . ' ' : '',
+                $this->extraOptions ?: '-bail',
                 $dbParams['path'],
                 \addcslashes($this->destination, '\\"')
             ),

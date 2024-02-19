@@ -42,12 +42,15 @@ class Backupper extends AbstractBackupper
         if ($this->extraOptions) {
             $command->addRaw($this->extraOptions);
         } else {
-            // Custom format (not SQL)
-            $command->addArg('-F', 'c');
             // Compression level (0-9)
             $command->addArg('-Z', '5');
             $command->addArg('--lock-wait-timeout=120');
         }
+
+        // Custom format (not SQL)
+        // Not overridable for now.
+        $command->addArg('-F', 'c');
+
         if ($this->destination) {
             $command->addArg('-f', $this->destination);
         }
