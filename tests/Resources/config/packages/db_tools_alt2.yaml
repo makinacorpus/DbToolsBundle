@@ -20,7 +20,7 @@ db_tools:
 
     backupper_options:
         connection_one: '--opt1 val1 -x -y -z --opt2 val2'
-        # Let's say we have no extra options for connection_two.
+        # Let's say we have no options for connection_two.
         #connection_two: ''
     restorer_options:
         connection_one: '-abc -x val1 -y val2'
