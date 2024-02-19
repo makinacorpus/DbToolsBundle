@@ -27,7 +27,7 @@ class CommandLine
                 );
             }
 
-            $escape ? $this->addArg($item) : $this->addRaw($item);
+            $escape ? $this->addArg($item) : $this->addRaw((string) $item);
         });
     }
 
