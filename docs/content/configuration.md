@@ -113,6 +113,10 @@ Note that you can override this configuration while running the `db-tools:backup
 the `--exclude` option.
 :::
 
+### Extra options
+
+See the [default binary options](#default-binary-options) section.
+
 ### Backup expiration age
 
 The `backup_expiration_age` parameter let you choose when a backup is considered as obsolete.
@@ -143,7 +147,8 @@ to be able to work. These binaries depend on the database vendor you use, you wi
 * for PostgreSQL: `pg_dump` and `pg_restore`
 * for SQLite: `sqlite3`
 
-You can verify that binaries for your DBAL connection(s) are correctly found by the *DbToolsBundle* launching:
+You can verify if those binaries are well found by the *DbToolsBundle*,
+for each of your DBAL connections, by launching:
 
 ```sh
 php console db-tools:check
@@ -201,6 +206,40 @@ RUN apt-get update && \
 :::warning
 Dump and restore is not supported yet for SQL Server.
 :::
+
+### Default binary options
+
+Apart from the essential options (credentials, database name, etc.), the bundle
+also passes a few default options to the binary depending on the operation being
+performed and the invoked binary itself. You can customize those default options
+by configuring your own ones per operation type and DBAL connection:
+
+```yaml
+# config/packages/db_tools.yaml
+db_tools:
+    # ...
+
+    backupper_options:
+        default: '--an-option'
+        another_connection: '-xyz --another'
+    restorer_options:
+        default: '--a-first-one --a-second-one'
+        another_connection: '-O sample-value'
+```
+
+If you do not define your own default options, the following ones will be used
+according to the database vendor:
+
+* When backing up:
+  * MariaDB: `--no-tablespaces`
+  * MySQL: `--no-tablespaces`
+  * PostgreSQL: `-Z 5 --lock-wait-timeout=120`
+  * SQLite: `-bail`
+* When restoring:
+  * MariaDB: None
+  * MySQL: None
+  * PostgreSQL: `-j 2 --clean --if-exists --disable-triggers`
+  * SQLite: None
 
 ## Anonymizer paths
 

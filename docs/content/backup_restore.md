@@ -1,12 +1,12 @@
 # Backup and Restore
 
-The *DbToolsBundle* comes with two Symfony Console commands to backup and restore
+The *DbToolsBundle* comes with two Symfony Console commands to back up and restore
 your database but also a tiny backups manager which handle backup files for you.
 
 ## Backup command
 
-The backup command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
-to dump your database.
+The backup command will use the [predefined or configured binary](./configuration#binaries) for your
+database vendor with correct parameters to dump your database.
 
 Each time you launch the backup command, [a backup file is stored in a directory](./configuration#storage-directory) (See
 [Storage section](#storage) below for more information on how backup files are stored).
@@ -18,13 +18,14 @@ backup files (i.e. files that have passed their expiration date).
 ```sh
 console db-tools:backup
 ```
+
 You can specify the behaviour of the command with some options detailed below.
 
 ### Connection
 
 By default, the command will backup the database from the default DBAL connection.
 
-You can choose to backup a database from another connection with `--connection` option:
+You can choose to back up a database from another connection with `--connection` option:
 
 ```sh
 console db-tools:backup --connection other_connection_name
@@ -36,7 +37,6 @@ You may have configured [tables to be exclude in the bundle configuration](./con
 If so, these tables will be automatically excluded each time you launch the command.
 
 But if you want to temporarily exclude some tables, run the command with the `--excluded-table` option:
-
 
 ```sh
 # Exclude a table
@@ -58,11 +58,39 @@ console db-tools:backup --no-cleanup
 Note that using this option, backup files will never be cleaned up.
 :::
 
+### Extra options
+
+If you temporarily want to provide your own options to the backup binary,
+use the `--extra-options` (`-o`) in your command:
+
+```sh
+console db-tools:backup --extra-options "--opt1 val1 --opt2 val2 --flag"
+```
+
+If you always need to use the same custom options when backing up, you can
+define them as default options in the bundle configuration file:
+
+```yaml
+# config/packages/db_tools.yaml
+db_tools:
+    # ...
+    backupper_options:
+        my_doctrine_connection: "--opt1 val1 --opt2 val2 --flag"
+```
+
+See the section about the [bundle configuration](./configuration#default-binary-options)
+for more information.
+
+:::warning
+The `--extra-options` option overrides default options defined in the
+configuration file as well as those from the bundle itself. (No merge
+will be performed.)
+:::
+
 ## Restore command
 
 The restore command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
 to restore your database from an existing backup files.
-
 
 ```sh
 console db-tools:restore
@@ -110,6 +138,35 @@ backup in production, use the `--yes-i-am-sure-of-what-i-am-doing` option.
 
 Note that, even with this option, the command will ask you to confirm, *twice*, that you
 really want to do so.
+:::
+
+### Extra options
+
+If you temporarily want to provide your own options to the restoration binary,
+use the `--extra-options` (`-o`) in your command:
+
+```sh
+console db-tools:restore --extra-options "--opt1 val1 --opt2 val2 --flag"
+```
+
+If you always need to use the same custom options when restoring, you can define
+them as default options in the bundle configuration file:
+
+```yaml
+# config/packages/db_tools.yaml
+db_tools:
+    # ...
+    restorer_options:
+        my_doctrine_connection: "--opt1 val1 --opt2 val2 --flag"
+```
+
+See the section about the [bundle configuration](./configuration#default-binary-options)
+for more information.
+
+:::warning
+The `--extra-options` option overrides default options defined in the
+configuration file as well as those from the bundle itself. (No merge
+will be performed.)
 :::
 
 ## Storage
