@@ -9,6 +9,7 @@ use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
@@ -88,6 +89,14 @@ abstract class AbstractAnonymizer
     protected function getJoinColumn(): Expression
     {
         return ExpressionFactory::column($this->getJoinId(), self::JOIN_TABLE);
+    }
+
+    /**
+     * Get a random, global salt for anonymizing hashed values.
+     */
+    protected function getSalt(): string
+    {
+        return $this->options->get('salt') ?? Anonymizator::generateRandomSalt();
     }
 
     /**

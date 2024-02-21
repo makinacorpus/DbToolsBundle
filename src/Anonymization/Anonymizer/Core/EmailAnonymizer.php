@@ -14,6 +14,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     pack: 'core',
     description: <<<TXT
     Anonymize email addresses. You can choose a domain and a tld with option 'domain'.
+    Values are salted to prevent reversing the hash with option 'use_salt' (default: true).
     TXT
 )]
 class EmailAnonymizer extends AbstractAnonymizer
@@ -28,7 +29,13 @@ class EmailAnonymizer extends AbstractAnonymizer
         if ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
             $emailHashExpr = $this->getJoinColumn();
         } else {
-            $emailHashExpr = $expr->md5($expr->column($this->columnName, $this->tableName));
+            $userExpr = $expr->column($this->columnName, $this->tableName);
+
+            if ($this->options->get('use_salt', true)) {
+                $userExpr = $expr->concat($userExpr, $expr->value($this->getSalt()));
+            }
+
+            $emailHashExpr = $expr->md5($userExpr);
         }
 
         $update->set(
