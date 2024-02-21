@@ -30,7 +30,6 @@ services:
         arguments:
             - '%doctrine.default_connection%'
             - '%db_tools.excluded_tables%'
-            - '%db_tools.backupper.options%'
             - '@db_tools.backupper.factory'
             - '@db_tools.storage'
         tags: ['console.command']
@@ -45,7 +44,6 @@ services:
         class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
         arguments:
             - '%doctrine.default_connection%'
-            - '%db_tools.restorer.options%'
             - '@db_tools.restorer.factory'
             - '@db_tools.storage'
         tags: ['console.command']
@@ -64,12 +62,12 @@ services:
     # Backuppers
     db_tools.backupper.factory:
         class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory
-        arguments: ['@doctrine', '%db_tools.backupper.binaries%']
+        arguments: ['@doctrine', '%db_tools.backupper.binaries%', '%db_tools.backupper.options%']
 
     # Restorers
     db_tools.restorer.factory:
         class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory
-        arguments: ['@doctrine', '%db_tools.restorer.binaries%']
+        arguments: ['@doctrine', '%db_tools.restorer.binaries%', '%db_tools.restorer.options%']
 
     # Stats providers
     db_tools.stats_provider.factory:

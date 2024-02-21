@@ -11,6 +11,9 @@ use Symfony\Component\Process\Process;
 
 class Backupper extends AbstractBackupper
 {
+    // Compression level (0-9)
+    public const DEFAULT_OPTIONS = "-Z 5 --lock-wait-timeout=120";
+
     private ?Process $process = null;
 
     /**
@@ -39,16 +42,10 @@ class Backupper extends AbstractBackupper
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        } else {
-            // Compression level (0-9)
-            $command->addArg('-Z', '5');
-            $command->addArg('--lock-wait-timeout=120');
-        }
 
-        // Custom format (not SQL)
-        // Not overridable for now.
+        $this->addCustomOptions($command);
+        // Custom format (not SQL).
+        // Forced for now.
         $command->addArg('-F', 'c');
 
         if ($this->destination) {

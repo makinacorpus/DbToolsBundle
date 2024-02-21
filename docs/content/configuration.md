@@ -113,7 +113,7 @@ Note that you can override this configuration while running the `db-tools:backup
 the `--exclude` option.
 :::
 
-### Extra options
+### Binary options
 
 See the [default binary options](#default-binary-options) section.
 

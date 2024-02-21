@@ -13,6 +13,8 @@ use Symfony\Component\Process\Process;
 
 class Backupper extends AbstractBackupper
 {
+    public const DEFAULT_OPTIONS = '-bail';
+
     private ?Process $process = null;
 
     /**
@@ -23,17 +25,17 @@ class Backupper extends AbstractBackupper
         $dbParams = $this->connection->getParams();
         $tablesToBackup = \implode(' ', $this->getTablesToBackup());
 
-        $command = new CommandLine(
-            \sprintf(
-                "echo 'BEGIN IMMEDIATE;\n.dump %s' | %s %s %s  > \"%s\"",
-                $tablesToBackup,
-                $this->binary,
-                $this->extraOptions ?: '-bail',
-                $dbParams['path'],
-                \addcslashes($this->destination, '\\"')
-            ),
-            false
-        );
+        // The CommandLine instance below will generate something like:
+        // echo 'BEGIN IMMEDIATE;\n.dump table1 table2 ...' | 'sqlite3' -bail > '/path/to/backup.sql'
+        $command = new CommandLine();
+        $command->addRaw(\sprintf(
+            "echo 'BEGIN IMMEDIATE;\n.dump %s' |", $tablesToBackup
+        ));
+        $command->addArg($this->binary);
+        $this->addCustomOptions($command);
+        $command->addArg($dbParams['path']);
+        $command->addRaw('>');
+        $command->addArg($this->destination);
 
         $this->process = Process::fromShellCommandline($command->toString());
         $this->process->setTimeout(600);

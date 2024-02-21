@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**
@@ -12,17 +13,24 @@ use Symfony\Component\Process\Process;
  */
 abstract class AbstractRestorer implements \IteratorAggregate
 {
+    public const DEFAULT_OPTIONS = '';
+
     protected ?string $backupFilename = null;
+    protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
+    protected bool $ignoreDefaultOptions = false;
     protected bool $verbose = false;
 
     public function __construct(
         protected string $binary,
         protected Connection $connection,
-    ) {}
+        ?string $defaultOptions = null,
+    ) {
+        $this->defaultOptions = $defaultOptions ?? static::DEFAULT_OPTIONS;
+    }
 
     /**
-     * Check that restore utility can be execute correctly.
+     * Check that restore utility can be executed correctly.
      */
     public function checkBinary(): string
     {
@@ -63,6 +71,18 @@ abstract class AbstractRestorer implements \IteratorAggregate
         return $this->extraOptions;
     }
 
+    public function ignoreDefaultOptions(bool $switch = true): self
+    {
+        $this->ignoreDefaultOptions = $switch;
+
+        return $this;
+    }
+
+    public function areDefaultOptionsIgnored(): bool
+    {
+        return $this->ignoreDefaultOptions;
+    }
+
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -73,6 +93,16 @@ abstract class AbstractRestorer implements \IteratorAggregate
     public function isVerbose(): bool
     {
         return $this->verbose;
+    }
+
+    protected function addCustomOptions(CommandLine $command): void
+    {
+        if (!$this->ignoreDefaultOptions) {
+            $command->addRaw($this->defaultOptions);
+        }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
+        }
     }
 
     abstract public function startRestore(): self;

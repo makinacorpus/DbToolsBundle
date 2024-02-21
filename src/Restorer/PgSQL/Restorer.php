@@ -11,6 +11,8 @@ use Symfony\Component\Process\Process;
 
 class Restorer extends AbstractRestorer
 {
+    public const DEFAULT_OPTIONS = '-j 2 --clean --if-exists --disable-triggers';
+
     private ?Process $process = null;
 
     /**
@@ -36,15 +38,8 @@ class Restorer extends AbstractRestorer
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        } else {
-            $command->addArg('--clean');
-            $command->addArg('-j', '2');
-            $command->addArg('--if-exists');
-            $command->addArg('--disable-triggers');
-        }
 
+        $this->addCustomOptions($command);
         $command->addArg('-d', $dbParams['dbname']);
         $command->addArg($this->backupFilename);
 

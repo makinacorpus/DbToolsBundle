@@ -46,7 +46,7 @@ class CommandLineTest extends TestCase
 
         $cl = new CommandLine(['test', 3, '-x', 42.24, '--opt=val', '-m', null], false);
         self::assertSame(
-            ['test', '3', '-x', '42.24', '--opt=val', '-m', ''],
+            ['test', '3', '-x', '42.24', '--opt=val', '-m'],
             $this->extractArgs($cl)
         );
     }
