@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper\PgSQL;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -18,48 +19,47 @@ class Backupper extends AbstractBackupper
     public function startBackup(): self
     {
         $dbParams = $this->connection->getParams();
-        $args = [
-            $this->binary,
-        ];
+        $command = new CommandLine($this->binary);
 
         if (isset($dbParams['host'])) {
-            $args[] = '-h';
-            $args[] = $dbParams['host'];
+            $command->addArg('-h', $dbParams['host']);
         }
         if (isset($dbParams['user'])) {
-            $args[] = '-U';
-            $args[] = $dbParams['user'];
+            $command->addArg('-U', $dbParams['user']);
         }
         if (isset($dbParams['port'])) {
-            $args[] = '-p';
-            $args[] = $dbParams['port'];
+            $command->addArg('-p', $dbParams['port']);
         }
 
-        $args[] = '-w';
-        $args[] = '-f';
-        $args[] = $this->destination;
-        $args[] = '-F'; // format custom (not sql)
-        $args[] = 'c';
-        $args[] = '-Z'; // compression level 0-9
-        $args[] = '5';
-        $args[] = '--lock-wait-timeout=120';
+        $command->addArg('-w');
+
         if ($this->excludedTables) {
-            $args[] = '--exclude-table-data=' . \implode('|', $this->excludedTables);
+            $command->addArg('--exclude-table-data=' . \implode('|', $this->excludedTables));
         }
-        $args[] = $dbParams['dbname'];
-
         if ($this->verbose) {
-            $args[] = '-v';
+            $command->addArg('-v');
+        }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
+        } else {
+            // Compression level (0-9)
+            $command->addArg('-Z', '5');
+            $command->addArg('--lock-wait-timeout=120');
         }
 
-        $this->process = new Process(
-            $args,
-            null,
-            ['PGPASSWORD' => $dbParams['password'] ?? ''],
-            null,
-            600
-        );
+        // Custom format (not SQL)
+        // Not overridable for now.
+        $command->addArg('-F', 'c');
 
+        if ($this->destination) {
+            $command->addArg('-f', $this->destination);
+        }
+
+        $command->addArg($dbParams['dbname']);
+
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
+        $this->process->setTimeout(600);
         $this->process->start();
 
         return $this;

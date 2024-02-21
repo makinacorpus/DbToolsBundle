@@ -26,6 +26,7 @@ class BackupCommand extends Command
     public function __construct(
         string $defaultConnectionName,
         private array $excludedTables,
+        private array $extraOptions,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
     ) {
@@ -59,6 +60,12 @@ class BackupCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Tables to exclude, separate with comma (ex: users,logs). If given, overrides excluded tables parameter from bundle configuration.'
             )
+            ->addOption(
+                'extra-options',
+                'o',
+                InputOption::VALUE_REQUIRED,
+                'Additional options to pass to the binary to perform the backup. If given, overrides the entire list of options defined in the bundle configuration.'
+            )
         ;
     }
 
@@ -69,9 +76,11 @@ class BackupCommand extends Command
         if ($input->getOption('connection')) {
             $this->connectionName = $input->getOption('connection');
         }
-
         if ($excludedTables = $input->getOption('excluded-tables')) {
             $this->excludedTables[$this->connectionName] = \explode(',', $excludedTables);
+        }
+        if ($extraOptions = $input->getOption('extra-options')) {
+            $this->extraOptions[$this->connectionName] = $extraOptions;
         }
 
         try {
@@ -100,6 +109,7 @@ class BackupCommand extends Command
             ->setDestination($filename)
             ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
+            ->setExtraOptions($this->extraOptions[$this->connectionName] ?? null)
             ->startBackup()
         ;
 
@@ -109,14 +119,13 @@ class BackupCommand extends Command
 
         $this->backupper->checkSuccessful();
 
-        $this->io->success("Backup done : " . $filename);
-
+        $this->io->success("Backup done: " . $filename);
         $this->io->text($this->backupper->getOutput());
 
         return $filename;
     }
 
-    private function cleanupBackups(string $preserveFile)
+    private function cleanupBackups(string $preserveFile): void
     {
         $this->io->section('Cleanups');
 
@@ -132,13 +141,13 @@ class BackupCommand extends Command
                 ['Age', 'Backup filename'],
                 $backupLists
             );
-            if ($this->io->confirm("delete ALL these files ?", true)) {
+            if ($this->io->confirm("Delete ALL these files?", true)) {
                 $filesystem = new Filesystem();
                 $filesystem->remove(\array_map(fn ($data) => $data[1], $backupLists));
                 $this->io->success(\sprintf("%s files have been deleted.", \count($backupLists)));
             }
         } else {
-            $this->io->success("Pas d'anciens Backups à supprimer.");
+            $this->io->success("No old backup to remove.");
         }
     }
 }

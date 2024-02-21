@@ -35,11 +35,13 @@ final class DbToolsExtension extends Extension
 
         // Backupper
         $container->setParameter('db_tools.backupper.binaries', $config['backupper_binaries']);
+        $container->setParameter('db_tools.backupper.options', $config['backupper_options']);
         $container->setParameter('db_tools.backup_expiration_age', $config['backup_expiration_age']);
         $container->setParameter('db_tools.excluded_tables', $config['excluded_tables'] ?? []);
 
         // Restorer
         $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
+        $container->setParameter('db_tools.restorer.options', $config['restorer_options']);
 
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];

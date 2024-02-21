@@ -13,6 +13,7 @@ use Symfony\Component\Process\Process;
 abstract class AbstractRestorer implements \IteratorAggregate
 {
     protected ?string $backupFilename = null;
+    protected ?string $extraOptions = null;
     protected bool $verbose = false;
 
     public function __construct(
@@ -48,6 +49,18 @@ abstract class AbstractRestorer implements \IteratorAggregate
     public function getBackupFilename(): ?string
     {
         return $this->backupFilename;
+    }
+
+    public function setExtraOptions(?string $options): self
+    {
+        $this->extraOptions = $options;
+
+        return $this;
+    }
+
+    public function getExtraOptions(?string $options): ?string
+    {
+        return $this->extraOptions;
     }
 
     public function setVerbose(bool $verbose): self

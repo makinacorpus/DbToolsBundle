@@ -45,6 +45,28 @@ db_tools:
         #postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
         #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
 
+    # Default options to pass to the binary when backing up or restoring
+    # a database. Those options must be defined per connection.
+    # If you do not define some default options, here or by using the
+    # "--extra-options" option when invoking the command, the following
+    # ones will be used according to the database vendor:
+    # - When backing up:
+    #   - MariaDB: --no-tablespaces
+    #   - MySQL: --no-tablespaces
+    #   - PostgreSQL: -Z 5 --lock-wait-timeout=120
+    #   - SQLite: -bail
+    # - When restoring:
+    #   - MariaDB: None
+    #   - MySQL: None
+    #   - PostgreSQL: -j 2 --clean --if-exists --disable-triggers
+    #   - SQLite: None
+    #backupper_options:
+        #default: ''
+        #another_connection: ''
+    #restorer_options:
+        #default: ''
+        #another_connection: ''
+
     # Update this configuration if you want to look for anonymizers in a custom folder.
     # These are default paths that will always be registered even if you override
     # the setting and don't repeat them:
