@@ -150,6 +150,7 @@ class BackupperRestorerTest extends FunctionalTestCase
                 $platform instanceof SqlitePlatform => '-bail -readonly', // No interesting options for SQLite.
                 default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
             })
+            ->ignoreDefaultOptions()
             ->setVerbose(false) // Enable via an extra option.
             ->startBackup()
         ;
@@ -276,6 +277,7 @@ class BackupperRestorerTest extends FunctionalTestCase
                 $platform instanceof SqlitePlatform => '-bail', // No interesting options for SQLite.
                 default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
             })
+            ->ignoreDefaultOptions()
             ->setVerbose(false) // Enable via an extra option.
             ->startRestore()
         ;

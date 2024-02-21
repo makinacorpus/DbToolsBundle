@@ -22,11 +22,12 @@ class BackupCommand extends Command
     private SymfonyStyle $io;
     private string $connectionName;
     private AbstractBackupper $backupper;
+    private ?string $extraOptions = null;
+    private bool $ignoreDefaultOptions = false;
 
     public function __construct(
         string $defaultConnectionName,
         private array $excludedTables,
-        private array $extraOptions,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
     ) {
@@ -64,7 +65,13 @@ class BackupCommand extends Command
                 'extra-options',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'Additional options to pass to the binary to perform the backup. If given, overrides the entire list of options defined in the bundle configuration.'
+                'Extra options to pass to the binary to perform the backup, added to the default ones, unless you specify --ignore-default-options.'
+            )
+            ->addOption(
+                '--ignore-default-options',
+                null,
+                InputOption::VALUE_NONE,
+                'Ignore default options defined in the bundle configuration.'
             )
         ;
     }
@@ -79,9 +86,9 @@ class BackupCommand extends Command
         if ($excludedTables = $input->getOption('excluded-tables')) {
             $this->excludedTables[$this->connectionName] = \explode(',', $excludedTables);
         }
-        if ($extraOptions = $input->getOption('extra-options')) {
-            $this->extraOptions[$this->connectionName] = $extraOptions;
-        }
+
+        $this->extraOptions = $input->getOption('extra-options');
+        $this->ignoreDefaultOptions = $input->getOption('ignore-default-options');
 
         try {
             $created = $this->doBackup();
@@ -109,7 +116,8 @@ class BackupCommand extends Command
             ->setDestination($filename)
             ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
-            ->setExtraOptions($this->extraOptions[$this->connectionName] ?? null)
+            ->setExtraOptions($this->extraOptions)
+            ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->startBackup()
         ;
 

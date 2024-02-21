@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**
@@ -16,13 +17,18 @@ abstract class AbstractBackupper implements \IteratorAggregate
 {
     protected ?string $destination = null;
     protected array $excludedTables = [];
+    protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
+    protected bool $ignoreDefaultOptions = false;
     protected bool $verbose = false;
 
     public function __construct(
         protected string $binary,
         protected Connection $connection,
+        ?string $defaultOptions = null,
     ) {
+        $this->defaultOptions = $defaultOptions ?? $this->getBuiltinDefaultOptions();
+
         $this->destination = \sprintf(
             '%s/db-tools-backup-%s.dump',
             \sys_get_temp_dir(),
@@ -84,6 +90,18 @@ abstract class AbstractBackupper implements \IteratorAggregate
         return $this->extraOptions;
     }
 
+    public function ignoreDefaultOptions(bool $switch = true): self
+    {
+        $this->ignoreDefaultOptions = $switch;
+
+        return $this;
+    }
+
+    public function areDefaultOptionsIgnored(): bool
+    {
+        return $this->ignoreDefaultOptions;
+    }
+
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -94,6 +112,28 @@ abstract class AbstractBackupper implements \IteratorAggregate
     public function isVerbose(): bool
     {
         return $this->verbose;
+    }
+
+    /**
+     * Provide the built-in default options that will be used if none is given
+     * through the dedicated constructor argument.
+     */
+    protected function getBuiltinDefaultOptions(): string
+    {
+        return '';
+    }
+
+    /**
+     * Add default (if not ignored) and extra options to the given command line.
+     */
+    protected function addCustomOptions(CommandLine $command): void
+    {
+        if (!$this->ignoreDefaultOptions) {
+            $command->addRaw($this->defaultOptions);
+        }
+        if ($this->extraOptions) {
+            $command->addRaw($this->extraOptions);
+        }
     }
 
     abstract public function startBackup(): self;

@@ -41,11 +41,9 @@ class Backupper extends AbstractBackupper
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        } else {
-            $command->addArg('--no-tablespaces');
-        }
+
+        $this->addCustomOptions($command);
+
         if ($this->destination) {
             $command->addArg('-r', $this->destination);
         }
@@ -79,5 +77,11 @@ class Backupper extends AbstractBackupper
     public function getIterator(): \Traversable
     {
         return $this->process;
+    }
+
+    #[\Override]
+    protected function getBuiltinDefaultOptions(): string
+    {
+        return '--no-tablespaces';
     }
 }
