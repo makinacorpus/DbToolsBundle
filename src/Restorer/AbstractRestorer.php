@@ -105,7 +105,7 @@ abstract class AbstractRestorer implements \IteratorAggregate
     /**
      * Add default (if not ignored) and extra options to the given command line.
      */
-    protected function addCustomOptions(CommandLine $command): void
+    final protected function addCustomOptions(CommandLine $command): void
     {
         if (!$this->ignoreDefaultOptions) {
             $command->addRaw($this->defaultOptions);
