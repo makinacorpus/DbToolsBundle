@@ -18,7 +18,9 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getConnection(),
-            new Options()
+            new Options([
+                'salt' => 'my_salt',
+            ])
         );
 
         $instance->anonymize($update);
@@ -30,7 +32,7 @@ class EmailAnonymizerTest extends UnitTestCase
             update "some_table"
             set
                 "email" = case when "some_table"."email" is not null
-                    then #1 || md5(cast("some_table"."email" as varchar))|| #2 || #3
+                    then #1 || md5("some_table"."email" || #2) || #3 || #4
                     else null
                 end
             SQL,
@@ -38,7 +40,7 @@ class EmailAnonymizerTest extends UnitTestCase
         );
 
         self::assertSame(
-            ['anon-', '@', 'example.com'],
+            ['anon-', 'my_salt', '@', 'example.com'],
             $prepared->getArguments()->getAll(),
         );
     }
@@ -53,7 +55,8 @@ class EmailAnonymizerTest extends UnitTestCase
             $this->getConnection(),
             new Options([
                 'domain' => 'makina-corpus.com',
-            ])
+                'salt' => 'my_salt',
+            ]),
         );
 
         $instance->anonymize($update);
@@ -65,7 +68,7 @@ class EmailAnonymizerTest extends UnitTestCase
             update "some_table"
             set
                 "email" = case when "some_table"."email" is not null
-                    then #1 || md5(cast("some_table"."email" as varchar))|| #2 || #3
+                    then #1 || md5("some_table"."email" || #2) || #3 || #4
                     else null
                 end
             SQL,
@@ -73,7 +76,42 @@ class EmailAnonymizerTest extends UnitTestCase
         );
 
         self::assertSame(
-            ['anon-', '@', 'makina-corpus.com'],
+            ['anon-', 'my_salt', '@', 'makina-corpus.com'],
+            $prepared->getArguments()->getAll(),
+        );
+    }
+
+    public function testAnonymizeWithoutSalt(): void
+    {
+        $update = $this->getQueryBuilder()->update('some_table');
+
+        $instance = new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'use_salt' => false,
+            ]),
+        );
+
+        $instance->anonymize($update);
+
+        $prepared = $this->prepareSql($update);
+
+        self::assertSameSql(
+            <<<SQL
+            update "some_table"
+            set
+                "email" = case when "some_table"."email" is not null
+                    then #1 || md5(cast("some_table"."email" as varchar)) || #2 || #3
+                    else null
+                end
+            SQL,
+            $prepared,
+        );
+
+        self::assertSame(
+            ['anon-', '@', 'example.com'],
             $prepared->getArguments()->getAll(),
         );
     }

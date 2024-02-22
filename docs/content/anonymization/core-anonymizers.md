@@ -81,6 +81,14 @@ customer:
 ```
 :::
 
+:::info
+Email value is salted prior to be hashed using md5 in order to prevent reverse hashing
+with rainbow tables. Salt is global across the same anonymization run, this means that
+the same email address anonymized twice will give the same value.
+
+In order to disable the salt, set the `use_salt` option to false.
+:::
+
 :::warning
 SQLite does implement `MD5()` function, neither any hashing function: in order to get
 around this, the `rowid` value is used instead which prevent email values anonymization
@@ -252,6 +260,17 @@ customer:
     my_dirty_secret: md5
 #...
 ```
+:::
+
+:::info
+Hashing a string is not anonymizing it because hash functions have a reproducible output.
+In order to avoid decrypting data using rainbow tables, a salt will be added by default to
+string values prior to hashing.
+
+Salt is global across the same anonymization run, which means that same values
+across the database will all inherit from the same hashed value, keeping things consistent.
+
+In order to disable the salt usage, set the `use_salt` option to `false`.
 :::
 
 :::warning
