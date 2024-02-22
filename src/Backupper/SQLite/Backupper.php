@@ -8,17 +8,13 @@ use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
 use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Where;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class Backupper extends AbstractBackupper
 {
-    private ?Process $process = null;
-
     /**
      * {@inheritdoc}
      */
-    public function startBackup(): self
+    public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
         $tablesToBackup = \implode(' ', $this->getTablesToBackup());
@@ -35,18 +31,7 @@ class Backupper extends AbstractBackupper
         $command->addRaw('>');
         $command->addArg($this->destination);
 
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setTimeout(600);
-        $this->process->start();
-
-        return $this;
-    }
-
-    public function checkSuccessful(): void
-    {
-        if (!$this->process->isSuccessful()) {
-            throw new ProcessFailedException($this->process);
-        }
+        return $command;
     }
 
     public function getExtension(): string
@@ -59,9 +44,10 @@ class Backupper extends AbstractBackupper
         return $this->process->getOutput();
     }
 
-    public function getIterator(): \Traversable
+    #[\Override]
+    protected function getBuiltinDefaultOptions(): string
     {
-        return $this->process;
+        return '-bail';
     }
 
     private function getTablesToBackup(): array
@@ -81,11 +67,5 @@ class Backupper extends AbstractBackupper
         }
 
         return $tables;
-    }
-
-    #[\Override]
-    protected function getBuiltinDefaultOptions(): string
-    {
-        return '-bail';
     }
 }

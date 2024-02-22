@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(name: 'db-tools:restore', description: 'Restore database')]
 class RestoreCommand extends Command
@@ -150,7 +151,7 @@ class RestoreCommand extends Command
 
     private function doRestore(): void
     {
-        $this->io->section('Starting restore');
+        $this->io->section('Starting restoration');
 
         $this->io->text("You are going to <error>destroy actual data</error> and restore <info>" . $this->backupFilename . "</info>");
 
@@ -163,17 +164,16 @@ class RestoreCommand extends Command
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setVerbose($this->io->isVerbose())
-            ->startRestore()
+            ->setOutputCallback(function (string $type, string $buffer): void {
+                if (Process::ERR === $type) {
+                    $buffer = '<error>' . $buffer . '</error>';
+                }
+                $this->io->write($buffer);
+            })
+            ->restore()
         ;
 
-        foreach ($this->restorer as $data) {
-            $this->io->text($data);
-        }
-
-        $this->restorer->checkSuccessful();
-
-        $this->io->success("Restoration done");
-        $this->io->text($this->restorer->getOutput());
+        $this->io->success("Restoration done.");
     }
 
     private function chooseBackup()

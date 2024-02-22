@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(name: 'db-tools:backup', description: 'Backup database')]
 class BackupCommand extends Command
@@ -114,21 +115,20 @@ class BackupCommand extends Command
 
         $this->backupper
             ->setDestination($filename)
-            ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
-            ->startBackup()
+            ->setVerbose($this->io->isVerbose())
+            ->setOutputCallback(function (string $type, string $buffer): void {
+                if (Process::ERR === $type) {
+                    $buffer = '<error>' . $buffer . '</error>';
+                }
+                $this->io->write($buffer);
+            })
+            ->backup()
         ;
 
-        foreach ($this->backupper as $data) {
-            $this->io->text($data);
-        }
-
-        $this->backupper->checkSuccessful();
-
         $this->io->success("Backup done: " . $filename);
-        $this->io->text($this->backupper->getOutput());
 
         return $filename;
     }

@@ -9,15 +9,17 @@ use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**
- * Restore backup a backup file.
+ * Restore a backup file.
  */
-abstract class AbstractRestorer implements \IteratorAggregate
+abstract class AbstractRestorer
 {
     protected ?string $backupFilename = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
+    protected ?\Closure $outputCallback = null;
     protected bool $verbose = false;
+    protected ?Process $process = null;
 
     public function __construct(
         protected string $binary,
@@ -81,6 +83,13 @@ abstract class AbstractRestorer implements \IteratorAggregate
         return $this->ignoreDefaultOptions;
     }
 
+    public function setOutputCallback(?callable $callback): self
+    {
+        $this->outputCallback = $callback(...);
+
+        return $this;
+    }
+
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -91,6 +100,37 @@ abstract class AbstractRestorer implements \IteratorAggregate
     public function isVerbose(): bool
     {
         return $this->verbose;
+    }
+
+    public function restore(): self
+    {
+        $command = $this->buildCommandLine();
+
+        $this->process = Process::fromShellCommandline($command->toString());
+        $this->process->setTimeout(1800);
+        $this->beforeRestoration();
+
+        try {
+            $this->process->mustRun($this->outputCallback);
+        } finally {
+            $this->afterRestoration();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Act just before the restoration process starts.
+     */
+    protected function beforeRestoration(): void
+    {
+    }
+
+    /**
+     * Act just after the restoration process ends.
+     */
+    protected function afterRestoration(): void
+    {
     }
 
     /**
@@ -115,14 +155,7 @@ abstract class AbstractRestorer implements \IteratorAggregate
         }
     }
 
-    abstract public function startRestore(): self;
-
-    /**
-     * Throw Exception if restore is not successful.
-     *
-     * @throws \Exception
-     */
-    abstract public function checkSuccessful(): void;
+    abstract public function buildCommandLine(): CommandLine;
 
     abstract public function getExtension(): string;
 
