@@ -22,11 +22,12 @@ class RestoreCommand extends Command
     private string $connectionName;
     private AbstractRestorer $restorer;
     private ?string $backupFilename = null;
+    private ?string $extraOptions = null;
+    private bool $ignoreDefaultOptions = false;
     private $force = false;
 
     public function __construct(
         string $defaultConnectionName,
-        private array $extraOptions,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
     ) {
@@ -64,7 +65,13 @@ class RestoreCommand extends Command
                 'extra-options',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'Additional options to pass to the binary to perform the restoration. If given, overrides the entire list of options defined in the bundle configuration.'
+                'Extra options to pass to the binary to perform the restoration, added to the default ones, unless you specify --ignore-default-options.'
+            )
+            ->addOption(
+                '--ignore-default-options',
+                null,
+                InputOption::VALUE_NONE,
+                'Ignore default options defined in the bundle configuration.'
             )
             ->addOption(
                 'force',
@@ -91,9 +98,10 @@ class RestoreCommand extends Command
         if ($input->getOption('list')) {
             return $this->listBackups();
         }
-        if ($extraOptions = $input->getOption('extra-options')) {
-            $this->extraOptions[$this->connectionName] = $extraOptions;
-        }
+
+        $this->extraOptions = $input->getOption('extra-options');
+        $this->ignoreDefaultOptions = $input->getOption('ignore-default-options');
+
         if ($this->force = $input->getOption('force')) {
             $input->setInteractive(false);
         }
@@ -152,7 +160,8 @@ class RestoreCommand extends Command
 
         $this->restorer
             ->setBackupFilename($this->backupFilename)
-            ->setExtraOptions($this->extraOptions[$this->connectionName] ?? null)
+            ->setExtraOptions($this->extraOptions)
+            ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setVerbose($this->io->isVerbose())
             ->startRestore()
         ;

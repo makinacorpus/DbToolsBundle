@@ -39,16 +39,10 @@ class Backupper extends AbstractBackupper
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        } else {
-            // Compression level (0-9)
-            $command->addArg('-Z', '5');
-            $command->addArg('--lock-wait-timeout=120');
-        }
 
-        // Custom format (not SQL)
-        // Not overridable for now.
+        $this->addCustomOptions($command);
+        // Custom format (not SQL).
+        // Forced for now.
         $command->addArg('-F', 'c');
 
         if ($this->destination) {
@@ -85,5 +79,12 @@ class Backupper extends AbstractBackupper
     public function getIterator(): \Traversable
     {
         return $this->process;
+    }
+
+    #[\Override]
+    protected function getBuiltinDefaultOptions(): string
+    {
+        // -Z: compression level (0-9)
+        return '-Z 5 --lock-wait-timeout=120';
     }
 }

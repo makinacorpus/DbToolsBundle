@@ -60,32 +60,25 @@ Note that using this option, backup files will never be cleaned up.
 
 ### Extra options
 
-If you temporarily want to provide your own options to the backup binary,
-use the `--extra-options` (`-o`) in your command:
+If you need to occasionally provide some custom options to the backup binary,
+use the `--extra-options` (`-o`) option in your command:
 
 ```sh
 console db-tools:backup --extra-options "--opt1 val1 --opt2 val2 --flag"
 ```
 
-If you always need to use the same custom options when backing up, you can
-define them as default options in the bundle configuration file:
+Unless you specify the `--ignore-default-options` option, the custom options
+will be added to the [default options](./configuration#default-binary-options).
 
-```yaml
-# config/packages/db_tools.yaml
-db_tools:
-    # ...
-    backupper_options:
-        my_doctrine_connection: "--opt1 val1 --opt2 val2 --flag"
+### Ignoring default options
+
+If necessary, [default options](./configuration#default-binary-options) can be
+ignored for a backup by using the `--ignore-default-options` option:
+
+```sh
+# Will run a backup without any special options except essential ones:
+console db-tools:backup --ignore-default-options
 ```
-
-See the section about the [bundle configuration](./configuration#default-binary-options)
-for more information.
-
-:::warning
-The `--extra-options` option overrides default options defined in the
-configuration file as well as those from the bundle itself. (No merge
-will be performed.)
-:::
 
 ## Restore command
 
@@ -142,32 +135,25 @@ really want to do so.
 
 ### Extra options
 
-If you temporarily want to provide your own options to the restoration binary,
-use the `--extra-options` (`-o`) in your command:
+If you need to occasionally provide some custom options to the restoration
+binary, use the `--extra-options` (`-o`) option in your command:
 
 ```sh
 console db-tools:restore --extra-options "--opt1 val1 --opt2 val2 --flag"
 ```
 
-If you always need to use the same custom options when restoring, you can define
-them as default options in the bundle configuration file:
+Unless you specify the `--ignore-default-options` option, the custom options
+will be added to the [default options](./configuration#default-binary-options).
 
-```yaml
-# config/packages/db_tools.yaml
-db_tools:
-    # ...
-    restorer_options:
-        my_doctrine_connection: "--opt1 val1 --opt2 val2 --flag"
+### Ignoring default options
+
+If necessary, [default options](./configuration#default-binary-options) can be 
+ignored for a restoration by using the `--ignore-default-options` option:
+
+```sh
+# Will run a restoration without any special options except essential ones:
+console db-tools:restore --ignore-default-options
 ```
-
-See the section about the [bundle configuration](./configuration#default-binary-options)
-for more information.
-
-:::warning
-The `--extra-options` option overrides default options defined in the
-configuration file as well as those from the bundle itself. (No merge
-will be performed.)
-:::
 
 ## Storage
 

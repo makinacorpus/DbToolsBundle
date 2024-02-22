@@ -12,9 +12,16 @@ use MakinaCorpus\QueryBuilder\Platform;
 
 class RestorerFactory
 {
+    /**
+     * Constructor.
+     *
+     * @param array<string, string> $restorerBinaries
+     * @param array<string, string> $restorerOptions
+     */
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $restorerBinaries,
+        private array $restorerOptions = [],
     ) {}
 
     /**
@@ -43,7 +50,8 @@ class RestorerFactory
 
         return new $restorer(
             $this->restorerBinaries[$platform],
-            $connection
+            $connection,
+            $this->restorerOptions[$connectionName] ?? null
         );
     }
 }

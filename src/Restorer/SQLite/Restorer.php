@@ -23,20 +23,14 @@ class Restorer extends AbstractRestorer
         }
 
         $dbParams = $this->connection->getParams();
-
         // Remove existing database to restore file in an empty one.
         \unlink($dbParams['path']);
 
-        $command = new CommandLine(
-            \sprintf(
-                '%s %s%s < "%s"',
-                $this->binary,
-                $this->extraOptions ? $this->extraOptions . ' ' : '',
-                $dbParams['path'],
-                \addcslashes($this->backupFilename, '\\"')
-            ),
-            false
-        );
+        $command = new CommandLine($this->binary);
+        $this->addCustomOptions($command);
+        $command->addArg($dbParams['path']);
+        $command->addRaw('<');
+        $command->addArg($this->backupFilename);
 
         $this->process = Process::fromShellCommandline($command->toString());
         $this->process->setTimeout(1800);

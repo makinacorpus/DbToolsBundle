@@ -50,7 +50,9 @@ class CommandLine
      */
     public function addRaw(string $raw): self
     {
-        $this->args[] = $raw;
+        if ($raw) {
+            $this->args[] = $raw;
+        }
 
         return $this;
     }
@@ -58,6 +60,7 @@ class CommandLine
     public function toString(): string
     {
         $command = \implode(' ', $this->args);
+
         if (!$this->osIsWindows()) {
             // exec is mandatory to deal with sending a signal to the process.
             $command = 'exec ' . $command;
@@ -74,8 +77,9 @@ class CommandLine
     /**
      * Escape a string to be used as a shell argument.
      *
-     * The code below has been copied from the Symfony Process component
-     * released under the MIT licence with the following copyright:
+     * The code below has been copied (and slightly modified) from the
+     * Symfony Process component released under the MIT licence with the
+     * following copyright:
      *
      * @copyright Copyright (c) 2004-present Fabien Potencier
      * @author Fabien Potencier <fabien@symfony.com>

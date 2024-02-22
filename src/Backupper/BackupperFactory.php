@@ -12,9 +12,16 @@ use MakinaCorpus\QueryBuilder\Platform;
 
 class BackupperFactory
 {
+    /**
+     * Constructor.
+     *
+     * @param array<string, string> $backupperBinaries
+     * @param array<string, string> $backupperOptions
+     */
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private array $backupperBinaries,
+        private array $backupperOptions = [],
     ) {}
 
     /**
@@ -43,7 +50,8 @@ class BackupperFactory
 
         return new $backupper(
             $this->backupperBinaries[$platform],
-            $connection
+            $connection,
+            $this->backupperOptions[$connectionName] ?? null
         );
     }
 }

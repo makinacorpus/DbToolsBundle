@@ -13,6 +13,7 @@ class Restorer extends AbstractRestorer
 {
     private ?Process $process = null;
     private mixed $backupStream = null;
+
     /**
      * {@inheritdoc}
      */
@@ -36,10 +37,8 @@ class Restorer extends AbstractRestorer
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        }
 
+        $this->addCustomOptions($command);
         $command->addArg($dbParams['dbname']);
 
         $this->backupStream = \fopen($this->backupFilename, 'r');

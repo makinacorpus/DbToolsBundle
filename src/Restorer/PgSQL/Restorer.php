@@ -36,15 +36,8 @@ class Restorer extends AbstractRestorer
         if ($this->verbose) {
             $command->addArg('-v');
         }
-        if ($this->extraOptions) {
-            $command->addRaw($this->extraOptions);
-        } else {
-            $command->addArg('--clean');
-            $command->addArg('-j', '2');
-            $command->addArg('--if-exists');
-            $command->addArg('--disable-triggers');
-        }
 
+        $this->addCustomOptions($command);
         $command->addArg('-d', $dbParams['dbname']);
         $command->addArg($this->backupFilename);
 
@@ -76,5 +69,11 @@ class Restorer extends AbstractRestorer
     public function getIterator(): \Traversable
     {
         return $this->process;
+    }
+
+    #[\Override]
+    protected function getBuiltinDefaultOptions(): string
+    {
+        return '-j 2 --clean --if-exists --disable-triggers';
     }
 }
