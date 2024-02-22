@@ -30,6 +30,19 @@ class Options
         return \count($this->options);
     }
 
+    /**
+     * Clone option with additional options.
+     */
+    public function with(array $options): self
+    {
+        $ret = clone $this;
+        foreach ($options as $key => $value) {
+            $ret->options[$key] = $value;
+        }
+
+        return $ret;
+    }
+
     public function toDisplayString(): string
     {
         return \implode(', ', \array_map(

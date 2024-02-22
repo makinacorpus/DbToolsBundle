@@ -29,6 +29,7 @@ class Anonymizator
         private Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
+        private ?string $salt = null,
     ) {}
 
     /**
@@ -37,6 +38,16 @@ class Anonymizator
     public function count(): int
     {
         return $this->anonymizationConfig->count();
+    }
+
+    protected function getSalt(): string
+    {
+        return $this->salt ??= self::generateRandomSalt();
+    }
+
+    public static function generateRandomSalt(): string
+    {
+        return \base64_encode(\random_bytes(12));
     }
 
     protected function getQueryBuilder(): DoctrineQueryBuilder
@@ -56,7 +67,7 @@ class Anonymizator
             $config->table,
             $config->targetName,
             $this->connection,
-            $config->options,
+            $config->options->with(['salt' => $this->getSalt()]),
         );
     }
 
