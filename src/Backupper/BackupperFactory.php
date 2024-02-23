@@ -9,6 +9,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class BackupperFactory
 {
@@ -22,6 +24,7 @@ class BackupperFactory
         private ManagerRegistry $doctrineRegistry,
         private array $backupperBinaries,
         private array $backupperOptions = [],
+        private ?LoggerInterface $logger = null,
     ) {}
 
     /**
@@ -48,10 +51,18 @@ class BackupperFactory
             )),
         };
 
-        return new $backupper(
+        $backupper = new $backupper(
             $this->backupperBinaries[$platform],
             $connection,
             $this->backupperOptions[$connectionName] ?? null
         );
+
+        \assert($backupper instanceof AbstractBackupper);
+
+        if ($this->logger) {
+            $backupper->addLogger($this->logger);
+        }
+
+        return $backupper;
     }
 }

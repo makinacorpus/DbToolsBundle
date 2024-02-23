@@ -42,7 +42,7 @@ class Restorer extends AbstractRestorer
     }
 
     #[\Override]
-    protected function beforeRestoration(): void
+    protected function beforeProcess(): void
     {
         $this->backupStream = \fopen($this->backupFilename, 'r');
 
@@ -57,7 +57,7 @@ class Restorer extends AbstractRestorer
     }
 
     #[\Override]
-    protected function afterRestoration(): void
+    protected function afterProcess(): void
     {
         \fclose($this->backupStream);
     }
@@ -65,10 +65,5 @@ class Restorer extends AbstractRestorer
     public function getExtension(): string
     {
         return 'sql';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
     }
 }

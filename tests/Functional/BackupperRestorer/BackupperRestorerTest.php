@@ -100,14 +100,8 @@ class BackupperRestorerTest extends FunctionalTestCase
         $backupper
             ->setDestination($backupFilename)
             ->setVerbose(true)
-            ->startBackup()
+            ->execute()
         ;
-
-        foreach ($backupper as $data) {
-            // Nothing to do there.
-        }
-
-        $backupper->checkSuccessful();
 
         self::assertFileExists($backupFilename);
     }
@@ -152,14 +146,8 @@ class BackupperRestorerTest extends FunctionalTestCase
             })
             ->ignoreDefaultOptions()
             ->setVerbose(false) // Enable via an extra option.
-            ->startBackup()
+            ->execute()
         ;
-
-        foreach ($backupper as $data) {
-            // Nothing to do there.
-        }
-
-        $backupper->checkSuccessful();
 
         self::assertFileExists($backupFilename);
     }
@@ -206,13 +194,8 @@ class BackupperRestorerTest extends FunctionalTestCase
         $restorer
             ->setBackupFilename($this->prepareAndGetBackupFilename($restorer->getExtension()))
             ->setVerbose(true)
-            ->startRestore()
+            ->execute()
         ;
-
-        foreach ($restorer as $data) {
-            // Nothing to do there.
-        }
-        $restorer->checkSuccessful();
 
         // Now we check data integrity:
         // - All data from initial insert (see self::createTestData) should be there
@@ -279,13 +262,8 @@ class BackupperRestorerTest extends FunctionalTestCase
             })
             ->ignoreDefaultOptions()
             ->setVerbose(false) // Enable via an extra option.
-            ->startRestore()
+            ->execute()
         ;
-
-        foreach ($restorer as $data) {
-            // Nothing to do there.
-        }
-        $restorer->checkSuccessful();
 
         // Now we check data integrity:
         // - All data from initial insert (see self::createTestData) should be there

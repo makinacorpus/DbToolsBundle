@@ -32,7 +32,7 @@ class Restorer extends AbstractRestorer
     }
 
     #[\Override]
-    protected function afterRestoration(): void
+    protected function afterProcess(): void
     {
         $this->connection->close();
         $this->connection->connect();
@@ -41,10 +41,5 @@ class Restorer extends AbstractRestorer
     public function getExtension(): string
     {
         return 'sql';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
     }
 }

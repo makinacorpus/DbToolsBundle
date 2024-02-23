@@ -12,6 +12,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -113,19 +114,15 @@ class BackupCommand extends Command
         $this->backupper = $this->backupperFactory->create($this->connectionName);
         $filename = $this->storage->generateFilename($this->connectionName, $this->backupper->getExtension());
 
-        $this->backupper
+        $this
+            ->backupper
             ->setDestination($filename)
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setVerbose($this->io->isVerbose())
-            ->setOutputCallback(function (string $type, string $buffer): void {
-                if (Process::ERR === $type) {
-                    $buffer = '<error>' . $buffer . '</error>';
-                }
-                $this->io->write($buffer);
-            })
-            ->backup()
+            ->addLogger(new ConsoleLogger($this->io))
+            ->execute()
         ;
 
         $this->io->success("Backup done: " . $filename);

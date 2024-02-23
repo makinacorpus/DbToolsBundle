@@ -52,11 +52,6 @@ class Backupper extends AbstractBackupper
         return 'sql';
     }
 
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
-    }
-
     #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {

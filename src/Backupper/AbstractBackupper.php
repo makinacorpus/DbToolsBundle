@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Utility\AbstractProcessTrait;
 use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Process;
 
@@ -15,14 +16,14 @@ use Symfony\Component\Process\Process;
  */
 abstract class AbstractBackupper
 {
+    use AbstractProcessTrait;
+
     protected ?string $destination = null;
     protected array $excludedTables = [];
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
-    protected ?\Closure $outputCallback = null;
     protected bool $verbose = false;
-    protected ?Process $process = null;
 
     public function __construct(
         protected string $binary,
@@ -45,9 +46,10 @@ abstract class AbstractBackupper
     {
         $process = new Process([$this->binary, '--version']);
         $process->run();
+
         if (!$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Error while trying to process '%s', check configuration for binary '%s",
+            throw new \LogicException(\sprintf(
+                "Error while running \"%s\" command, check configuration for binary '%s'.",
                 $process->getCommandLine(),
                 $this->binary,
             ));
@@ -104,13 +106,6 @@ abstract class AbstractBackupper
         return $this->ignoreDefaultOptions;
     }
 
-    public function setOutputCallback(?callable $callback): self
-    {
-        $this->outputCallback = $callback(...);
-
-        return $this;
-    }
-
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -121,37 +116,6 @@ abstract class AbstractBackupper
     public function isVerbose(): bool
     {
         return $this->verbose;
-    }
-
-    public function backup(): self
-    {
-        $command = $this->buildCommandLine();
-
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setTimeout(600);
-        $this->beforeBackup();
-
-        try {
-            $this->process->mustRun($this->outputCallback);
-        } finally {
-            $this->afterBackup();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Act just before the backup process starts.
-     */
-    protected function beforeBackup(): void
-    {
-    }
-
-    /**
-     * Act just after the backup process ends.
-     */
-    protected function afterBackup(): void
-    {
     }
 
     /**
@@ -176,9 +140,5 @@ abstract class AbstractBackupper
         }
     }
 
-    abstract public function buildCommandLine(): CommandLine;
-
     abstract public function getExtension(): string;
-
-    abstract public function getOutput(): string;
 }

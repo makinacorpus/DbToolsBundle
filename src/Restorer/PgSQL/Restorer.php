@@ -41,7 +41,7 @@ class Restorer extends AbstractRestorer
     }
 
     #[\Override]
-    protected function beforeRestoration(): void
+    protected function beforeProcess(): void
     {
         $dbParams = $this->connection->getParams();
         $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
@@ -50,11 +50,6 @@ class Restorer extends AbstractRestorer
     public function getExtension(): string
     {
         return 'dump';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
     }
 
     #[\Override]

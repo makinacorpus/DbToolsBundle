@@ -14,6 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
@@ -30,7 +31,7 @@ class AnonymizeCommand extends Command
     private string $connectionName;
 
     private ?string $backupFilename = null;
-    private ?string $initialDatabaseBackupFilename = null;
+    private ?string $initialBackupFilename = null;
 
     // Command behavior
     private bool $doAnonymizeCurrentDatabase = false;
@@ -248,27 +249,18 @@ class AnonymizeCommand extends Command
         }
 
         $backupper = $this->backupperFactory->create($this->connectionName);
-
         if ($this->io->isVerbose()) {
-            $backupper
-                ->setVerbose(true)
-                ->setOutputCallback(function (string $type, string $buffer): void {
-                    if (Process::ERR === $type) {
-                        $buffer = '<error>' . $buffer . '</error>';
-                    }
-                    $this->io->write($buffer);
-                })
-            ;
+            $backupper->setVerbose(true)->addLogger(new ConsoleLogger($this->io));
         }
 
-        $this->initialDatabaseBackupFilename = $this->storage->generateFilename($this->connectionName, $backupper->getExtension());
-        $backupper->setDestination($this->initialDatabaseBackupFilename)->backup();
+        $this->initialBackupFilename = $this->storage->generateFilename($this->connectionName, $backupper->getExtension());
+        $backupper->setDestination($this->initialBackupFilename)->execute();
 
         if ($this->io->isVerbose()) {
             $this->io->newLine();
             $this->io->info('Local database backed up: ' . $this->backupFilename);
         } else {
-            $this->io->writeln(' ok (' . $this->initialDatabaseBackupFilename . ')');
+            $this->io->writeln(' ok (' . $this->initialBackupFilename . ')');
         }
     }
 
@@ -281,20 +273,11 @@ class AnonymizeCommand extends Command
         }
 
         $restorer = $this->restorerFactory->create($this->connectionName);
-
         if ($this->io->isVerbose()) {
-            $restorer
-                ->setVerbose(true)
-                ->setOutputCallback(function (string $type, string $buffer): void {
-                    if (Process::ERR === $type) {
-                        $buffer = '<error>' . $buffer . '</error>';
-                    }
-                    $this->io->write($buffer);
-                })
-            ;
+            $restorer->setVerbose(true)->addLogger(new ConsoleLogger($this->io));
         }
 
-        $restorer->setBackupFilename($this->backupFilename)->restore();
+        $restorer->setBackupFilename($this->backupFilename)->execute();
 
         if ($this->io->isVerbose()) {
             $this->io->newLine();
@@ -349,24 +332,15 @@ class AnonymizeCommand extends Command
         }
 
         $backupper = $this->backupperFactory->create($this->connectionName);
-
         if ($this->io->isVerbose()) {
-            $backupper
-                ->setVerbose(true)
-                ->setOutputCallback(function (string $type, string $buffer): void {
-                    if (Process::ERR === $type) {
-                        $buffer = '<error>' . $buffer . '</error>';
-                    }
-                    $this->io->write($buffer);
-                })
-            ;
+            $backupper->setVerbose(true)->addLogger(new ConsoleLogger($this->io));
         }
 
         // If we are not anonymizing a database from a given backup file,
         // we put anonymized database backup in classic storage directory,
         // but we specify it is anonymized.
         $this->backupFilename = $this->backupFilename ?? $this->storage->generateFilename($this->connectionName, $backupper->getExtension(), true);
-        $backupper->setDestination($this->backupFilename)->backup();
+        $backupper->setDestination($this->backupFilename)->execute();
 
         if ($this->io->isVerbose()) {
             $this->io->newLine();
@@ -385,20 +359,11 @@ class AnonymizeCommand extends Command
         }
 
         $restorer = $this->restorerFactory->create($this->connectionName);
-
         if ($this->io->isVerbose()) {
-            $restorer
-                ->setVerbose(true)
-                ->setOutputCallback(function (string $type, string $buffer): void {
-                    if (Process::ERR === $type) {
-                        $buffer = '<error>' . $buffer . '</error>';
-                    }
-                    $this->io->write($buffer);
-                })
-            ;
+            $restorer->setVerbose(true)->addLogger(new ConsoleLogger($this->io));
         }
 
-        $restorer->setBackupFilename($this->initialDatabaseBackupFilename)->restore();
+        $restorer->setBackupFilename($this->initialBackupFilename)->execute();
 
         if ($this->io->isVerbose()) {
             $this->io->newLine();

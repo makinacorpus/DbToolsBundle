@@ -12,6 +12,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\Process;
@@ -159,18 +160,14 @@ class RestoreCommand extends Command
             throw new \RuntimeException('Action cancelled');
         }
 
-        $this->restorer
+        $this
+            ->restorer
             ->setBackupFilename($this->backupFilename)
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setVerbose($this->io->isVerbose())
-            ->setOutputCallback(function (string $type, string $buffer): void {
-                if (Process::ERR === $type) {
-                    $buffer = '<error>' . $buffer . '</error>';
-                }
-                $this->io->write($buffer);
-            })
-            ->restore()
+            ->addLogger(new ConsoleLogger($this->io))
+            ->execute()
         ;
 
         $this->io->success("Restoration done.");

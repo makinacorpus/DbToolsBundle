@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Utility\AbstractProcessTrait;
 use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
 use Symfony\Component\Process\Process;
 
@@ -13,13 +14,13 @@ use Symfony\Component\Process\Process;
  */
 abstract class AbstractRestorer
 {
+    use AbstractProcessTrait;
+
     protected ?string $backupFilename = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
-    protected ?\Closure $outputCallback = null;
     protected bool $verbose = false;
-    protected ?Process $process = null;
 
     public function __construct(
         protected string $binary,
@@ -36,9 +37,10 @@ abstract class AbstractRestorer
     {
         $process = new Process([$this->binary, '--version']);
         $process->run();
+
         if (!$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Error while trying to process '%s', check configuration for binary '%s",
+            throw new \LogicException(\sprintf(
+                "Error while running \"%s\" command, check configuration for binary '%s'.",
                 $process->getCommandLine(),
                 $this->binary,
             ));
@@ -83,13 +85,6 @@ abstract class AbstractRestorer
         return $this->ignoreDefaultOptions;
     }
 
-    public function setOutputCallback(?callable $callback): self
-    {
-        $this->outputCallback = $callback(...);
-
-        return $this;
-    }
-
     public function setVerbose(bool $verbose): self
     {
         $this->verbose = $verbose;
@@ -100,37 +95,6 @@ abstract class AbstractRestorer
     public function isVerbose(): bool
     {
         return $this->verbose;
-    }
-
-    public function restore(): self
-    {
-        $command = $this->buildCommandLine();
-
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setTimeout(1800);
-        $this->beforeRestoration();
-
-        try {
-            $this->process->mustRun($this->outputCallback);
-        } finally {
-            $this->afterRestoration();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Act just before the restoration process starts.
-     */
-    protected function beforeRestoration(): void
-    {
-    }
-
-    /**
-     * Act just after the restoration process ends.
-     */
-    protected function afterRestoration(): void
-    {
     }
 
     /**
@@ -155,9 +119,5 @@ abstract class AbstractRestorer
         }
     }
 
-    abstract public function buildCommandLine(): CommandLine;
-
     abstract public function getExtension(): string;
-
-    abstract public function getOutput(): string;
 }
