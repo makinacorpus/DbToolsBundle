@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Process\AbstractProcessTrait;
+use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use Symfony\Component\Process\Process;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Process\Process;
  */
 abstract class AbstractBackupper
 {
-    use AbstractProcessTrait;
+    use ProcessTrait;
 
     protected ?string $destination = null;
     protected array $excludedTables = [];

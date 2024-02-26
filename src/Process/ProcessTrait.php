@@ -8,7 +8,7 @@ use MakinaCorpus\DbToolsBundle\Helper\ChainLogger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
-trait AbstractProcessTrait
+trait ProcessTrait
 {
     protected ?Process $process = null;
     private ?ChainLogger $logger = null;
