@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Utility\AbstractProcessTrait;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\AbstractProcessTrait;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**

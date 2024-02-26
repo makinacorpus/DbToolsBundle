@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Utility;
+namespace MakinaCorpus\DbToolsBundle\Process;
 
+use MakinaCorpus\DbToolsBundle\Helper\ChainLogger;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 

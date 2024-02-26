@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer\SQLite;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class Restorer extends AbstractRestorer
 {

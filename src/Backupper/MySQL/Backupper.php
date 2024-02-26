@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class Backupper extends AbstractBackupper
 {

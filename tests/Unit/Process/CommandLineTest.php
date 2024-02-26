@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Utility;
+namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Process;
 
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
 use PHPUnit\Framework\TestCase;
 
