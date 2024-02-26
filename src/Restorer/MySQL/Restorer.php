@@ -44,6 +44,8 @@ class Restorer extends AbstractRestorer
     #[\Override]
     protected function beforeProcess(): void
     {
+        parent::beforeProcess();
+
         $this->backupStream = \fopen($this->backupFilename, 'r');
 
         if (false === $this->backupStream) {

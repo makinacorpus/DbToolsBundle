@@ -118,6 +118,12 @@ abstract class AbstractBackupper
         return $this->verbose;
     }
 
+    #[\Override]
+    protected function beforeProcess(): void
+    {
+        $this->process->setTimeout(600);
+    }
+
     /**
      * Provide the built-in default options that will be used if none is given
      * through the dedicated constructor argument.

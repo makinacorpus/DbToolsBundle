@@ -53,6 +53,7 @@ class Backupper extends AbstractBackupper
     #[\Override]
     protected function beforeProcess(): void
     {
+        parent::beforeProcess();
         $dbParams = $this->connection->getParams();
         $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
     }
