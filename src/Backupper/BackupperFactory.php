@@ -10,7 +10,6 @@ use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class BackupperFactory
 {
