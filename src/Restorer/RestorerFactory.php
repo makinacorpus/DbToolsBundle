@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
+use Psr\Log\LoggerInterface;
 
 class RestorerFactory
 {
@@ -22,6 +23,7 @@ class RestorerFactory
         private ManagerRegistry $doctrineRegistry,
         private array $restorerBinaries,
         private array $restorerOptions = [],
+        private ?LoggerInterface $logger = null,
     ) {}
 
     /**
@@ -48,10 +50,18 @@ class RestorerFactory
             )),
         };
 
-        return new $restorer(
+        $restorer = new $restorer(
             $this->restorerBinaries[$platform],
             $connection,
             $this->restorerOptions[$connectionName] ?? null
         );
+
+        \assert($restorer instanceof AbstractRestorer);
+
+        if ($this->logger) {
+            $restorer->addLogger($this->logger);
+        }
+
+        return $restorer;
     }
 }

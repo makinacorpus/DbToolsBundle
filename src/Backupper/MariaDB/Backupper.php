@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper\MariaDB;
 
 use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class Backupper extends AbstractBackupper
 {
-    private ?Process $process = null;
-
     /**
      * {@inheritdoc}
      */
-    public function startBackup(): self
+    public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
         $command = new CommandLine($this->binary);
@@ -50,33 +46,12 @@ class Backupper extends AbstractBackupper
 
         $command->addArg($dbParams['dbname']);
 
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setTimeout(600);
-        $this->process->start();
-
-        return $this;
-    }
-
-    public function checkSuccessful(): void
-    {
-        if (!$this->process->isSuccessful()) {
-            throw new ProcessFailedException($this->process);
-        }
+        return $command;
     }
 
     public function getExtension(): string
     {
         return 'sql';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return $this->process;
     }
 
     #[\Override]

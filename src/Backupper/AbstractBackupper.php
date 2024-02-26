@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**
@@ -13,8 +14,10 @@ use Symfony\Component\Process\Process;
  *
  * If no destination is given, creates the backup in system temp directory.
  */
-abstract class AbstractBackupper implements \IteratorAggregate
+abstract class AbstractBackupper
 {
+    use ProcessTrait;
+
     protected ?string $destination = null;
     protected array $excludedTables = [];
     protected string $defaultOptions = '';
@@ -43,9 +46,10 @@ abstract class AbstractBackupper implements \IteratorAggregate
     {
         $process = new Process([$this->binary, '--version']);
         $process->run();
+
         if (!$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Error while trying to process '%s', check configuration for binary '%s",
+            throw new \RuntimeException(\sprintf(
+                'Error while running "%s" command, check configuration for binary "%s".',
                 $process->getCommandLine(),
                 $this->binary,
             ));
@@ -114,6 +118,11 @@ abstract class AbstractBackupper implements \IteratorAggregate
         return $this->verbose;
     }
 
+    protected function beforeProcess(): void
+    {
+        $this->process->setTimeout(600);
+    }
+
     /**
      * Provide the built-in default options that will be used if none is given
      * through the dedicated constructor argument.
@@ -136,16 +145,5 @@ abstract class AbstractBackupper implements \IteratorAggregate
         }
     }
 
-    abstract public function startBackup(): self;
-
-    /**
-     * Throw Exception if backup is not successful.
-     *
-     * @throws \Exception
-     */
-    abstract public function checkSuccessful(): void;
-
     abstract public function getExtension(): string;
-
-    abstract public function getOutput(): string;
 }

@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer\SQLite;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class Restorer extends AbstractRestorer
 {
-    private ?Process $process = null;
-
     /**
      * {@inheritdoc}
      */
-    public function startRestore(): self
+    public function buildCommandLine(): CommandLine
     {
         if (!\file_exists($this->backupFilename)) {
             throw new \Exception(\sprintf('Backup file not found (%s)', $this->backupFilename));
@@ -32,19 +28,12 @@ class Restorer extends AbstractRestorer
         $command->addRaw('<');
         $command->addArg($this->backupFilename);
 
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setTimeout(1800);
-        $this->process->start();
-
-        return $this;
+        return $command;
     }
 
-    public function checkSuccessful(): void
+    #[\Override]
+    protected function afterProcess(): void
     {
-        if (!$this->process->isSuccessful()) {
-            throw new ProcessFailedException($this->process);
-        }
-
         $this->connection->close();
         $this->connection->connect();
     }
@@ -52,15 +41,5 @@ class Restorer extends AbstractRestorer
     public function getExtension(): string
     {
         return 'sql';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return $this->process;
     }
 }

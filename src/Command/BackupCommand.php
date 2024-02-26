@@ -12,9 +12,11 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 #[AsCommand(name: 'db-tools:backup', description: 'Backup database')]
 class BackupCommand extends Command
@@ -112,23 +114,18 @@ class BackupCommand extends Command
         $this->backupper = $this->backupperFactory->create($this->connectionName);
         $filename = $this->storage->generateFilename($this->connectionName, $this->backupper->getExtension());
 
-        $this->backupper
+        $this
+            ->backupper
             ->setDestination($filename)
-            ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
-            ->startBackup()
+            ->addLogger(new ConsoleLogger($this->io))
+            ->setVerbose($this->io->isVerbose())
+            ->execute()
         ;
 
-        foreach ($this->backupper as $data) {
-            $this->io->text($data);
-        }
-
-        $this->backupper->checkSuccessful();
-
         $this->io->success("Backup done: " . $filename);
-        $this->io->text($this->backupper->getOutput());
 
         return $filename;
     }

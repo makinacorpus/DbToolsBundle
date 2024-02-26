@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
 
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class Restorer extends AbstractRestorer
 {
-    private ?Process $process = null;
-
     /**
      * {@inheritdoc}
      */
-    public function startRestore(): AbstractRestorer
+    public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
         $command = new CommandLine($this->binary);
@@ -41,34 +37,20 @@ class Restorer extends AbstractRestorer
         $command->addArg('-d', $dbParams['dbname']);
         $command->addArg($this->backupFilename);
 
-        $this->process = Process::fromShellCommandline($command->toString());
-        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
-        $this->process->setTimeout(1800);
-        $this->process->start();
-
-        return $this;
+        return $command;
     }
 
-    public function checkSuccessful(): void
+    #[\Override]
+    protected function beforeProcess(): void
     {
-        if (!$this->process->isSuccessful()) {
-            throw new ProcessFailedException($this->process);
-        }
+        parent::beforeProcess();
+        $dbParams = $this->connection->getParams();
+        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
     }
 
     public function getExtension(): string
     {
         return 'dump';
-    }
-
-    public function getOutput(): string
-    {
-        return $this->process->getOutput();
-    }
-
-    public function getIterator(): \Traversable
-    {
-        return $this->process;
     }
 
     #[\Override]

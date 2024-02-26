@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Utility\CommandLine;
+use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
+use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use Symfony\Component\Process\Process;
 
 /**
- * Restore backup a backup file.
+ * Restore a backup file.
  */
-abstract class AbstractRestorer implements \IteratorAggregate
+abstract class AbstractRestorer
 {
+    use ProcessTrait;
+
     protected ?string $backupFilename = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
@@ -34,9 +37,10 @@ abstract class AbstractRestorer implements \IteratorAggregate
     {
         $process = new Process([$this->binary, '--version']);
         $process->run();
+
         if (!$process->isSuccessful()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Error while trying to process '%s', check configuration for binary '%s",
+            throw new \RuntimeException(\sprintf(
+                'Error while running "%s" command, check configuration for binary "%s".',
                 $process->getCommandLine(),
                 $this->binary,
             ));
@@ -93,6 +97,11 @@ abstract class AbstractRestorer implements \IteratorAggregate
         return $this->verbose;
     }
 
+    protected function beforeProcess(): void
+    {
+        $this->process->setTimeout(1800);
+    }
+
     /**
      * Provide the built-in default options that will be used if none is given
      * through the dedicated constructor argument.
@@ -115,16 +124,5 @@ abstract class AbstractRestorer implements \IteratorAggregate
         }
     }
 
-    abstract public function startRestore(): self;
-
-    /**
-     * Throw Exception if restore is not successful.
-     *
-     * @throws \Exception
-     */
-    abstract public function checkSuccessful(): void;
-
     abstract public function getExtension(): string;
-
-    abstract public function getOutput(): string;
 }

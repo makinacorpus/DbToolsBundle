@@ -62,12 +62,22 @@ services:
     # Backuppers
     db_tools.backupper.factory:
         class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory
-        arguments: ['@doctrine', '%db_tools.backupper.binaries%', '%db_tools.backupper.options%']
+        arguments:
+            - '@doctrine'
+            - '%db_tools.backupper.binaries%'
+            - '%db_tools.backupper.options%'
+            - '@logger'
+        tags: [{ name: 'monolog.logger', channel: 'db_tools_backup' }]
 
     # Restorers
     db_tools.restorer.factory:
         class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory
-        arguments: ['@doctrine', '%db_tools.restorer.binaries%', '%db_tools.restorer.options%']
+        arguments:
+            - '@doctrine'
+            - '%db_tools.restorer.binaries%'
+            - '%db_tools.restorer.options%'
+            - '@logger'
+        tags: [{ name: monolog.logger, channel: db_tools_restoration }]
 
     # Stats providers
     db_tools.stats_provider.factory:
