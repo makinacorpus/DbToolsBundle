@@ -73,11 +73,7 @@ trait AbstractProcessTrait
      */
     protected function getLogger(): ChainLogger
     {
-        if (null === $this->logger) {
-            $this->logger = new ChainLogger();
-        }
-
-        return $this->logger;
+        return $this->logger ??= new ChainLogger();
     }
 
     /**
