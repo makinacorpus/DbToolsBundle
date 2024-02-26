@@ -48,7 +48,7 @@ abstract class AbstractBackupper
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new \LogicException(\sprintf(
+            throw new \RuntimeException(\sprintf(
                 'Error while running "%s" command, check configuration for binary "%s".',
                 $process->getCommandLine(),
                 $this->binary,
