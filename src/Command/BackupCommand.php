@@ -120,8 +120,8 @@ class BackupCommand extends Command
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
-            ->setVerbose($this->io->isVerbose())
             ->addLogger(new ConsoleLogger($this->io))
+            ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
 

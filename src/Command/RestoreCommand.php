@@ -165,8 +165,8 @@ class RestoreCommand extends Command
             ->setBackupFilename($this->backupFilename)
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
-            ->setVerbose($this->io->isVerbose())
             ->addLogger(new ConsoleLogger($this->io))
+            ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
 
