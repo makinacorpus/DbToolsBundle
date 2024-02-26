@@ -97,7 +97,6 @@ abstract class AbstractRestorer
         return $this->verbose;
     }
 
-    #[\Override]
     protected function beforeProcess(): void
     {
         $this->process->setTimeout(1800);

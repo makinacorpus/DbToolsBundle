@@ -118,7 +118,6 @@ abstract class AbstractBackupper
         return $this->verbose;
     }
 
-    #[\Override]
     protected function beforeProcess(): void
     {
         $this->process->setTimeout(600);
