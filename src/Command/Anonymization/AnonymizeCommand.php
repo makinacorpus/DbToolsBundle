@@ -7,6 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
+use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,6 +27,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
+    private ConsoleLogger $logger;
 
     private string $connectionName;
 
@@ -129,6 +131,7 @@ class AnonymizeCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
+        $this->logger = new ConsoleLogger($this->io);
 
         $this->io->warning([
             'Note that this command should only be used in a secured environment. Following GDPR best ' .
@@ -252,7 +255,7 @@ class AnonymizeCommand extends Command
 
         $backupper
             ->setDestination($this->initialBackupFilename)
-            ->addLogger(new ConsoleLogger($this->io))
+            ->addLogger($this->logger)
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -277,7 +280,7 @@ class AnonymizeCommand extends Command
             ->restorerFactory
             ->create($this->connectionName)
             ->setBackupFilename($this->backupFilename)
-            ->addLogger(new ConsoleLogger($this->io))
+            ->addLogger($this->logger)
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -298,25 +301,17 @@ class AnonymizeCommand extends Command
             $this->io->write('Anonymizing database ...');
         }
 
-        $anonymizator = $this->anonymizatorFactory->getOrCreate($this->connectionName);
+        $anonymizator = $this
+            ->anonymizatorFactory
+            ->getOrCreate($this->connectionName)
+            ->setOutput(new ConsoleOutput($this->io))
+        ;
 
-        $needsLineFeed = false;
-        foreach ($anonymizator->anonymize($this->excludedTargets, $this->onlyTargets, $this->atOnce) as $message) {
-            if ($this->io->isVerbose()) {
-                if (\str_ends_with($message, '...')) {
-                    $this->io->write($message);
-                    $needsLineFeed = true;
-                } elseif ($needsLineFeed) {
-                    $this->io->writeln(' [' . $message . ']');
-                    $needsLineFeed = false;
-                } else {
-                    $this->io->writeln($message);
-                }
-            }
+        if (!$anonymizator->hasLogger($this->logger)) {
+            $anonymizator->addLogger($this->logger);
         }
-        if ($needsLineFeed) {
-            $this->io->writeln("");
-        }
+
+        $anonymizator->anonymize($this->excludedTargets, $this->onlyTargets, $this->atOnce);
 
         if ($this->io->isVerbose()) {
             $this->io->newLine();
@@ -342,7 +337,7 @@ class AnonymizeCommand extends Command
 
         $backupper
             ->setDestination($this->backupFilename)
-            ->addLogger(new ConsoleLogger($this->io))
+            ->addLogger($this->logger)
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -367,7 +362,7 @@ class AnonymizeCommand extends Command
             ->restorerFactory
             ->create($this->connectionName)
             ->setBackupFilename($this->initialBackupFilename)
-            ->addLogger(new ConsoleLogger($this->io))
+            ->addLogger($this->logger)
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;

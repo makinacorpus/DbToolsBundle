@@ -6,10 +6,11 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\LoaderInterface;
+use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
+use Psr\Log\LoggerInterface;
 
 class AnonymizatorFactory
 {
@@ -21,6 +22,7 @@ class AnonymizatorFactory
     public function __construct(
         private ManagerRegistry $doctrineRegistry,
         private AnonymizerRegistry $anonymizerRegistry,
+        private ?LoggerInterface $logger = null,
     ) {}
 
     public function addConfigurationLoader(LoaderInterface $loader): void
@@ -34,8 +36,8 @@ class AnonymizatorFactory
             return $this->anonymizators[$connectionName];
         }
 
-        /** @var Connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
+        \assert($connection instanceof Connection);
 
         $config = new AnonymizationConfig($connectionName);
 
@@ -43,11 +45,17 @@ class AnonymizatorFactory
             $loader->load($config);
         }
 
-        return $this->anonymizators[$connectionName] = new Anonymizator(
+        $anonymizator = new Anonymizator(
             $connection,
             $this->anonymizerRegistry,
             $config
         );
+
+        if ($this->logger) {
+            $anonymizator->addLogger($this->logger);
+        }
+
+        return $this->anonymizators[$connectionName] = $anonymizator;
     }
 
     /**

@@ -29,4 +29,9 @@ class ChainLogger extends AbstractLogger
     {
         $this->loggers[] = $logger;
     }
+
+    public function hasLogger(LoggerInterface $logger): bool
+    {
+        return \in_array($logger, $this->loggers, true);
+    }
 }
