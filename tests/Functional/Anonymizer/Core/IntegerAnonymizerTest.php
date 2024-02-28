@@ -63,8 +63,7 @@ class IntegerAnonymizerTest extends FunctionalTestCase
             (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        $anonymizator->anonymize();
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
