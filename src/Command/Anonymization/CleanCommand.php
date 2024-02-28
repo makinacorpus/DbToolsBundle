@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
+use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +30,7 @@ class CleanCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Clean DbTools left-over temporary tables')
+            ->setDescription('Clean DbTools left-over temporary tables, columns and indexes.')
             ->addOption(
                 'connection',
                 'c',
@@ -64,32 +65,47 @@ class CleanCommand extends Command
         }
 
         $connectionName = $input->getOption('connection') ?? $this->defaultConnectionName;
-        $anonymizator = $this->anonymizatorFactory->getOrCreate($connectionName);
+        $anonymizator = $this
+            ->anonymizatorFactory
+            ->getOrCreate($connectionName)
+            ->setOutput(new ConsoleOutput($io))
+        ;
 
-        $items = \iterator_to_array($anonymizator->clean(true));
+        $garbage = $anonymizator->collectGarbage();
 
-        if (!$items) {
-            $io->success("There is is no left-overs to clean, exiting.");
+        if (!$garbage) {
+            $io->success("There is no left-overs to clean, exiting.");
 
             return self::SUCCESS;
         }
 
         if (!$force) {
-            $io->section("Items that will be deleted");
-            $io->listing($items);
+            $tables = $others = [];
 
-            if (!$io->confirm("Are you sure you want to drop all this database items?", false)) {
+            \array_walk($garbage, function ($item) use (&$tables, &$others) {
+                if ('table' === $item['type']) {
+                    $tables[] = $item['name'];
+                } else {
+                    $others[] = $item['table'] . '.' . $item['name'];
+                }
+            });
+
+            $io->section("Items that will be deleted");
+            $io->title('Tables');
+            $io->listing($tables);
+            $io->title('Columns and indexes');
+            $io->listing($others);
+
+            if (!$io->confirm("Are you sure you want to drop all these database items?", false)) {
                 $io->warning('Action cancelled');
 
-                return self::FAILURE;
+                return self::SUCCESS;
             }
 
             $io->section("Dropping items");
         }
 
-        foreach ($anonymizator->clean(false) as $message) {
-            $io->writeln('Dropping ' . $message);
-        }
+        $anonymizator->clean();
 
         $io->newLine();
         $io->success("Clean done!");
