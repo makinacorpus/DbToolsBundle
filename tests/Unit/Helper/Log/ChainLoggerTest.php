@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Helper;
+namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Helper\Log;
 
-use MakinaCorpus\DbToolsBundle\Helper\ChainLogger;
+use MakinaCorpus\DbToolsBundle\Helper\Log\ChainLogger;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;

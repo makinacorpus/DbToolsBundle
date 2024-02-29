@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Helper;
+namespace MakinaCorpus\DbToolsBundle\Helper\Log;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LoggerInterface;

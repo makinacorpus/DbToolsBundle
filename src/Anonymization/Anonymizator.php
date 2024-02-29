@@ -18,18 +18,18 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Helper\ChainLogger;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
+use MakinaCorpus\DbToolsBundle\Helper\Log\ChainLoggerAwareTrait;
 use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Query\Update;
-use Psr\Log\LoggerInterface;
 
 class Anonymizator
 {
-    private ChainLogger $logger;
+    use ChainLoggerAwareTrait;
+
     private OutputInterface $output;
 
     public function __construct(
@@ -38,7 +38,6 @@ class Anonymizator
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
     ) {
-        $this->logger = new ChainLogger();
         $this->output = new NullOutput();
     }
 
@@ -48,25 +47,6 @@ class Anonymizator
     public function count(): int
     {
         return $this->anonymizationConfig->count();
-    }
-
-    /**
-     * Add a logger to get some process feedbacks. It is possible to give
-     * many loggers.
-     */
-    public function addLogger(LoggerInterface $logger): self
-    {
-        $this->logger->addLogger($logger);
-
-        return $this;
-    }
-
-    /**
-     * Know whether the given logger is included in the internal logger list.
-     */
-    public function hasLogger(LoggerInterface $logger): bool
-    {
-        return $this->logger->hasLogger($logger);
     }
 
     /**
@@ -204,7 +184,7 @@ class Anonymizator
 
                 if ($atOnce) {
                     $this->anonymizeTableAtOnce($table, $anonymizers);
-                    $this->logger->info(
+                    $this->getChainLogger()->info(
                         'Table "{table}" anonymized at once. Targets were: "{targets}" ({timer}).',
                         $context + ['timer' => $timer]
                     );
@@ -214,7 +194,7 @@ class Anonymizator
                 }
             }
             catch (\Throwable $e) {
-                $this->logger->error(
+                $this->getChainLogger()->error(
                     'Exception caught when anonymizing "{table}" table: {error}. (Targets were: "{targets}").',
                     $context + ['error' => $e->getMessage()]
                 );
@@ -232,7 +212,7 @@ class Anonymizator
                 $this->output->write("- total " . $this->formatTimer($initTimer));
                 $this->output->outdent();
 
-                $this->logger->info(
+                $this->getChainLogger()->info(
                     'Clean-up performed after anonymizing "{table}" table ({timer}).',
                     $context + ['timer' => $cleanTimer]
                 );
@@ -387,7 +367,7 @@ class Anonymizator
             $timer = $this->formatTimer($timer);
             $this->output->writeLine(\sprintf('[%s]', $timer));
 
-            $this->logger->info(
+            $this->getChainLogger()->info(
                 'Target "{target}" from "{table}" table anonymized ({timer}).',
                 [
                     'table' => $table,

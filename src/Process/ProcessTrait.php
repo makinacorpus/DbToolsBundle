@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Process;
 
-use MakinaCorpus\DbToolsBundle\Helper\ChainLogger;
-use Psr\Log\LoggerInterface;
+use MakinaCorpus\DbToolsBundle\Helper\Log\ChainLoggerAwareTrait;
 use Symfony\Component\Process\Process;
 
 trait ProcessTrait
 {
+    use ChainLoggerAwareTrait;
+
     protected ?Process $process = null;
-    private ?ChainLogger $logger = null;
 
     public function execute(?float $timeout = null): self
     {
@@ -28,17 +28,6 @@ trait ProcessTrait
         } finally {
             $this->afterProcess();
         }
-
-        return $this;
-    }
-
-    /**
-     * Add a logger to retrieve the process output. It is possible to give
-     * many loggers.
-     */
-    public function addLogger(LoggerInterface $logger): self
-    {
-        $this->getLogger()->addLogger($logger);
 
         return $this;
     }
@@ -63,18 +52,10 @@ trait ProcessTrait
     protected function logProcessOutput(string $type, string $output): void
     {
         if (Process::ERR === $type) {
-            $this->getLogger()->error($output);
+            $this->getChainLogger()->error($output);
         } else {
-            $this->getLogger()->info($output);
+            $this->getChainLogger()->info($output);
         }
-    }
-
-    /**
-     * Initialize and get the logger.
-     */
-    protected function getLogger(): ChainLogger
-    {
-        return $this->logger ??= new ChainLogger();
     }
 
     /**
