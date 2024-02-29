@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Backupper\SQLite;
+namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Where;
 
-class Backupper extends AbstractBackupper
+class SqliteBackupper extends AbstractBackupper
 {
     /**
      * {@inheritdoc}

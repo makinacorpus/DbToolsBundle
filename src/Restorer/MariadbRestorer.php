@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Restorer\MySQL;
+namespace MakinaCorpus\DbToolsBundle\Restorer;
 
-use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Restorer extends AbstractRestorer
+class MariadbRestorer extends AbstractRestorer
 {
     private mixed $backupStream = null;
 

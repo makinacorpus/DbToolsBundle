@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Backupper\MySQL;
+namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Backupper extends AbstractBackupper
+class MariadbBackupper extends AbstractBackupper
 {
     /**
      * {@inheritdoc}
@@ -37,7 +36,9 @@ class Backupper extends AbstractBackupper
         if ($this->verbose) {
             $command->addArg('-v');
         }
+
         $this->addCustomOptions($command);
+
         if ($this->destination) {
             $command->addArg('-r', $this->destination);
         }

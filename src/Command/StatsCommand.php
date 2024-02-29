@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\DbToolsBundle\Stats\AbstractStatsProvider;
+use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactory;
 use MakinaCorpus\DbToolsBundle\Stats\StatValue;
 use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
-use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactory;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
