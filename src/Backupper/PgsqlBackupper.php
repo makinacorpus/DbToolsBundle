@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use MakinaCorpus\DbToolsBundle\Process\CommandLine;
+use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 
 class PgsqlBackupper extends AbstractBackupper
 {

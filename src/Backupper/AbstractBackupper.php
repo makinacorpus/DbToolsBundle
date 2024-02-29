@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
-use MakinaCorpus\DbToolsBundle\Process\CommandLine;
+use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
+use MakinaCorpus\DbToolsBundle\Helper\Process\ProcessTrait;
 use Symfony\Component\Process\Process;
 
 /**

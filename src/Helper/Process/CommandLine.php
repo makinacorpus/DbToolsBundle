@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Process;
+namespace MakinaCorpus\DbToolsBundle\Helper\Process;
 
 use Symfony\Component\Process\Process;
 
