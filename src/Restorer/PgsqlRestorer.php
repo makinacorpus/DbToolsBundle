@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Backupper\MariaDB;
+namespace MakinaCorpus\DbToolsBundle\Restorer;
 
-use MakinaCorpus\DbToolsBundle\Backupper\AbstractBackupper;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Backupper extends AbstractBackupper
+class PgsqlRestorer extends AbstractRestorer
 {
     /**
      * {@inheritdoc}
@@ -21,42 +20,41 @@ class Backupper extends AbstractBackupper
             $command->addArg('-h', $dbParams['host']);
         }
         if (isset($dbParams['user'])) {
-            $command->addArg('-u', $dbParams['user']);
+            $command->addArg('-U', $dbParams['user']);
         }
         if (isset($dbParams['port'])) {
-            $command->addArg('-P', $dbParams['port']);
-        }
-        if (isset($dbParams['password'])) {
-            $command->addArg('-p' . $dbParams['password']);
+            $command->addArg('-p', $dbParams['port']);
         }
 
-        foreach ($this->excludedTables as $table) {
-            $command->addArg('--ignore-table', $dbParams['dbname'] . '.' . $table);
-        }
+        $command->addArg('-w');
 
         if ($this->verbose) {
             $command->addArg('-v');
         }
 
         $this->addCustomOptions($command);
-
-        if ($this->destination) {
-            $command->addArg('-r', $this->destination);
-        }
-
-        $command->addArg($dbParams['dbname']);
+        $command->addArg('-d', $dbParams['dbname']);
+        $command->addArg($this->backupFilename);
 
         return $command;
     }
 
+    #[\Override]
+    protected function beforeProcess(): void
+    {
+        parent::beforeProcess();
+        $dbParams = $this->connection->getParams();
+        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
+    }
+
     public function getExtension(): string
     {
-        return 'sql';
+        return 'dump';
     }
 
     #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
-        return '--no-tablespaces';
+        return '-j 2 --clean --if-exists --disable-triggers';
     }
 }

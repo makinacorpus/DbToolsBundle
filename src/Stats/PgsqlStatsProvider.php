@@ -2,13 +2,9 @@
 
 declare (strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Stats\PgSQL;
+namespace MakinaCorpus\DbToolsBundle\Stats;
 
-use MakinaCorpus\DbToolsBundle\Stats\AbstractStatsProvider;
-use MakinaCorpus\DbToolsBundle\Stats\StatValue;
-use MakinaCorpus\DbToolsBundle\Stats\StatValueList;
-
-class StatsProvider extends AbstractStatsProvider
+class PgsqlStatsProvider extends AbstractStatsProvider
 {
     /**
      * {@inheritdoc}

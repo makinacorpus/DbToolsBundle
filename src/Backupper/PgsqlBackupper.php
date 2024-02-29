@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Restorer\PgSQL;
+namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Restorer extends AbstractRestorer
+class PgsqlBackupper extends AbstractBackupper
 {
     /**
      * {@inheritdoc}
@@ -29,13 +28,23 @@ class Restorer extends AbstractRestorer
 
         $command->addArg('-w');
 
+        if ($this->excludedTables) {
+            $command->addArg('--exclude-table-data=' . \implode('|', $this->excludedTables));
+        }
         if ($this->verbose) {
             $command->addArg('-v');
         }
 
         $this->addCustomOptions($command);
-        $command->addArg('-d', $dbParams['dbname']);
-        $command->addArg($this->backupFilename);
+        // Custom format (not SQL).
+        // Forced for now.
+        $command->addArg('-F', 'c');
+
+        if ($this->destination) {
+            $command->addArg('-f', $this->destination);
+        }
+
+        $command->addArg($dbParams['dbname']);
 
         return $command;
     }
@@ -56,6 +65,7 @@ class Restorer extends AbstractRestorer
     #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
-        return '-j 2 --clean --if-exists --disable-triggers';
+        // -Z: compression level (0-9)
+        return '-Z 5 --lock-wait-timeout=120';
     }
 }

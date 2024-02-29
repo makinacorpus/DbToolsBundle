@@ -2,15 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Restorer\MariaDB;
+namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Restorer extends AbstractRestorer
+class MysqlBackupper extends AbstractBackupper
 {
-    private mixed $backupStream = null;
-
     /**
      * {@inheritdoc}
      */
@@ -31,41 +28,34 @@ class Restorer extends AbstractRestorer
         if (isset($dbParams['password'])) {
             $command->addArg('-p' . $dbParams['password']);
         }
+
+        foreach ($this->excludedTables as $table) {
+            $command->addArg('--ignore-table', $dbParams['dbname'] . '.' . $table);
+        }
+
         if ($this->verbose) {
             $command->addArg('-v');
         }
 
         $this->addCustomOptions($command);
+
+        if ($this->destination) {
+            $command->addArg('-r', $this->destination);
+        }
+
         $command->addArg($dbParams['dbname']);
 
         return $command;
     }
 
-    #[\Override]
-    protected function beforeProcess(): void
-    {
-        parent::beforeProcess();
-
-        $this->backupStream = \fopen($this->backupFilename, 'r');
-
-        if (false === $this->backupStream) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Backup file '%s' can't be read",
-                $this->backupFilename
-            ));
-        }
-
-        $this->process->setInput($this->backupStream);
-    }
-
-    #[\Override]
-    protected function afterProcess(): void
-    {
-        \fclose($this->backupStream);
-    }
-
     public function getExtension(): string
     {
         return 'sql';
+    }
+
+    #[\Override]
+    protected function getBuiltinDefaultOptions(): string
+    {
+        return '--no-tablespaces';
     }
 }

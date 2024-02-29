@@ -39,10 +39,10 @@ class BackupperFactory
         $platform = $queryBuilder->getServerFlavor();
 
         $backupper = match ($platform) {
-            Platform::MARIADB => MariaDB\Backupper::class,
-            Platform::MYSQL => MySQL\Backupper::class,
-            Platform::POSTGRESQL => PgSQL\Backupper::class,
-            Platform::SQLITE => SQLite\Backupper::class,
+            Platform::MARIADB => MariadbBackupper::class,
+            Platform::MYSQL => MysqlBackupper::class,
+            Platform::POSTGRESQL => PgsqlBackupper::class,
+            Platform::SQLITE => SqliteBackupper::class,
             default => throw new NotImplementedException(\sprintf(
                 "Backup is not implemented or configured for platform '%s' while using connection '%s'",
                 $platform,

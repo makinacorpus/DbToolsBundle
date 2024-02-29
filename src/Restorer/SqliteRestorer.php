@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Restorer\SQLite;
+namespace MakinaCorpus\DbToolsBundle\Restorer;
 
-use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
-class Restorer extends AbstractRestorer
+class SqliteRestorer extends AbstractRestorer
 {
     /**
      * {@inheritdoc}
