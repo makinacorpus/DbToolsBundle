@@ -51,11 +51,7 @@ trait ProcessTrait
      */
     protected function logProcessOutput(string $type, string $output): void
     {
-        if (Process::ERR === $type) {
-            $this->getChainLogger()->error($output);
-        } else {
-            $this->getChainLogger()->info($output);
-        }
+        $this->getChainLogger()->info(\rtrim($output, \PHP_EOL));
     }
 
     /**

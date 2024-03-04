@@ -209,7 +209,7 @@ class Anonymizator
 
                 $cleanTimer = $this->formatTimer($cleanTimer);
                 $this->output->writeLine(\sprintf('[%s]', $cleanTimer));
-                $this->output->write("- total " . $this->formatTimer($initTimer));
+                $this->output->writeLine("- total " . $this->formatTimer($initTimer));
                 $this->output->outdent();
 
                 $this->getChainLogger()->info(
