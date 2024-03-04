@@ -49,7 +49,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
             'table_test',
             'data',
             'float',
-            new Options(['min' => 2, 'max' => 5, 'precision' => 6])
+            new Options(['min' => 2, 'max' => 5.5, 'precision' => 6])
         ));
 
         $anonymizator = new Anonymizator(
@@ -71,19 +71,19 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $data = (float) $datas[0];
         $this->assertNotNull($data);
         $this->assertNotSame(1.5, $data);
-        $this->assertTrue($data >= 2 && $data <= 5);
+        $this->assertTrue($data >= 2 && $data <= 5.5);
         $this->assertSame(\round($data, 6), \round($data, 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
         $this->assertNotSame(2.5, $data);
-        $this->assertTrue($data >= 2 && $data <= 5);
+        $this->assertTrue($data >= 2 && $data <= 5.5);
         $this->assertSame(\round($data, 6), \round($data, 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
         $this->assertNotSame(3.5, $data);
-        $this->assertTrue($data >= 2 && $data <= 5);
+        $this->assertTrue($data >= 2 && $data <= 5.5);
         $this->assertSame(\round($data, 6), \round($data, 6));
 
         $this->assertNull($datas[3]);
