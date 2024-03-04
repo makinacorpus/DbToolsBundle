@@ -37,9 +37,12 @@ class FloatAnonymizer extends AbstractAnonymizer
             $this->columnName,
             $this->getSetIfNotNullExpression(
                 $expr->raw(
-                    'cast(floor(?) / ? as float)',
+                    'cast(? / ? as float)',
                     [
-                        $this->getRandomIntExpression($max * $precision, $min * $precision),
+                        $this->getRandomIntExpression(
+                            (int) ($max * $precision),
+                            (int) ($min * $precision)
+                        ),
                         $expr->cast($precision, 'float'),
                     ]
                 )
