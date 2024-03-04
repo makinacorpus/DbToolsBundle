@@ -301,12 +301,11 @@ class AnonymizeCommand extends Command
             $this->io->write('Anonymizing database ...');
         }
 
-        $anonymizator = $this
-            ->anonymizatorFactory
-            ->getOrCreate($this->connectionName)
-            ->setOutput(new ConsoleOutput($this->io))
-        ;
+        $anonymizator = $this->anonymizatorFactory->getOrCreate($this->connectionName);
 
+        if ($this->io->isVerbose()) {
+            $anonymizator->setOutput(new ConsoleOutput($this->io));
+        }
         if (!$anonymizator->hasLogger($this->logger)) {
             $anonymizator->addLogger($this->logger);
         }
