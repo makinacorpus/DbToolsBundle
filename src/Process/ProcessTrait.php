@@ -62,11 +62,7 @@ trait ProcessTrait
      */
     protected function logProcessOutput(string $type, string $output): void
     {
-        if (Process::ERR === $type) {
-            $this->getLogger()->error($output);
-        } else {
-            $this->getLogger()->info($output);
-        }
+        $this->getLogger()->info($output);
     }
 
     /**
