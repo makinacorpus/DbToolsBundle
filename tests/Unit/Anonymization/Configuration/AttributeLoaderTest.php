@@ -15,6 +15,7 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntityWithEmbedded;
 
 class AttributeLoaderTest extends UnitTestCase
 {
@@ -56,28 +57,67 @@ class AttributeLoaderTest extends UnitTestCase
         // Then we validate what's in it:
         self::assertCount(1, $config->all());
 
-        $userTableConfig = $config->getTableConfig('test');
-        self::assertCount(3, $userTableConfig);
+        $testTableConfig = $config->getTableConfig('test');
+        self::assertCount(3, $testTableConfig);
 
-        self::assertInstanceOf(AnonymizerConfig::class, $userTableConfig['age']);
-        self::assertSame('integer', $userTableConfig['age']->anonymizer);
-        self::assertSame('age', $userTableConfig['age']->targetName);
-        self::assertSame(0, $userTableConfig['age']->options->get('min'));
-        self::assertSame(65, $userTableConfig['age']->options->get('max'));
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['age']);
+        self::assertSame('integer', $testTableConfig['age']->anonymizer);
+        self::assertSame('age', $testTableConfig['age']->targetName);
+        self::assertSame(0, $testTableConfig['age']->options->get('min'));
+        self::assertSame(65, $testTableConfig['age']->options->get('max'));
 
-        self::assertInstanceOf(AnonymizerConfig::class, $userTableConfig['email']);
-        self::assertSame('email', $userTableConfig['email']->anonymizer);
-        self::assertSame('email', $userTableConfig['email']->targetName);
-        self::assertSame('toto.com', $userTableConfig['email']->options->get('domain'));
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['email']);
+        self::assertSame('email', $testTableConfig['email']->anonymizer);
+        self::assertSame('email', $testTableConfig['email']->targetName);
+        self::assertSame('toto.com', $testTableConfig['email']->options->get('domain'));
 
-        self::assertInstanceOf(AnonymizerConfig::class, $userTableConfig['address_0']);
-        self::assertSame('address', $userTableConfig['address_0']->anonymizer);
-        self::assertSame('address_0', $userTableConfig['address_0']->targetName);
-        self::assertSame('street', $userTableConfig['address_0']->options->get('street_address'));
-        self::assertNull($userTableConfig['address_0']->options->get('secondary_address'));
-        self::assertSame('zip_code', $userTableConfig['address_0']->options->get('postal_code'));
-        self::assertSame('city', $userTableConfig['address_0']->options->get('locality'));
-        self::assertNull($userTableConfig['address_0']->options->get('region'));
-        self::assertSame('country', $userTableConfig['address_0']->options->get('country'));
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['address_0']);
+        self::assertSame('address', $testTableConfig['address_0']->anonymizer);
+        self::assertSame('address_0', $testTableConfig['address_0']->targetName);
+        self::assertSame('street', $testTableConfig['address_0']->options->get('street_address'));
+        self::assertNull($testTableConfig['address_0']->options->get('secondary_address'));
+        self::assertSame('zip_code', $testTableConfig['address_0']->options->get('postal_code'));
+        self::assertSame('city', $testTableConfig['address_0']->options->get('locality'));
+        self::assertNull($testTableConfig['address_0']->options->get('region'));
+        self::assertSame('country', $testTableConfig['address_0']->options->get('country'));
+    }
+
+    public function testLoadIgnoreEmbedded(): void
+    {
+        $attributeDriver = new AttributeDriver([
+            \dirname(\dirname(\dirname(__DIR__))) . '/Resources/Loader'
+        ]);
+        $classMetadata = new ClassMetadata(TestEntityWithEmbedded::class);
+        $classMetadata->initializeReflection(new RuntimeReflectionService());
+
+        $attributeDriver->loadMetadataForClass(TestEntity::class, $classMetadata);
+
+        $metaDataFactory = $this->createMock(ClassMetadataFactory::class);
+        $metaDataFactory
+            ->expects($this->exactly(1))
+            ->method('getAllMetadata')
+            ->willReturn([$classMetadata])
+        ;
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->expects($this->exactly(1))
+            ->method('getMetadataFactory')
+            ->willReturn($metaDataFactory)
+        ;
+
+        $entityManagerProvider = $this->createMock(EntityManagerProvider::class);
+        $entityManagerProvider
+            ->expects($this->exactly(1))
+            ->method('getManager')
+            ->willReturn($entityManager)
+        ;
+
+        // We try to load configuration for the 'default' connection.
+        $config = new AnonymizationConfig('default');
+        (new AttributesLoader($entityManagerProvider))->load($config);
+
+        // Then we validate what's in it:
+        self::assertCount(0, $config->all());
     }
 }

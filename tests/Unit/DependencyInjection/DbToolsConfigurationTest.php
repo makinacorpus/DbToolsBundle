@@ -17,7 +17,8 @@ class DbToolsConfigurationTest extends TestCase
         $configuration = new DbToolsConfiguration();
 
         return $processor->processConfiguration(
-            $configuration, Yaml::parseFile($yamlFilename)
+            $configuration,
+            Yaml::parseFile($yamlFilename)
         );
     }
 
