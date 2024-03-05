@@ -15,15 +15,13 @@ class TestEntityWithEmbedded
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Embedded(class: TestEmbeddableEntity::class)]
+    private TestEmbeddableEntity $embeddableEntity;
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    #[ORM\Embedded(class: TestEmbeddableEntity::class)]
-    private TestEmbeddableEntity $embeddableEntity;
-
-
 
     public function getEmbeddableEntity(): ?TestEmbeddableEntity
     {
