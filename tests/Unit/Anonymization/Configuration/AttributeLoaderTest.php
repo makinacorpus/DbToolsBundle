@@ -117,7 +117,7 @@ class AttributeLoaderTest extends UnitTestCase
         $config = new AnonymizationConfig('default');
         (new AttributesLoader($entityManagerProvider))->load($config);
 
-        // Then we validate what's in it:
+        // Then we validate that there is still nothing in the config:
         self::assertCount(0, $config->all());
     }
 }
