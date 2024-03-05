@@ -55,15 +55,16 @@ is the Symfony Console and a database. It doesn't need to be a complete working 
 
 Let's assume the environment we have besides *production* is called *another_env*.
 
-1. Run `console db-tools:backup` on *production* environment or
+![The GDPR workflow](/public/gdpr-workflow.gif)
+
+0. Run `console db-tools:backup` on *production* environment or
    choose an existing backup with `console db-tools:restore --list`,
-2. Securely download your backup file from *production* to *another_env* environment,
-3. Stop services on *another_env* to ensure no one is using it,
-4. Run `console db-tools:anonymize path/to/your/production/backup` to generate
+1. Securely download your backup file from *production* to *another_env* environment,
+   and stop services on *another_env* to ensure no one is using it,
+1. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
-5. Restart services on *another_env*,
-6. Download the anonymized backup from *another_env* to your local machine
-7. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
+2. Download the anonymized backup from *another_env* to your local machine
+3. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
 ## Options
 
