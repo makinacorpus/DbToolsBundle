@@ -118,6 +118,7 @@ class AttributeLoaderTest extends UnitTestCase
         (new AttributesLoader($entityManagerProvider))->load($config);
 
         // Then we validate that there is still nothing in the config:
+        // (it means that the embeddale has been correctly ignored)
         self::assertCount(0, $config->all());
     }
 }
