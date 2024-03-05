@@ -8,14 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 
 #[ORM\Embeddable]
-#[Anonymize(type: 'address', options: [
-    'street_address' => 'street',
-    // secondary_address: ''
-    'postal_code' => 'zip_code',
-    'locality' => 'city',
-    // -region: ''
-    'country' => 'country',
-])]
 class TestEmbeddableEntity
 {
     #[ORM\Column]
