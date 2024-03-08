@@ -183,7 +183,8 @@ class Customer
     #[ORM\Column]
     // Will add to each age value a random integer // [!code ++]
     // in the [-delta, +delta] interval // [!code ++]
-    // In this example, an integer between -15 and 15 of the initial value // [!code ++]
+    // In this example, an integer between -15 and 15 will be // [!code ++]
+    // add to the initial value // [!code ++]
     #[Anonymize(type: 'integer', options: ['delta' => 15])] // [!code ++]
     private ?int $age = null;
 
