@@ -159,7 +159,7 @@ customer:
 
 Anonymize integers by:
 - randomly choosing an integer in a range delimited by 'min' and 'max' options
-- altering the initial value by adding it a random value picked in a range calculated from the 'delta' or 'percent' options
+- altering the initial value by adding it a random value picked in a range computed from the 'delta' or 'percent' options
 
 ::: code-group
 ```php [Attribute]
