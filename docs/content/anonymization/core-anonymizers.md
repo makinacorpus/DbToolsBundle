@@ -390,12 +390,12 @@ customer:
 ## LoremIpsumAnonymizer
 
 Replace a text with *lorem ipsum*.
-Default behaviour is to generate 1 paragraph.
+Default behavior is to generate a single paragraph.
 
 Available options:
 - `paragraphs`: (int) number of paragraphs to generate,
 - `words`: (int) number of words to generate
-  (could not be used in combination with `parapraphs` option),
+  (could not be used in combination with `paragraphs` option),
 - `html`: (bool) surround each paragraph with `<p>`, default is false.
 - `sample_count`: (int) how many different values to use (default is 100).
 
@@ -417,8 +417,8 @@ class Customer
     private ?string $message = null;
 
     #[ORM\Column(length: 255)]
-    // Will generate 10 paragraphs, each one sourounded by a html p tag
-    #[Anonymize('lorem', ['paragaphs' => 10, 'html' => true])] // [!code ++]
+    // Will generate 10 paragraphs, each one surrounded by a html `<p>` tag
+    #[Anonymize('lorem', ['paragraphs' => 10, 'html' => true])] // [!code ++]
     private ?string $message = null;
 
     #[ORM\Column(length: 255)]
@@ -437,7 +437,7 @@ customer:
     message: lorem
 
 customer:
-    # Will generate 10 paragraphs, each one sourounded by a html p tag
+    # Will generate 10 paragraphs, each one surrounded by a html `<p>` tag
     message:
         anonymizer: lorem
         options:
@@ -448,7 +448,7 @@ customer:
     # Will only generate 5 words
     message:
         anonymizer: lorem
-        options: {words: 10}
+        options: {words: 5}
 #...
 ```
 :::

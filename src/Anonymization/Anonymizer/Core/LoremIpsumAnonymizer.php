@@ -15,11 +15,12 @@ use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
     name: 'lorem',
     pack: 'core',
     description: <<<TXT
-    Replace a text with lorem ipsum. Default behaviour is to generate 1 paragraph
+    Replace a text with lorem ipsum.
+    Default behavior is to generate a single paragraph.
     Available options:
      - 'paragraphs': (int) number of paragraphs to generate,
      - 'words': (int) number of words to generate
-       (could not be used in combination with 'parapraphs' option),
+       (could not be used in combination with 'paragraphs' option),
      - 'html': (bool) surround each paragraph with <p>, default is false.
      - 'sample_count': (int) how many different values to use (default is 100).
     TXT

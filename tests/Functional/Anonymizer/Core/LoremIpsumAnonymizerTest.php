@@ -68,7 +68,7 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
-        // Default behaviour is to create on paragraph, without HTML 'p' tag.
+        // Default behavior is to create on paragraph, without HTML '<p>' tag.
         $data = $datas[0];
         $this->assertNotNull($data);
         $this->assertNotSame('test1', $data);
