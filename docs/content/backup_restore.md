@@ -19,7 +19,7 @@ backup files (i.e. files that have passed their expiration date).
 console db-tools:backup
 ```
 
-You can specify the behaviour of the command with some options detailed below.
+You can specify the behavior of the command with some options detailed below.
 
 ### Connection
 
@@ -89,7 +89,7 @@ to restore your database from an existing backup files.
 console db-tools:restore
 ```
 
-You can specify the behaviour of the command with some options detailed below.
+You can specify the behavior of the command with some options detailed below.
 
 ### Connection
 
@@ -147,7 +147,7 @@ will be added to the [default options](./configuration#default-binary-options).
 
 ### Ignoring default options
 
-If necessary, [default options](./configuration#default-binary-options) can be 
+If necessary, [default options](./configuration#default-binary-options) can be
 ignored for a restoration by using the `--ignore-default-options` option:
 
 ```sh
