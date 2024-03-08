@@ -20,7 +20,7 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
             'table_test',
             [
                 'id' => 'integer',
-                'data' => 'string',
+                'data' => 'text',
             ],
             [
                 [
