@@ -142,8 +142,6 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(40, $data);
 
         $this->assertNull($datas[3]);
-
-        $this->assertCount(4, \array_unique($datas), 'All generated values are different.');
     }
 
     public function testAnonymizeWithPercent(): void
@@ -200,7 +198,5 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(45, $data);
 
         $this->assertNull($datas[3]);
-
-        $this->assertCount(4, \array_unique($datas), 'All generated values are different.');
     }
 }

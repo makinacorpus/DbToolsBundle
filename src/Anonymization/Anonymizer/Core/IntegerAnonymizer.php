@@ -13,10 +13,10 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     pack: 'core',
     description: <<<TXT
     Anonymize integers:
-        - fill with a random integer between two bounds
-          with 'min' and 'max' options
-        - add random noise to initial value
-          with 'delta' or 'percent' options
+        - randomly choosing an integer in a range delimited
+          by 'min' and 'max' options
+        - altering the initial value by adding it a random value picked
+          in a range calculated from the 'delta' or 'percent' options
     TXT
 )]
 class IntegerAnonymizer extends AbstractAnonymizer
