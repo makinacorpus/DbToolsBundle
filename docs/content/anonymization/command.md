@@ -67,7 +67,7 @@ Let's assume the environment we have besides *production* is called *another_env
 
 ## Options
 
-You can specify the behaviour of the  `db-tools:anonymize`command with some options detailed below.
+You can specify the behavior of the  `db-tools:anonymize`command with some options detailed below.
 
 ### Anonymizing local database
 

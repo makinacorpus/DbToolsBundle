@@ -1,6 +1,6 @@
 # Bundle configuration
 
-The *DbToolsBundle* let you configure some of its behaviours. As with any classic Symfony Bundle,
+The *DbToolsBundle* let you configure some of its behaviors. As with any classic Symfony Bundle,
 all will take place in the `config/packages/db_tools.yaml` file.
 
 :::tip
