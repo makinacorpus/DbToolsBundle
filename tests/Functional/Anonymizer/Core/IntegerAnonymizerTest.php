@@ -71,17 +71,20 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $data = (int) $datas[0];
         $this->assertNotNull($data);
         $this->assertNotSame(1, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[1];
         $this->assertNotNull($data);
         $this->assertNotSame(2, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[2];
         $this->assertNotNull($data);
         $this->assertNotSame(3, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
         $this->assertNull($datas[3]);
 
