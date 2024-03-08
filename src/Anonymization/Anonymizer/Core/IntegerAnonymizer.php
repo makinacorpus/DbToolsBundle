@@ -12,7 +12,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     name: 'integer',
     pack: 'core',
     description: <<<TXT
-    Anonymize integers:
+    Anonymize integers by:
         - randomly choosing an integer in a range delimited
           by 'min' and 'max' options
         - altering the initial value by adding it a random value picked
