@@ -387,6 +387,72 @@ customer:
 ```
 :::
 
+## LoremIpsumAnonymizer
+
+Replace a text with *lorem ipsum*.
+Default behaviour is to generate 1 paragraph.
+
+Available options:
+- `paragraphs`: (int) number of paragraphs to generate,
+- `words`: (int) number of words to generate
+  (could not be used in combination with `parapraphs` option),
+- `html`: (bool) surround each paragraph with `<p>`, default is false.
+- `sample_count`: (int) how many different values to use (default is 100).
+
+::: code-group
+```php [Attribute]
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: 'customer')]
+class Customer
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    #[Anonymize('lorem')] // [!code ++]
+    private ?string $message = null;
+
+    #[ORM\Column(length: 255)]
+    // Will generate 10 paragraphs, each one sourounded by a html p tag
+    #[Anonymize('lorem', ['paragaphs' => 10, 'html' => true])] // [!code ++]
+    private ?string $message = null;
+
+    #[ORM\Column(length: 255)]
+    // Will only generate 5 words
+    #[Anonymize('lorem', ['words' => 5])] // [!code ++]
+    private ?string $message = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+
+customer:
+    message: lorem
+
+customer:
+    # Will generate 10 paragraphs, each one sourounded by a html p tag
+    message:
+        anonymizer: lorem
+        options:
+            paragaphs: 10
+            html: true
+
+customer:
+    # Will only generate 5 words
+    message:
+        anonymizer: lorem
+        options: {words: 10}
+#...
+```
+:::
+
 ## AddressAnonymizer
 
 This *Anonymizer* is multicolumn. It let you anonymize, at once, mutiple columns on one table

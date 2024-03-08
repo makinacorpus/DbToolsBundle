@@ -72,17 +72,17 @@ class StringAnonymizerTest extends FunctionalTestCase
 
         $data = $datas[0];
         $this->assertNotNull($data);
-        $this->assertNotSame(1, $data);
+        $this->assertNotSame('test1', $data);
         $this->assertContains($data, $sample);
 
         $data = $datas[1];
         $this->assertNotNull($data);
-        $this->assertNotSame(2, $data);
+        $this->assertNotSame('test2', $data);
         $this->assertContains($data, $sample);
 
         $data = $datas[2];
         $this->assertNotNull($data);
-        $this->assertNotSame(3, $data);
+        $this->assertNotSame('test3', $data);
         $this->assertContains($data, $sample);
 
         $this->assertNull($datas[3]);
