@@ -15,7 +15,7 @@ use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
     name: 'lorem',
     pack: 'core',
     description: <<<TXT
-    Replace a text with lorem ipsum.
+    Replace a text with some lorem ipsum.
     Default behavior is to generate a single paragraph.
     Available options:
      - 'paragraphs': (int) number of paragraphs to generate,

@@ -389,7 +389,7 @@ customer:
 
 ## LoremIpsumAnonymizer
 
-Replace a text with *lorem ipsum*.
+Replace a text with some *lorem ipsum*.
 Default behavior is to generate a single paragraph.
 
 Available options:
