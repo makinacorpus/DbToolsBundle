@@ -6,8 +6,8 @@ services:
             - db-tools-test
         volumes:
             - ./:/var/www
-    mysql57:
-        image: mysql:5.7
+    mysql80:
+        image: mysql:8.0
         restart: 'no'
         environment:
             MYSQL_DATABASE: test_db
@@ -16,8 +16,8 @@ services:
             - 9501:3306
         networks:
             - db-tools-test
-    mysql80:
-        image: mysql:8
+    mysql83:
+        image: mysql:8.3
         restart: 'no'
         environment:
             MYSQL_DATABASE: test_db
