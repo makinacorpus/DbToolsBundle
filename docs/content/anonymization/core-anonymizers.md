@@ -207,6 +207,24 @@ customer:
         anonymizer: integer
         options: {min: 10, max: 99}
 
+customer:
+    # Will add to each age value a random integer
+    # in the [-delta, +delta] interval
+    # In this example, an integer between -15 and 15 will be
+    # added to the initial value
+    age:
+        anonymizer: integer
+        options: {delta: 15}
+
+customer:
+    # Will add to each age value a random percent
+    # of the initial value in the [-percent%, +percent%] interval
+    # In this example, a value between -10% and 10% of the initial value
+    # will be added to age.
+    age:
+        anonymizer: integer
+        options: {percent: 10}
+
 #...
 ```
 :::
