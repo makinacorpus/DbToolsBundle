@@ -25,15 +25,15 @@ class IntegerAnonymizerTest extends FunctionalTestCase
             [
                 [
                     'id' => '1',
-                    'data' => '1',
+                    'data' => '10',
                 ],
                 [
                     'id' => '2',
-                    'data' => '2',
+                    'data' => '20',
                 ],
                 [
                     'id' => '3',
-                    'data' => '3',
+                    'data' => '30',
                 ],
                 [
                     'id' => '4',
@@ -42,7 +42,7 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         );
     }
 
-    public function testAnonymize(): void
+    public function testAnonymizeWithMinAndMax(): void
     {
         $config = new AnonymizationConfig();
         $config->add(new AnonymizerConfig(
@@ -59,7 +59,7 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         );
 
         $this->assertSame(
-            1,
+            10,
             (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
@@ -70,21 +70,127 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
         $data = (int) $datas[0];
         $this->assertNotNull($data);
-        $this->assertNotSame(1, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertNotSame(10, $data);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[1];
         $this->assertNotNull($data);
-        $this->assertNotSame(2, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertNotSame(20, $data);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[2];
         $this->assertNotNull($data);
-        $this->assertNotSame(3, $data);
-        $this->assertTrue($data >= 200 && $data <= 10000);
+        $this->assertNotSame(30, $data);
+        $this->assertGreaterThanOrEqual(200, $data);
+        $this->assertLessThanOrEqual(10000, $data);
 
-        $this->assertNull($datas[3]);
+        $this->assertNull($datas[3], 'IntegerAnonymizer should keep null values');
 
         $this->assertCount(4, \array_unique($datas), 'All generated values are different.');
+    }
+
+    public function testAnonymizeWithDelta(): void
+    {
+        $config = new AnonymizationConfig();
+        $config->add(new AnonymizerConfig(
+            'table_test',
+            'data',
+            'integer',
+            new Options(['delta' => 10])
+        ));
+
+        $anonymizator = new Anonymizator(
+            $this->getConnection(),
+            new AnonymizerRegistry(),
+            $config
+        );
+
+        $this->assertSame(
+            10,
+            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+        );
+
+        foreach ($anonymizator->anonymize() as $message) {
+        }
+
+        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+
+        $data = (int) $datas[0];
+        $this->assertNotNull($data);
+        // Initial value is 10, we added a value in [-10, 10]
+        // so current value should be in [10-10, 10+10]
+        $this->assertGreaterThanOrEqual(0, $data);
+        $this->assertLessThanOrEqual(20, $data);
+
+        $data = (int) $datas[1];
+        $this->assertNotNull($data);
+        // Initial value is 20, we added a value in [-10, 10]
+        // so current value should be in [20-10, 20+10]
+        $this->assertGreaterThanOrEqual(10, $data);
+        $this->assertLessThanOrEqual(30, $data);
+
+        $data = (int) $datas[2];
+        $this->assertNotNull($data);
+        // Initial value is 30, we added a value in [-10, 10]
+        // so current value should be in [30-10, 30+10]
+        $this->assertGreaterThanOrEqual(20, $data);
+        $this->assertLessThanOrEqual(40, $data);
+
+        $this->assertNull($datas[3], 'IntegerAnonymizer should keep null values');
+    }
+
+    public function testAnonymizeWithPercent(): void
+    {
+        $config = new AnonymizationConfig();
+        $config->add(new AnonymizerConfig(
+            'table_test',
+            'data',
+            'integer',
+            new Options(['percent' => 50])
+        ));
+
+        $anonymizator = new Anonymizator(
+            $this->getConnection(),
+            new AnonymizerRegistry(),
+            $config
+        );
+
+        $this->assertSame(
+            10,
+            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+        );
+
+        foreach ($anonymizator->anonymize() as $message) {
+        }
+
+        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+
+        $data = (int) $datas[0];
+        $this->assertNotNull($data);
+        // Initial value is 10, we added a random percent of
+        // this value in [-50%, 50%],
+        // so current value should be in [10*0.5, 10*1.5]
+        $this->assertGreaterThanOrEqual(5, $data);
+        $this->assertLessThanOrEqual(15, $data);
+
+        $data = (int) $datas[1];
+        $this->assertNotNull($data);
+        // Initial value is 20, we added a random percent of
+        // this value in [-50%, 50%],
+        // so current value should be in [20*0.5, 20*1.5]
+        $this->assertGreaterThanOrEqual(10, $data);
+        $this->assertLessThanOrEqual(30, $data);
+
+        $data = (int) $datas[2];
+        $this->assertNotNull($data);
+        // Initial value is 30, we added a random percent of
+        // this value in [-50%, 50%],
+        // so current value should be in [30*0.5, 30*1.5]
+        $this->assertGreaterThanOrEqual(15, $data);
+        $this->assertLessThanOrEqual(45, $data);
+
+        $this->assertNull($datas[3], 'IntegerAnonymizer should keep null values');
     }
 }
