@@ -1,14 +1,39 @@
 # Internals
 
-## Basics
+As we mention in the previous section, the anonymization process is done with SQL
+statements.
 
-Anonymization processus is based upon a single `UPDATE` SQL query, each anonymizer
-adds it own `SET` statements, and a few `JOIN` clauses if necessary.
+Anonymization for each table is based upon a single `UPDATE` SQL query.
+Each anonymizer adds it own `SET` statements, and a few `JOIN` clauses if necessary.
 
-Enum and multiple-column anonymizers are base implementations for anonymizers
-that use pre-generated sample data lists as source values for anonymizing
-your database. In order to make those efficient, the sample data lists are
-first inserted into a temporary table in database.
+## PHP Query builder
+
+Generating this kind of queries is quiet complexe and mostly impossible without a complete
+and robust SQL query builder.
+
+Our first thought was to use [the DBAL Query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder). But while it is very robust, it
+lacks many features. Features such as update with join which are essential for our
+use case.
+
+Instead, we have decided to re-use one of our tool: the [php-query-builder](https://php-query-builder.readthedocs.io/en/stable).
+
+This query builder let you write SQL queries using a concise and easy to read fluent PHP API
+and [implements a lot of features](https://php-query-builder.readthedocs.io/en/stable/introduction/features.html).
+
+If you want to [create your own anonymizers](./custom-anonymizers), you will problably need to take a look at
+[its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
+
+## Enum Anonymizer optimizations
+
+`AbstractEnumAnonymizer` and `AbstractMultipleColumnAnonymizer` are base implementations
+for anonymizers that use pre-generated sample data lists as source values for anonymizing
+your database.
+
+For those anonymizers, the goal is to create queries that will randomly take, for each
+row, one value from the given sample. Let's see how we have built those to make
+efficient:
+
+The sample data lists are first inserted into a temporary table in database.
 
 Once data is inserted into temporary tables, anonymization will use an SQL
 `JOIN` statement on the anonymizing SQL `UPDATE` query.
@@ -22,12 +47,7 @@ In order to achieve this, the anonymizator will add a **temporary** integer
 column on each target table and populate it using a sequence, that will be
 dropped once anonymization is done.
 
-Some anonymizers will generate their own `SET` statements instead of using
-a sample table join, they are not covered by this documentation page.
-
-## Targeted UPDATE query
-
-### Standard SQL
+### Targeted UPDATE query
 
 Considering that:
 
@@ -57,7 +77,7 @@ LEFT JOIN (
     LIMIT 171224
 ) AS "sample_1"
     -- See note 1: we join over the FROM table, not the target one.
-    -- See note 3: MOD() function usage for joining.    
+    -- See note 3: MOD() function usage for joining.
     ON MOD("_target_table"."_db_tools_id", 589) = "sample_1"."rownum"
 
 LEFT JOIN (
@@ -179,8 +199,3 @@ FROM (
 
 Which is semantically equivalent and solve the table reference shadowing
 issue.
-
-### Other variants
-
-Only PostgreSQL and MySQL are extensively tested for now, other SQL dialects
-will be supported in the future.
