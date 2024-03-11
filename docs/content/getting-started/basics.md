@@ -49,7 +49,7 @@ and downloaded the backup file on your machine.
 You could run `console db-tools:restore` to populate your database from the
 freshly downloaded backup file. But in doing so, you will end up with sensitive
 data on your machine, which is not what you want. First of all, because in most
-cases that's illegal (in UE for example, because of GDPR). Secondly because you
+cases that's illegal (in EU for example, because of GDPR). Secondly because you
 just don't want to know personal data from your (or your client's) customers.
 
 To avoid that, you need a proper **anonymization**.
