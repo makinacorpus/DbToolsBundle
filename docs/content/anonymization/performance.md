@@ -172,6 +172,6 @@ Then, we executed the `db-tools:anonymize` command on different backups. Here ar
 | 100K Customers, 200K Addresses and 1&nbsp;000K Orders | ~24s       | ~25s   | ~1m40s  | ~36m47s
 
 <small>
-**NB**: Each database vendor docker image has been used as is. Without any tweaking.
-This could explain the bad results for MySQL.
+<strong>NB</strong>: Each database vendor docker image has been used as is. Without any tweaking.
+This could explain the bad results for MySQL compare to MariaDb's ones.
 </small>
