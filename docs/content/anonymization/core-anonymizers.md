@@ -294,7 +294,53 @@ class Customer
 # config/anonymization.yaml
 
 customer:
-    sensible_content: null
+    sensible_content: 'null'
+
+#...
+```
+:::
+
+## ConstantAnonymizer
+
+Set all value to `xxxxxx` or a custom value  (with the `value` option).
+
+::: code-group
+```php [Attribute]
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: 'customer')]
+class Customer
+{
+    // ...
+
+    #[ORM\Column]
+    #[Anonymize(type: 'constant')] // [!code ++]
+    private ?string $sensibleContent = null;
+
+    #[ORM\Column]
+    // You can specify a custom value with the `value` option
+    #[Anonymize(type: 'constant', options: ['value' => '_______'])] // [!code ++]
+    private ?string $sensibleContent = null;
+
+    // ...
+}
+```
+
+```yml [YAML]
+# config/anonymization.yaml
+
+customer:
+    sensible_content: constant
+
+customer:
+    # You can specify a custom value with the `value` option
+    sensible_content:
+        type: constant
+        options: {value: '_______'}
 
 #...
 ```
