@@ -302,7 +302,11 @@ customer:
 
 ## ConstantAnonymizer
 
-Set all value to `xxxxxx` or a custom value  (with the `value` option).
+Set all value to a constant value.
+Options are:
+* `value`: the value you want to use to fill the column
+* `type`: a SQL type for the given value
+  (default value is `text`)
 
 ::: code-group
 ```php [Attribute]
@@ -318,12 +322,11 @@ class Customer
     // ...
 
     #[ORM\Column]
-    #[Anonymize(type: 'constant')] // [!code ++]
+    #[Anonymize(type: 'constant', options: ['value' => '_______'])] // [!code ++]
     private ?string $sensibleContent = null;
 
     #[ORM\Column]
-    // You can specify a custom value with the `value` option
-    #[Anonymize(type: 'constant', options: ['value' => '_______'])] // [!code ++]
+    #[Anonymize(type: 'constant', options: ['value' => '2012-12-21', 'type' => 'date'])] // [!code ++]
     private ?string $sensibleContent = null;
 
     // ...
@@ -334,13 +337,14 @@ class Customer
 # config/anonymization.yaml
 
 customer:
-    sensible_content: constant
-
-customer:
-    # You can specify a custom value with the `value` option
     sensible_content:
         type: constant
         options: {value: '_______'}
+
+customer:
+    sensible_content:
+        type: constant
+        options: {value: '2012-12-21', type: 'date'}
 
 #...
 ```

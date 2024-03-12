@@ -13,8 +13,7 @@ use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class ConstantAnonymizerTest extends FunctionalTestCase
 {
-    /** @before */
-    protected function createTestData(): void
+    public function testAnonymize(): void
     {
         $this->createOrReplaceTable(
             'table_test',
@@ -40,16 +39,13 @@ class ConstantAnonymizerTest extends FunctionalTestCase
                 ],
             ],
         );
-    }
 
-    public function testAnonymize(): void
-    {
         $config = new AnonymizationConfig();
         $config->add(new AnonymizerConfig(
             'table_test',
             'data',
             'constant',
-            new Options()
+            new Options(['value' => 'xxxxxx'])
         ));
 
         $anonymizator = new Anonymizator(
@@ -74,14 +70,39 @@ class ConstantAnonymizerTest extends FunctionalTestCase
         $this->assertNull($datas[3]);
     }
 
-    public function testAnonymizeWithCustomValue(): void
+    public function testAnonymizeWithCustomType(): void
     {
+        $this->createOrReplaceTable(
+            'table_test',
+            [
+                'id' => 'integer',
+                'data' => 'integer',
+            ],
+            [
+                [
+                    'id' => '1',
+                    'data' => '52',
+                ],
+                [
+                    'id' => '2',
+                    'data' => '76',
+                ],
+                [
+                    'id' => '3',
+                    'data' => '89',
+                ],
+                [
+                    'id' => '4',
+                ],
+            ],
+        );
+
         $config = new AnonymizationConfig();
         $config->add(new AnonymizerConfig(
             'table_test',
             'data',
             'constant',
-            new Options(['value' => 'testtesttest'])
+            new Options(['value' => '2012', 'type' => 'integer'])
         ));
 
         $anonymizator = new Anonymizator(
@@ -91,7 +112,7 @@ class ConstantAnonymizerTest extends FunctionalTestCase
         );
 
         $this->assertSame(
-            "toto1@example.com",
+            52,
             $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
@@ -100,9 +121,9 @@ class ConstantAnonymizerTest extends FunctionalTestCase
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
-        $this->assertSame('testtesttest', $datas[0]);
-        $this->assertSame('testtesttest', $datas[1]);
-        $this->assertSame('testtesttest', $datas[2]);
+        $this->assertSame(2012, $datas[0]);
+        $this->assertSame(2012, $datas[1]);
+        $this->assertSame(2012, $datas[2]);
         $this->assertNull($datas[3]);
     }
 }
