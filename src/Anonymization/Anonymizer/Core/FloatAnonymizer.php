@@ -31,15 +31,20 @@ class FloatAnonymizer extends AbstractAnonymizer
         $min = $this->options->get('min');
         $precision = 10 ** $this->options->get('precision', 2);
 
+        $randomInt = $this->getRandomIntExpression(
+            (int) \floor($max * $precision),
+            (int) \ceil($min * $precision)
+        );
+
         $expr = $update->expression();
 
         $update->set(
             $this->columnName,
             $this->getSetIfNotNullExpression(
                 $expr->raw(
-                    'cast(floor(?) / ? as float)',
+                    '? / ?',
                     [
-                        $this->getRandomIntExpression($max * $precision, $min * $precision),
+                        $expr->cast($randomInt, 'float'),
                         $expr->cast($precision, 'float'),
                     ]
                 )
