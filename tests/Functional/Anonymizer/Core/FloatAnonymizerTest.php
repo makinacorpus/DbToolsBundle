@@ -74,30 +74,24 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertNotSame(10.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 6));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
         $this->assertNotSame(20.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 6));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
         $this->assertNotSame(30.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 6));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $this->assertNull($datas[3]);
 
@@ -136,10 +130,8 @@ class FloatAnonymizerTest extends FunctionalTestCase
         // so current value should be in [10.5-5.2, 10.5+5.2]
         $this->assertGreaterThanOrEqual(5.3, $data);
         $this->assertLessThanOrEqual(15.7, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 4));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
@@ -147,10 +139,8 @@ class FloatAnonymizerTest extends FunctionalTestCase
         // so current value should be in [20.5-5.2, 20.5+5.2]
         $this->assertGreaterThanOrEqual(15.3, $data);
         $this->assertLessThanOrEqual(25.7, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 4));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
@@ -158,10 +148,8 @@ class FloatAnonymizerTest extends FunctionalTestCase
         // so current value should be in [30.5-5.2, 30.5+5.2]
         $this->assertGreaterThanOrEqual(25.3, $data);
         $this->assertLessThanOrEqual(35.7, $data);
-        // Precision does not work well on SQL server.
-        if (!$connection->getDatabasePlatform() instanceof SQLServerPlatform) {
-            $this->assertSame($data, \round($data, 4));
-        }
+        // Checking precision
+        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
 
         $this->assertNull($datas[3]);
     }
