@@ -30,41 +30,8 @@ It depends on:
   sensitive data, hence, following GDPR recommendations, this **backup file
   should never transit on an unsecured environment**.
 
-Read the next section to learn more about a proper workflow.
+Learn more about a proper workflow in the [dedicated section](./workflow).
 :::
-
-## A GDPR-friendly workflow
-
-Here is an example of workflow - that follows GDPR recommendations - to retrieve anonymized production
-data on your local environment.
-
-### Prerequisites
-
-* You have a second secured environment besides your *production* (such as a preproduction)
-  and you can securely copy files from one to another,
-* You can shut down your service on this second environment,
-* Your anonymization is well configured: every sensitive data has been
-  mapped to an anonymizer that will erase/hash/randomize it.
-
-::: info
-Note that the second environment could be any environment, not only a preproduction. All it needs to work
-is the Symfony Console and a database. It doesn't need to be a complete working env.
-:::
-
-### Workflow
-
-Let's assume the environment we have besides *production* is called *another_env*.
-
-![The GDPR workflow](/public/gdpr-workflow.gif)
-
-0. Run `console db-tools:backup` on *production* environment or
-   choose an existing backup with `console db-tools:restore --list`,
-1. Securely download your backup file from *production* to *another_env* environment,
-   and stop services on *another_env* to ensure no one is using it,
-1. Run `console db-tools:anonymize path/to/your/production/backup` to generate
-   a new backup cleaned from its sensitive data,
-2. Download the anonymized backup from *another_env* to your local machine
-3. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
 ## Options
 

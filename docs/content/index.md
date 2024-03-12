@@ -43,7 +43,7 @@ features:
       dark: '/gdpr-d.svg'
     title: Set up a GDPR-friendly workflow
     details: Make it easier to follow GDPR best practices when importing production dump to other environments.
-    link: /anonymization/command.html#a-gdpr-friendly-workflow
+    link: /anonymization/workflow
   - icon:
       light: '/stats.svg'
       dark: '/stats-d.svg'

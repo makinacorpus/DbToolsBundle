@@ -11,9 +11,9 @@ Each anonymizer adds it own `SET` statements, and a few `JOIN` clauses if necess
 Generating this kind of queries is quiet complexe and mostly impossible without a complete
 and robust SQL query builder.
 
-Our first thought was to use [the DBAL Query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder). But while it is very robust, it
-lacks many features. Features such as update with join which are essential for our
-use case.
+Our first thought was to use [the DBAL Query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder).
+But, while it is very robust, it lacks many features. Features such as
+update with join, which are essential for our use case.
 
 Instead, we have decided to re-use one of our tool: the [php-query-builder](https://php-query-builder.readthedocs.io/en/stable).
 
