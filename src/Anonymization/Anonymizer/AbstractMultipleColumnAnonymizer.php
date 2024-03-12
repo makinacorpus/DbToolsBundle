@@ -90,7 +90,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
             $expr->where()->raw(
                 '? + 1 = ?',
                 [
-                    $expr->mod($this->getJoinColumn(), $sampleCount),
+                    $expr->mod($this->getJoinColumn(), \min($targetCount, $sampleCount)),
                     $expr->column('rownum', $joinAlias),
                 ]
             ),

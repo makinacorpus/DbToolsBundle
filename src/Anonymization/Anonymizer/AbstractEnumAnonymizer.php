@@ -9,7 +9,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 
 /**
  * Can not be use alone, check FrFR/PrenomAnonymizer for an
- * example on how to extends this Anonymizer for your need.
+ * example on how to extend this Anonymizer for your need.
  */
 abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
 {
@@ -67,7 +67,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
                 ->raw(
                     '? + 1 = ?',
                     [
-                        $expr->mod($this->getJoinColumn(), $sampleCount),
+                        $expr->mod($this->getJoinColumn(), \min($targetCount, $sampleCount)),
                         $expr->column('rownum', $joinAlias),
                     ]
                 )
