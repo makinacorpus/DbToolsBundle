@@ -267,7 +267,7 @@ customer:
 
 ## NullAnonymizer
 
-Set all value to `NULL`.
+Set all values to `NULL`.
 
 ::: code-group
 ```php [Attribute]

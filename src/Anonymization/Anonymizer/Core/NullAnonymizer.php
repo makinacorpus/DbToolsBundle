@@ -23,7 +23,7 @@ class NullAnonymizer extends AbstractAnonymizer
         $expr = $update->expression();
         $update->set(
             $this->columnName,
-            $expr->raw('NULL'),
+            $expr->null(),
         );
     }
 }
