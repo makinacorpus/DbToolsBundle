@@ -30,7 +30,7 @@ for anonymizers that use pre-generated sample data lists as source values for an
 your database.
 
 For those anonymizers, the goal is to create queries that will randomly take, for each
-row, one value from the given sample. Let's see how we have built those to make
+row, one value from the given sample. Let's see how we have built those to make them
 efficient:
 
 The sample data lists are first inserted into a temporary table in database.

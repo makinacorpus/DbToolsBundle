@@ -102,7 +102,7 @@ Then, running the anonymization on our local development environment might not b
 We should therefore, for example, perform this task on the preproduction environment.
 
 ::: tip
-[Learn more about a good GDPR-friendly workflow](../anonymization/command#a-gdpr-friendly-workflow).
+[Learn more about a good GDPR-friendly workflow](../anonymization/workflow).
 :::
 
 ```sh
