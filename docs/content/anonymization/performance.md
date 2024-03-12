@@ -30,7 +30,7 @@ We get pretty good results with this approach. And to demonstrate the DbToolsBnu
 capabilities, we created a [benchmark app](https://github.com/DbToolsBundle/benchmark-app).
 
 In this app, you will find a Symfony application that uses 4 different
-DBAL Doctrine connections (SQLite, PostgreSQL, MariaDb and MySQL).
+DBAL Doctrine connections (SQLite, PostgreSQL, MariaDB and MySQL).
 
 For each one of these connections, we defined the same 3 entities : Customer, Address and Order.
 
@@ -159,19 +159,26 @@ class Order
 ```
 :::
 
-Then, we executed the `db-tools:anonymize` command on different backups. Here are the results:
+Then, we executed the `db-tools:anonymize` command on different backups with different
+amount of data.
 
-| Backup description                                    | PostgreSQL | SQLite | MariaDb | MySQL
-|-------------------------------------------------------|------------|--------|---------|---------
-| 100K Customers alone                                  | ~5s        | ~7s    | ~20s    | ~53s
-| 500K Customers alone                                  | ~9s        | ~10s   | ~37s    | ~3m44s
-| 1&nbsp;000K Customers alone                           | ~16s       | ~16s   | ~1m23s  | ~36m56s
-| 200K Addresses alone                                  | ~6s        | ~10s   | ~26s    | ~42s
-| 1&nbsp;000K Orders alone                              | ~16s       | ~11s   | ~1m15s  | ~25m31s
-| 100K Customers and 200K Addresses                     | ~7s        | ~10s   | ~32s    | ~1m16s
-| 100K Customers, 200K Addresses and 1&nbsp;000K Orders | ~24s       | ~25s   | ~1m40s  | ~36m47s
+Here are the results:
+
+| Customer            | Address      | Order               | PostgreSQL | SQLite | MariaDB  | MySQL
+|---------------------|--------------|---------------------|------------|--------|----------|-------
+| 100&nbsp;000        | -            | -                   | 5s         | 7s     | 20s      | 53s
+| 500&nbsp;000        | -            | -                   | 9s         | 10s    | 37s      | 3m 44s
+| 1&nbsp;000&nbsp;000 | -            | -                   | 16s        | 16s    | 1m 23s   | 36m 56s
+| -                   | 200&nbsp;000 | -                   | 6s         | 10s    | 26s      | 42s
+| -                   | -            | 1&nbsp;000&nbsp;000 | 16s        | 11s    | 1m 15s   | 25m 1s
+| 100&nbsp;000        | 200&nbsp;000 | -                   | 7s         | 10s    | 32s      | 1m 16s
+| 100&nbsp;000        | 200&nbsp;000 | 1&nbsp;000&nbsp;000 | 24s        | 25s    | 1m 40s   | 36m 47s
 
 <small>
-<strong>NB</strong>: Each database vendor docker image has been used as is. Without any tweaking.
-This could explain the bad results for MySQL compare to MariaDb's ones.
+<strong>NB1</strong>: The values indicated are approximate and vary slightly each time the command is
+executed. A margin of error of 10% can be assumed.
+</small><br>
+<small>
+<strong>NB2</strong>: Each database vendor docker image has been used as is. Without any tweaking.
+This could explain the bad results for MySQL compare to MariaDB's ones.
 </small>
