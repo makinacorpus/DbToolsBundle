@@ -10,14 +10,17 @@ class ConsoleOutput extends AbstractOutput
 {
     public function __construct(
         private SymfonyOutputInterface $output,
-        int $indentSize = 4,
+        int $indentSize = 2,
     ) {
         parent::__construct($indentSize);
     }
 
-    protected function doWrite(?string $text, int $lineBreak = 0): void
+    protected function doWrite(?string $text, ?array $values = null, int $lineBreak = 0): void
     {
         if ($text) {
+            if ($values) {
+                $text = \sprintf($text, ...$values);
+            }
             if ($this->indentCount) {
                 $lines = \preg_split('/\R/', $text);
                 $indentation = \str_repeat(' ', $this->indentCount * $this->indentSize);

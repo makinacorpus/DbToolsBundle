@@ -6,11 +6,11 @@ namespace MakinaCorpus\DbToolsBundle\Helper\Output;
 
 class NullOutput implements OutputInterface
 {
-    public function write(string $text) : void
+    public function write(string $text, array $values = []): void
     {
     }
 
-    public function writeLine(string $text, int $lineBreak = 1) : void
+    public function writeLine(string $text, array $values = [], int $lineBreak = 1) : void
     {
     }
 
