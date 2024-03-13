@@ -82,13 +82,13 @@ class CleanCommand extends Command
         if (!$force) {
             $tables = $others = [];
 
-            \array_walk($garbage, function ($item) use (&$tables, &$others) {
+            foreach ($garbage as $item) {
                 if ('table' === $item['type']) {
                     $tables[] = $item['name'];
                 } else {
                     $others[] = $item['table'] . '.' . $item['name'];
                 }
-            });
+            }
 
             $io->section("Items that will be deleted");
             $io->text('Tables:');
