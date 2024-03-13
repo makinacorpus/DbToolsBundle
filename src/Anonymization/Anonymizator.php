@@ -201,6 +201,8 @@ class Anonymizator implements LoggerAwareInterface
                     'Exception caught when anonymizing "{table}" table: {error}. (Targets were: "{targets}").',
                     $context + ['error' => $e->getMessage()]
                 );
+
+                throw $e;
             }
             finally {
                 $cleanTimer = $this->startTimer();
