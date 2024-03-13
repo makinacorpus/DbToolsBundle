@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use Doctrine\DBAL\Connection;
+use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 use MakinaCorpus\DbToolsBundle\Helper\Process\ProcessTrait;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Process\Process;
 
 /**
@@ -14,7 +17,7 @@ use Symfony\Component\Process\Process;
  *
  * If no destination is given, creates the backup in system temp directory.
  */
-abstract class AbstractBackupper
+abstract class AbstractBackupper implements LoggerAwareInterface
 {
     use ProcessTrait;
 
@@ -37,6 +40,9 @@ abstract class AbstractBackupper
             \sys_get_temp_dir(),
             (new \DateTimeImmutable())->format('YmdHis')
         );
+
+        $this->logger = new NullLogger();
+        $this->output = new NullOutput();
     }
 
     /**

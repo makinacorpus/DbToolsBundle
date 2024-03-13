@@ -15,7 +15,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -27,7 +26,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
-    private ConsoleLogger $logger;
 
     private string $connectionName;
 
@@ -39,7 +37,7 @@ class AnonymizeCommand extends Command
     private bool $doBackupAndRestoreInitial = true;
     private bool $doCancel = false;
 
-    // Anonmyzation options
+    // Anonymization options
     private ?array $excludedTargets = null;
     private ?array $onlyTargets = null;
     private bool $atOnce = true;
@@ -131,7 +129,6 @@ class AnonymizeCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
-        $this->logger = new ConsoleLogger($this->io);
 
         $this->io->warning([
             'Note that this command should only be used in a secured environment. Following GDPR best ' .
@@ -140,7 +137,6 @@ class AnonymizeCommand extends Command
             'reading the DbToolsBundle documentation: ',
             '> https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/workflow.html',
         ]);
-
 
         $this->doAnonymizeCurrentDatabase = !!$input->getOption('local-database');
 
@@ -255,7 +251,7 @@ class AnonymizeCommand extends Command
 
         $backupper
             ->setDestination($this->initialBackupFilename)
-            ->addLogger($this->logger)
+            ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -280,7 +276,7 @@ class AnonymizeCommand extends Command
             ->restorerFactory
             ->create($this->connectionName)
             ->setBackupFilename($this->backupFilename)
-            ->addLogger($this->logger)
+            ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -305,9 +301,6 @@ class AnonymizeCommand extends Command
 
         if ($this->io->isVerbose()) {
             $anonymizator->setOutput(new ConsoleOutput($this->io));
-        }
-        if (!$anonymizator->hasLogger($this->logger)) {
-            $anonymizator->addLogger($this->logger);
         }
 
         $anonymizator->anonymize($this->excludedTargets, $this->onlyTargets, $this->atOnce);
@@ -336,7 +329,7 @@ class AnonymizeCommand extends Command
 
         $backupper
             ->setDestination($this->backupFilename)
-            ->addLogger($this->logger)
+            ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
@@ -361,7 +354,7 @@ class AnonymizeCommand extends Command
             ->restorerFactory
             ->create($this->connectionName)
             ->setBackupFilename($this->initialBackupFilename)
-            ->addLogger($this->logger)
+            ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;

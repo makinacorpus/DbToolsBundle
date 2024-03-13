@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Helper\Process;
 
-use MakinaCorpus\DbToolsBundle\Helper\Log\ChainLoggerAwareTrait;
+use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Process\Process;
 
 trait ProcessTrait
 {
-    use ChainLoggerAwareTrait;
+    use LoggerAwareTrait;
 
     protected ?Process $process = null;
+    protected ?OutputInterface $output = null;
 
-    public function execute(?float $timeout = null): self
+    public function setOutput(OutputInterface $output): static
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
+    public function execute(?float $timeout = null): static
     {
         $command = $this->buildCommandLine();
 
@@ -24,7 +33,7 @@ trait ProcessTrait
         }
 
         try {
-            $this->process->mustRun($this->logProcessOutput(...));
+            $this->process->mustRun($this->handleProcessOutput(...));
         } finally {
             $this->afterProcess();
         }
@@ -47,11 +56,12 @@ trait ProcessTrait
     }
 
     /**
-     * Log process output.
+     * Handle process output.
      */
-    protected function logProcessOutput(string $type, string $output): void
+    protected function handleProcessOutput(string $type, string $output): void
     {
-        $this->getChainLogger()->info(\rtrim($output, \PHP_EOL));
+        $this->output?->write($output);
+        $this->logger?->info(\rtrim($output, \PHP_EOL));
     }
 
     /**

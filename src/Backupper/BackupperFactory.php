@@ -59,7 +59,7 @@ class BackupperFactory
         \assert($backupper instanceof AbstractBackupper);
 
         if ($this->logger) {
-            $backupper->addLogger($this->logger);
+            $backupper->setLogger($this->logger);
         }
 
         return $backupper;

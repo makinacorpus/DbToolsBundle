@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\LoaderInterface;
-use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use Psr\Log\LoggerInterface;
 
 class AnonymizatorFactory
@@ -52,7 +51,7 @@ class AnonymizatorFactory
         );
 
         if ($this->logger) {
-            $anonymizator->addLogger($this->logger);
+            $anonymizator->setLogger($this->logger);
         }
 
         return $this->anonymizators[$connectionName] = $anonymizator;
