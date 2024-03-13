@@ -91,9 +91,11 @@ class CleanCommand extends Command
             });
 
             $io->section("Items that will be deleted");
-            $io->title('Tables');
+            $io->text('Tables:');
+            $io->newLine();
             $io->listing($tables);
-            $io->title('Columns and indexes');
+            $io->text('Columns and indexes:');
+            $io->newLine();
             $io->listing($others);
 
             if (!$io->confirm("Are you sure you want to drop all these database items?", false)) {
