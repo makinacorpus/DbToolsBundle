@@ -13,40 +13,41 @@ production data on your local environment.
 
 ## Prerequisites
 
-* You have a second secured environment besides your *production* (such as a preproduction)
-  and you can securely copy files from one to another,
-* You can shut down your service on this second environment,
+* You have a second secured environment besides your *production*
+  and you can securely copy files from one to another. We will call
+  it the *intermediate environment*,
+* You can shut down your service on this *intermediate environment*,
 * Your anonymization is well configured: every sensitive data has been
   mapped to an anonymizer that will erase/hash/randomize it.
 
-::: info
-Note that the second environment could be any environment, not only a preproduction. All it needs to work
-is the Symfony Console and a database. It doesn't need to be a complete working env.
-:::
-
 ## The workflow
 
-Let's assume the environment we have besides *production* is called *another_env*.
+Let's assume the environment we have besides *production* is the *preprod* environment.
 
 ![The GDPR workflow](/public/gdpr-workflow.gif)
 
-0. Run `console db-tools:backup` on *production* environment or
+1. Run `console db-tools:backup` on *production* environment or
    choose an existing backup with `console db-tools:restore --list`,
-1. Securely download your backup file from *production* to *another_env* environment,
-   and stop services on *another_env* to ensure no one is using it,
-2. Run `console db-tools:anonymize path/to/your/production/backup` to generate
+2. Securely download your backup file from *production* to *preprod* environment,
+   and stop services on *preprod* to ensure no one is using it,
+3. Run `console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
-3. Download the anonymized backup from *another_env* to your local machine
-4. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
+4. Download the anonymized backup from *preprod* to your local machine
+5. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
-In the illustration above, we take the preproduction as our *another_env*. It is a kind
-of universal use case: there is a preproduction environment in almost all project.
+That's it: you now have fully anonymized data on your local environment. But sensitive
+data *never* passed through an unsecured environment!
+
+### Backup anonymization as a CI job
+
+In the example above, we took the preproduction as our *intermediate environment*: it is a kind
+of universal use case, there is a preproduction environment in almost all project.
 
 But it is important to bear in mind that **you can use whatever secured environment** you want to perform
 step 2.
 
 For example, you can automate this workflow **as a CI job** and therefore use a simple Docker container
-to play the *another_env* role.
+to play the *intermediate environment* role.
 
 This approach has many benefits:
 * You don't need to backup and restore initial state of this environment:
