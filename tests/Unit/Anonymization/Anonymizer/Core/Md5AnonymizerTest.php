@@ -67,7 +67,7 @@ class Md5AnonymizerTest extends UnitTestCase
             <<<SQL
             update "some_table"
             set
-                "some_column" = md5(cast("some_table"."some_column" as varchar))
+                "some_column" = md5("some_table"."some_column")
             SQL,
             $update,
         );

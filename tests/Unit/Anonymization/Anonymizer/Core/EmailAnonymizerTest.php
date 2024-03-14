@@ -171,7 +171,7 @@ class EmailAnonymizerTest extends UnitTestCase
             update "some_table"
             set
                 "email" = case when "some_table"."email" is not null
-                    then #1 || md5(cast("some_table"."email" as varchar)) || #2 || #3
+                    then #1 || md5("some_table"."email") || #2 || #3
                     else null
                 end
             SQL,
