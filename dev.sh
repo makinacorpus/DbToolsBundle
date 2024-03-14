@@ -179,7 +179,7 @@ do_test_sqlsrv2022() {
         -e DBAL_ROOT_PASSWORD=P@ssword123 \
         -e DBAL_ROOT_USER=sa \
         -e DBAL_USER=sa \
-        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
+        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2022&charset=utf8&driverOptions[TrustServerCertificate]=true" \
         phpunit vendor/bin/phpunit $@
 }
 
