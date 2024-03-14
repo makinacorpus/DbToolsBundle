@@ -113,7 +113,7 @@ Once the command has succeeded, `path/to/my_backup.dump` will be fully anonymize
 to download and restore it on your local environment without any security concerns.
 
 ::: info
-We know that a slow anonymization process can be a pain in the ass. That's why a meticulous work has been
+We know that a slow anonymization process can be real pain. That's why a meticulous work has been
 carried out to make this operation as quick as possible.
 
 Thanks to this work, the DbToolsBundle can now **anonymize 1 million rows in less than 20s**!
