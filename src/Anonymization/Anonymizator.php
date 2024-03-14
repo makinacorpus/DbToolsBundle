@@ -167,13 +167,13 @@ class Anonymizator implements LoggerAwareInterface
             }
 
             try {
-                $this->output->writeLine(\sprintf(
+                $this->output->writeLine(
                     ' * table %d/%d: "%s" ("%s")',
                     $count,
                     $total,
                     $table,
                     \implode('", "', $targets)
-                ));
+                );
 
                 $this->output->indent();
                 $this->output->write("- initializing anonymizers...");
@@ -181,7 +181,7 @@ class Anonymizator implements LoggerAwareInterface
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
 
                 $timer = $this->formatTimer($initTimer);
-                $this->output->writeLine(\sprintf('[%s]', $timer));
+                $this->output->writeLine('[%s]', $timer);
 
                 $this->addAnonymizerIdColumn($table);
 
@@ -213,7 +213,7 @@ class Anonymizator implements LoggerAwareInterface
                 $this->removeAnonymizerIdColumn($table);
 
                 $cleanTimer = $this->formatTimer($cleanTimer);
-                $this->output->writeLine(\sprintf('[%s]', $cleanTimer));
+                $this->output->writeLine('[%s]', $cleanTimer);
                 $this->output->writeLine("- total " . $this->formatTimer($initTimer));
                 $this->output->outdent();
 
@@ -237,23 +237,23 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($this->collectGarbage() as $item) {
             switch ($item['type']) {
                 case 'table':
-                    $this->output->writeLine(\sprintf(
+                    $this->output->writeLine(
                         "Dropping table: %s", $item['name']
-                    ));
+                    );
                     $schemaManager->dropTable($item['name']);
                     break;
 
                 case 'column':
-                    $this->output->writeLine(\sprintf(
-                        "Dropping column: %s", $item['table'] . '.' . $item['name']
-                    ));
+                    $this->output->writeLine(
+                        "Dropping column: %s.%s", $item['table'], $item['name']
+                    );
                     $this->dropColumn($item['table'], $item['name']);
                     break;
 
                 case 'index':
-                    $this->output->writeLine(\sprintf(
-                        "Dropping index: %s", $item['table'] . '.' . $item['name']
-                    ));
+                    $this->output->writeLine(
+                        "Dropping index: %s.%s", $item['table'], $item['name']
+                    );
                     $this->dropIndex($item['table'], $item['name']);
                     break;
 
@@ -341,7 +341,7 @@ class Anonymizator implements LoggerAwareInterface
 
         $update->executeStatement();
 
-        $this->output->writeLine(\sprintf('[%s]', $this->formatTimer($timer)));
+        $this->output->writeLine('[%s]', $this->formatTimer($timer));
     }
 
     /**
@@ -360,9 +360,9 @@ class Anonymizator implements LoggerAwareInterface
             $table = $anonymizer->getTableName();
             $target = $anonymizer->getColumnName();
 
-            $this->output->write(\sprintf(
+            $this->output->write(
                 '- anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target
-            ));
+            );
 
             $update = $this->createUpdateQuery($table);
             $anonymizer->anonymize($update);
@@ -370,7 +370,7 @@ class Anonymizator implements LoggerAwareInterface
             $count++;
 
             $timer = $this->formatTimer($timer);
-            $this->output->writeLine(\sprintf('[%s]', $timer));
+            $this->output->writeLine('[%s]', $timer);
 
             $this->logger->info(
                 'Target "{target}" from "{table}" table anonymized ({timer}).',

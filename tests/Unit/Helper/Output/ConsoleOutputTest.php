@@ -36,7 +36,8 @@ class ConsoleOutputTest extends TestCase
             Firstname: %s
             Lastname: %s
             TXT,
-            ['John', 'Doe']
+            'John',
+            'Doe',
         );
         self::assertSame("Firstname: John\nLastname: Doe", $sfOutput->fetch());
     }
@@ -50,9 +51,6 @@ class ConsoleOutputTest extends TestCase
         $output->writeLine('test');
         self::assertSame("test\n", $sfOutput->fetch());
 
-        $output->writeLine('test', [], 4);
-        self::assertSame("test\n\n\n\n", $sfOutput->fetch());
-
         // Multiple lines text.
         $output->writeLine(
             <<<TXT
@@ -63,27 +61,16 @@ class ConsoleOutputTest extends TestCase
         );
         self::assertSame("I will contain\nthree line\nbreaks.\n", $sfOutput->fetch());
 
-        $output->writeLine(
-            <<<TXT
-            I will contain
-            five line
-            breaks.
-            TXT,
-            [],
-            3
-        );
-        self::assertSame("I will contain\nfive line\nbreaks.\n\n\n", $sfOutput->fetch());
-
         // With placeholders.
         $output->writeLine(
             <<<TXT
             Full name: %s
             Age: %d
             TXT,
-            ['John Doe', 30],
-            2
+            'John Doe',
+            30,
         );
-        self::assertSame("Full name: John Doe\nAge: 30\n\n", $sfOutput->fetch());
+        self::assertSame("Full name: John Doe\nAge: 30\n", $sfOutput->fetch());
     }
 
     public function testNewLine(): void
@@ -170,7 +157,8 @@ class ConsoleOutputTest extends TestCase
         // With default indentation size.
         $output = new ConsoleOutput($sfOutput);
         $output->writeLine('Main title');
-        $output->writeLine('==========', [], 2);
+        $output->writeLine('==========');
+        $output->newLine();
         $output->write('A sentence of introduction with a table of contents following.');
         $output->indent();
         $output->newLine(2);
@@ -187,12 +175,13 @@ class ConsoleOutputTest extends TestCase
         $output->writeLine('2. Chapter 2');
         $output->indent();
         foreach ([1, 2] as $index) {
-            $output->writeLine('2.%d. Sub-chapter %1$d', [$index]);
+            $output->writeLine('2.%d. Sub-chapter %1$d', $index);
         }
         $output->outdent(2);
         $output->newLine(2);
         $output->writeLine('1. Chapter 1');
-        $output->writeLine('------------', [], 2);
+        $output->writeLine('------------');
+        $output->newLine();
         $output->write('Lorem ipsum...');
 
         self::assertSame(
@@ -222,7 +211,8 @@ class ConsoleOutputTest extends TestCase
         // With customized indentation size.
         $output = new ConsoleOutput($sfOutput, 4);
         $output->writeLine('Table of contents');
-        $output->writeLine("'''''''''''''''''", [], 2);
+        $output->writeLine("'''''''''''''''''");
+        $output->newLine();
         $output->indent();
         $output->writeLine('1. Chapter 1');
         $output->indent();
@@ -231,10 +221,9 @@ class ConsoleOutputTest extends TestCase
             1.1. Sub-chapter 1
             1.2. Sub-chapter 2
             1.3. Sub-chapter 3
-            TOC,
-            [],
-            2
+            TOC
         );
+        $output->newLine();
         $output->outdent();
         $output->writeLine('2. Chapter 2');
         $output->indent();
@@ -262,6 +251,5 @@ class ConsoleOutputTest extends TestCase
             TXT,
             $sfOutput->fetch()
         );
-
     }
 }
