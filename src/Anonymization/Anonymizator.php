@@ -180,15 +180,15 @@ class Anonymizator implements LoggerAwareInterface
 
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
 
+                $this->addAnonymizerIdColumn($table);
+
                 $timer = $this->formatTimer($initTimer);
                 $this->output->writeLine('[%s]', $timer);
-
-                $this->addAnonymizerIdColumn($table);
 
                 if ($atOnce) {
                     $this->anonymizeTableAtOnce($table, $anonymizers);
                     $this->logger->info(
-                        'Table "{table}" anonymized at once. Targets were: "{targets}" ({timer}).',
+                        'Table "{table}" anonymized. Targets were: "{targets}" ({timer}).',
                         $context + ['timer' => $timer]
                     );
                 }
