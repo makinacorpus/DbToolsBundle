@@ -65,7 +65,7 @@ do_test_mysql57() {
 }
 
 do_test_mysql80() {
-    section_title "Running tests with MySQL 8"
+    section_title "Running tests with MySQL 8.0"
     docker compose -p db_tools_bundle_test exec \
         -e DBAL_DRIVER=pdo_mysql \
         -e DBAL_DBNAME=test_db \
@@ -76,6 +76,21 @@ do_test_mysql80() {
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8 \
+        phpunit vendor/bin/phpunit $@
+}
+
+do_test_mysql83() {
+    section_title "Running tests with MySQL 8.3"
+    docker compose -p db_tools_bundle_test exec \
+        -e DBAL_DRIVER=pdo_mysql \
+        -e DBAL_DBNAME=test_db \
+        -e DBAL_HOST=mysql83 \
+        -e DBAL_PASSWORD=password \
+        -e DBAL_PORT=3306 \
+        -e DBAL_ROOT_PASSWORD=password \
+        -e DBAL_ROOT_USER=root \
+        -e DBAL_USER=root \
+        -e DATABASE_URL=mysql://root:password@mysql83:3306/test_db?serverVersion=8 \
         phpunit vendor/bin/phpunit $@
 }
 
@@ -95,8 +110,11 @@ do_test_mariadb11() {
 }
 
 do_test_mysql() {
-    do_test_mysql57 $@
+    # @todo Temporary deactivated MySQL 5.7 due to a bug.
+    # https://github.com/makinacorpus/DbToolsBundle/issues/124
+    # do_test_mysql57
     do_test_mysql80 $@
+    do_test_mysql83 $@
     do_test_mariadb11 $@
 }
 
@@ -150,8 +168,24 @@ do_test_sqlsrv2019() {
         phpunit vendor/bin/phpunit $@
 }
 
+do_test_sqlsrv2022() {
+    section_title "Running tests with SQL Server 2022"
+    docker compose -p db_tools_bundle_test exec \
+        -e DBAL_DRIVER=pdo_sqlsrv \
+        -e DBAL_DBNAME=test_db \
+        -e DBAL_HOST=sqlsrv2022 \
+        -e DBAL_PASSWORD=P@ssword123 \
+        -e DBAL_PORT=1433 \
+        -e DBAL_ROOT_PASSWORD=P@ssword123 \
+        -e DBAL_ROOT_USER=sa \
+        -e DBAL_USER=sa \
+        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
+        phpunit vendor/bin/phpunit $@
+}
+
 do_test_sqlsrv() {
     do_test_sqlsrv2019 $@
+    do_test_sqlsrv2022 $@
 }
 
 # SQLite version depends upon the PHP embeded version or linked
@@ -172,12 +206,15 @@ do_test_all() {
     do_composer_update
 
     # @todo Temporary deactivated MySQL 5.7 due to a bug.
+    # https://github.com/makinacorpus/DbToolsBundle/issues/124
     # do_test_mysql57
     do_test_mysql80 $@
+    do_test_mysql83 $@
     do_test_mariadb11 $@
     do_test_postgresql10 $@
     do_test_postgresql16 $@
     do_test_sqlsrv2019 $@
+    do_test_sqlsrv2022 $@
     do_test_sqlite $@
 }
 
@@ -187,15 +224,17 @@ do_test_notice() {
     printf "\n"
     printf "\nLaunch this action with one of these available options:"
     printf "\n"
-    printf "\n  - ${GREEN}mysql${NC}: Launch test for MySQL 5.7, MySQL 8.0 & MariaDB 11"
+    printf "\n  - ${GREEN}mysql${NC}: Launch test for MySQL 5.7, 8.0, 8.3 & MariaDB 11"
     printf "\n  - ${GREEN}mysql57${NC}: Launch test for MySQL 5.7"
     printf "\n  - ${GREEN}mysql80${NC}: Launch test for MySQL 8.0"
+    printf "\n  - ${GREEN}mysql83${NC}: Launch test for MySQL 8.3"
     printf "\n  - ${GREEN}mariadb11${NC}: Launch test for MariaDB 11"
     printf "\n  - ${GREEN}postgresql${NC}: Launch test for PostgreSQL 10 & 16"
     printf "\n  - ${GREEN}postgresql10${NC}: Launch test for PostgreSQL 10"
     printf "\n  - ${GREEN}postgresql16${NC}: Launch test for PostgreSQL 16"
-    printf "\n  - ${GREEN}sqlsrv${NC}: Launch test for SQL Server 2019"
+    printf "\n  - ${GREEN}sqlsrv${NC}: Launch test for SQL Server 2019 & 2022"
     printf "\n  - ${GREEN}sqlsrv2019${NC}: Launch test for SQL Server 2019"
+    printf "\n  - ${GREEN}sqlsrv2022${NC}: Launch test for SQL Server 2022"
     printf "\n  - ${GREEN}sqlite${NC}: Launch test for SQLite"
     printf "\n\nYou can then use PHPUnit option as usual:"
     printf "\n${GREEN}./dev.sh test mysql --filter AnonymizatorFactoryTest${NC}"
@@ -208,7 +247,7 @@ do_test() {
     if [[ -n $@ ]];then shift;fi
 
     case $suit in
-        mysql57|mysql80|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv|sqlite) do_composer_update && do_test_$suit "$@";;
+        mysql57|mysql80|mysql83|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv2022|sqlsrv|sqlite) do_composer_update && do_test_$suit "$@";;
         *) do_test_notice;;
     esac
 }
