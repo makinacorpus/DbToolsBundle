@@ -4,11 +4,11 @@ Fully supported database vendors are:
 
 - PostgreSQL 10 and above
   <br><small>(previous versions from 9.5 are untested but should work)</small>
+- MariaDB 10.11 and above
 - MySQL 8.0 and above
 
 Partially supported database vendors are:
 
-- MariaDB 10.11 and above
 - SQlite 3.0 and above
 - SQL Server 2019 and above
   <br><small>(previous versions from 2015 are untested but should work)</small>
@@ -29,6 +29,6 @@ Here is a matrix of the current state of support:
 | MySQL    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | MariaDB    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> | <Badge type="tip" text="✔" title="Working"/> |
 | SQLite    |  <Badge type="tip" text="✔" title="Working"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
-| SQL Server    |  <Badge type="danger" text="✘" title="Unsupported"/> | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
+| SQL Server    |  <Badge type="danger" text="✘" title="Unsupported"/> (<a target="_blank" href="https://github.com/makinacorpus/DbToolsBundle/issues/61">see issue</a>) | <Badge type="warning" text="~" title="Only unit-tested"/> | <Badge type="danger" text="✘" title="Unsupported"/> |
 
 <Badge type="tip" text="✔" /> Working - <Badge type="warning" text="~" /> Only unit-tested - <Badge type="danger" text="✘" /> Unsupported

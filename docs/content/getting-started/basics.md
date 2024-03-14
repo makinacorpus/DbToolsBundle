@@ -48,17 +48,19 @@ and downloaded the backup file on your machine.
 
 You could run `console db-tools:restore` to populate your database from the
 freshly downloaded backup file. But in doing so, you will end up with sensitive
-data on your machine, which is not what you want. First of all, because in most
-cases that's illegal (in EU for example, because of GDPR). Secondly because you
-just don't want to know personal data from your (or your client's) customers.
+data on your machine, which is not what you want:
+* First of all, because in most cases that's **illegal**
+  (in UE for example, because of **GDPR**).
+* Secondly because you just don't want to know personal data from your
+  clients or your client's clients.
 
 To avoid that, you need a proper **anonymization**.
 
 As it could be tricky and time-consuming to try to nicely anonymize data:
 the *DbToolsBundle* get rid of that for you.
 
-By adding some PHP attributes on your Doctrine Entities, you can easily
-configure a complete anonymization for your sensitive data.
+With the DbToolsBundle, by adding some PHP attributes on your Doctrine Entities,
+you can easily configure a complete anonymization for your sensitive data.
 
 ::: info
 Anonymization does not only work with Doctrine Entities. You can use it with
@@ -95,19 +97,28 @@ all the user email addresses it contains will be replaced with hashed ones.
 Learn more about how to configure Anonymization in the [dedicated section](../anonymization/essentials).
 :::
 
-According to GDPR recommendations, sensitive data should never transit on an unsecured environment.
+According to GDPR recommendations, **sensitive data should never transit on an unsecured environment**.
 Then, running the anonymization on our local development environment might not be compliant.
 We should therefore, for example, perform this task on the preproduction environment.
+
+::: tip
+[Learn more about a good GDPR-friendly workflow](../anonymization/workflow).
+:::
 
 ```sh
 console db-tools:anonymize path/to/my_backup.dump
 ```
 
-You now have a fully anonymized backup file that you can download and restore on your local
-environment.
+Once the command has succeeded, `path/to/my_backup.dump` will be fully anonymized. You will be free
+to download and restore it on your local environment without any security concerns.
 
-::: tip
-[Learn more about a good GDPR-friendly workflow](../anonymization/command#a-gdpr-friendly-workflow).
+::: info
+We know that a slow anonymization process can be real pain. That's why a meticulous work has been
+carried out to make this operation as quick as possible.
+
+Thanks to this work, the DbToolsBundle can now **anonymize 1 million rows in less than 20s**!
+
+Learn more about performance in the [dedicated section](../anonymization/performance).
 :::
 
 ## Use case 3 - Getting basic stats on your database without proper monitoring

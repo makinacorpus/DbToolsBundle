@@ -41,6 +41,12 @@ You can tell the *DbToolsBundle* your *Custom Anonymizers* live in a different d
 with the [*Anonymizer paths* configuration](../configuration#anonymizer-paths).
 :::
 
+::: tip
+To generate its update queries, the *DbToolsBundle* uses the *[makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package*.
+If you want to create your own anonymizers, you will problably need to take a look at
+[its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
+:::
+
 ## Enum Anonymizers
 
 A classic need is to anonymize a column filling it with a random value from a large sample.
