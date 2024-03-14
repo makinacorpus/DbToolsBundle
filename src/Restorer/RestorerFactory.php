@@ -59,7 +59,7 @@ class RestorerFactory
         \assert($restorer instanceof AbstractRestorer);
 
         if ($this->logger) {
-            $restorer->addLogger($this->logger);
+            $restorer->setLogger($this->logger);
         }
 
         return $restorer;

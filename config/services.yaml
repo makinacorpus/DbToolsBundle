@@ -90,4 +90,8 @@ services:
         arguments: ['%kernel.project_dir%', '%db_tools.anonymization.anonymizer.paths%']
     db_tools.anonymization.anonymizator.factory:
         class: MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory
-        arguments: ['@doctrine', '@db_tools.anonymization.anonymizer.registry']
+        arguments:
+            - '@doctrine'
+            - '@db_tools.anonymization.anonymizer.registry'
+            - '@logger'
+        tags: [{ name: monolog.logger, channel: db_tools_anonymization }]

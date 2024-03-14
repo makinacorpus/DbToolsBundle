@@ -64,8 +64,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
             (float) $connection->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        $anonymizator->anonymize();
 
         $datas = $connection->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
@@ -119,8 +118,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
             (float) $connection->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        $anonymizator->anonymize();
 
         $datas = $connection->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
@@ -175,8 +173,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
             (float) $connection->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        $anonymizator->anonymize();
 
         $datas = $connection->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 

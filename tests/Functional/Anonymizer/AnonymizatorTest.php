@@ -93,9 +93,7 @@ class AnonymizatorTest extends FunctionalTestCase
 
         $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), $config);
         $anonymizator->addAnonymizerIdColumn('table_test');
-
-        foreach ($anonymizator->anonymize() as $message) {
-        }
+        $anonymizator->anonymize();
 
         self::expectNotToPerformAssertions();
     }

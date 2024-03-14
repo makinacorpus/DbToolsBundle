@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
 use Doctrine\DBAL\Connection;
-use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
-use MakinaCorpus\DbToolsBundle\Process\CommandLine;
+use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
+use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
+use MakinaCorpus\DbToolsBundle\Helper\Process\ProcessTrait;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Process\Process;
 
 /**
  * Restore a backup file.
  */
-abstract class AbstractRestorer
+abstract class AbstractRestorer implements LoggerAwareInterface
 {
     use ProcessTrait;
 
@@ -28,6 +31,8 @@ abstract class AbstractRestorer
         ?string $defaultOptions = null,
     ) {
         $this->defaultOptions = $defaultOptions ?? $this->getBuiltinDefaultOptions();
+        $this->logger = new NullLogger();
+        $this->output = new NullOutput();
     }
 
     /**

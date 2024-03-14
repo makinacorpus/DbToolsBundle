@@ -19,18 +19,30 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
+use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
+use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Platform;
 use MakinaCorpus\QueryBuilder\Query\Update;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-class Anonymizator
+class Anonymizator implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    private OutputInterface $output;
+
     public function __construct(
         private Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
-    ) {}
+    ) {
+        $this->logger = new NullLogger();
+        $this->output = new NullOutput();
+    }
 
     /**
      * Count tables.
@@ -40,14 +52,24 @@ class Anonymizator
         return $this->anonymizationConfig->count();
     }
 
-    protected function getSalt(): string
+    /**
+     * Set the output handler.
+     */
+    public function setOutput(OutputInterface $output): self
     {
-        return $this->salt ??= self::generateRandomSalt();
+        $this->output = $output;
+
+        return $this;
     }
 
     public static function generateRandomSalt(): string
     {
         return \base64_encode(\random_bytes(12));
+    }
+
+    protected function getSalt(): string
+    {
+        return $this->salt ??= self::generateRandomSalt();
     }
 
     protected function getQueryBuilder(): DoctrineQueryBuilder
@@ -79,26 +101,23 @@ class Anonymizator
     /**
      * Anonymize all configured database tables.
      *
-     * @param null|array<string> $excludedTargets
+     * @param null|string[] $excludedTargets
      *   Exclude targets:
      *     - "TABLE_NAME" for a complete table,
      *     - "TABLE_NAME.TARGET_NAME" for a single table column.
-     * @param null|array<string> $onlyTargets
+     * @param null|string[] $onlyTargets
      *   Filter and proceed only those targets:
      *     - "TABLE_NAME" for a complete table,
      *     - "TABLE_NAME.TARGET_NAME" for a single table column.
      * @param bool $atOnce
      *   If set to false, there will be one UPDATE query per anonymizer, if set
      *   to true a single UPDATE query for anonymizing all at once will be done.
-     *
-     * @return \Generator<string>
-     *   Progression messages.
      */
     public function anonymize(
         ?array $excludedTargets = null,
         ?array $onlyTargets = null,
         bool $atOnce = true
-    ): \Generator {
+    ): void {
 
         if ($excludedTargets && $onlyTargets) {
             throw new \InvalidArgumentException("\$excludedTargets and \$onlyTargets are mutually exclusive.");
@@ -109,7 +128,7 @@ class Anonymizator
         if ($onlyTargets) {
             foreach ($onlyTargets as $targetString) {
                 if (\str_contains($targetString, '.')) {
-                    list($table, $target) = \explode('.', $targetString, 2);
+                    [$table, $target] = \explode('.', $targetString, 2);
                     $plan[$table][] = $target; // Avoid duplicates.
                 } else {
                     $plan[$targetString] = [];
@@ -133,6 +152,12 @@ class Anonymizator
         $count = 1;
 
         foreach ($plan as $table => $targets) {
+            // Base context for logging.
+            $context = [
+                'table' => $table,
+                'targets' => \implode('", "', $targets),
+            ];
+
             $initTimer = $this->startTimer();
 
             // Create anonymizer array prior running the anonymisation.
@@ -142,28 +167,60 @@ class Anonymizator
             }
 
             try {
-                yield \sprintf(' * table %d/%d: "%s" ("%s")', $count, $total, $table, \implode('", "', $targets));
-                yield "   - initializing anonymizers...";
+                $this->output->writeLine(
+                    ' * table %d/%d: "%s" ("%s")',
+                    $count,
+                    $total,
+                    $table,
+                    \implode('", "', $targets)
+                );
+
+                $this->output->indent();
+                $this->output->write("- initializing anonymizers...");
+
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
-                yield $this->printTimer($initTimer);
 
                 $this->addAnonymizerIdColumn($table);
 
+                $timer = $this->formatTimer($initTimer);
+                $this->output->writeLine('[%s]', $timer);
+
                 if ($atOnce) {
-                    yield from $this->anonymizeTableAtOnce($table, $anonymizers);
-                } else {
-                    yield from $this->anonymizeTablePerColumn($table, $anonymizers);
+                    $this->anonymizeTableAtOnce($table, $anonymizers);
+                    $this->logger->info(
+                        'Table "{table}" anonymized. Targets were: "{targets}" ({timer}).',
+                        $context + ['timer' => $timer]
+                    );
                 }
-            } finally {
+                else {
+                    $this->anonymizeTablePerColumn($table, $anonymizers);
+                }
+            }
+            catch (\Throwable $e) {
+                $this->logger->error(
+                    'Exception caught when anonymizing "{table}" table: {error}. (Targets were: "{targets}").',
+                    $context + ['error' => $e->getMessage()]
+                );
+
+                throw $e;
+            }
+            finally {
                 $cleanTimer = $this->startTimer();
-                // Cleanup everything, even in case of any error.
-                yield "   - cleaning anonymizers...";
+                // Clean up everything, even in case of any error.
+                $this->output->write("- cleaning anonymizers...");
                 \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->clean());
 
                 $this->removeAnonymizerIdColumn($table);
 
-                yield $this->printTimer($cleanTimer);
-                yield '   - total ' . $this->printTimer($initTimer);
+                $cleanTimer = $this->formatTimer($cleanTimer);
+                $this->output->writeLine('[%s]', $cleanTimer);
+                $this->output->writeLine("- total " . $this->formatTimer($initTimer));
+                $this->output->outdent();
+
+                $this->logger->info(
+                    'Clean-up performed after anonymizing "{table}" table ({timer}).',
+                    $context + ['timer' => $cleanTimer]
+                );
             }
 
             $count++;
@@ -171,40 +228,108 @@ class Anonymizator
     }
 
     /**
-     * Forcefuly clean all left-over temporary tables.
-     *
-     * This method could be dangerous if you have table names whose name matches
-     * the temporary tables generated by this bundle, hence the dry run mode
-     * being the default.
-     *
-     * This method yields all symbol names that will be dropped from the database.
+     * Forcefully clean all leftover temporary tables, columns and indexes.
      */
-    public function clean(bool $dryRun = true): \Generator
+    public function clean(): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
-        foreach ($schemaManager->listTableNames() as $tableName) {
-            if (\str_starts_with($tableName, AbstractAnonymizer::TEMP_TABLE_PREFIX)) {
+        foreach ($this->collectGarbage() as $item) {
+            switch ($item['type']) {
+                case 'table':
+                    $this->output->writeLine(
+                        "Dropping table: %s", $item['name']
+                    );
+                    $schemaManager->dropTable($item['name']);
+                    break;
 
-                yield \sprintf("table: %s", $tableName);
+                case 'column':
+                    $this->output->writeLine(
+                        "Dropping column: %s.%s", $item['table'], $item['name']
+                    );
+                    $this->dropColumn($item['table'], $item['name']);
+                    break;
 
-                if (!$dryRun) {
-                    $schemaManager->dropTable($tableName);
-                }
-            } else {
-                if (!$dryRun) {
-                    $this->removeAnonymizerIdColumn($tableName);
-                }
+                case 'index':
+                    $this->output->writeLine(
+                        "Dropping index: %s.%s", $item['table'], $item['name']
+                    );
+                    $this->dropIndex($item['table'], $item['name']);
+                    break;
+
+                default:
+                    throw new \DomainException(\sprintf(
+                        'Unsupported "%s" structure type.', $item['type']
+                    ));
             }
         }
     }
 
     /**
+     *
+     * @return array<array<string, string>>
+     *   Each item is an array structured as such:
+     *   [
+     *     'type' => 'table' / 'column' / 'index',
+     *     'name' => 'table_column_or_index_name',
+     *     'table' => 'table_name' (only for columns and indexes)
+     *   ]
+     */
+    public function collectGarbage(): array
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+        $garbage = [];
+
+        foreach ($schemaManager->listTableNames() as $tableName) {
+            if (\str_starts_with($tableName, AbstractAnonymizer::TEMP_TABLE_PREFIX)) {
+                $garbage[] = ['type' => 'table', 'name' => $tableName];
+            } else {
+                $garbage = \array_merge($garbage, $this->collectGarbageInto($tableName));
+            }
+        }
+
+        return $garbage;
+    }
+
+    protected function collectGarbageInto(string $table): array
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+        $garbage = [];
+
+        // List indexes to remove before columns to avoid problems with
+        // SQL Server which doesn't support to drop a column still used
+        // by an index.
+        foreach ($schemaManager->listTableIndexes($table) as $index) {
+            \assert($index instanceof Index);
+            if (AbstractAnonymizer::JOIN_ID_INDEX === $index->getName()) {
+                $garbage[] = [
+                    'type' => 'index',
+                    'name' => $index->getName(),
+                    'table' => $table,
+                ];
+            }
+        }
+
+        foreach ($schemaManager->listTableColumns($table) as $column) {
+            \assert($column instanceof Column);
+            if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
+                $garbage[] = [
+                    'type' => 'column',
+                    'name' => $column->getName(),
+                    'table' => $table,
+                ];
+            }
+        }
+
+        return $garbage;
+    }
+
+    /**
      * Anonymize a single database table using a single UPDATE query for each.
      */
-    protected function anonymizeTableAtOnce(string $table, array $anonymizers): \Generator
+    protected function anonymizeTableAtOnce(string $table, array $anonymizers): void
     {
-        yield '   - anonymizing...';
+        $this->output->write("- anonymizing...");
 
         $timer = $this->startTimer();
         $update = $this->createUpdateQuery($table);
@@ -216,13 +341,13 @@ class Anonymizator
 
         $update->executeStatement();
 
-        yield $this->printTimer($timer);
+        $this->output->writeLine('[%s]', $this->formatTimer($timer));
     }
 
     /**
      * Anonymize a single database table using one UPDATE query per target.
      */
-    protected function anonymizeTablePerColumn(string $table, array $anonymizers): \Generator
+    protected function anonymizeTablePerColumn(string $table, array $anonymizers): void
     {
         $total = \count($anonymizers);
         $count = 1;
@@ -235,14 +360,26 @@ class Anonymizator
             $table = $anonymizer->getTableName();
             $target = $anonymizer->getColumnName();
 
-            yield \sprintf('   - anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target);
+            $this->output->write(
+                '- anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target
+            );
 
             $update = $this->createUpdateQuery($table);
             $anonymizer->anonymize($update);
             $update->executeStatement();
             $count++;
 
-            yield $this->printTimer($timer);
+            $timer = $this->formatTimer($timer);
+            $this->output->writeLine('[%s]', $timer);
+
+            $this->logger->info(
+                'Target "{target}" from "{table}" table anonymized ({timer}).',
+                [
+                    'table' => $table,
+                    'target' => $target,
+                    'timer' => $timer,
+                ]
+            );
         }
     }
 
@@ -250,7 +387,6 @@ class Anonymizator
     {
         $builder = $this->getQueryBuilder();
         $update = $builder->update($table);
-
         $expr = $update->expression();
 
         // Add target table a second time into the FROM statement of the
@@ -267,9 +403,8 @@ class Anonymizator
             //     JOIN bar ON bar.id = foo_2.id
             //     WHERE foo.id = foo_2.id
             //
-            // Except for SQL Server, which cannot deambiguate the foo table
-            // reference in the WHERE clause, so we have to write it this
-            // way:
+            // Except for SQL Server, which cannot disambiguate the foo table
+            // reference in the WHERE clause, so we have to write it this way:
             //
             //     UPDATE foo
             //     SET val = bar.val
@@ -328,7 +463,7 @@ class Anonymizator
         return \hrtime(true);
     }
 
-    protected function printTimer(null|int|float $timer): string
+    protected function formatTimer(null|int|float $timer): string
     {
         if (null === $timer) {
             return 'N/A';
@@ -342,9 +477,9 @@ class Anonymizator
     }
 
     /**
-     * This method will add a anonymizer identifier as a serial column on the
+     * This method will add an anonymizer identifier as a serial column on the
      * table to anonymize: having a serial will allow UPDATE "target_table" FROM
-     * "sample_table" statements for injecting data randomly by joining over
+     * "sample_table" statements to inject data randomly by joining over
      * ROW_NUMBER() using this serial column.
      *
      * @internal
@@ -408,36 +543,30 @@ class Anonymizator
     }
 
     /**
-     * Remote anonymizer identifier column.
+     * Remove anonymizer identifier column.
      */
-    protected function removeAnonymizerIdColumn(string $tableName): void
+    protected function removeAnonymizerIdColumn(string $table): void
     {
-        $schemaManager = $this->connection->createSchemaManager();
-
-        // Remove index first, this solves problems with SQL Server, since
-        // it doesn't support dropping a column while an index exists.
-        foreach ($schemaManager->listTableIndexes($tableName) as $index) {
-            \assert($index instanceof Index);
-
-            if (AbstractAnonymizer::JOIN_ID_INDEX === $index->getName()) {
-                $this->dropIndex($tableName, $index->getName());
+        foreach ($this->collectGarbageInto($table) as $item) {
+            if ('column' === $item['type']) {
+                $this->dropColumn($item['table'], $item['name']);
             }
-        }
-
-        foreach ($schemaManager->listTableColumns($tableName) as $column) {
-            \assert($column instanceof Column);
-
-            if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
-                $this->dropColumn($tableName, $column->getName());
+            elseif ('index' === $item['type']) {
+                $this->dropIndex($item['table'], $item['name']);
+            }
+            else {
+                throw new \DomainException(\sprintf(
+                    'Unsupported "%s" structure type.', $item['type']
+                ));
             }
         }
     }
 
     /**
      * We are adding an arbitrary integer based identity column, MySQL only
-     * support this using AUTO_INCREMENT, and it can only exist one per table.
+     * supports this using AUTO_INCREMENT, and it can only exist one per table.
      *
-     * Because we don't known anything about the target table, we can't add an
+     * Because we don't know anything about the target table, we can't add an
      * AUTO_INCREMENT, we are else going to create a BIGINT colum, which default
      * value is NULL, and populate it using a custom function that creates as
      * sequence.
@@ -453,7 +582,7 @@ class Anonymizator
      * All other RDBMS should be fine with more than one identity columns per
      * table.
      */
-    protected function addAnonymizerIdColumnMySql(string $table)
+    protected function addAnonymizerIdColumnMySql(string $table): void
     {
         $schemaManager = $this->connection->createSchemaManager();
         $platform = $this->connection->getDatabasePlatform();
@@ -569,7 +698,7 @@ class Anonymizator
      * column, we need to manually create a sequence. It's much easier than
      * MySQL thought.
      */
-    protected function addAnonymizerIdColumnSqlServer(string $table)
+    protected function addAnonymizerIdColumnSqlServer(string $table): void
     {
         $platform = $this->connection->getDatabasePlatform();
         $queryBuilder = $this->getQueryBuilder();

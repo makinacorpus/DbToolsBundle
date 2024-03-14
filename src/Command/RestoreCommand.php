@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Command;
 
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
+use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
@@ -12,7 +13,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -164,7 +164,7 @@ class RestoreCommand extends Command
             ->setBackupFilename($this->backupFilename)
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
-            ->addLogger(new ConsoleLogger($this->io))
+            ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
             ->execute()
         ;
