@@ -17,13 +17,23 @@ services:
         networks:
             - db-tools-test
     mysql80:
-        image: mysql:8
+        image: mysql:8.0
         restart: 'no'
         environment:
             MYSQL_DATABASE: test_db
             MYSQL_ROOT_PASSWORD: password
         ports:
             - 9502:3306
+        networks:
+            - db-tools-test
+    mysql83:
+        image: mysql:8.3
+        restart: 'no'
+        environment:
+            MYSQL_DATABASE: test_db
+            MYSQL_ROOT_PASSWORD: password
+        ports:
+            - 9508:3306
         networks:
             - db-tools-test
     mariadb11:
@@ -64,6 +74,18 @@ services:
             SA_PASSWORD: P@ssword123
         ports:
             - 9506:1433
+        networks:
+            - db-tools-test
+    sqlsrv2022:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        restart: unless-stopped
+        environment:
+            ACCEPT_EULA: "y"
+            MSSQL_PID: Developer
+            MSSQL_SA_PASSWORD: P@ssword123
+            SA_PASSWORD: P@ssword123
+        ports:
+            - 9507:1433
         networks:
             - db-tools-test
 
