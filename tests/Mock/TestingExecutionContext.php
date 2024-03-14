@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Mock;
 
+use RuntimeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -64,7 +65,7 @@ class TestingExecutionContext implements ExecutionContextInterface
      */
     public function getValidator(): ValidatorInterface
     {
-        throw new \RuntimeException("Testing execution context does not allow this.");
+        throw new RuntimeException("Testing execution context does not allow this.");
     }
 
     /**

@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Storage;
 
+use Override;
+use DateTimeImmutable;
 class DefaultFilenameStrategy extends AbstractFilenameStrategy
 {
-    #[\Override]
+    #[Override]
     public function generateFilename(
         string $connectionName = 'default',
         string $extension = 'sql',
         bool $anonymized = false
     ): string {
-        $now = new \DateTimeImmutable();
+        $now = new DateTimeImmutable();
 
         return \sprintf(
             '%s/%s/%s%s-%s.%s',

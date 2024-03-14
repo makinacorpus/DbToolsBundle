@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Config;
 
+use InvalidArgumentException;
 class AnonymizationConfig
 {
     /** @var array<string, array<string, AnonymizerConfig>> */
@@ -40,7 +41,7 @@ class AnonymizationConfig
      */
     public function getTableConfig(string $table, ?array $filteredTargets = null): array
     {
-        $config = $this->tableConfigs[$table] ?? throw new \InvalidArgumentException(\sprintf(
+        $config = $this->tableConfigs[$table] ?? throw new InvalidArgumentException(\sprintf(
             "Table '%s' does not exist in configuration",
             $table
         ));
@@ -48,7 +49,7 @@ class AnonymizationConfig
         if ($filteredTargets) {
             $ret = [];
             foreach ($filteredTargets as $target) {
-                $ret[$target] = $config[$target] ?? throw new \InvalidArgumentException(\sprintf(
+                $ret[$target] = $config[$target] ?? throw new InvalidArgumentException(\sprintf(
                     "Target '%s'.'%s' does not exist in configuration",
                     $table,
                     $target

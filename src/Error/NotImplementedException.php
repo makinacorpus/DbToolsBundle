@@ -4,7 +4,8 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Error;
 
-class NotImplementedException extends \InvalidArgumentException
+use InvalidArgumentException;
+class NotImplementedException extends InvalidArgumentException
 {
     /**
      * Console exit status code when command fail with this exception.

@@ -4,6 +4,8 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Storage;
 
+use Datetime;
+use DateTimeImmutable;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -45,12 +47,12 @@ class Storage
             ->sortByName()
         ;
 
-        $expirationDate = new \Datetime($this->expirationAge);
+        $expirationDate = new Datetime($this->expirationAge);
         $list = [];
 
         foreach ($finder as $file) {
-            $lastModified = new \Datetime(\date("Y-m-d H:i:s", \filemtime((string) $file)));
-            $age = $lastModified->diff(new \DateTimeImmutable(''));
+            $lastModified = new Datetime(\date("Y-m-d H:i:s", \filemtime((string) $file)));
+            $age = $lastModified->diff(new DateTimeImmutable(''));
 
             if (!$onlyExpired || ($lastModified < $expirationDate)) {
                 if ($file !== $preserveFile) {

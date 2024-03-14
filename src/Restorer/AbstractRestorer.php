@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use RuntimeException;
 use Doctrine\DBAL\Connection;
 use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
@@ -39,7 +40,7 @@ abstract class AbstractRestorer
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(\sprintf(
+            throw new RuntimeException(\sprintf(
                 'Error while running "%s" command, check configuration for binary "%s".',
                 $process->getCommandLine(),
                 $this->binary,

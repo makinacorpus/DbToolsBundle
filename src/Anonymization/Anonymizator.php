@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
+use Generator;
+use InvalidArgumentException;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
@@ -91,17 +93,17 @@ class Anonymizator
      *   If set to false, there will be one UPDATE query per anonymizer, if set
      *   to true a single UPDATE query for anonymizing all at once will be done.
      *
-     * @return \Generator<string>
+     * @return Generator<string>
      *   Progression messages.
      */
     public function anonymize(
         ?array $excludedTargets = null,
         ?array $onlyTargets = null,
         bool $atOnce = true
-    ): \Generator {
+    ): Generator {
 
         if ($excludedTargets && $onlyTargets) {
-            throw new \InvalidArgumentException("\$excludedTargets and \$onlyTargets are mutually exclusive.");
+            throw new InvalidArgumentException("\$excludedTargets and \$onlyTargets are mutually exclusive.");
         }
 
         $plan = [];
@@ -179,7 +181,7 @@ class Anonymizator
      *
      * This method yields all symbol names that will be dropped from the database.
      */
-    public function clean(bool $dryRun = true): \Generator
+    public function clean(bool $dryRun = true): Generator
     {
         $schemaManager = $this->connection->createSchemaManager();
 
@@ -202,7 +204,7 @@ class Anonymizator
     /**
      * Anonymize a single database table using a single UPDATE query for each.
      */
-    protected function anonymizeTableAtOnce(string $table, array $anonymizers): \Generator
+    protected function anonymizeTableAtOnce(string $table, array $anonymizers): Generator
     {
         yield '   - anonymizing...';
 
@@ -222,7 +224,7 @@ class Anonymizator
     /**
      * Anonymize a single database table using one UPDATE query per target.
      */
-    protected function anonymizeTablePerColumn(string $table, array $anonymizers): \Generator
+    protected function anonymizeTablePerColumn(string $table, array $anonymizers): Generator
     {
         $total = \count($anonymizers);
         $count = 1;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class MysqlBackupper extends AbstractBackupper
@@ -53,7 +54,7 @@ class MysqlBackupper extends AbstractBackupper
         return 'sql';
     }
 
-    #[\Override]
+    #[Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '--no-tablespaces';

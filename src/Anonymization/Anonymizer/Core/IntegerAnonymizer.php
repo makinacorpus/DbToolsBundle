@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\Query\Update;
@@ -30,26 +31,26 @@ class IntegerAnonymizer extends AbstractAnonymizer
             $min = (int) $this->options->get('min');
             $max = (int) $this->options->get('max');
             if ($min >= $max) {
-                throw new \InvalidArgumentException("'max' should be greater than 'min'.");
+                throw new InvalidArgumentException("'max' should be greater than 'min'.");
             }
 
             $this->anonymizeWithMinAndMax($update, $min, $max);
         } elseif ($this->options->has('delta')) {
             $delta = (int) $this->options->get('delta');
             if ($delta <= 0) {
-                throw new \InvalidArgumentException("'delta' should be greater than 0.");
+                throw new InvalidArgumentException("'delta' should be greater than 0.");
             }
 
             $this->anonymizeWithDelta($update, $delta);
         } elseif ($this->options->has('percent')) {
             $percent = (int) $this->options->get('percent');
             if ($percent <= 0) {
-                throw new \InvalidArgumentException("'percent' should be greater than 0.");
+                throw new InvalidArgumentException("'percent' should be greater than 0.");
             }
 
             $this->anonymizeWithPercent($update, $percent);
         } else {
-            throw new \InvalidArgumentException("You should provide options with this anonymizer: both min and max, or either delta or percent.");
+            throw new InvalidArgumentException("You should provide options with this anonymizer: both min and max, or either delta or percent.");
         }
     }
 

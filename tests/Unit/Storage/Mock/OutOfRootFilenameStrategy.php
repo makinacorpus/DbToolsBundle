@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Storage\Mock;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
 
 class OutOfRootFilenameStrategy implements FilenameStrategyInterface
@@ -12,7 +13,7 @@ class OutOfRootFilenameStrategy implements FilenameStrategyInterface
         private string $rootDir,
     ) {}
 
-    #[\Override]
+    #[Override]
     public function generateFilename(
         string $connectionName = 'default',
         string $extension = 'sql',
@@ -21,7 +22,7 @@ class OutOfRootFilenameStrategy implements FilenameStrategyInterface
         return $connectionName . '.' . $extension;
     }
 
-    #[\Override]
+    #[Override]
     public function getRootDir(
         string $defaultRootDir,
         string $connectionName = 'default',

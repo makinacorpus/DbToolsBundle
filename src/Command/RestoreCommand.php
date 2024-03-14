@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command;
 
+use RuntimeException;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
@@ -137,13 +138,13 @@ class RestoreCommand extends Command
         if ('prod' == $input->getOption('env')) {
             $this->io->caution("You are in PROD, your action will destroy ALL actual production data!");
             if (!$this->force && !$input->getOption('yes-i-am-sure-of-what-i-am-doing')) {
-                throw new \RuntimeException('If you want to run this command in production, use --yes-i-am-sure-of-what-i-am-doing option');
+                throw new RuntimeException('If you want to run this command in production, use --yes-i-am-sure-of-what-i-am-doing option');
             }
             if (!$this->force && !$this->io->confirm("You are going to restore a database in production, are you sure you want to continue?!", false)) {
-                throw new \RuntimeException('Action cancelled');
+                throw new RuntimeException('Action cancelled');
             } else {
                 if (!$this->force && !$this->io->confirm("Well, this is dangerous, you confirm you want to restore a database in production ?", false)) {
-                    throw new \RuntimeException('Action cancelled');
+                    throw new RuntimeException('Action cancelled');
                 }
             }
         }
@@ -156,7 +157,7 @@ class RestoreCommand extends Command
         $this->io->text("You are going to <error>destroy actual data</error> and restore <info>" . $this->backupFilename . "</info>");
 
         if (!$this->force && !$this->io->confirm("Are you sure you want to continue?", false)) {
-            throw new \RuntimeException('Action cancelled');
+            throw new RuntimeException('Action cancelled');
         }
 
         $this

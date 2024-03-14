@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class PgsqlBackupper extends AbstractBackupper
@@ -49,7 +50,7 @@ class PgsqlBackupper extends AbstractBackupper
         return $command;
     }
 
-    #[\Override]
+    #[Override]
     protected function beforeProcess(): void
     {
         parent::beforeProcess();
@@ -62,7 +63,7 @@ class PgsqlBackupper extends AbstractBackupper
         return 'dump';
     }
 
-    #[\Override]
+    #[Override]
     protected function getBuiltinDefaultOptions(): string
     {
         // -Z: compression level (0-9)

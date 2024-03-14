@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader;
 
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
@@ -40,7 +41,7 @@ class YamlLoader implements LoaderInterface
                     $targetConfig = $resolver->resolve($targetConfig);
                 } catch (ExceptionInterface $e) {
                     $message = $e->getMessage();
-                    throw new \InvalidArgumentException(
+                    throw new InvalidArgumentException(
                         <<<TXT
                         Error while validating configuration for table '{$table}', key '{$target}':
                         {$message}

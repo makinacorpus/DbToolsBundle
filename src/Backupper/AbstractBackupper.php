@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use DateTimeImmutable;
+use RuntimeException;
 use Doctrine\DBAL\Connection;
 use MakinaCorpus\DbToolsBundle\Process\ProcessTrait;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
@@ -35,7 +37,7 @@ abstract class AbstractBackupper
         $this->destination = \sprintf(
             '%s/db-tools-backup-%s.dump',
             \sys_get_temp_dir(),
-            (new \DateTimeImmutable())->format('YmdHis')
+            (new DateTimeImmutable())->format('YmdHis')
         );
     }
 
@@ -48,7 +50,7 @@ abstract class AbstractBackupper
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new \RuntimeException(\sprintf(
+            throw new RuntimeException(\sprintf(
                 'Error while running "%s" command, check configuration for binary "%s".',
                 $process->getCommandLine(),
                 $this->binary,

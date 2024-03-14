@@ -4,6 +4,8 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 
 class StatValue
@@ -24,7 +26,7 @@ class StatValue
 
     public function __construct(
         public string $name,
-        public null|bool|float|int|string|\DateTimeImmutable $value,
+        public null|bool|float|int|string|DateTimeImmutable $value,
         public string $unit = self::UNIT_UNIT,
         public array $tags = [],
         public ?string $description = null,
@@ -59,7 +61,7 @@ class StatValue
             return '';
         }
 
-        if ($this->value instanceof \DateTimeInterface) {
+        if ($this->value instanceof DateTimeInterface) {
             return $this->value->format('Y:m:d H:i:s');
         }
 

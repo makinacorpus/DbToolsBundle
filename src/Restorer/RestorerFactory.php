@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use InvalidArgumentException;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
@@ -29,7 +30,7 @@ class RestorerFactory
     /**
      * Get a Restorer for given connection
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function create(?string $connectionName = null): AbstractRestorer
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use InvalidArgumentException;
 use MakinaCorpus\QueryBuilder\Query\Select;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
@@ -65,7 +66,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         $columns = $this->getColumnNames();
 
         if (0 >= $this->options->count()) {
-            throw new \InvalidArgumentException(\sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 "Options are empty. You should at least give one of those: %s",
                 \implode(', ', $columns)
             ));

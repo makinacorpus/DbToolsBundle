@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use Override;
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class MysqlRestorer extends AbstractRestorer
@@ -40,7 +42,7 @@ class MysqlRestorer extends AbstractRestorer
         return $command;
     }
 
-    #[\Override]
+    #[Override]
     protected function beforeProcess(): void
     {
         parent::beforeProcess();
@@ -48,7 +50,7 @@ class MysqlRestorer extends AbstractRestorer
         $this->backupStream = \fopen($this->backupFilename, 'r');
 
         if (false === $this->backupStream) {
-            throw new \InvalidArgumentException(\sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 "Backup file '%s' can't be read",
                 $this->backupFilename
             ));
@@ -57,7 +59,7 @@ class MysqlRestorer extends AbstractRestorer
         $this->process->setInput($this->backupStream);
     }
 
-    #[\Override]
+    #[Override]
     protected function afterProcess(): void
     {
         \fclose($this->backupStream);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
+use LogicException;
+use Exception;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,7 +27,7 @@ class ConfigDumpCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$output instanceof ConsoleOutputInterface) {
-            throw new \LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
+            throw new LogicException('This command accepts only an instance of "ConsoleOutputInterface".');
         }
 
         $io = new SymfonyStyle($input, $output);
@@ -35,7 +37,7 @@ class ConfigDumpCommand extends Command
 
             try {
                 $anonymizator->checkConfig();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $io->error($e->getMessage());
 
                 return self::FAILURE;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
@@ -26,7 +27,7 @@ class StringAnonymizer extends AbstractEnumAnonymizer
     protected function getSample(): array
     {
         if (!$this->options->has('sample')) {
-            throw new \InvalidArgumentException(\sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 <<<TXT
                 You should provide an 'sample' option with this anonymizer.
                 Check your configuration for table "%s", column "%s"

@@ -4,10 +4,12 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
+use IteratorAggregate;
+use Traversable;
 /**
  * @type iterable<StatValue>
  */
-class StatValueList implements \IteratorAggregate
+class StatValueList implements IteratorAggregate
 {
     public function __construct(
         public string $name,
@@ -18,7 +20,7 @@ class StatValueList implements \IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         yield from $this->stats;
     }

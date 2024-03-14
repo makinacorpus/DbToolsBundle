@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Where;
@@ -38,7 +39,7 @@ class SqliteBackupper extends AbstractBackupper
         return 'sql';
     }
 
-    #[\Override]
+    #[Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '-bail';

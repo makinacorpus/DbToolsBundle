@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
+use DateTimeImmutable;
 class PgsqlStatsProvider extends AbstractStatsProvider
 {
     /**
@@ -197,28 +198,28 @@ class PgsqlStatsProvider extends AbstractStatsProvider
                     // VACUUM information.
                     new StatValue(
                         'last_vacuum',
-                        $row['last_vacuum'] ? new \DateTimeImmutable($row['last_vacuum']) : null,
+                        $row['last_vacuum'] ? new DateTimeImmutable($row['last_vacuum']) : null,
                         StatValue::UNIT_DATETIME,
                         [StatValue::TAG_MAINTENANCE],
                         "Last time at which this table was manually vacuumed (not counting VACUUM FULL).",
                     ),
                     new StatValue(
                         'last_autovacuum',
-                        $row['last_autovacuum'] ? new \DateTimeImmutable($row['last_autovacuum']) : null,
+                        $row['last_autovacuum'] ? new DateTimeImmutable($row['last_autovacuum']) : null,
                         StatValue::UNIT_DATETIME,
                         [StatValue::TAG_MAINTENANCE],
                         "Last time at which this table was vacuumed by the autovacuum daemon.",
                     ),
                     new StatValue(
                         'last_analyze',
-                        $row['last_analyze'] ? new \DateTimeImmutable($row['last_analyze']) : null,
+                        $row['last_analyze'] ? new DateTimeImmutable($row['last_analyze']) : null,
                         StatValue::UNIT_DATETIME,
                         [StatValue::TAG_MAINTENANCE],
                         "Last time at which this table was manually analyzed.",
                     ),
                     new StatValue(
                         'last_autoanalyze',
-                        $row['last_autoanalyze'] ? new \DateTimeImmutable($row['last_autoanalyze']) : null,
+                        $row['last_autoanalyze'] ? new DateTimeImmutable($row['last_autoanalyze']) : null,
                         StatValue::UNIT_DATETIME,
                         [StatValue::TAG_MAINTENANCE],
                         "Last time at which this table was analyzed by the autovacuum daemon.",

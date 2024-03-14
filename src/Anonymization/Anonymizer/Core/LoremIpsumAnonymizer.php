@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractEnumAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
@@ -39,14 +40,14 @@ class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
         if ($this->options->has('words')) {
             $words = (int) $this->options->get('words');
             if ($words <= 0) {
-                throw new \InvalidArgumentException("'words' should be greater than 0.");
+                throw new InvalidArgumentException("'words' should be greater than 0.");
             }
 
             return $this->generateWordsSample($words,  $sampleCount);
         } else {
             $paragraphs = (int) $this->options->get('paragraphs', 1);
             if ($paragraphs <= 0) {
-                throw new \InvalidArgumentException("'paragraphs' should be greater than 0.");
+                throw new InvalidArgumentException("'paragraphs' should be greater than 0.");
             }
 
             return $this->generateParagraphsSample($paragraphs, $sampleCount, $tag);

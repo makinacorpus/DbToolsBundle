@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 
 /**
@@ -87,7 +88,7 @@ abstract class AbstractStatsProvider
      */
     protected function singleValueLine(
         string $name,
-        null|bool|float|int|string|\DateTimeImmutable $value,
+        null|bool|float|int|string|DateTimeImmutable $value,
         string $unit = StatValue::UNIT_UNIT,
         array $tags = [],
         ?string $description = null,

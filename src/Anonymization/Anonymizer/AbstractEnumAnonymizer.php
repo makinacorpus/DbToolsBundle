@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use InvalidArgumentException;
 use MakinaCorpus\QueryBuilder\Query\Select;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
@@ -99,7 +100,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
          */
         /** @phpstan-ignore-next-line */
         if (\is_null($sample) || 0 === \count($sample)) {
-            throw new \InvalidArgumentException("No sample given, your implementation of EnumAnomyzer should provide its own sample.");
+            throw new InvalidArgumentException("No sample given, your implementation of EnumAnomyzer should provide its own sample.");
         }
     }
 }

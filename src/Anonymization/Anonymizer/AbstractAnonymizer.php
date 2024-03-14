@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use ReflectionClass;
+use LogicException;
+use InvalidArgumentException;
+use Exception;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\Column;
@@ -37,11 +41,11 @@ abstract class AbstractAnonymizer
 
     final public static function getMetadata(): AsAnonymizer
     {
-        if ($attributes = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
+        if ($attributes = (new ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
             return $attributes[0]->newInstance();
         }
 
-        throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");
+        throw new LogicException("Each anonymizer should add a AsAnonymizer attribute.");
     }
 
     /**
@@ -179,7 +183,7 @@ abstract class AbstractAnonymizer
                 $value = (array) $value;
 
                 if ($columnCount !== \count($value)) {
-                    throw new \InvalidArgumentException(\sprintf("Row %s in sample list column count (%d) mismatch with table column count (%d)", $key, \count($values), $columnCount));
+                    throw new InvalidArgumentException(\sprintf("Row %s in sample list column count (%d) mismatch with table column count (%d)", $key, \count($values), $columnCount));
                 }
 
                 $this->connection
@@ -195,7 +199,7 @@ abstract class AbstractAnonymizer
             }
 
             $this->connection->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->connection->rollBack();
 
             throw $e;

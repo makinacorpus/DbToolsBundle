@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Test;
 
+use Stringable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
@@ -114,7 +115,7 @@ abstract class UnitTestCase extends TestCase
     /**
      * Get prepared SQL.
      */
-    protected function prepareSql(string|Expression|\Stringable $input): SqlString
+    protected function prepareSql(string|Expression|Stringable $input): SqlString
     {
         if ($input instanceof SqlString) {
             return $input;
@@ -130,8 +131,8 @@ abstract class UnitTestCase extends TestCase
      * way.
      */
     protected function assertSameSql(
-        string|Expression|\Stringable $expected,
-        string|Expression|\Stringable $actual,
+        string|Expression|Stringable $expected,
+        string|Expression|Stringable $actual,
         string $message = ''
     ): void {
         $expected = $this->prepareSql($expected);

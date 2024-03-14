@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Process;
 
+use InvalidArgumentException;
 use Symfony\Component\Process\Process;
 
 class CommandLine
@@ -22,7 +23,7 @@ class CommandLine
 
         \array_walk($arg, function ($item) use ($escape) {
             if (!(\is_string($item) || \is_int($item) || \is_float($item) || \is_null($item))) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     "Each command line argument must be a string, an integer, a float or null."
                 );
             }

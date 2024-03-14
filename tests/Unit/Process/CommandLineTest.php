@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Process;
 
+use ReflectionClass;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 use PHPUnit\Framework\Attributes\RequiresOperatingSystem;
 use PHPUnit\Framework\TestCase;
@@ -11,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 #[RequiresOperatingSystem('Linux')]
 class CommandLineTest extends TestCase
 {
-    private ?\ReflectionClass $rc = null;
+    private ?ReflectionClass $rc = null;
 
     protected function setUp(): void
     {
         if (null === $this->rc) {
-            $this->rc = new \ReflectionClass(CommandLine::class);
+            $this->rc = new ReflectionClass(CommandLine::class);
         }
     }
 
@@ -27,7 +28,7 @@ class CommandLineTest extends TestCase
 
     public function testConstructor(): void
     {
-        $r = new \ReflectionClass(CommandLine::class);
+        $r = new ReflectionClass(CommandLine::class);
 
         $cl = new CommandLine();
         self::assertSame([], $this->extractArgs($cl));

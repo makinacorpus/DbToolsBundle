@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Storage;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Storage\DefaultFilenameStrategy;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
 use MakinaCorpus\DbToolsBundle\Tests\Unit\Storage\Mock\OutOfRootFilenameStrategy;
@@ -16,7 +17,7 @@ class StorageTest extends TestCase
     private ?string $rootDir = null;
     private ?string $outsideOfRootDir = null;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->rootDir = \sys_get_temp_dir() . '/db-tools-bundle-test/root-dir';
@@ -25,7 +26,7 @@ class StorageTest extends TestCase
         (new Filesystem())->mkdir($this->rootDir);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         (new Filesystem())->remove(\sys_get_temp_dir() . '/db-tools-bundle-test');

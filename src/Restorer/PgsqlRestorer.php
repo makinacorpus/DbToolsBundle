@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use Override;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class PgsqlRestorer extends AbstractRestorer
@@ -39,7 +40,7 @@ class PgsqlRestorer extends AbstractRestorer
         return $command;
     }
 
-    #[\Override]
+    #[Override]
     protected function beforeProcess(): void
     {
         parent::beforeProcess();
@@ -52,7 +53,7 @@ class PgsqlRestorer extends AbstractRestorer
         return 'dump';
     }
 
-    #[\Override]
+    #[Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '-j 2 --clean --if-exists --disable-triggers';

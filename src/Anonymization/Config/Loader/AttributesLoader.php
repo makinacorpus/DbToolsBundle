@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader;
 
+use InvalidArgumentException;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
@@ -21,7 +22,7 @@ class AttributesLoader implements LoaderInterface
     {
         try {
             $entityManager = $this->entityManagerProvider->getManager($config->connectionName);
-        } catch (\InvalidArgumentException) {
+        } catch (InvalidArgumentException) {
             // Entity manager on the given connection does not exists.
             // Simply pass attribute lookup.
             return;

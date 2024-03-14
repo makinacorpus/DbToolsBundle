@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use Exception;
+use Override;
 use MakinaCorpus\DbToolsBundle\Process\CommandLine;
 
 class SqliteRestorer extends AbstractRestorer
@@ -14,7 +16,7 @@ class SqliteRestorer extends AbstractRestorer
     public function buildCommandLine(): CommandLine
     {
         if (!\file_exists($this->backupFilename)) {
-            throw new \Exception(\sprintf('Backup file not found (%s)', $this->backupFilename));
+            throw new Exception(\sprintf('Backup file not found (%s)', $this->backupFilename));
         }
 
         $dbParams = $this->connection->getParams();
@@ -30,7 +32,7 @@ class SqliteRestorer extends AbstractRestorer
         return $command;
     }
 
-    #[\Override]
+    #[Override]
     protected function afterProcess(): void
     {
         $this->connection->close();

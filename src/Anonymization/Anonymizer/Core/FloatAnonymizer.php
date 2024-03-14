@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
+use InvalidArgumentException;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\Query\Update;
@@ -24,7 +25,7 @@ class FloatAnonymizer extends AbstractAnonymizer
     public function anonymize(Update $update): void
     {
         if (!($this->options->has('min') && $this->options->has('max'))) {
-            throw new \InvalidArgumentException("You should provide 2 options (min and max) with this anonymizer");
+            throw new InvalidArgumentException("You should provide 2 options (min and max) with this anonymizer");
         }
 
         $max = $this->options->get('max');

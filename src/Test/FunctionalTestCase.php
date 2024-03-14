@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Test;
 
+use InvalidArgumentException;
+use Exception;
+use Stringable;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -105,7 +108,7 @@ abstract class FunctionalTestCase extends UnitTestCase
                 }
                 $columns[$name] = new Column($name, $type, $column + $defaultColumnOptions);
             } elseif (!$column instanceof Column) {
-                throw new \InvalidArgumentException(\sprintf("Column must be a string (type), and array (doctrine/dbal Column class options) or a %s instance", Column::class));
+                throw new InvalidArgumentException(\sprintf("Column must be a string (type), and array (doctrine/dbal Column class options) or a %s instance", Column::class));
             }
         }
 
@@ -174,7 +177,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         $privConnection = $this->createPrivConnection();
         try {
             $privConnection->createSchemaManager()->createDatabase('test_db');
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
 
         } finally {
             $privConnection->close();
@@ -247,7 +250,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         if (false) {
             $middlewares[] = new Middleware(
                 new class () extends AbstractLogger {
-                    public function log($level, string|\Stringable $message, array $context = []): void
+                    public function log($level, string|Stringable $message, array $context = []): void
                     {
                         if (\str_contains($message, 'Executing statement')) {
                             echo $message, \print_r($context, true), "\n";

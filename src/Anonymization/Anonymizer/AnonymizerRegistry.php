@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use LogicException;
+use RegexIterator;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use FilesystemIterator;
+use RecursiveRegexIterator;
+use ReflectionClass;
+use InvalidArgumentException;
+use DomainException;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
 class AnonymizerRegistry
@@ -42,16 +51,16 @@ class AnonymizerRegistry
 
         foreach ($this->paths as $path) {
             if (!\is_dir($path)) {
-                throw new \LogicException(\sprintf("Given path '%s' is not a directory", $path));
+                throw new LogicException(\sprintf("Given path '%s' is not a directory", $path));
             }
 
-            $iterator = new \RegexIterator(
-                new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
-                    \RecursiveIteratorIterator::LEAVES_ONLY
+            $iterator = new RegexIterator(
+                new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+                    RecursiveIteratorIterator::LEAVES_ONLY
                 ),
                 '/^.+' . \preg_quote('.php') . '$/i',
-                \RecursiveRegexIterator::GET_MATCH
+                RecursiveRegexIterator::GET_MATCH
             );
 
             foreach ($iterator as $file) {
@@ -70,9 +79,9 @@ class AnonymizerRegistry
         $declared = \get_declared_classes();
 
         foreach ($declared as $className) {
-            if ((new \ReflectionClass($className))->getAttributes(AsAnonymizer::class)) {
+            if ((new ReflectionClass($className))->getAttributes(AsAnonymizer::class)) {
                 if (!\is_subclass_of($className, AbstractAnonymizer::class)) {
-                    throw new \InvalidArgumentException(\sprintf(
+                    throw new InvalidArgumentException(\sprintf(
                         '"%s" should extends "%s".',
                         $className,
                         AbstractAnonymizer::class
@@ -91,7 +100,7 @@ class AnonymizerRegistry
     public function get(string $name): string
     {
         if (!isset($this->getAnonymizers()[$name])) {
-            throw new \InvalidArgumentException(\sprintf("Can't find Anonymizer with name : %s, check your configuration.", $name));
+            throw new InvalidArgumentException(\sprintf("Can't find Anonymizer with name : %s, check your configuration.", $name));
         }
 
         return $this->getAnonymizers()[$name];
@@ -103,13 +112,13 @@ class AnonymizerRegistry
             return;
         }
 
-        $iterator = new \RegexIterator(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($this->projectDir . '/vendor', \FilesystemIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::LEAVES_ONLY
+        $iterator = new RegexIterator(
+            new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($this->projectDir . '/vendor', FilesystemIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::LEAVES_ONLY
             ),
             '/^.+composer\.json$/i',
-            \RecursiveRegexIterator::GET_MATCH
+            RecursiveRegexIterator::GET_MATCH
         );
 
         $packPaths = [];
@@ -123,7 +132,7 @@ class AnonymizerRegistry
                 if (\is_dir($anonymizersPath)) {
                     $packPaths[] = $anonymizersPath;
                 } else {
-                    throw new \DomainException(\sprintf(
+                    throw new DomainException(\sprintf(
                         "Pack of anonymizers '%s' (%s) as no 'src/Anonymizer/' directory and is thus not usable.",
                         $composerJson->name ?? 'no-name',
                         $packagePath
