@@ -226,6 +226,7 @@ jobs:
         mysql-version:
           - "8.0"
           - "8.2"
+          - "8.3"
         extension:
           - "mysqli"
           - "pdo_mysql"
@@ -282,14 +283,17 @@ jobs:
 
     strategy:
       matrix:
-        include:
-          - php-version: "8.1"
-            extension: "pdo_sqlsrv"
-            schema: "mssql"
+        php-version:
+          - "8.1"
+        mssql-version:
+          - "2019"
+          - "2022"
+        extension:
+          - "pdo_sqlsrv"
 
     services:
       mssql:
-        image: "mcr.microsoft.com/mssql/server:2019-latest"
+        image: "mcr.microsoft.com/mssql/server:${{ matrix.mssql-version }}-latest"
         env:
           ACCEPT_EULA: "Y"
           SA_PASSWORD: "P@ssword123"
@@ -328,7 +332,7 @@ jobs:
           DBAL_ROOT_PASSWORD: "P@ssword123"
           DBAL_ROOT_USER: "sa"
           DBAL_USER: "sa"
-          DATABASE_URL: "${{ matrix.schema }}://sa:P%40ssword123@mssql:1433/test_db?serverVersion=2019&driverOptions[TrustServerCertificate]=true"
+          DATABASE_URL: "mssql://sa:P%40ssword123@mssql:1433/test_db?serverVersion=2019&driverOptions[TrustServerCertificate]=true"
 
         run: "vendor/bin/phpunit"
 
