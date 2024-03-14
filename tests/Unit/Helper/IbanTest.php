@@ -14,7 +14,7 @@ class IbanTest extends TestCase
 {
     public static function dataSupportedCountryCode(): array
     {
-        return \array_map(fn ($value): array => [$value], Iban::supportedCountries());
+        return \array_map(fn ($value) => [$value], Iban::supportedCountries());
     }
 
     /**

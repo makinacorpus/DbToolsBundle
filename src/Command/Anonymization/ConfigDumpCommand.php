@@ -48,7 +48,7 @@ class ConfigDumpCommand extends Command
                 $io->table(
                     ['Target', 'Anonymizer', 'Options'],
                     \array_map(
-                        fn (AnonymizerConfig $config): array => [
+                        fn (AnonymizerConfig $config) => [
                             $config->targetName,
                             $config->anonymizer,
                             $config->options->toDisplayString()
