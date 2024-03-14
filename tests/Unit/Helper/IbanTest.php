@@ -12,9 +12,9 @@ use Symfony\Component\Validator\Constraints\IbanValidator;
 
 class IbanTest extends TestCase
 {
-    public static function dataSupportedCountryCode()
+    public static function dataSupportedCountryCode(): array
     {
-        return \array_map(fn ($value) => [$value], Iban::supportedCountries());
+        return \array_map(fn ($value): array => [$value], Iban::supportedCountries());
     }
 
     /**

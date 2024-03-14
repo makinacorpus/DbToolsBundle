@@ -135,7 +135,7 @@ class AnonymizatorTest extends FunctionalTestCase
 
         // Some connectors will return string values for int.
         $actual = \array_map(
-            fn (array $item) => [
+            fn (array $item): array => [
                 'id' => (int) $item['id'],
                 'value' => $item['value'],
                 AbstractAnonymizer::JOIN_ID => (int) $item[AbstractAnonymizer::JOIN_ID],

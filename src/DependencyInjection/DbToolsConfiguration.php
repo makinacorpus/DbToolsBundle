@@ -73,7 +73,7 @@ final class DbToolsConfiguration implements ConfigurationInterface
                         ->children()
                             ->arrayNode('yaml')
                                 ->useAttributeAsKey('connection')
-                                ->beforeNormalization()->ifString()->then(function ($v) { return ['default' => $v]; })->end()
+                                ->beforeNormalization()->ifString()->then(function ($v): array { return ['default' => $v]; })->end()
                                 ->scalarPrototype()->end()
                             ->end()
                         ->end()
