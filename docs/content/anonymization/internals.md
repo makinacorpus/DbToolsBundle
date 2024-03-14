@@ -1,42 +1,42 @@
 # Internals
 
-As we mention in the previous section, the anonymization process is done with SQL
+As mentioned in the previous section, the anonymization process is done with SQL
 statements.
 
-Anonymization for each table is based upon a single `UPDATE` SQL query.
-Each anonymizer adds it own `SET` statements, and a few `JOIN` clauses if necessary.
+Anonymization process is based upon a single `UPDATE` SQL query for each table.
+Each anonymizer adds its own `SET` statements to the query, and a few `JOIN` clauses if necessary.
 
-## PHP Query builder
+## PHP query builder
 
 Generating this kind of queries is quiet complexe and mostly impossible without a complete
 and robust SQL query builder.
 
-Our first thought was to use [the DBAL Query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder).
+Our first thought was to use the [DBAL query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder).
 But, while it is very robust, it lacks many features. Features such as
 update with join, which are essential for our use case.
 
-Instead, we have decided to re-use one of our tool: the [php-query-builder](https://php-query-builder.readthedocs.io/en/stable).
+Instead, we decided to re-use one of our tool: the [makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package.
 
-This query builder let you write SQL queries using a concise and easy to read fluent PHP API
+This query builder lets you write SQL queries using a concise and easy to read fluent PHP API
 and [implements a lot of features](https://php-query-builder.readthedocs.io/en/stable/introduction/features.html).
 
-If you want to [create your own anonymizers](./custom-anonymizers), you will problably need to take a look at
+If you want to [create your own anonymizers](./custom-anonymizers), you will probably need to take a look at
 [its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
 
 ## Enum Anonymizer optimizations
 
 `AbstractEnumAnonymizer` and `AbstractMultipleColumnAnonymizer` are base implementations
-for anonymizers that use pre-generated sample data lists as source values for anonymizing
+for anonymizers that use pre-generated fake data samples as source of values for anonymizing
 your database.
 
 For those anonymizers, the goal is to create queries that will randomly take, for each
 row, one value from the given sample. Let's see how we have built those to make them
 efficient:
 
-The sample data lists are first inserted into a temporary table in database.
+Fake data samples are first inserted into temporary tables in database.
 
-Once data is inserted into temporary tables, anonymization will use an SQL
-`JOIN` statement on the anonymizing SQL `UPDATE` query.
+Once data are inserted into temporary tables, anonymization will use `JOIN`
+statements on the anonymizing SQL `UPDATE` query.
 
 Joining on the target table to anonymize is only possible if you have an arbitrary
 row identifier to `JOIN` on. Without an identifier, RDBMS will optimise

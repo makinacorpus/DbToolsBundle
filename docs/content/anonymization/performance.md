@@ -7,32 +7,32 @@ top and most of the solutions we found was unmaintained.
 Also, all these projects used the same methodology:
 1. Load the data from the database
 2. Anonymize it in PHP
-3. Persit updated data in database
+3. Persist updated data in database
 
 This approach has a benefit: you can use an external library - such as
 [Faker](https://github.com/fzaninotto/Faker) - to anonymize your data.
 But it also has a big drawback: it is very slow.
 
 For the DbToolsBundle, we choose another methodology: **we anonymize with SQL
-queries**. We use Database management system for what they are good at: processing
-huge amount of data.
+queries**. We use database management systems for what they are good at: processing
+huge amounts of data.
 
 :::info
-Anonymizing through SQL, the DbToolsBundle generates long and complexe
-update queries. To get great performance for each one of the platfrom it adresses,
-a minitious work has been made. Queries are optimised differently depending on the
+Anonymizing through SQL, the DbToolsBundle generates long and complex
+update queries. To get great performance for each one of the platform it addresses,
+a meticulous work has been made. Queries are optimized differently depending on the
 database platform on which they will be executed.
 
 [Learn more about these optimizations](./internals).
 :::
 
-We get pretty good results with this approach. And to demonstrate the DbToolsBnulde
+We get pretty good results with this approach. And to demonstrate the DbToolsBundle
 capabilities, we created a [benchmark app](https://github.com/DbToolsBundle/benchmark-app).
 
 In this app, you will find a Symfony application that uses 4 different
 DBAL Doctrine connections (SQLite, PostgreSQL, MariaDB and MySQL).
 
-For each one of these connections, we defined the same 3 entities : Customer, Address and Order.
+For each one of these connections, we defined the same 3 entities: Customer, Address and Order.
 
 ::: code-group
 ```php [Customer]
@@ -160,7 +160,7 @@ class Order
 :::
 
 Then, we executed the `db-tools:anonymize` command on different backups with different
-amount of data.
+amounts of data.
 
 Here are the results:
 
@@ -175,10 +175,10 @@ Here are the results:
 | 100&nbsp;000        | 200&nbsp;000 | 1&nbsp;000&nbsp;000 | 24s        | 25s    | 1m 40s   | 36m 47s
 
 <small>
-<strong>NB1</strong>: The values indicated are approximate and vary slightly each time the command is
-executed. A margin of error of 10% can be assumed.
+<strong>NB1</strong>: The indicated values are approximate and vary slightly each time the command is
+executed. A 10% margin of error can be assumed.
 </small><br>
 <small>
 <strong>NB2</strong>: Each database vendor docker image has been used as is. Without any tweaking.
-This could explain the bad results for MySQL compare to MariaDB's ones.
+This could explain the bad results for MySQL compared to MariaDB's ones.
 </small>

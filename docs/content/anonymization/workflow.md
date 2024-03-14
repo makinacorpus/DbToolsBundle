@@ -1,10 +1,10 @@
 
 # A GDPR-friendly workflow
 
-This bundle alone won't ensure you follow the GDPR best practice.
+This bundle alone won't ensure you follow the GDPR best practices.
 It will depend on how you will use it.
 
-The key notion to understand and to keep in mind is :
+The key notion to understand and to keep in mind is:
 
 > **Sensitive data should never transit on an unsecured environment**.
 
@@ -39,8 +39,8 @@ Let's assume the environment we have besides *production* is called *another_env
 3. Download the anonymized backup from *another_env* to your local machine
 4. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
 
-In the illustration above, we take the preproduction as our *another_env*. It is kind of
-the universel use case: there is a preproduction environment in almost all project.
+In the illustration above, we take the preproduction as our *another_env*. It is a kind
+of universal use case: there is a preproduction environment in almost all project.
 
 But it is important to bear in mind that **you can use whatever secured environment** you want to perform
 step 2.
@@ -51,7 +51,7 @@ to play the *another_env* role.
 This approach has many benefits:
 * You don't need to backup and restore initial state of this environment:
   the `db-tools:anonymize` will be faster,
-* You can store the anonymized backup as a CI artefact, it will then be automaticly available for
+* You can store the anonymized backup as a CI artefact, it will then be automatically available for
   all the team,
 * You can run a weekly job to always have a fresh anonymized backup file.
 

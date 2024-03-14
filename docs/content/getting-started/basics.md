@@ -52,7 +52,7 @@ data on your machine, which is not what you want:
 * First of all, because in most cases that's **illegal**
   (in UE for example, because of **GDPR**).
 * Secondly because you just don't want to know personal data from your
-  (or your client's) customers.
+  clients or your client's clients.
 
 To avoid that, you need a proper **anonymization**.
 
@@ -110,7 +110,7 @@ console db-tools:anonymize path/to/my_backup.dump
 ```
 
 Once the command has succeeded, `path/to/my_backup.dump` will be fully anonymized. You will be free
-to download and restore it to your local environment without any security concerns.
+to download and restore it on your local environment without any security concerns.
 
 ::: info
 We know that a slow anonymization process can be a pain in the ass. That's why a meticulous work has been

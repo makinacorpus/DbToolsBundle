@@ -42,7 +42,7 @@ with the [*Anonymizer paths* configuration](../configuration#anonymizer-paths).
 :::
 
 ::: tip
-To generate its update queries, the *DbToolsBundle* use the ***php-query-builder***.
+To generate its update queries, the *DbToolsBundle* uses the *[makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package*.
 If you want to create your own anonymizers, you will problably need to take a look at
 [its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
 :::
