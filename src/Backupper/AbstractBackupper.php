@@ -22,10 +22,10 @@ abstract class AbstractBackupper implements LoggerAwareInterface
     use ProcessTrait;
 
     protected ?string $destination = null;
-    protected array $excludedTables = [];
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
+    protected array $excludedTables = [];
     protected bool $verbose = false;
 
     public function __construct(
@@ -78,7 +78,18 @@ abstract class AbstractBackupper implements LoggerAwareInterface
 
     public function setExcludedTables(array $excludedTables): self
     {
-        $this->excludedTables = $excludedTables;
+        foreach ($excludedTables as $table) {
+            if (!\is_string($table)) {
+                throw new \InvalidArgumentException(
+                    "Each value of the array argument must be a string."
+                );
+            }
+            if (empty($table)) {
+                continue;
+            }
+
+            $this->excludedTables[] = $table;
+        }
 
         return $this;
     }
@@ -95,7 +106,7 @@ abstract class AbstractBackupper implements LoggerAwareInterface
         return $this;
     }
 
-    public function getExtraOptions(?string $options): ?string
+    public function getExtraOptions(): ?string
     {
         return $this->extraOptions;
     }
