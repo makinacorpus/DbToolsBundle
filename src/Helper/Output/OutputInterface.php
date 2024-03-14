@@ -11,19 +11,18 @@ interface OutputInterface
      *
      * The text can include the kind of directives expected by the \sprintf()
      * function. We assume that implementations use this function to resolve
-     * directives from the values provided as second argument.
+     * directives from the other argument values.
      */
-    public function write(string $text, array $values = []): void;
+    public function write(string $text, mixed ...$values): void;
 
     /**
-     * Write the given text in the output channel by ending with one or more
-     * line breaks depending on the last argument value.
+     * Write the given text in the output channel by ending with one line break.
      *
      * The text can include the kind of directives expected by the \sprintf()
      * function. We assume that implementations use this function to resolve
-     * directives from the values provided as second argument.
+     * directives from the other argument values.
      */
-    public function writeLine(string $text, array $values = [], int $lineBreak = 1): void;
+    public function writeLine(string $text, mixed ...$values): void;
 
     public function newLine(int $count = 1): void;
 

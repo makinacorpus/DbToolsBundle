@@ -15,7 +15,7 @@ class ConsoleOutput extends AbstractOutput
         parent::__construct($indentSize);
     }
 
-    protected function doWrite(?string $text, ?array $values = null, int $lineBreak = 0): void
+    protected function doWrite(string $text = '', array $values = [], int $lineBreak = 0): void
     {
         if ($text) {
             if ($values) {
