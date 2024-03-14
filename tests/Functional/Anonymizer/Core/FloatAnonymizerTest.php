@@ -185,24 +185,24 @@ class FloatAnonymizerTest extends FunctionalTestCase
         // Initial value is 10.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [10.5*0.95, 10.5*1.05]
-        $this->assertGreaterThanOrEqual(9.975, $data);
-        $this->assertLessThanOrEqual(11.025, $data);
+        $this->assertGreaterThanOrEqual(9.975, \round($data, 6));
+        $this->assertLessThanOrEqual(11.025, \round($data, 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
         // Initial value is 20.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [20.5*0.95, 20.5*1.05]
-        $this->assertGreaterThanOrEqual(19.475, $data);
-        $this->assertLessThanOrEqual(21.525, $data);
+        $this->assertGreaterThanOrEqual(19.475, \round($data, 6));
+        $this->assertLessThanOrEqual(21.525, \round($data, 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
         // Initial value is 30.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [30.5*0.95, 30.5*1.05]
-        $this->assertGreaterThanOrEqual(28.975, $data);
-        $this->assertLessThanOrEqual(32.025, $data);
+        $this->assertGreaterThanOrEqual(28.975, \round($data, 6));
+        $this->assertLessThanOrEqual(32.025, \round($data, 6));
 
         $this->assertNull($datas[3]);
     }
