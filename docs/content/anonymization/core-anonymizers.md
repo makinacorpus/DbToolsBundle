@@ -265,6 +265,41 @@ customer:
 ```
 :::
 
+## NullAnonymizer
+
+Set all values to `NULL`.
+
+::: code-group
+```php [Attribute]
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: 'customer')]
+class Customer
+{
+    // ...
+
+    #[ORM\Column]
+    #[Anonymize(type: 'null')] // [!code ++]
+    private ?string $sensibleContent = null;
+
+    // ...
+}
+```
+
+```yml [YAML]
+# config/anonymization.yaml
+
+customer:
+    sensible_content: null
+
+#...
+```
+:::
+
 ## Md5Anonymizer
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
