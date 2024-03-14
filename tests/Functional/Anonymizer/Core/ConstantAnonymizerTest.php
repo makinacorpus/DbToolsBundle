@@ -113,7 +113,7 @@ class ConstantAnonymizerTest extends FunctionalTestCase
 
         $this->assertSame(
             52,
-            $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
         foreach ($anonymizator->anonymize() as $message) {
@@ -121,9 +121,9 @@ class ConstantAnonymizerTest extends FunctionalTestCase
 
         $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
-        $this->assertSame(2012, $datas[0]);
-        $this->assertSame(2012, $datas[1]);
-        $this->assertSame(2012, $datas[2]);
+        $this->assertSame(2012, (int) $datas[0]);
+        $this->assertSame(2012, (int) $datas[1]);
+        $this->assertSame(2012, (int) $datas[2]);
         $this->assertNull($datas[3]);
     }
 }
