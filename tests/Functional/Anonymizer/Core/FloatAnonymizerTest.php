@@ -74,7 +74,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
@@ -82,7 +82,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
@@ -90,7 +90,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $this->assertNull($datas[3]);
 
@@ -129,7 +129,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(5.3, $data);
         $this->assertLessThanOrEqual(15.7, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
         $this->assertNotNull($data);
@@ -138,7 +138,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(15.3, $data);
         $this->assertLessThanOrEqual(25.7, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
         $this->assertNotNull($data);
@@ -147,7 +147,7 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertGreaterThanOrEqual(25.3, $data);
         $this->assertLessThanOrEqual(35.7, $data);
         // Checking precision
-        $this->assertSame(\number_format($data, 6) , \number_format(\round($data, 6), 6));
+        $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $this->assertNull($datas[3]);
     }

@@ -243,8 +243,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         /* @phpstan-ignore-next-line */
         if (false) {
             $middlewares[] = new Middleware(
-                new class () extends AbstractLogger
-                {
+                new class () extends AbstractLogger {
                     #[\Override]
                     public function log($level, string|\Stringable $message, array $context = []): void
                     {

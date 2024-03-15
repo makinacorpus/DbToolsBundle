@@ -41,8 +41,7 @@ class TestingExecutionContext implements ExecutionContextInterface
             null,
             null,
             null,
-            new class () implements TranslatorInterface
-            {
+            new class () implements TranslatorInterface {
                 #[\Override]
                 public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
                 {

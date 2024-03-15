@@ -191,20 +191,17 @@ class Anonymizator implements LoggerAwareInterface
                         'Table "{table}" anonymized. Targets were: "{targets}" ({timer}).',
                         $context + ['timer' => $timer]
                     );
-                }
-                else {
+                } else {
                     $this->anonymizeTablePerColumn($table, $anonymizers);
                 }
-            }
-            catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 $this->logger->error(
                     'Exception caught when anonymizing "{table}" table: {error}. (Targets were: "{targets}").',
                     $context + ['error' => $e->getMessage()]
                 );
 
                 throw $e;
-            }
-            finally {
+            } finally {
                 $cleanTimer = $this->startTimer();
                 // Clean up everything, even in case of any error.
                 $this->output->write("- cleaning anonymizers...");
@@ -238,28 +235,34 @@ class Anonymizator implements LoggerAwareInterface
             switch ($item['type']) {
                 case 'table':
                     $this->output->writeLine(
-                        "Dropping table: %s", $item['name']
+                        "Dropping table: %s",
+                        $item['name']
                     );
                     $schemaManager->dropTable($item['name']);
                     break;
 
                 case 'column':
                     $this->output->writeLine(
-                        "Dropping column: %s.%s", $item['table'], $item['name']
+                        "Dropping column: %s.%s",
+                        $item['table'],
+                        $item['name']
                     );
                     $this->dropColumn($item['table'], $item['name']);
                     break;
 
                 case 'index':
                     $this->output->writeLine(
-                        "Dropping index: %s.%s", $item['table'], $item['name']
+                        "Dropping index: %s.%s",
+                        $item['table'],
+                        $item['name']
                     );
                     $this->dropIndex($item['table'], $item['name']);
                     break;
 
                 default:
                     throw new \DomainException(\sprintf(
-                        'Unsupported "%s" structure type.', $item['type']
+                        'Unsupported "%s" structure type.',
+                        $item['type']
                     ));
             }
         }
@@ -361,7 +364,11 @@ class Anonymizator implements LoggerAwareInterface
             $target = $anonymizer->getColumnName();
 
             $this->output->write(
-                '- anonymizing %d/%d: "%s"."%s"...', $count, $total, $table, $target
+                '- anonymizing %d/%d: "%s"."%s"...',
+                $count,
+                $total,
+                $table,
+                $target
             );
 
             $update = $this->createUpdateQuery($table);
@@ -550,13 +557,12 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($this->collectGarbageInto($table) as $item) {
             if ('column' === $item['type']) {
                 $this->dropColumn($item['table'], $item['name']);
-            }
-            elseif ('index' === $item['type']) {
+            } elseif ('index' === $item['type']) {
                 $this->dropIndex($item['table'], $item['name']);
-            }
-            else {
+            } else {
                 throw new \DomainException(\sprintf(
-                    'Unsupported "%s" structure type.', $item['type']
+                    'Unsupported "%s" structure type.',
+                    $item['type']
                 ));
             }
         }
