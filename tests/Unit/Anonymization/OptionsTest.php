@@ -88,6 +88,7 @@ class OptionsTest extends TestCase
             'ok2' => 1,
             'ok3' => 12.5,
             'ok4' => new class () {
+                #[\Override]
                 public function __toString()
                 {
                     return 'test';
@@ -197,5 +198,4 @@ class OptionsTest extends TestCase
         $options->getInterval('ko2');
 
     }
-
 }
