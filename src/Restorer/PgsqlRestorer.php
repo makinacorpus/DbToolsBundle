@@ -8,9 +8,7 @@ use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 
 class PgsqlRestorer extends AbstractRestorer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
@@ -47,6 +45,7 @@ class PgsqlRestorer extends AbstractRestorer
         $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'dump';

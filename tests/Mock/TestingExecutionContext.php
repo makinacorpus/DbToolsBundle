@@ -24,17 +24,13 @@ class TestingExecutionContext implements ExecutionContextInterface
         $this->violationList = new ConstraintViolationList();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addViolation(string $message, array $params = []): void
     {
         $this->violationList->add(new ConstraintViolation($message, null, $params, null, null, null));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildViolation(string $message, array $parameters = []): ConstraintViolationBuilderInterface
     {
         return new ConstraintViolationBuilder(
@@ -45,11 +41,15 @@ class TestingExecutionContext implements ExecutionContextInterface
             null,
             null,
             null,
-            new class () implements TranslatorInterface {
+            new class () implements TranslatorInterface
+            {
+                #[\Override]
                 public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
                 {
                     return $id;
                 }
+
+                #[\Override]
                 public function getLocale(): string
                 {
                     return 'C';
@@ -59,135 +59,97 @@ class TestingExecutionContext implements ExecutionContextInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getValidator(): ValidatorInterface
     {
         throw new \RuntimeException("Testing execution context does not allow this.");
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getObject(): ?object
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setGroup(?string $group): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setConstraint(Constraint $constraint): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function markGroupAsValidated(string $cacheKey, string $groupHash): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isGroupValidated(string $cacheKey, string $groupHash): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function markConstraintAsValidated(string $cacheKey, string $constraintHash): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isConstraintValidated(string $cacheKey, string $constraintHash): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function markObjectAsInitialized(string $cacheKey): void {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isObjectInitialized(string $cacheKey): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getViolations(): ConstraintViolationListInterface
     {
         return $this->violationList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRoot(): mixed
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getValue(): mixed
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetadata(): ?MetadataInterface
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getGroup(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getClassName(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPropertyName(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPropertyPath(string $subPath = ''): string
     {
         return '';

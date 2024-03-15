@@ -8,9 +8,7 @@ use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 
 class PgsqlBackupper extends AbstractBackupper
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
@@ -57,6 +55,7 @@ class PgsqlBackupper extends AbstractBackupper
         $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'dump';

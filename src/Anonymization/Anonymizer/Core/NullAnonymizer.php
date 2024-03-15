@@ -15,9 +15,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 )]
 class NullAnonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $expr = $update->expression();

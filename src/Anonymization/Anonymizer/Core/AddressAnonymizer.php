@@ -32,9 +32,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class AddressAnonymizer extends AbstractMultipleColumnAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getColumnNames(): array
     {
         return [
@@ -47,9 +45,7 @@ class AddressAnonymizer extends AbstractMultipleColumnAnonymizer
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getSamples(): array
     {
         return [

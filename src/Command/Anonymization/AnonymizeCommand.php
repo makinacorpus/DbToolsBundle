@@ -54,9 +54,7 @@ class AnonymizeCommand extends Command
         $this->connectionName = $defaultConnectionName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -123,9 +121,7 @@ class AnonymizeCommand extends Command
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
@@ -157,9 +153,7 @@ class AnonymizeCommand extends Command
         $this->atOnce = !$input->getOption('split-per-column');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->backupFilename && !$this->doAnonymizeCurrentDatabase) {
@@ -188,9 +182,7 @@ class AnonymizeCommand extends Command
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ((false === $this->doBackupAndRestoreInitial) && ('prod' === $input->getOption('env'))) {

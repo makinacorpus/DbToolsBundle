@@ -67,5 +67,6 @@ trait ProcessTrait
     /**
      * Build the command line to run.
      */
+    // @phpstan-ignore-next-line
     abstract public function buildCommandLine(): CommandLine;
 }

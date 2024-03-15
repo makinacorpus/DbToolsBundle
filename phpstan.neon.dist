@@ -5,3 +5,4 @@ parameters:
         - tests
     excludePaths:
         - src/DependencyInjection/DbToolsConfiguration.php
+    checkMissingOverrideMethodAttribute: true

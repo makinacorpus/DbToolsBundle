@@ -15,9 +15,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 final class DbToolsExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = $this->getConfiguration($configs, $container);
@@ -86,9 +84,7 @@ final class DbToolsExtension extends Extension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
         return new DbToolsConfiguration();

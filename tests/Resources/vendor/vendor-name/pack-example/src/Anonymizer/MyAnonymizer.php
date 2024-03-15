@@ -20,6 +20,7 @@ class MyAnonymizer extends AbstractEnumAnonymizer
     /**
      * Overwrite this argument with your sample.
      */
+    #[\Override]
     protected function getSample(): array
     {
         return ['foo', 'bar', 'baz'];

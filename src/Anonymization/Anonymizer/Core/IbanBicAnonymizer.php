@@ -31,9 +31,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getColumnNames(): array
     {
         return [
@@ -42,9 +40,7 @@ class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getSamples(): array
     {
         // @todo, pas d'options, pas de count ni de country, désolé.

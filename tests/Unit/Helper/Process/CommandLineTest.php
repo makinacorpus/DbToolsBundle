@@ -13,6 +13,7 @@ class CommandLineTest extends TestCase
 {
     private ?\ReflectionClass $rc = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         if (null === $this->rc) {

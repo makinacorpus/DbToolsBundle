@@ -140,6 +140,7 @@ abstract class FunctionalTestCase extends UnitTestCase
     }
 
     /** @after */
+    #[\Override]
     protected function disconnect(): void
     {
         parent::disconnect();
@@ -153,9 +154,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createConnection(): Connection
     {
         $params = $this->getConnectionParameters();
@@ -166,9 +165,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function initializeDatabase(): void
     {
         $privConnection = $this->createPrivConnection();
@@ -246,7 +243,9 @@ abstract class FunctionalTestCase extends UnitTestCase
         /* @phpstan-ignore-next-line */
         if (false) {
             $middlewares[] = new Middleware(
-                new class () extends AbstractLogger {
+                new class () extends AbstractLogger
+                {
+                    #[\Override]
                     public function log($level, string|\Stringable $message, array $context = []): void
                     {
                         if (\str_contains($message, 'Executing statement')) {

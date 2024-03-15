@@ -10,9 +10,7 @@ use MakinaCorpus\QueryBuilder\Where;
 
 class SqliteBackupper extends AbstractBackupper
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
@@ -33,6 +31,7 @@ class SqliteBackupper extends AbstractBackupper
         return $command;
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

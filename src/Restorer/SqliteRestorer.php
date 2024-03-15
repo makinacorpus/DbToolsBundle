@@ -8,9 +8,7 @@ use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 
 class SqliteRestorer extends AbstractRestorer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         if (!\file_exists($this->backupFilename)) {
@@ -37,6 +35,7 @@ class SqliteRestorer extends AbstractRestorer
         $this->connection->connect();
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Helper\Process;
 
-use Symfony\Component\Process\Process;
-
 class CommandLine
 {
     /** @var string[] */
@@ -69,6 +67,7 @@ class CommandLine
         return $command;
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->toString();

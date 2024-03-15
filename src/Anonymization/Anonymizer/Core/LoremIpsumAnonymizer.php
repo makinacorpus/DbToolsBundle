@@ -27,9 +27,7 @@ use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
 )]
 class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSample(): array
     {
         $tag = $this->options->get('html', false) ? 'p' : null;

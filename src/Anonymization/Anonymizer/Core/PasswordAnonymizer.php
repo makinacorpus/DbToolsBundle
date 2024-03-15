@@ -19,9 +19,7 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 )]
 class PasswordAnonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $algorithm = $this->options->get('algorithm', 'auto');

@@ -21,9 +21,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 )]
 class IntegerAnonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         if ($this->options->has('min') && $this->options->has('max')) {
