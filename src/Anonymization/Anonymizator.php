@@ -112,6 +112,8 @@ class Anonymizator implements LoggerAwareInterface
      * @param bool $atOnce
      *   If set to false, there will be one UPDATE query per anonymizer, if set
      *   to true a single UPDATE query for anonymizing all at once will be done.
+     *
+     * @throws \Exception if anonymization config is invalid.
      */
     public function anonymize(
         ?array $excludedTargets = null,
@@ -150,7 +152,18 @@ class Anonymizator implements LoggerAwareInterface
 
         $total = \count($plan);
         $count = 1;
+        $anonymizers = [];
 
+        // First of all, we create each anonymizer for all tables
+        // and validate their configuration.
+        foreach ($plan as $table => $targets) {
+            $anonymizers[$table] = [];
+            foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
+                $anonymizers[$table][] = $this->createAnonymizer($config);
+            }
+        }
+
+        // Then, we initialize them and we run the anonymization.
         foreach ($plan as $table => $targets) {
             // Base context for logging.
             $context = [
@@ -159,12 +172,6 @@ class Anonymizator implements LoggerAwareInterface
             ];
 
             $initTimer = $this->startTimer();
-
-            // Create anonymizer array prior running the anonymisation.
-            $anonymizers = [];
-            foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
-                $anonymizers[] = $this->createAnonymizer($config);
-            }
 
             try {
                 $this->output->writeLine(
@@ -178,7 +185,7 @@ class Anonymizator implements LoggerAwareInterface
                 $this->output->indent();
                 $this->output->write("- initializing anonymizers...");
 
-                \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
+                \array_walk($anonymizers[$table], fn (AbstractAnonymizer $anonymizer) => $anonymizer->initialize());
 
                 $this->addAnonymizerIdColumn($table);
 
@@ -186,13 +193,13 @@ class Anonymizator implements LoggerAwareInterface
                 $this->output->writeLine('[%s]', $timer);
 
                 if ($atOnce) {
-                    $this->anonymizeTableAtOnce($table, $anonymizers);
+                    $this->anonymizeTableAtOnce($table, $anonymizers[$table]);
                     $this->logger->info(
                         'Table "{table}" anonymized. Targets were: "{targets}" ({timer}).',
                         $context + ['timer' => $timer]
                     );
                 } else {
-                    $this->anonymizeTablePerColumn($table, $anonymizers);
+                    $this->anonymizeTablePerColumn($table, $anonymizers[$table]);
                 }
             } catch (\Throwable $e) {
                 $this->logger->error(
@@ -205,7 +212,7 @@ class Anonymizator implements LoggerAwareInterface
                 $cleanTimer = $this->startTimer();
                 // Clean up everything, even in case of any error.
                 $this->output->write("- cleaning anonymizers...");
-                \array_walk($anonymizers, fn (AbstractAnonymizer $anonymizer) => $anonymizer->clean());
+                \array_walk($anonymizers[$table], fn (AbstractAnonymizer $anonymizer) => $anonymizer->clean());
 
                 $this->removeAnonymizerIdColumn($table);
 
@@ -898,12 +905,26 @@ class Anonymizator implements LoggerAwareInterface
         return $this->anonymizationConfig->connectionName;
     }
 
-    public function checkConfig(): void
+    /**
+     * @return array<string, array<string, string>> errors indexed by table and target.
+     */
+    public function checkAnonymizationConfig(): array
     {
-        foreach ($this->anonymizationConfig->all() as $tableConfig) {
+        $errors = [];
+        foreach ($this->anonymizationConfig->all() as $table => $tableConfig) {
             foreach ($tableConfig as $config) {
-                $this->createAnonymizer($config);
+                try {
+                    $this->createAnonymizer($config);
+                } catch (\Exception $e) {
+                    if (!\key_exists($table, $errors)) {
+                        $errors[$table] = [];
+                    }
+
+                    $errors[$table][$config->targetName] = $e->getMessage();
+                }
             }
         }
+
+        return $errors;
     }
 }

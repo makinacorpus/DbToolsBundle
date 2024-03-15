@@ -68,7 +68,7 @@ class Options
             return (string) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value should be a string", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be a string", $name));
     }
 
     public function getInt(string $name, int $default = null, bool $required = false): ?int
@@ -83,7 +83,7 @@ class Options
             return (int) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value should be an int", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be an int", $name));
     }
 
     public function getFloat(string $name, float $default = null, bool $required = false): ?float
@@ -98,7 +98,7 @@ class Options
             return (float) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value should be a float", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be a float", $name));
 
     }
 
@@ -116,7 +116,7 @@ class Options
 
         try {
             return new \DateTimeImmutable($value);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateTimeImmutable", $name));
         }
     }
@@ -135,7 +135,7 @@ class Options
 
         try {
             return new \DateInterval($value);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         // Adding a try catch here beacause from PHP8.3, using \DateInterval::createFromDateString
@@ -144,7 +144,7 @@ class Options
             if ($value = \DateInterval::createFromDateString($value)) {
                 return $value;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateInterval", $name));

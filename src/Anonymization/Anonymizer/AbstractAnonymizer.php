@@ -28,7 +28,9 @@ abstract class AbstractAnonymizer
         protected string $columnName,
         protected Connection $connection,
         protected Options $options,
-    ) {}
+    ) {
+        $this->validateOptions();
+    }
 
     final public static function id(): string
     {
@@ -98,6 +100,21 @@ abstract class AbstractAnonymizer
     {
         return $this->options->get('salt') ?? Anonymizator::generateRandomSalt();
     }
+
+    /**
+     * Validate options given to the Anonymizer.
+     *
+     * Override this method for your needs, for example validate that
+     * an option `foo` is given with the correct type.
+     *
+     * This method is launched before the beginning of the anonymization process.
+     *
+     * If you override this method, you must call `parent::validateOptions()`
+     * at the beginning of your implementation.
+     *
+     * @throws \Exception if any option is invalid.
+     */
+    protected function validateOptions(): void {}
 
     /**
      * Initialize your anonymizer.

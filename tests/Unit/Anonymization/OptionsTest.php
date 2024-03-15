@@ -70,13 +70,13 @@ class OptionsTest extends TestCase
         self::assertSame(null, $options->get('bar', null, true));
 
         // Trying to get ungiven required option with no default
-        // value should lead to an exception
+        // value must lead to an exception
         self::expectExceptionMessageMatches("@value is required@");
         $options->get('baz', null, true);
 
 
         // Trying to get ungiven required option with default
-        // value should not lead to an exception
+        // value must not lead to an exception
         self::assertSame("2", $options->get('baz', "2", true));
 
     }
@@ -103,9 +103,9 @@ class OptionsTest extends TestCase
         self::assertSame("12.5", $options->getString('ok3'));
         self::assertIsString($options->getString('ok4'));
 
-        self::expectExceptionMessageMatches("@value should be a string@");
+        self::expectExceptionMessageMatches("@value must be a string@");
         $options->getString('ko1');
-        self::expectExceptionMessageMatches("@value should be a string@");
+        self::expectExceptionMessageMatches("@value must be a string@");
         $options->getString('ko2');
     }
 
@@ -123,9 +123,9 @@ class OptionsTest extends TestCase
         self::assertSame(1, $options->getInt('ok2'));
         self::assertSame(12, $options->getInt('ok3'));
 
-        self::expectExceptionMessageMatches("@value should be an int@");
+        self::expectExceptionMessageMatches("@value must be an int@");
         $options->getInt('ko1');
-        self::expectExceptionMessageMatches("@value should be an int@");
+        self::expectExceptionMessageMatches("@value must be an int@");
         $options->getInt('ko2');
 
     }
@@ -144,9 +144,9 @@ class OptionsTest extends TestCase
         self::assertSame(1.0, $options->getFloat('ok2'));
         self::assertSame(12.5, $options->getFloat('ok3'));
 
-        self::expectExceptionMessageMatches("@value should be a float@");
+        self::expectExceptionMessageMatches("@value must be a float@");
         $options->getFloat('ko1');
-        self::expectExceptionMessageMatches("@value should be a float@");
+        self::expectExceptionMessageMatches("@value must be a float@");
         $options->getFloat('ko2');
     }
 

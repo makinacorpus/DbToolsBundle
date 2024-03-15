@@ -13,7 +13,10 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymization:dump-config', description: 'Dump anonymization configuration.')]
+#[AsCommand(
+    name: 'db-tools:anonymization:dump-config',
+    description: 'Dump anonymization configuration.'
+)]
 class ConfigDumpCommand extends Command
 {
     public function __construct(
@@ -32,32 +35,34 @@ class ConfigDumpCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         foreach ($this->anonymizatorFactory->all() as $connectionName => $anonymizator) {
+
             $io->title('Connection: ' . $connectionName);
 
-            try {
-                $anonymizator->checkConfig();
-            } catch (\Exception $e) {
-                $io->error($e->getMessage());
-
-                return self::FAILURE;
-            }
-
+            $errors = $anonymizator->checkAnonymizationConfig();
             $config = $anonymizator->getAnonymizationConfig();
             foreach ($config->all() as $table => $tableConfig) {
                 $io->section('Table: ' . $table);
 
+                $tableErrors = $errors[$table] ?? [];
                 $io->table(
-                    ['Target', 'Anonymizer', 'Options'],
+                    ['', 'Target', 'Anonymizer', 'Options'],
                     \array_map(
                         fn (AnonymizerConfig $config) => [
+                            \array_key_exists($config->targetName, $tableErrors) ? '<error>✘</>' : '<info>✔</>',
                             $config->targetName,
                             $config->anonymizer,
-                            $config->options->toDisplayString()
+                            $config->options->toDisplayString() .
+                            (
+                                \key_exists($config->targetName, $tableErrors) ?
+                                \PHP_EOL . '<error>' . $tableErrors[$config->targetName] . '</>'
+                                : ''
+                            ),
                         ],
                         $tableConfig,
                     )
                 );
             }
+
 
         }
 
