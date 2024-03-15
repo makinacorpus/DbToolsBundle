@@ -46,6 +46,15 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     }
 
     #[\Override]
+    protected function validateOptions(): void
+    {
+        $diff = \array_diff(\array_keys($this->options->all(), $this->getColumnNames()));
+        if (\count($diff)) {
+            throw new \InvalidArgumentException("Some given options are unknown: " . \implode(', ', $diff));
+        }
+    }
+
+    #[\Override]
     public function initialize(): void
     {
         $this->sampleTableName = $this->createSampleTempTable(

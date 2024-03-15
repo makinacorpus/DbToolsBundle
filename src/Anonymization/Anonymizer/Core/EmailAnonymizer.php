@@ -20,6 +20,12 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 class EmailAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    protected function validateOptions(): void
+    {
+        $this->options->getString('domain', 'example.com', true);
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $expr = $update->expression();

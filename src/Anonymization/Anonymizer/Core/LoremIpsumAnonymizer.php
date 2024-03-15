@@ -28,24 +28,47 @@ use MakinaCorpus\DbToolsBundle\Helper\LoremIpsum;
 class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
 {
     #[\Override]
-    protected function getSample(): array
+    protected function validateOptions(): void
     {
-        $tag = $this->options->get('html', false) ? 'p' : null;
-        $sampleCount = (int) $this->options->get('sample_count', 100);
-        $paragraphs = (int) $this->options->get('paragraphs', 1);
+        $this->options->get('html', false, true);
+        $this->options->getInt('sample_count', 100, true);
 
         if ($this->options->has('words')) {
-            $words = (int) $this->options->get('words');
+            if ($this->options->has('paragraphs')) {
+                throw new \InvalidArgumentException("'paragraphs' option cannot be specified if 'words' is in use.");
+            }
+
+            $words = $this->options->getInt('words');
+            if ($words <= 0) {
+                throw new \InvalidArgumentException("'words' must be greater than 0.");
+            }
+        } else {
+            $paragraphs = (int) $this->options->getInt('paragraphs', 1);
+            if ($paragraphs <= 0) {
+                throw new \InvalidArgumentException("'paragraphs' must be greater than 0.");
+            }
+        }
+    }
+
+    #[\Override]
+    protected function getSample(): array
+    {
+        $sampleCount = $this->options->getInt('sample_count', 100);
+
+        if ($this->options->has('words')) {
+            $words = $this->options->getInt('words');
             if ($words <= 0) {
                 throw new \InvalidArgumentException("'words' should be greater than 0.");
             }
 
             return $this->generateWordsSample($words, $sampleCount);
         } else {
-            $paragraphs = (int) $this->options->get('paragraphs', 1);
+            $paragraphs = $this->options->getInt('paragraphs', 1);
             if ($paragraphs <= 0) {
                 throw new \InvalidArgumentException("'paragraphs' should be greater than 0.");
             }
+
+            $tag = $this->options->get('html', false) ? 'p' : null;
 
             return $this->generateParagraphsSample($paragraphs, $sampleCount, $tag);
         }

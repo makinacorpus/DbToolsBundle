@@ -20,10 +20,26 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 class PasswordAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    protected function validateOptions(): void
+    {
+        $algorithm = $this->options->getString('algorithm', 'auto');
+        $this->options->getString('password', 'password');
+
+        try {
+            $passwordHasherFactory = new PasswordHasherFactory([
+                $algorithm => ['algorithm' => $algorithm]
+            ]);
+            $passwordHasherFactory->getPasswordHasher($algorithm);
+        } catch (\Throwable $e) {
+            throw new \InvalidArgumentException("Given 'algorithm' option is invalid: " . $e->getMessage());
+        }
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
-        $algorithm = $this->options->get('algorithm', 'auto');
-        $password = $this->options->get('password', 'password');
+        $algorithm = $this->options->getString('algorithm', 'auto');
+        $password = $this->options->getString('password', 'password');
 
         $passwordHasherFactory = new PasswordHasherFactory([
             $algorithm => ['algorithm' => $algorithm]

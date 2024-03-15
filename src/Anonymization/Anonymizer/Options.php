@@ -18,7 +18,7 @@ class Options
     public function get(string $name, mixed $default = null, bool $required = false): mixed
     {
         if ($required && (null === $default) && !$this->has($name)) {
-            throw new \InvalidArgumentException(\sprintf("Option '%s' value is required", $name));
+            throw new \InvalidArgumentException(\sprintf("Option '%s' is required", $name));
         }
 
         return $this->options[$name] ?? $default;

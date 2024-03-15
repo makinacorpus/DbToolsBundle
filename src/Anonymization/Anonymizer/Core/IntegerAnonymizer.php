@@ -22,32 +22,53 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 class IntegerAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    protected function validateOptions(): void
+    {
+        if ($this->options->has('min') && $this->options->has('max')) {
+            if ($this->options->has('delta')) {
+                throw new \InvalidArgumentException("'delta' option cannot be specified if 'min' and 'max' are in use.");
+            }
+            if ($this->options->has('percent')) {
+                throw new \InvalidArgumentException("'percent' option cannot be specified if 'min' and 'max' are in use.");
+            }
+
+            $min = $this->options->getInt('min');
+            $max = $this->options->getInt('max');
+            if ($min >= $max) {
+                throw new \InvalidArgumentException("'max' must be greater than 'min'.");
+            }
+        } elseif ($this->options->has('delta')) {
+            if ($this->options->has('percent')) {
+                throw new \InvalidArgumentException("'percent' option cannot be specified if 'min' and 'max' are in use.");
+            }
+
+            $delta = (float) $this->options->getInt('delta');
+            if ($delta <= 0) {
+                throw new \InvalidArgumentException("'delta' must be greater than 0.");
+            }
+        } elseif ($this->options->has('percent')) {
+            $percent = (int) $this->options->getInt('percent');
+            if ($percent <= 0) {
+                throw new \InvalidArgumentException("'percent' must be greater than 0.");
+            }
+        } else {
+            throw new \InvalidArgumentException("You must provide options with this anonymizer: both min and max, or either delta or percent.");
+        }
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
         if ($this->options->has('min') && $this->options->has('max')) {
-            $min = (int) $this->options->get('min');
-            $max = (int) $this->options->get('max');
-            if ($min >= $max) {
-                throw new \InvalidArgumentException("'max' should be greater than 'min'.");
-            }
-
-            $this->anonymizeWithMinAndMax($update, $min, $max);
+            $this->anonymizeWithMinAndMax(
+                $update,
+                $this->options->getInt('min'),
+                $this->options->getInt('max')
+            );
         } elseif ($this->options->has('delta')) {
-            $delta = (int) $this->options->get('delta');
-            if ($delta <= 0) {
-                throw new \InvalidArgumentException("'delta' should be greater than 0.");
-            }
-
-            $this->anonymizeWithDelta($update, $delta);
+            $this->anonymizeWithDelta($update, $this->options->getInt('delta'));
         } elseif ($this->options->has('percent')) {
-            $percent = (int) $this->options->get('percent');
-            if ($percent <= 0) {
-                throw new \InvalidArgumentException("'percent' should be greater than 0.");
-            }
-
-            $this->anonymizeWithPercent($update, $percent);
-        } else {
-            throw new \InvalidArgumentException("You should provide options with this anonymizer: both min and max, or either delta or percent.");
+            $this->anonymizeWithPercent($update, $this->options->getInt('percent'));
         }
     }
 
