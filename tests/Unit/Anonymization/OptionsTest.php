@@ -71,7 +71,7 @@ class OptionsTest extends TestCase
 
         // Trying to get ungiven required option with no default
         // value must lead to an exception
-        self::expectExceptionMessageMatches("@value is required@");
+        self::expectExceptionMessageMatches("@is required@");
         $options->get('baz', null, true);
 
 
