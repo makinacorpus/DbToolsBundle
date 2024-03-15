@@ -59,7 +59,12 @@ class Options
     public function getString(string $name, string $default = null, bool $required = false): ?string
     {
         $value = $this->get($name, $default, $required);
-        if ($value === null || is_scalar($value) || $value instanceof \Stringable) {
+
+        if (null === $value) {
+            return $value;
+        }
+
+        if (\is_scalar($value) || $value instanceof \Stringable) {
             return (string) $value;
         }
 
@@ -69,6 +74,10 @@ class Options
     public function getInt(string $name, int $default = null, bool $required = false): ?int
     {
         $value = $this->get($name, $default, $required);
+
+        if (null === $value) {
+            return $value;
+        }
 
         if (\is_numeric($value)) {
             return (int) $value;
@@ -81,6 +90,10 @@ class Options
     {
         $value = $this->get($name, $default, $required);
 
+        if (null === $value) {
+            return $value;
+        }
+
         if (\is_numeric($value)) {
             return (float) $value;
         }
@@ -92,6 +105,10 @@ class Options
     public function getDate(string $name, \DateTimeImmutable $default = null, bool $required = false): ?\DateTimeImmutable
     {
         $value = $this->get($name, $default, $required);
+
+        if (null === $value) {
+            return $value;
+        }
 
         if ($value instanceof \DateTimeInterface) {
             return \DateTimeImmutable::createFromInterface($value);
@@ -107,6 +124,10 @@ class Options
     public function getInterval(string $name, \DateInterval $default = null, bool $required = false): ?\DateInterval
     {
         $value = $this->get($name, $default, $required);
+
+        if (null === $value) {
+            return $value;
+        }
 
         if ($value instanceof \DateInterval) {
             return $value;
