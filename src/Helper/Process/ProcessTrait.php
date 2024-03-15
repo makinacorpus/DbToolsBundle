@@ -44,16 +44,12 @@ trait ProcessTrait
     /**
      * Act just before the process starts.
      */
-    protected function beforeProcess(): void
-    {
-    }
+    protected function beforeProcess(): void {}
 
     /**
      * Act just after the process ends.
      */
-    protected function afterProcess(): void
-    {
-    }
+    protected function afterProcess(): void {}
 
     /**
      * Handle process output.

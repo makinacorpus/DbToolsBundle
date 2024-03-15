@@ -29,8 +29,7 @@ class ConsoleOutput extends AbstractOutput
                     $newLine = $index < (\count($lines) - 1);
                     $this->output->write($indentation . $line, $newLine);
                 }
-            }
-            else {
+            } else {
                 $this->output->write($text);
             }
         }

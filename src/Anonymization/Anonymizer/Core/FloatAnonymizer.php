@@ -45,7 +45,7 @@ class FloatAnonymizer extends AbstractAnonymizer
                 throw new \InvalidArgumentException("'delta' should be greater than 0.");
             }
 
-            $this->anonymizeWithDelta($update,  $precision, $delta);
+            $this->anonymizeWithDelta($update, $precision, $delta);
         } elseif ($this->options->has('percent')) {
             $percent = (int) $this->options->get('percent');
             if ($percent <= 0) {

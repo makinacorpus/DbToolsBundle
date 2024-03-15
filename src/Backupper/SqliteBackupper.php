@@ -20,7 +20,8 @@ class SqliteBackupper extends AbstractBackupper
         // echo 'BEGIN IMMEDIATE;\n.dump table1 table2 ...' | 'sqlite3' -bail > '/path/to/backup.sql'
         $command = new CommandLine();
         $command->addRaw(\sprintf(
-            "echo 'BEGIN IMMEDIATE;\n.dump %s' |", $tablesToBackup
+            "echo 'BEGIN IMMEDIATE;\n.dump %s' |",
+            $tablesToBackup
         ));
         $command->addArg($this->binary);
         $this->addCustomOptions($command);

@@ -40,7 +40,7 @@ class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
                 throw new \InvalidArgumentException("'words' should be greater than 0.");
             }
 
-            return $this->generateWordsSample($words,  $sampleCount);
+            return $this->generateWordsSample($words, $sampleCount);
         } else {
             $paragraphs = (int) $this->options->get('paragraphs', 1);
             if ($paragraphs <= 0) {
