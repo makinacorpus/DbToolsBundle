@@ -114,8 +114,12 @@ class Options
 
         try {
             return new \DateInterval($value);
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateInterval", $name));
+        } catch (\Exception $e) {}
+
+        if ($value = \DateInterval::createFromDateString($value)) {
+            return $value;
         }
+
+        throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateInterval", $name));
     }
 }

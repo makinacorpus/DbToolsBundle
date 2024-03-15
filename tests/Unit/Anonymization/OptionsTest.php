@@ -177,12 +177,14 @@ class OptionsTest extends TestCase
         $options = new Options([
             'ok1' => 'P1D',
             'ok2' => 'PT36S',
+            'ok3' => '3 months',
             'ko1' => 'test',
             'ko2' => ['test'],
         ]);
 
         self::assertInstanceOf(\DateInterval::class, $options->getInterval('ok1'));
         self::assertInstanceOf(\DateInterval::class, $options->getInterval('ok2'));
+        self::assertInstanceOf(\DateInterval::class, $options->getInterval('ok3'));
 
         self::expectExceptionMessageMatches("@could not be converted to DateInterval@");
         $options->getInterval('ko1');
