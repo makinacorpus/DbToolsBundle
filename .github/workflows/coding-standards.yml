@@ -3,7 +3,7 @@ name: "Coding standards"
 on:
   pull_request:
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/coding-standards.yml
       - composer.*
       - .php-cs-fixer.dist.php
       - src/**
@@ -12,7 +12,7 @@ on:
     branches:
       - "main"
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/coding-standards.yml
       - composer.*
       - .php-cs-fixer.dist.php
       - src/**
