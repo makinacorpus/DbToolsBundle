@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class DbToolsExtensionTest extends TestCase
 {
-    private function getContainer(array $parameters = [], array $bundles = [])
+    private function getContainer(array $parameters = [], array $bundles = []): ContainerBuilder
     {
         $container = new ContainerBuilder(new ParameterBag($parameters + [
             'kernel.bundles' => $bundles,

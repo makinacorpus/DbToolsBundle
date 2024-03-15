@@ -172,7 +172,7 @@ class RestoreCommand extends Command
         $this->io->success("Restoration done.");
     }
 
-    private function chooseBackup()
+    private function chooseBackup(): bool
     {
         $this->io->section('Backup choice');
 
@@ -201,7 +201,7 @@ class RestoreCommand extends Command
         return true;
     }
 
-    private function listBackups()
+    private function listBackups(): int
     {
         $this->io->section('Backups list');
 
