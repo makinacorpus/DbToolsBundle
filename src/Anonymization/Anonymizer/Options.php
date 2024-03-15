@@ -116,9 +116,13 @@ class Options
             return new \DateInterval($value);
         } catch (\Exception $e) {}
 
-        if ($value = \DateInterval::createFromDateString($value)) {
-            return $value;
-        }
+        // Adding a try catch here beacause from PHP8.3, using \DateInterval::createFromDateString
+        // with an unvalid value leads to an exception.
+        try {
+            if ($value = \DateInterval::createFromDateString($value)) {
+                return $value;
+            }
+        } catch (\Exception $e) {}
 
         throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateInterval", $name));
     }
