@@ -6,7 +6,6 @@ namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +13,10 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'db-tools:anonymization:dump-config', description: 'Dump anonymization configuration.')]
+#[AsCommand(
+    name: 'db-tools:anonymization:dump-config',
+    description: 'Dump anonymization configuration.'
+)]
 class ConfigDumpCommand extends Command
 {
     public function __construct(
@@ -36,27 +38,31 @@ class ConfigDumpCommand extends Command
 
             $io->title('Connection: ' . $connectionName);
 
-            $anonymizator
-                ->setOutput(new ConsoleOutput($io))
-                ->checkAnonymizationConfig()
-            ;
-
+            $errors = $anonymizator->checkAnonymizationConfig();
             $config = $anonymizator->getAnonymizationConfig();
             foreach ($config->all() as $table => $tableConfig) {
                 $io->section('Table: ' . $table);
 
+                $tableErrors = $errors[$table] ?? [];
                 $io->table(
-                    ['Target', 'Anonymizer', 'Options'],
+                    ['', 'Target', 'Anonymizer', 'Options'],
                     \array_map(
                         fn (AnonymizerConfig $config) => [
+                            \array_key_exists($config->targetName, $tableErrors) ? '<error>✘</>' : '<info>✔</>',
                             $config->targetName,
                             $config->anonymizer,
-                            $config->options->toDisplayString()
+                            $config->options->toDisplayString() .
+                            (
+                                \key_exists($config->targetName, $tableErrors) ?
+                                \PHP_EOL . '<error>' . $tableErrors[$config->targetName] . '</>'
+                                : ''
+                            ),
                         ],
                         $tableConfig,
                     )
                 );
             }
+
 
         }
 

@@ -112,6 +112,8 @@ class Anonymizator implements LoggerAwareInterface
      * @param bool $atOnce
      *   If set to false, there will be one UPDATE query per anonymizer, if set
      *   to true a single UPDATE query for anonymizing all at once will be done.
+     *
+     * @throws \Exception if anonymization config is invalid.
      */
     public function anonymize(
         ?array $excludedTargets = null,
@@ -906,21 +908,26 @@ class Anonymizator implements LoggerAwareInterface
         return $this->anonymizationConfig->connectionName;
     }
 
-    public function checkAnonymizationConfig(): void
+    /**
+     * @return array<string, array<string, string>> errors indexed by table and target.
+     */
+    public function checkAnonymizationConfig(): array
     {
-        foreach ($this->anonymizationConfig->all() as $tableConfig) {
+        $errors = [];
+        foreach ($this->anonymizationConfig->all() as $table => $tableConfig) {
             foreach ($tableConfig as $config) {
                 try {
                     $this->createAnonymizer($config)->validateOptions();
                 } catch (\Exception $e) {
-                    $this->output->writeLine(
-                        "%s - %s - Invalid options given: %s",
-                        $config->table,
-                        $config->targetName,
-                        $e->getMessage()
-                    );
+                    if (!\key_exists($table, $errors)) {
+                        $errors[$table] = [];
+                    }
+
+                    $errors[$table][$config->targetName] = $e->getMessage();
                 }
             }
         }
+
+        return $errors;
     }
 }
