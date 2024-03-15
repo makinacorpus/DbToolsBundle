@@ -16,9 +16,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class FirstNameAnonymizer extends AbstractEnumAnonymizer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSample(): array
     {
         return [

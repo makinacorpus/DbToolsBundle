@@ -6,9 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Stats;
 
 class PgsqlStatsProvider extends AbstractStatsProvider
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doGetTableStats(): iterable
     {
         $result = $this->connection->executeQuery(
@@ -256,9 +254,7 @@ class PgsqlStatsProvider extends AbstractStatsProvider
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doGetIndexStats(): iterable
     {
         $result = $this->connection->executeQuery(

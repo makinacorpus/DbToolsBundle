@@ -24,9 +24,7 @@ class CleanCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function configure()
     {
         $this
@@ -46,6 +44,7 @@ class CleanCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$output instanceof ConsoleOutputInterface) {

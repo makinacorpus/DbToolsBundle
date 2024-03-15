@@ -37,9 +37,7 @@ class RestoreCommand extends Command
         $this->connectionName = $defaultConnectionName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -89,6 +87,7 @@ class RestoreCommand extends Command
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);

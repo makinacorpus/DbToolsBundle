@@ -9,9 +9,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 final class DbToolsConfiguration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('db_tools');

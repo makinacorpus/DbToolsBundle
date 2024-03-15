@@ -19,9 +19,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 )]
 class Md5Anonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $expr = $update->expression();

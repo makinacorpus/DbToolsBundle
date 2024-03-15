@@ -28,9 +28,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
      */
     abstract protected function getSample(): array;
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function initialize(): void
     {
         $this->validateSample();
@@ -43,9 +41,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
         );
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $expr = $update->expression();
@@ -78,9 +74,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
         $update->set($this->columnName, $expr->column('value', $joinAlias));
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function clean(): void
     {
         if ($this->sampleTableName) {

@@ -8,9 +8,7 @@ use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 
 class MariadbBackupper extends AbstractBackupper
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
@@ -48,6 +46,7 @@ class MariadbBackupper extends AbstractBackupper
         return $command;
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

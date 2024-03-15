@@ -17,6 +17,7 @@ class AttributesLoader implements LoaderInterface
         private EntityManagerProvider $entityManagerProvider,
     ) {}
 
+    #[\Override]
     public function load(AnonymizationConfig $config): void
     {
         try {

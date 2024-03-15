@@ -18,6 +18,7 @@ class YamlLoader implements LoaderInterface
         private string $connectionName = 'default',
     ) {}
 
+    #[\Override]
     public function load(AnonymizationConfig $config): void
     {
         $yamlConfig = Yaml::parseFile($this->file);

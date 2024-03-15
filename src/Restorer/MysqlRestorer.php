@@ -10,9 +10,7 @@ class MysqlRestorer extends AbstractRestorer
 {
     private mixed $backupStream = null;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCommandLine(): CommandLine
     {
         $dbParams = $this->connection->getParams();
@@ -63,6 +61,7 @@ class MysqlRestorer extends AbstractRestorer
         \fclose($this->backupStream);
     }
 
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

@@ -20,9 +20,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class StringAnonymizer extends AbstractEnumAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getSample(): array
     {
         if (!$this->options->has('sample')) {

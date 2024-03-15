@@ -32,6 +32,7 @@ class TestKernel extends Kernel implements CompilerPassInterface
         parent::__construct($environment, $debug);
     }
 
+    #[\Override]
     public function registerBundles(): iterable
     {
         return [
@@ -56,6 +57,7 @@ class TestKernel extends Kernel implements CompilerPassInterface
         ]);
     }
 
+    #[\Override]
     public function getProjectDir(): string
     {
         return $this->getRootDir();
@@ -66,8 +68,6 @@ class TestKernel extends Kernel implements CompilerPassInterface
         return $this->testRootDir;
     }
 
-    /**
-     * @return void
-     */
+    #[\Override]
     public function process(ContainerBuilder $container) {}
 }

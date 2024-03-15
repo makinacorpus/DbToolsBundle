@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DbToolsPass implements CompilerPassInterface
 {
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         $config = $this->getProcessedConfiguration($container);

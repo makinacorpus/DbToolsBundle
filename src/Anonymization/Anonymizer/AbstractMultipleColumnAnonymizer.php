@@ -45,9 +45,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         return [];
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function initialize(): void
     {
         $this->sampleTableName = $this->createSampleTempTable(
@@ -57,9 +55,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         );
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $columns = $this->getColumnNames();
@@ -105,9 +101,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         }
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function clean(): void
     {
         if ($this->sampleTableName) {

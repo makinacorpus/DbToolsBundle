@@ -15,9 +15,7 @@ class StatValueList implements \IteratorAggregate
         public ?string $help = null,
     ) {}
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIterator(): \Traversable
     {
         yield from $this->stats;

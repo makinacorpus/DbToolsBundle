@@ -20,9 +20,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 )]
 class ConstantAnonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
         if (!$this->options->has('value')) {

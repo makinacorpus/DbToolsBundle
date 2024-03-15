@@ -22,12 +22,9 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 )]
 class FloatAnonymizer extends AbstractAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function anonymize(Update $update): void
     {
-
         $precision = $this->options->get('precision', 2);
         if ($precision <= 0) {
             throw new \InvalidArgumentException("'precision' should be greater than 0.");

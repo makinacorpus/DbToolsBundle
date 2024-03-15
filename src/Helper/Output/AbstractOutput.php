@@ -12,26 +12,31 @@ abstract class AbstractOutput implements OutputInterface
         protected int $indentSize = 2
     ) {}
 
+    #[\Override]
     public function write(string $text, mixed ...$values): void
     {
         $this->doWrite($text, $values);
     }
 
+    #[\Override]
     public function writeLine(string $text, mixed ...$values): void
     {
         $this->doWrite($text, $values, 1);
     }
 
+    #[\Override]
     public function newLine(int $count = 1): void
     {
         $this->doWrite(lineBreak: $count);
     }
 
+    #[\Override]
     public function indent(int $count = 1): void
     {
         $this->indentCount += $count;
     }
 
+    #[\Override]
     public function outdent(int $count = 1): void
     {
         $this->indentCount = \max(0, $this->indentCount - $count);

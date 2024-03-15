@@ -6,9 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Stats;
 
 class MysqlStatsProvider extends AbstractStatsProvider
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doGetGlobalStats(): iterable
     {
         $result = $this->connection->executeQuery(
@@ -43,9 +41,7 @@ class MysqlStatsProvider extends AbstractStatsProvider
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doGetTableStats(): iterable
     {
         $result = $this->connection->executeQuery(
