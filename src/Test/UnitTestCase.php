@@ -17,11 +17,11 @@ use MakinaCorpus\QueryBuilder\Writer\Writer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Extends this class whenever you need either one of the connection or the
- * the query builder from doctrine/dbal.
+ * Extends this class whenever you need either the connection or the query
+ * builder from doctrine/dbal.
  *
  * Per default, it will yield the PostgreSQL database platform, it is meant
- * for writing unit test or anonymisers. If you need another dialect for a
+ * for writing unit test or anonymizers. If you need another dialect for a
  * certain test class, override createPlatform() method to change it.
  *
  * If you need to test all dialects, either:
@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class UnitTestCase extends TestCase
 {
-    private bool $inialized = false;
+    private bool $initialized = false;
     private ?Connection $connection = null;
 
     /** @after */
@@ -94,10 +94,10 @@ abstract class UnitTestCase extends TestCase
      */
     protected function getConnection(): Connection
     {
-        if (!$this->inialized) {
+        if (!$this->initialized) {
             $this->initializeDatabase();
 
-            $this->inialized = true;
+            $this->initialized = true;
         }
 
         return $this->connection ??= $this->createConnection();
