@@ -81,12 +81,13 @@ class OptionsTest extends TestCase
 
     }
 
-    public function testGetString() {
+    public function testGetString()
+    {
         $options = new Options([
             'ok1' => "test",
             'ok2' => 1,
             'ok3' => 12.5,
-            'ok4' => new class() {
+            'ok4' => new class () {
                 public function __toString()
                 {
                     return 'test';
@@ -107,7 +108,8 @@ class OptionsTest extends TestCase
         $options->getString('ko2');
     }
 
-    public function testGetInt() {
+    public function testGetInt()
+    {
         $options = new Options([
             'ok1' => "1",
             'ok2' => 1,
@@ -127,7 +129,8 @@ class OptionsTest extends TestCase
 
     }
 
-    public function testGetFloat() {
+    public function testGetFloat()
+    {
         $options = new Options([
             'ok1' => "1",
             'ok2' => 1,
@@ -146,7 +149,8 @@ class OptionsTest extends TestCase
         $options->getFloat('ko2');
     }
 
-    public function testGetDate() {
+    public function testGetDate()
+    {
         $options = new Options([
             'ok1' => new \DateTimeImmutable(),
             'ok2' => new \DateTime(),
@@ -173,7 +177,8 @@ class OptionsTest extends TestCase
 
     }
 
-    public function testGetInterval() {
+    public function testGetInterval()
+    {
         $options = new Options([
             'ok1' => 'P1D',
             'ok2' => 'PT36S',
