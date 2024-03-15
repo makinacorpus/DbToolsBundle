@@ -28,7 +28,9 @@ abstract class AbstractAnonymizer
         protected string $columnName,
         protected Connection $connection,
         protected Options $options,
-    ) {}
+    ) {
+        $this->validateOptions();
+    }
 
     final public static function id(): string
     {
@@ -112,7 +114,7 @@ abstract class AbstractAnonymizer
      *
      * @throws \Exception if any option is invalid.
      */
-    public function validateOptions(): void {}
+    protected function validateOptions(): void {}
 
     /**
      * Initialize your anonymizer.

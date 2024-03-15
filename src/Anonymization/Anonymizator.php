@@ -159,10 +159,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($plan as $table => $targets) {
             $anonymizers[$table] = [];
             foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
-                $anonymizer = $this->createAnonymizer($config);
-                $anonymizer->validateOptions();
-
-                $anonymizers[$table][] = $anonymizer;
+                $anonymizers[$table][] = $this->createAnonymizer($config);
             }
         }
 
@@ -917,7 +914,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($this->anonymizationConfig->all() as $table => $tableConfig) {
             foreach ($tableConfig as $config) {
                 try {
-                    $this->createAnonymizer($config)->validateOptions();
+                    $this->createAnonymizer($config);
                 } catch (\Exception $e) {
                     if (!\key_exists($table, $errors)) {
                         $errors[$table] = [];

@@ -23,6 +23,12 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 class FloatAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    public function validateOptions(): void
+    {
+        throw new \Exception('non mais ça va pas');
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $precision = $this->options->get('precision', 2);
