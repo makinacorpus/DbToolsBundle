@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Command\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Helper\Output\ConsoleOutput;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,15 +33,13 @@ class ConfigDumpCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         foreach ($this->anonymizatorFactory->all() as $connectionName => $anonymizator) {
+
             $io->title('Connection: ' . $connectionName);
 
-            try {
-                $anonymizator->checkConfig();
-            } catch (\Exception $e) {
-                $io->error($e->getMessage());
-
-                return self::FAILURE;
-            }
+            $anonymizator
+                ->setOutput(new ConsoleOutput($io))
+                ->checkAnonymizationConfig()
+            ;
 
             $config = $anonymizator->getAnonymizationConfig();
             foreach ($config->all() as $table => $tableConfig) {
