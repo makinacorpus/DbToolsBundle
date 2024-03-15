@@ -100,17 +100,17 @@ abstract class AbstractAnonymizer
     }
 
     /**
-     * Validate Options given to the Anonymizer.
+     * Validate options given to the Anonymizer.
      *
      * Override this method for your needs, for example validate that
      * an option `foo` is given with the correct type.
      *
-     * This method is launch before the beginning of the anonymization process.
+     * This method is launched before the beginning of the anonymization process.
      *
      * If you override this method, you must call `parent::validateOptions()`
-     * at the begining of your implementation.
+     * at the beginning of your implementation.
      *
-     * @throws \Exception if given options are not valide.
+     * @throws \Exception if any option is invalid.
      */
     public function validateOptions(): void {}
 
