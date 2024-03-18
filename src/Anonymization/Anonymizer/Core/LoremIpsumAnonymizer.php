@@ -30,7 +30,7 @@ class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
     #[\Override]
     protected function validateOptions(): void
     {
-        $this->options->get('html', false, true);
+        $this->options->getBool('html', false, true);
         $this->options->getInt('sample_count', 100, true);
 
         if ($this->options->has('words')) {
@@ -68,7 +68,7 @@ class LoremIpsumAnonymizer extends AbstractEnumAnonymizer
                 throw new \InvalidArgumentException("'paragraphs' should be greater than 0.");
             }
 
-            $tag = $this->options->get('html', false) ? 'p' : null;
+            $tag = $this->options->getBool('html', false) ? 'p' : null;
 
             return $this->generateParagraphsSample($paragraphs, $sampleCount, $tag);
         }

@@ -63,7 +63,8 @@ class FloatAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void    {
+    public function anonymize(Update $update): void
+    {
         $precision = $this->options->getInt('precision', 2);
         $precision = 10 ** $precision;
 

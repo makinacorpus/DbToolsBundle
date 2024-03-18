@@ -29,7 +29,13 @@ class PasswordAnonymizer extends AbstractAnonymizer
             $passwordHasherFactory = new PasswordHasherFactory([
                 $algorithm => ['algorithm' => $algorithm]
             ]);
-            $passwordHasherFactory->getPasswordHasher($algorithm);
+
+            // We try to hash a password to validate given algorithm
+            // really exists.
+            $passwordHasherFactory
+                ->getPasswordHasher($algorithm)
+                ->hash('password')
+            ;
         } catch (\Throwable $e) {
             throw new \InvalidArgumentException("Given 'algorithm' option is invalid: " . $e->getMessage());
         }

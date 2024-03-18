@@ -23,6 +23,7 @@ class EmailAnonymizer extends AbstractAnonymizer
     protected function validateOptions(): void
     {
         $this->options->getString('domain', 'example.com', true);
+        $this->options->getBool('use_salt', false);
     }
 
     #[\Override]
@@ -35,7 +36,7 @@ class EmailAnonymizer extends AbstractAnonymizer
         } else {
             $userExpr = $expr->column($this->columnName, $this->tableName);
 
-            if ($this->options->get('use_salt', true)) {
+            if ($this->options->getBool('use_salt', true)) {
                 $userExpr = $expr->concat($userExpr, $expr->value($this->getSalt()));
             }
 

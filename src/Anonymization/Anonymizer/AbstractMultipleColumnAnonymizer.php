@@ -48,7 +48,20 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     #[\Override]
     protected function validateOptions(): void
     {
-        $diff = \array_diff(\array_keys($this->options->all(), $this->getColumnNames()));
+        $options = $this->options->all();
+
+        if (0 === \count($options)) {
+            throw new \InvalidArgumentException("You must provide at least one option.");
+        }
+
+        if (\count(\array_unique($options)) < \count($options)) {
+            throw new \InvalidArgumentException("The same column has been mapped twice.");
+        }
+
+        $diff = \array_diff(
+            \array_keys($options),
+            $this->getColumnNames()
+        );
         if (\count($diff)) {
             throw new \InvalidArgumentException("Some given options are unknown: " . \implode(', ', $diff));
         }
