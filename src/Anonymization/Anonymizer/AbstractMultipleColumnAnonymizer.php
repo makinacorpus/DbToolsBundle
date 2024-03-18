@@ -56,7 +56,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
         // Other ones will be validated by each implementation.
         $options = \array_filter(
             $this->options->all(),
-            fn ($key) => \in_array($key, $this->getColumnNames()) ,
+            fn ($key) => \in_array($key, $this->getColumnNames()),
             ARRAY_FILTER_USE_KEY
         );
 
