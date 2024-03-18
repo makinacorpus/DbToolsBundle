@@ -9,7 +9,7 @@
 * [feature] ⭐️ Add NullAnonymizer (#114, #116)
 * [feature] LoremIpsumAnonymizer - Add some customization options (#90, #112)
 * [feature] ⭐️ IntegerAnonymizer - Add possibility to anonymize value by adding noise (#84, #110)
-* [internal] Backup and Restore Commands - Some internal code base refactors (#100, #104)
+* [internal] Backup and Restore Commands - Some internal code base refactorings (#100, #104)
 * [feature] Backup and Restore Commands - Make usage and management of default and extra options more convenient (#79, #99)
 * [feature] ⭐️ Backup and Restore Commands - Allow to provide custom options for backup and restoration tasks (#79, #94)
 * [feature] Anonymize Command - Make output more compact in none-verbose mode (#92, #93)
