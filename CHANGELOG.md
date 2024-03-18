@@ -29,11 +29,11 @@
 
 ## 1.0.3
 
-* [fix] MySQL Anonymization process - Fix join id index creation(#89)
+* [fix] MySQL Anonymization process - Fix join id index creation (#89)
 
 ## 1.0.2
 
-* [fix] SQLite Restorer - Reset the doctrine connection after restoration (#87)
+* [fix] SQLite Restorer - Reset the Doctrine connection after restoration (#87)
 
 ## 1.0.1
 
