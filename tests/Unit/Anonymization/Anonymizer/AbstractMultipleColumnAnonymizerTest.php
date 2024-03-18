@@ -65,20 +65,6 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
             ]),
         );
     }
-
-    public function testValidateOptionsKoWithBadColumnOption(): void
-    {
-        self::expectExceptionMessageMatches("@Some given options@");
-
-        new TestMultipleColumnAnonymizer(
-            'some_table',
-            'some_column',
-            $this->getConnection(),
-            new Options([
-                'column_3' => 'actual_column_1',
-            ]),
-        );
-    }
 }
 
 class TestMultipleColumnAnonymizer extends AbstractMultipleColumnAnonymizer
