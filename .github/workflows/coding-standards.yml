@@ -3,7 +3,7 @@ name: "Coding standards"
 on:
   pull_request:
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/coding-standards.yml
       - composer.*
       - .php-cs-fixer.dist.php
       - src/**
@@ -12,7 +12,7 @@ on:
     branches:
       - "main"
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/coding-standards.yml
       - composer.*
       - .php-cs-fixer.dist.php
       - src/**
@@ -37,9 +37,10 @@ jobs:
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
+          tools: cs2pr
 
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v2"
 
       - name: "Run a Code style analysis with friendsofphp/php-cs-fixer"
-        run: "vendor/bin/php-cs-fixer fix --verbose --allow-risky=yes"
+        run: "vendor/bin/php-cs-fixer fix --format=checkstyle --allow-risky=yes --dry-run | cs2pr"

@@ -3,7 +3,7 @@ name: "Static Analysis"
 on:
   pull_request:
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/static-analysis.yml
       - composer.*
       - phpstan.neon.dist
       - src/**
@@ -12,7 +12,7 @@ on:
     branches:
       - "main"
     paths:
-      - .github/workflows/composer-checks.yml
+      - .github/workflows/static-analysis.yml
       - composer.*
       - phpstan.neon.dist
       - src/**
