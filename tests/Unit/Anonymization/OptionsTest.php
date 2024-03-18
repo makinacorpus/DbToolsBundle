@@ -71,7 +71,7 @@ class OptionsTest extends TestCase
 
         // Trying to get ungiven required option with no default
         // value must lead to an exception
-        self::expectExceptionMessageMatches("@value is required@");
+        self::expectExceptionMessageMatches("@is required@");
         $options->get('baz', null, true);
 
 
@@ -103,10 +103,36 @@ class OptionsTest extends TestCase
         self::assertSame("12.5", $options->getString('ok3'));
         self::assertIsString($options->getString('ok4'));
 
-        self::expectExceptionMessageMatches("@value must be a string@");
+        self::expectExceptionMessageMatches("@must be a string@");
         $options->getString('ko1');
-        self::expectExceptionMessageMatches("@value must be a string@");
+        self::expectExceptionMessageMatches("@must be a string@");
         $options->getString('ko2');
+    }
+
+    public function testGetBool()
+    {
+        $options = new Options([
+            'ok1' => true,
+            'ok2' => 1,
+            'ok3' => "t",
+            'ok4' => false,
+            'ok5' => "f",
+            'ok6' => "0",
+            'ko1' => new \DateTimeImmutable(),
+            'ko2' => ['test'],
+        ]);
+
+        self::assertSame(true, $options->getBool('ok1'));
+        self::assertSame(true, $options->getBool('ok2'));
+        self::assertSame(true, $options->getBool('ok3'));
+        self::assertSame(false, $options->getBool('ok4'));
+        self::assertSame(false, $options->getBool('ok5'));
+        self::assertSame(false, $options->getBool('ok6'));
+
+        self::expectExceptionMessageMatches("@must be a scalar@");
+        $options->getBool('ko1');
+        self::expectExceptionMessageMatches("@must be an scalar@");
+        $options->getBool('ko2');
     }
 
     public function testGetInt()
@@ -123,9 +149,9 @@ class OptionsTest extends TestCase
         self::assertSame(1, $options->getInt('ok2'));
         self::assertSame(12, $options->getInt('ok3'));
 
-        self::expectExceptionMessageMatches("@value must be an int@");
+        self::expectExceptionMessageMatches("@must be an int@");
         $options->getInt('ko1');
-        self::expectExceptionMessageMatches("@value must be an int@");
+        self::expectExceptionMessageMatches("@must be an int@");
         $options->getInt('ko2');
 
     }
@@ -144,9 +170,9 @@ class OptionsTest extends TestCase
         self::assertSame(1.0, $options->getFloat('ok2'));
         self::assertSame(12.5, $options->getFloat('ok3'));
 
-        self::expectExceptionMessageMatches("@value must be a float@");
+        self::expectExceptionMessageMatches("@must be a float@");
         $options->getFloat('ko1');
-        self::expectExceptionMessageMatches("@value must be a float@");
+        self::expectExceptionMessageMatches("@must be a float@");
         $options->getFloat('ko2');
     }
 

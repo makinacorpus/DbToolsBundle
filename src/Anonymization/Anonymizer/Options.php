@@ -18,7 +18,7 @@ class Options
     public function get(string $name, mixed $default = null, bool $required = false): mixed
     {
         if ($required && (null === $default) && !$this->has($name)) {
-            throw new \InvalidArgumentException(\sprintf("Option '%s' value is required", $name));
+            throw new \InvalidArgumentException(\sprintf("Option '%s' is required", $name));
         }
 
         return $this->options[$name] ?? $default;
@@ -68,7 +68,29 @@ class Options
             return (string) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be a string", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' must be a string", $name));
+    }
+
+    public function getBool(string $name, bool $default = null, bool $required = false): ?bool
+    {
+        $value = $this->get($name, $default, $required);
+
+        if (null === $value) {
+            return $value;
+        }
+
+        if (\is_string($value)) {
+            return !\in_array(
+                \strtolower($value),
+                ['0', 'no', 'n', 'false', 'f', '']
+            );
+        }
+
+        if (!\is_scalar($value)) {
+            throw new \InvalidArgumentException(\sprintf("Option '%s' must be a scalar", $name));
+        }
+
+        return (bool) $value;
     }
 
     public function getInt(string $name, int $default = null, bool $required = false): ?int
@@ -83,7 +105,7 @@ class Options
             return (int) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be an int", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' must be an int", $name));
     }
 
     public function getFloat(string $name, float $default = null, bool $required = false): ?float
@@ -98,7 +120,7 @@ class Options
             return (float) $value;
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value must be a float", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' must be a float", $name));
 
     }
 
@@ -117,7 +139,7 @@ class Options
         try {
             return new \DateTimeImmutable($value);
         } catch (\Throwable $e) {
-            throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateTimeImmutable", $name));
+            throw new \InvalidArgumentException(\sprintf("Option '%s' could not be converted to DateTimeImmutable", $name));
         }
     }
 
@@ -141,12 +163,12 @@ class Options
         // Adding a try catch here beacause from PHP8.3, using \DateInterval::createFromDateString
         // with an unvalid value leads to an exception.
         try {
-            if ($value = \DateInterval::createFromDateString($value)) {
+            if ($value = @\DateInterval::createFromDateString($value)) {
                 return $value;
             }
         } catch (\Throwable $e) {
         }
 
-        throw new \InvalidArgumentException(\sprintf("Option '%s' value could not be converted to DateInterval", $name));
+        throw new \InvalidArgumentException(\sprintf("Option '%s' could not be converted to DateInterval", $name));
     }
 }

@@ -46,6 +46,26 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     }
 
     #[\Override]
+    protected function validateOptions(): void
+    {
+        if (0 === \count($this->options->all())) {
+            throw new \InvalidArgumentException("You must provide at least one option.");
+        }
+
+        // We only validate column options here.
+        // Other ones will be validated by each implementation.
+        $options = \array_filter(
+            $this->options->all(),
+            fn ($key) => \in_array($key, $this->getColumnNames()),
+            ARRAY_FILTER_USE_KEY
+        );
+
+        if (\count(\array_unique($options)) < \count($options)) {
+            throw new \InvalidArgumentException("The same column has been mapped twice.");
+        }
+    }
+
+    #[\Override]
     public function initialize(): void
     {
         $this->sampleTableName = $this->createSampleTempTable(

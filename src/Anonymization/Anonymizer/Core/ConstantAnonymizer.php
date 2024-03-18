@@ -21,12 +21,14 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 class ConstantAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    protected function validateOptions(): void
+    {
+        $this->options->get('value', null, true);
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
-        if (!$this->options->has('value')) {
-            throw new \InvalidArgumentException("'value' option should be given.");
-        }
-
         $expr = $update->expression();
 
         $update->set(

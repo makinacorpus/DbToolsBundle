@@ -10,6 +10,74 @@ use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class EmailAnonymizerTest extends UnitTestCase
 {
+    public function testValidateOptionsOkWithNoOption(): void
+    {
+        new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([]),
+        );
+
+        self::expectNotToPerformAssertions();
+    }
+
+    public function testValidateOptionsOkWithDomainOptionAsString(): void
+    {
+        new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'domain' => 'makina-corpus.com',
+            ]),
+        );
+
+        self::expectNotToPerformAssertions();
+    }
+
+    public function testValidateOptionsKoWithDomainNotStringable(): void
+    {
+        self::expectExceptionMessageMatches("@string@");
+
+        new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'domain' => ['ttt', 'ttt'],
+            ]),
+        );
+    }
+
+    public function testValidateOptionsOkWithUseSaltOptionAsBool(): void
+    {
+        new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'use_salt' => true,
+            ]),
+        );
+
+        self::expectNotToPerformAssertions();
+    }
+
+    public function testValidateOptionsKoWithUseSaltOptionAsNoneBool(): void
+    {
+        self::expectExceptionMessageMatches("@scalar@");
+
+        new EmailAnonymizer(
+            'some_table',
+            'email',
+            $this->getConnection(),
+            new Options([
+                'use_salt' => ['true'],
+            ]),
+        );
+    }
+
     public function testAnonymizeWithDefaultDomain(): void
     {
         $update = $this->getQueryBuilder()->update('some_table');

@@ -20,6 +20,13 @@ use MakinaCorpus\QueryBuilder\Query\Update;
 class EmailAnonymizer extends AbstractAnonymizer
 {
     #[\Override]
+    protected function validateOptions(): void
+    {
+        $this->options->getString('domain', 'example.com', true);
+        $this->options->getBool('use_salt', false);
+    }
+
+    #[\Override]
     public function anonymize(Update $update): void
     {
         $expr = $update->expression();
@@ -29,7 +36,7 @@ class EmailAnonymizer extends AbstractAnonymizer
         } else {
             $userExpr = $expr->column($this->columnName, $this->tableName);
 
-            if ($this->options->get('use_salt', true)) {
+            if ($this->options->getBool('use_salt', true)) {
                 $userExpr = $expr->concat($userExpr, $expr->value($this->getSalt()));
             }
 
