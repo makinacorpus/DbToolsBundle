@@ -78,6 +78,7 @@ abstract class AbstractBackupper implements LoggerAwareInterface
 
     public function setExcludedTables(array $excludedTables): self
     {
+        $this->excludedTables = [];
         foreach ($excludedTables as $table) {
             if (!\is_string($table)) {
                 throw new \InvalidArgumentException(
