@@ -110,6 +110,17 @@ class BackupperFactoryTest extends TestCase
         };
     }
 
+    /**
+     * Get the value of a protected or private property from the given object.
+     *
+     * Internally, it binds a closure to the given object and calls this closure
+     * to extract the protected or private property value.
+     */
+    private function getPropertyValue(object $object, string $property): mixed
+    {
+        return (fn () => $this->{$property})->call($object);
+    }
+
     public function testCreateAnonymizer(): void
     {
         $connection = $this->createMockConnection();
@@ -118,12 +129,11 @@ class BackupperFactoryTest extends TestCase
 
         $backupperFactory = new BackupperFactory($registry, self::BINARIES);
         $backupper = $backupperFactory->create();
-        $reflection = new \ReflectionClass($backupper);
 
-        $this->assertSame(self::BINARIES[$platformId], $reflection->getProperty('binary')->getValue($backupper));
-        $this->assertNull($reflection->getProperty('extraOptions')->getValue($backupper));
-        $this->assertIsArray($reflection->getProperty('excludedTables')->getValue($backupper));
-        $this->assertEmpty($reflection->getProperty('excludedTables')->getValue($backupper));
+        $this->assertSame(self::BINARIES[$platformId], $this->getPropertyValue($backupper, 'binary'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
     }
 
     public function testCreateAnonymizerWithDefaultOptions(): void
@@ -141,20 +151,18 @@ class BackupperFactoryTest extends TestCase
         );
 
         $backupper = $backupperFactory->create();
-        $reflection = new \ReflectionClass($backupper);
 
-        $this->assertSame('--fake-opt --mock-opt', $reflection->getProperty('defaultOptions')->getValue($backupper));
-        $this->assertNull($reflection->getProperty('extraOptions')->getValue($backupper));
-        $this->assertIsArray($reflection->getProperty('excludedTables')->getValue($backupper));
-        $this->assertEmpty($reflection->getProperty('excludedTables')->getValue($backupper));
+        $this->assertSame('--fake-opt --mock-opt', $this->getPropertyValue($backupper, 'defaultOptions'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
 
         $backupper = $backupperFactory->create('another');
-        $reflection = new \ReflectionClass($backupper);
 
-        $this->assertSame('-x -y -z', $reflection->getProperty('defaultOptions')->getValue($backupper));
-        $this->assertNull($reflection->getProperty('extraOptions')->getValue($backupper));
-        $this->assertIsArray($reflection->getProperty('excludedTables')->getValue($backupper));
-        $this->assertEmpty($reflection->getProperty('excludedTables')->getValue($backupper));
+        $this->assertSame('-x -y -z', $this->getPropertyValue($backupper, 'defaultOptions'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
     }
 
     public function testCreateAnonymizerWithExcludedTables(): void
@@ -173,17 +181,15 @@ class BackupperFactoryTest extends TestCase
         );
 
         $backupper = $backupperFactory->create();
-        $reflection = new \ReflectionClass($backupper);
 
-        $this->assertNull($reflection->getProperty('extraOptions')->getValue($backupper));
-        $this->assertIsArray($reflection->getProperty('excludedTables')->getValue($backupper));
-        $this->assertSame(['table1', 'table2'], $reflection->getProperty('excludedTables')->getValue($backupper));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertSame(['table1', 'table2'], $this->getPropertyValue($backupper, 'excludedTables'));
 
         $backupper = $backupperFactory->create('another');
-        $reflection = new \ReflectionClass($backupper);
 
-        $this->assertNull($reflection->getProperty('extraOptions')->getValue($backupper));
-        $this->assertIsArray($reflection->getProperty('excludedTables')->getValue($backupper));
-        $this->assertSame(['table3', 'table4'], $reflection->getProperty('excludedTables')->getValue($backupper));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertSame(['table3', 'table4'], $this->getPropertyValue($backupper, 'excludedTables'));
     }
 }
