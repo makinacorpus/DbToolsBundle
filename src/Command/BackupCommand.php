@@ -23,12 +23,12 @@ class BackupCommand extends Command
     private SymfonyStyle $io;
     private string $connectionName;
     private AbstractBackupper $backupper;
+    private ?array $excludedTables = null;
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
 
     public function __construct(
         string $defaultConnectionName,
-        private array $excludedTables,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
     ) {
@@ -84,7 +84,7 @@ class BackupCommand extends Command
             $this->connectionName = $input->getOption('connection');
         }
         if ($excludedTables = $input->getOption('excluded-tables')) {
-            $this->excludedTables[$this->connectionName] = \explode(',', $excludedTables);
+            $this->excludedTables = \explode(',', $excludedTables);
         }
 
         $this->extraOptions = $input->getOption('extra-options');
@@ -112,10 +112,13 @@ class BackupCommand extends Command
         $this->backupper = $this->backupperFactory->create($this->connectionName);
         $filename = $this->storage->generateFilename($this->connectionName, $this->backupper->getExtension());
 
+        if (isset($this->excludedTables)) {
+            $this->backupper->setExcludedTables($this->excludedTables);
+        }
+
         $this
             ->backupper
             ->setDestination($filename)
-            ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
             ->setExtraOptions($this->extraOptions)
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setOutput(new ConsoleOutput($this->io))

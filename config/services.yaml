@@ -29,7 +29,6 @@ services:
         class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
         arguments:
             - '%doctrine.default_connection%'
-            - '%db_tools.excluded_tables%'
             - '@db_tools.backupper.factory'
             - '@db_tools.storage'
         tags: ['console.command']
@@ -66,6 +65,7 @@ services:
             - '@doctrine'
             - '%db_tools.backupper.binaries%'
             - '%db_tools.backupper.options%'
+            - '%db_tools.excluded_tables%'
             - '@logger'
         tags: [{ name: 'monolog.logger', channel: 'db_tools_backup' }]
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
@@ -73,23 +74,48 @@ class BackupperRestorerTest extends FunctionalTestCase
         );
     }
 
-    public function testBackupper(): void
+    private function getBackupperFactory(?Connection $connection = null): BackupperFactory
     {
+        $connection = $connection ?? $this->getConnection();
+
         $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
         $mockDoctrineRegistry
+            ->expects($this->atLeast(1))
             ->method('getConnection')
-            ->willReturn($this->getConnection())
+            ->willReturn($connection)
         ;
 
-        $backupperFactoy = new BackupperFactory($mockDoctrineRegistry, [
+        return new BackupperFactory($mockDoctrineRegistry, [
             'mariadb' => 'mariadb-dump',
             'mysql' => 'mysqldump',
             'postgresql' => 'pg_dump',
             'sqlite' => 'sqlite3',
         ]);
+    }
 
+    private function getRestorerFactory(?Connection $connection = null): RestorerFactory
+    {
+        $connection = $this->getConnection();
+
+        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
+        $mockDoctrineRegistry
+            ->expects($this->atLeast(1))
+            ->method('getConnection')
+            ->willReturn($connection)
+        ;
+
+        return new RestorerFactory($mockDoctrineRegistry, [
+            'mariadb' => 'mariadb',
+            'mysql' => 'mysql',
+            'postgresql' => 'pg_restore',
+            'sqlite' => 'sqlite3',
+        ]);
+    }
+
+    public function testBackupper(): void
+    {
         try {
-            $backupper = $backupperFactoy->create('');
+            $backupper = $this->getBackupperFactory()->create();
         } catch (NotImplementedException $e) {
             $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
         }
@@ -112,21 +138,10 @@ class BackupperRestorerTest extends FunctionalTestCase
     public function testBackupperWithExtraOptions(): void
     {
         $connection = $this->getConnection();
-        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $mockDoctrineRegistry
-            ->method('getConnection')
-            ->willReturn($connection)
-        ;
-
-        $backupperFactoy = new BackupperFactory($mockDoctrineRegistry, [
-            'mariadb' => 'mariadb-dump',
-            'mysql' => 'mysqldump',
-            'postgresql' => 'pg_dump',
-            'sqlite' => 'sqlite3',
-        ]);
+        $backupperFactory = $this->getBackupperFactory($connection);
 
         try {
-            $backupper = $backupperFactoy->create('');
+            $backupper = $backupperFactory->create();
         } catch (NotImplementedException $e) {
             $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
         }
@@ -158,15 +173,9 @@ class BackupperRestorerTest extends FunctionalTestCase
     public function testRestorer(): void
     {
         $connection = $this->getConnection();
-        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $mockDoctrineRegistry
-            ->method('getConnection')
-            ->willReturn($connection)
-        ;
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
-
         $connection
             ->createQueryBuilder()
             ->delete('table_in_backup_1')
@@ -174,15 +183,10 @@ class BackupperRestorerTest extends FunctionalTestCase
             ->executeStatement()
         ;
 
-        $restorerFactoy = new RestorerFactory($mockDoctrineRegistry, [
-            'mariadb' => 'mariadb',
-            'mysql' => 'mysql',
-            'postgresql' => 'pg_restore',
-            'sqlite' => 'sqlite3',
-        ]);
+        $restorerFactory = $this->getRestorerFactory($connection);
 
         try {
-            $restorer = $restorerFactoy->create('');
+            $restorer = $restorerFactory->create();
         } catch (NotImplementedException $e) {
             $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
         }
@@ -218,15 +222,9 @@ class BackupperRestorerTest extends FunctionalTestCase
     public function testRestorerWithExtraOptions(): void
     {
         $connection = $this->getConnection();
-        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $mockDoctrineRegistry
-            ->method('getConnection')
-            ->willReturn($connection)
-        ;
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
-
         $connection
             ->createQueryBuilder()
             ->delete('table_in_backup_1')
@@ -234,15 +232,10 @@ class BackupperRestorerTest extends FunctionalTestCase
             ->executeStatement()
         ;
 
-        $restorerFactoy = new RestorerFactory($mockDoctrineRegistry, [
-            'mariadb' => 'mariadb',
-            'mysql' => 'mysql',
-            'postgresql' => 'pg_restore',
-            'sqlite' => 'sqlite3',
-        ]);
+        $restorerFactory = $this->getRestorerFactory($connection);
 
         try {
-            $restorer = $restorerFactoy->create('');
+            $restorer = $restorerFactory->create();
         } catch (NotImplementedException $e) {
             $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
         }
