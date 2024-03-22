@@ -84,7 +84,10 @@ class BackupperFactoryTest extends TestCase
         $doctrineRegistry
             ->expects($this->any())
             ->method('getConnectionNames')
-            ->willReturn(['default', 'another'])
+            ->willReturn([
+                'default' => 'doctrine.dbal.default_connection',
+                'another' => 'doctrine.dbal.another_connection',
+            ])
         ;
         $doctrineRegistry
             ->expects($this->any())

@@ -30,7 +30,7 @@ class BackupperFactory
         $connectionNames = $this->doctrineRegistry->getConnectionNames();
 
         foreach ($this->backupperOptions as $connectionName => $options) {
-            if (!\in_array($connectionName, $connectionNames, true)) {
+            if (!isset($connectionNames[$connectionName])) {
                 throw new \DomainException(\sprintf(
                     "'%s' is not a valid Doctrine connection name.",
                     $connectionName
@@ -44,7 +44,7 @@ class BackupperFactory
         }
 
         foreach ($this->excludedTables as $connectionName => $tableNames) {
-            if (!\in_array($connectionName, $connectionNames, true)) {
+            if (!isset($connectionNames[$connectionName])) {
                 throw new \DomainException(\sprintf(
                     "'%s' is not a valid Doctrine connection name.",
                     $connectionName
