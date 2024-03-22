@@ -32,7 +32,8 @@ class BackupperFactory
         foreach ($this->backupperOptions as $connectionName => $options) {
             if (!\in_array($connectionName, $connectionNames, true)) {
                 throw new \DomainException(\sprintf(
-                    "'%s' is not a valid Doctrine connection name.", $connectionName
+                    "'%s' is not a valid Doctrine connection name.",
+                    $connectionName
                 ));
             }
             if (!\is_string($options)) {
@@ -45,7 +46,8 @@ class BackupperFactory
         foreach ($this->excludedTables as $connectionName => $tableNames) {
             if (!\in_array($connectionName, $connectionNames, true)) {
                 throw new \DomainException(\sprintf(
-                    "'%s' is not a valid Doctrine connection name.", $connectionName
+                    "'%s' is not a valid Doctrine connection name.",
+                    $connectionName
                 ));
             }
             if (!\is_array($tableNames)) {

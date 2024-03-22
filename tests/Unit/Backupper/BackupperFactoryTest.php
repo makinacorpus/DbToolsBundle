@@ -104,7 +104,8 @@ class BackupperFactoryTest extends TestCase
             //$platform instanceof SQLServerPlatform => 'sqlsrv',
             $platform instanceof SqlitePlatform => 'sqlite',
             default => throw new \LogicException(\sprintf(
-                'Unsupported database platform: %s', $platform::class
+                'Unsupported database platform: %s',
+                $platform::class
             ))
         };
     }
