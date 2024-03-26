@@ -15,9 +15,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/makinacorpus/DbToolsBundle
-    # - theme: alt
-    #   text: View on Packagist
-    #   link: https://github.com/makinacorpus/DbToolsBundle
+    - theme: alt
+      text: View on Packagist
+      link: https://packagist.org/packages/makinacorpus/db-tools-bundle
 
 features:
   - icon:

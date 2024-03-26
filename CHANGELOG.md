@@ -1,11 +1,8 @@
 # Changelog
 
-## Next
-
-* [feature] ⭐️ Add DateAnonymizer (#32)
-
 ## 1.1.0
 
+* [feature] ⭐️ Add DateAnonymizer (#32)
 * [feature] Anonymizers - Add options validation method (#97, #128, #131, #133)
 * [internal] Backupper, Restorer, Anonymizator - Change the way we output information during processes (#103)
 * [feature] ⭐️ FloatAnonymizer - Add possibility to anonymize value by adding noise (#86, #113)

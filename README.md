@@ -10,10 +10,10 @@ A set of Symfony Console Commands to interact with your database
     </a>
 </p>
 
-* **Backup**: Backup your database and manage your dumps with a simple command.
-* **Restore**: Easily restore a previous dump of your database.
-* **Anonymize**: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
-* Set up a **GDPR-friendly** workflow: Make it easier to follow GDPR best practices when importing production dump to other environments.
+* **[Backup](https://dbtoolsbundle.readthedocs.io/en/stable/backup_restore.html#backup-command)**: Backup your database and manage your dumps with a simple command.
+* **[Restore](https://dbtoolsbundle.readthedocs.io/en/stable/backup_restore.html#restore-command)**: Easily restore a previous dump of your database.
+* **[Anonymize](https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/essentials.html)**: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
+* [Set up a **GDPR-friendly** workflow](https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/workflow.html): Make it easier to follow GDPR best practices when importing production dump to other environments.
 
 ## Installation
 
@@ -26,6 +26,10 @@ composer require makinacorpus/db-tools-bundle
 ## Documentation
 
 Read [DbToolsBundle documentation](https://dbtoolsbundle.readthedocs.io/) on Read the Docs.
+
+## Contributing
+
+The DbToolsBundle is an Open Source project, if you want to help check out the [contribute page on the documentation](https://dbtoolsbundle.readthedocs.io/en/stable/contribute/contribute.html).
 
 ## Licence
 
