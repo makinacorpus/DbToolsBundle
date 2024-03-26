@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+
+* [feature] ⭐️ Add DateAnonymizer (#32)
+
 ## 1.1.0
 
 * [feature] Anonymizers - Add options validation method (#97, #128, #131, #133)
