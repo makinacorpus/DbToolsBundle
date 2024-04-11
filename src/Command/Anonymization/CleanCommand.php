@@ -25,7 +25,7 @@ class CleanCommand extends Command
     }
 
     #[\Override]
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Clean DbTools left-over temporary tables, columns and indexes.')
