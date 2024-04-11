@@ -12,11 +12,12 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class DbToolsExtension extends Extension
 {
     #[\Override]
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
@@ -85,7 +86,7 @@ final class DbToolsExtension extends Extension
     }
 
     #[\Override]
-    public function getConfiguration(array $config, ContainerBuilder $container)
+    public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
     {
         return new DbToolsConfiguration();
     }

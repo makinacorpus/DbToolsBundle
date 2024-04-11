@@ -26,7 +26,7 @@ class CheckCommand extends Command
     }
 
     #[\Override]
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Check DbTools configuration')

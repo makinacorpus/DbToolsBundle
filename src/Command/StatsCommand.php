@@ -31,7 +31,7 @@ class StatsCommand extends Command
     }
 
     #[\Override]
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Give some database statistics')
