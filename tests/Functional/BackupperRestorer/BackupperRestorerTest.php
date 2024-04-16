@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\MariaDBPlatform;
-use Doctrine\DBAL\Platforms\MySQLPlatform;
-use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 /**
  * This class will successively test Backupper and Restorer.
@@ -76,7 +73,7 @@ class BackupperRestorerTest extends FunctionalTestCase
 
     private function getBackupperFactory(?Connection $connection = null): BackupperFactory
     {
-        $connection = $connection ?? $this->getConnection();
+        $connection = $connection ?? $this->getDoctrineConnection();
 
         $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
         $mockDoctrineRegistry
@@ -95,7 +92,7 @@ class BackupperRestorerTest extends FunctionalTestCase
 
     private function getRestorerFactory(?Connection $connection = null): RestorerFactory
     {
-        $connection = $this->getConnection();
+        $connection = $this->getDoctrineConnection();
 
         $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
         $mockDoctrineRegistry
@@ -137,8 +134,7 @@ class BackupperRestorerTest extends FunctionalTestCase
      */
     public function testBackupperWithExtraOptions(): void
     {
-        $connection = $this->getConnection();
-        $backupperFactory = $this->getBackupperFactory($connection);
+        $backupperFactory = $this->getBackupperFactory($this->getDoctrineConnection());
 
         try {
             $backupper = $backupperFactory->create();
@@ -148,15 +144,14 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         $backupper->checkBinary();
         $backupFilename = $this->prepareAndGetBackupFilename($backupper->getExtension());
-        $platform = $connection->getDatabasePlatform();
 
         $backupper
             ->setDestination($backupFilename)
-            ->setExtraOptions(match (true) {
-                $platform instanceof MariaDBPlatform => '-v --no-tablespaces --add-drop-table --skip-quote-names',
-                $platform instanceof MySQLPlatform => '-v --no-tablespaces --add-drop-table --skip-quote-names',
-                $platform instanceof PostgreSQLPlatform => '-v --no-owner -Z 5 --lock-wait-timeout=120',
-                $platform instanceof SqlitePlatform => '-bail -readonly', // No interesting options for SQLite.
+            ->setExtraOptions(match ($this->getDatabaseSession()->getVendorName()) {
+                Vendor::MARIADB => '-v --no-tablespaces --add-drop-table --skip-quote-names',
+                Vendor::MYSQL => '-v --no-tablespaces --add-drop-table --skip-quote-names',
+                Vendor::POSTGRESQL => '-v --no-owner -Z 5 --lock-wait-timeout=120',
+                Vendor::SQLITE => '-bail -readonly', // No interesting options for SQLite.
                 default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
             })
             ->ignoreDefaultOptions()
@@ -172,7 +167,7 @@ class BackupperRestorerTest extends FunctionalTestCase
      */
     public function testRestorer(): void
     {
-        $connection = $this->getConnection();
+        $connection = $this->getDoctrineConnection();
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
@@ -205,14 +200,13 @@ class BackupperRestorerTest extends FunctionalTestCase
         // - All data from initial insert (see self::createTestData) should be there
         // - Deleted data from our previous modifications should not be
 
-        $schemaManager = $connection->createSchemaManager();
-        self::assertTrue($schemaManager->tablesExist('table_in_backup_1'));
-        self::assertTrue($schemaManager->tablesExist('table_in_backup_2'));
-
+        $schemaManager = $this->getDatabaseSession()->getSchemaManager();
+        self::assertTrue($schemaManager->tableExists('table_in_backup_1'));
+        self::assertTrue($schemaManager->tableExists('table_in_backup_2'));
 
         $this->assertSame(
             6,
-            $this->getConnection()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
         );
     }
 
@@ -221,18 +215,18 @@ class BackupperRestorerTest extends FunctionalTestCase
      */
     public function testRestorerWithExtraOptions(): void
     {
-        $connection = $this->getConnection();
+        $session = $this->getDatabaseSession();
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
-        $connection
-            ->createQueryBuilder()
+
+        $session
             ->delete('table_in_backup_1')
-            ->where('id = 1')
+            ->where('id', 1)
             ->executeStatement()
         ;
 
-        $restorerFactory = $this->getRestorerFactory($connection);
+        $restorerFactory = $this->getRestorerFactory($this->getDoctrineConnection());
 
         try {
             $restorer = $restorerFactory->create();
@@ -241,16 +235,15 @@ class BackupperRestorerTest extends FunctionalTestCase
         }
 
         $restorer->checkBinary();
-        $platform = $connection->getDatabasePlatform();
-        $connection->close();
+        $session->close();
 
         $restorer
             ->setBackupFilename($this->prepareAndGetBackupFilename($restorer->getExtension()))
-            ->setExtraOptions(match (true) {
-                $platform instanceof MariaDBPlatform => '-v --no-auto-rehash --skip-progress-reports',
-                $platform instanceof MySQLPlatform => '-v --no-auto-rehash',
-                $platform instanceof PostgreSQLPlatform => '-v -j 2 --disable-triggers --clean --if-exists',
-                $platform instanceof SqlitePlatform => '-bail', // No interesting options for SQLite.
+            ->setExtraOptions(match ($this->getDatabaseSession()->getVendorName()) {
+                Vendor::MARIADB => '-v --no-auto-rehash --skip-progress-reports',
+                Vendor::MYSQL => '-v --no-auto-rehash',
+                Vendor::POSTGRESQL => '-v -j 2 --disable-triggers --clean --if-exists',
+                Vendor::SQLITE => '-bail', // No interesting options for SQLite.
                 default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
             })
             ->ignoreDefaultOptions()
@@ -262,14 +255,13 @@ class BackupperRestorerTest extends FunctionalTestCase
         // - All data from initial insert (see self::createTestData) should be there
         // - Deleted data from our previous modifications should not be
 
-        $schemaManager = $connection->createSchemaManager();
-        self::assertTrue($schemaManager->tablesExist('table_in_backup_1'));
-        self::assertTrue($schemaManager->tablesExist('table_in_backup_2'));
-
+        $schemaManager = $this->getDatabaseSession()->getSchemaManager();
+        self::assertTrue($schemaManager->tableExists('table_in_backup_1'));
+        self::assertTrue($schemaManager->tableExists('table_in_backup_2'));
 
         $this->assertSame(
             6,
-            $this->getConnection()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
         );
     }
 

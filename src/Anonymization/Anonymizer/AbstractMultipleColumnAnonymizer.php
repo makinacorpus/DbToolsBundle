@@ -37,7 +37,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
      * type per default.
      *
      * @return string[]
-     *   Each value is a type name that Doctrine/DBAL knows.
+     *   Each value is a type name that makinacorpus/query-builder knows.
      *   The array must contain the same value count as column names.
      */
     protected function getColumnTypes(): array
@@ -125,7 +125,13 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     public function clean(): void
     {
         if ($this->sampleTableName) {
-            $this->connection->createSchemaManager()->dropTable($this->sampleTableName);
+            $this
+                ->databaseSession
+                ->getSchemaManager()
+                ->modify()
+                ->dropTable($this->sampleTableName)
+                ->commit()
+            ;
         }
     }
 }

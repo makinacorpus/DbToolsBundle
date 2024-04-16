@@ -78,7 +78,13 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
     public function clean(): void
     {
         if ($this->sampleTableName) {
-            $this->connection->createSchemaManager()->dropTable($this->sampleTableName);
+            $this
+                ->databaseSession
+                ->getSchemaManager()
+                ->modify()
+                ->dropTable($this->sampleTableName)
+                ->commit()
+            ;
         }
     }
 

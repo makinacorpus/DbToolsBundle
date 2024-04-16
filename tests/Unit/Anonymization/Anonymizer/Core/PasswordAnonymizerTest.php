@@ -15,7 +15,7 @@ class PasswordAnonymizerTest extends UnitTestCase
         new PasswordAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
 
@@ -27,7 +27,7 @@ class PasswordAnonymizerTest extends UnitTestCase
         new PasswordAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'password' => 'test',
             ]),
@@ -41,7 +41,7 @@ class PasswordAnonymizerTest extends UnitTestCase
         new PasswordAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'algorithm' => 'bcrypt',
             ]),
@@ -57,7 +57,7 @@ class PasswordAnonymizerTest extends UnitTestCase
         new PasswordAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'algorithm' => 'toto',
             ]),

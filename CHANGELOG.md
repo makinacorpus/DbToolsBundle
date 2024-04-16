@@ -1,5 +1,12 @@
 # Changelog
 
+## Next
+
+* [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
+* [feature] ⭐️ As a side effect, Doctrine ORM 3.0 should now work (#140).
+* [internal] Use `makinacorpus/query-builder` schema manager for DDL alteration (#140).
+* [internal] Raise `makinacorpus/query-builder` dependency to version 1.5.3 (#140).
+
 ## 1.1.0
 
 * [feature] ⭐️ Add DateAnonymizer (#32)

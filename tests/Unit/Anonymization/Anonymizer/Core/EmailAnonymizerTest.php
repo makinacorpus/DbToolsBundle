@@ -15,7 +15,7 @@ class EmailAnonymizerTest extends UnitTestCase
         new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
 
@@ -27,7 +27,7 @@ class EmailAnonymizerTest extends UnitTestCase
         new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'domain' => 'makina-corpus.com',
             ]),
@@ -43,7 +43,7 @@ class EmailAnonymizerTest extends UnitTestCase
         new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'domain' => ['ttt', 'ttt'],
             ]),
@@ -55,7 +55,7 @@ class EmailAnonymizerTest extends UnitTestCase
         new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'use_salt' => true,
             ]),
@@ -71,7 +71,7 @@ class EmailAnonymizerTest extends UnitTestCase
         new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'use_salt' => ['true'],
             ]),
@@ -85,7 +85,7 @@ class EmailAnonymizerTest extends UnitTestCase
         $instance = new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'salt' => 'my_salt',
             ])
@@ -120,7 +120,7 @@ class EmailAnonymizerTest extends UnitTestCase
         $instance = new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'domain' => 'makina-corpus.com',
                 'salt' => 'my_salt',
@@ -156,7 +156,7 @@ class EmailAnonymizerTest extends UnitTestCase
         $instance = new EmailAnonymizer(
             'some_table',
             'email',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'use_salt' => false,
             ]),

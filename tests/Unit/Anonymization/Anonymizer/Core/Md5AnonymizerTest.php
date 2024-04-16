@@ -17,7 +17,7 @@ class Md5AnonymizerTest extends UnitTestCase
         $instance = new Md5Anonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'salt' => 'my_salt',
             ])
@@ -53,7 +53,7 @@ class Md5AnonymizerTest extends UnitTestCase
         $instance = new Md5Anonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'use_salt' => false,
             ])

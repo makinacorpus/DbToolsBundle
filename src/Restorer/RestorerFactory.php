@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\Platform;
+use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerInterface;
 
 class RestorerFactory
@@ -35,23 +35,23 @@ class RestorerFactory
     {
         /** @var Connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $queryBuilder = new DoctrineQueryBuilder($connection);
-        $platform = $queryBuilder->getServerFlavor();
+        $session = new DoctrineQueryBuilder($connection);
+        $vendorName = $session->getVendorName();
 
-        $restorer = match ($platform) {
-            Platform::MARIADB => MariadbRestorer::class,
-            Platform::MYSQL => MysqlRestorer::class,
-            Platform::POSTGRESQL => PgsqlRestorer::class,
-            Platform::SQLITE => SqliteRestorer::class,
+        $restorer = match ($vendorName) {
+            Vendor::MARIADB => MariadbRestorer::class,
+            Vendor::MYSQL => MysqlRestorer::class,
+            Vendor::POSTGRESQL => PgsqlRestorer::class,
+            Vendor::SQLITE => SqliteRestorer::class,
             default => throw new NotImplementedException(\sprintf(
                 "Restore is not implemented or configured for platform '%s' while using connection '%s'",
-                $platform,
+                $vendorName,
                 $connectionName
             )),
         };
 
         $restorer = new $restorer(
-            $this->restorerBinaries[$platform],
+            $this->restorerBinaries[$vendorName],
             $connection,
             $this->restorerOptions[$connectionName] ?? null
         );

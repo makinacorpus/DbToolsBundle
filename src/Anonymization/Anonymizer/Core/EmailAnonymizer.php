@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -31,7 +31,7 @@ class EmailAnonymizer extends AbstractAnonymizer
     {
         $expr = $update->expression();
 
-        if ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLITE)) {
             $emailHashExpr = $this->getJoinColumn();
         } else {
             $userExpr = $expr->column($this->columnName, $this->tableName);
