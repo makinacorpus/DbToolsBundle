@@ -20,7 +20,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 class TestEntity
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
     private ?int $id = null;
 
