@@ -4,7 +4,7 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
-use Doctrine\DBAL\Connection;
+use MakinaCorpus\QueryBuilder\DatabaseSession;
 
 /**
  * Every RDMBS will have different statistics to restitute, this cannot be
@@ -16,7 +16,7 @@ use Doctrine\DBAL\Connection;
 abstract class AbstractStatsProvider
 {
     public function __construct(
-        protected Connection $connection
+        protected DatabaseSession $databaseSession
     ) {}
 
     /**

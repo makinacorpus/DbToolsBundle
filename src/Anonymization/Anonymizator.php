@@ -5,15 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Platforms\SQLServerPlatform;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Index;
-use Doctrine\DBAL\Schema\SchemaDiff;
-use Doctrine\DBAL\Schema\TableDiff;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Types\Types;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
@@ -22,8 +13,14 @@ use MakinaCorpus\DbToolsBundle\Helper\Format;
 use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\Platform;
+use MakinaCorpus\QueryBuilder\DatabaseSession;
+use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
 use MakinaCorpus\QueryBuilder\Query\Update;
+use MakinaCorpus\QueryBuilder\Schema\Read\Column;
+use MakinaCorpus\QueryBuilder\Schema\Read\Index;
+use MakinaCorpus\QueryBuilder\Schema\Read\Table;
+use MakinaCorpus\QueryBuilder\Type\Type;
+use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -33,15 +30,17 @@ class Anonymizator implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     private OutputInterface $output;
+    private DatabaseSession $databaseSession;
 
     public function __construct(
-        private Connection $connection,
+        Connection $connection,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
+        $this->databaseSession = new DoctrineQueryBuilder($connection);
     }
 
     /**
@@ -72,11 +71,6 @@ class Anonymizator implements LoggerAwareInterface
         return $this->salt ??= self::generateRandomSalt();
     }
 
-    protected function getQueryBuilder(): DoctrineQueryBuilder
-    {
-        return new DoctrineQueryBuilder($this->connection);
-    }
-
     /**
      * Create anonymizer instance.
      */
@@ -88,7 +82,7 @@ class Anonymizator implements LoggerAwareInterface
         return new $className(
             $config->table,
             $config->targetName,
-            $this->connection,
+            $this->databaseSession,
             $config->options->with(['salt' => $this->getSalt()]),
         );
     }
@@ -236,7 +230,7 @@ class Anonymizator implements LoggerAwareInterface
      */
     public function clean(): void
     {
-        $schemaManager = $this->connection->createSchemaManager();
+        $transaction = $this->databaseSession->getSchemaManager()->modify();
 
         foreach ($this->collectGarbage() as $item) {
             switch ($item['type']) {
@@ -245,7 +239,7 @@ class Anonymizator implements LoggerAwareInterface
                         "Dropping table: %s",
                         $item['name']
                     );
-                    $schemaManager->dropTable($item['name']);
+                    $transaction->dropTable($item['name']);
                     break;
 
                 case 'column':
@@ -254,7 +248,7 @@ class Anonymizator implements LoggerAwareInterface
                         $item['table'],
                         $item['name']
                     );
-                    $this->dropColumn($item['table'], $item['name']);
+                    $transaction->dropColumn($item['table'], $item['name']);
                     break;
 
                 case 'index':
@@ -263,7 +257,7 @@ class Anonymizator implements LoggerAwareInterface
                         $item['table'],
                         $item['name']
                     );
-                    $this->dropIndex($item['table'], $item['name']);
+                    $transaction->dropIndex($item['table'], $item['name']);
                     break;
 
                 default:
@@ -273,6 +267,8 @@ class Anonymizator implements LoggerAwareInterface
                     ));
             }
         }
+
+        $transaction->commit();
     }
 
     /**
@@ -287,10 +283,10 @@ class Anonymizator implements LoggerAwareInterface
      */
     public function collectGarbage(): array
     {
-        $schemaManager = $this->connection->createSchemaManager();
+        $schemaManager = $this->databaseSession->getSchemaManager();
         $garbage = [];
 
-        foreach ($schemaManager->listTableNames() as $tableName) {
+        foreach ($schemaManager->listTables() as $tableName) {
             if (\str_starts_with($tableName, AbstractAnonymizer::TEMP_TABLE_PREFIX)) {
                 $garbage[] = ['type' => 'table', 'name' => $tableName];
             } else {
@@ -303,30 +299,39 @@ class Anonymizator implements LoggerAwareInterface
 
     protected function collectGarbageInto(string $table): array
     {
-        $schemaManager = $this->connection->createSchemaManager();
+        $schemaManager = $this->databaseSession->getSchemaManager();
         $garbage = [];
+
+        try {
+            $table = $schemaManager->getTable(name: $table);
+        } catch (DatabaseObjectDoesNotExistError) {
+            // @todo Log error?
+            return [];
+        }
 
         // List indexes to remove before columns to avoid problems with
         // SQL Server which doesn't support to drop a column still used
         // by an index.
-        foreach ($schemaManager->listTableIndexes($table) as $index) {
+        foreach ($table->getIndexes() as $index) {
             \assert($index instanceof Index);
+
             if (AbstractAnonymizer::JOIN_ID_INDEX === $index->getName()) {
                 $garbage[] = [
                     'type' => 'index',
                     'name' => $index->getName(),
-                    'table' => $table,
+                    'table' => $table->getName(),
                 ];
             }
         }
 
-        foreach ($schemaManager->listTableColumns($table) as $column) {
+        foreach ($table->getColumns() as $column) {
             \assert($column instanceof Column);
+
             if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
                 $garbage[] = [
                     'type' => 'column',
                     'name' => $column->getName(),
-                    'table' => $table,
+                    'table' => $table->getName(),
                 ];
             }
         }
@@ -399,15 +404,14 @@ class Anonymizator implements LoggerAwareInterface
 
     protected function createUpdateQuery(string $table): Update
     {
-        $builder = $this->getQueryBuilder();
-        $update = $builder->update($table);
+        $update = $this->databaseSession->update($table);
         $expr = $update->expression();
 
         // Add target table a second time into the FROM statement of the
         // UPDATE query, in order for anonymizers to be able to JOIN over
         // it. Otherwise, JOIN would not be possible for RDBMS that speak
         // standard SQL.
-        if (Platform::SQLSERVER === $builder->getServerFlavor()) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLSERVER)) {
             // This is the only and single hack regarding the UPDATE clause
             // syntax, all RDBMS accept the following query:
             //
@@ -434,21 +438,22 @@ class Anonymizator implements LoggerAwareInterface
             // a temporary table (especially for MySQL...). For those we need
             // to keep the original query, even if semantically identical.
             $update->join(
-                $builder->select($table),
+                $this->databaseSession->select($table),
                 $expr->where()->isEqual(
                     $expr->column(AbstractAnonymizer::JOIN_ID, $table),
                     $expr->column(AbstractAnonymizer::JOIN_ID, AbstractAnonymizer::JOIN_TABLE),
                 ),
                 AbstractAnonymizer::JOIN_TABLE
             );
-        } elseif (Platform::SQLITE === $builder->getServerFlavor()) {
+        } elseif ($this->databaseSession->vendorIs(Vendor::SQLITE)) {
             // SQLite doesn't support DDL statements on tables, we cannot add
             // the join column with an int identifier. But, fortunately, it does
             // have a special ROWID column which is a unique int identifier for
             // each row we can use instead.
             // @see https://www.sqlite.org/lang_createtable.html#rowid
             $update->join(
-                $builder
+                $this
+                    ->databaseSession
                     ->select($table)
                     ->column('*')
                     ->column('rowid', AbstractAnonymizer::JOIN_ID),
@@ -501,9 +506,9 @@ class Anonymizator implements LoggerAwareInterface
      */
     public function addAnonymizerIdColumn(string $table): void
     {
-        $schemaManager = $this->connection->createSchemaManager();
+        $schemaManager = $this->databaseSession->getSchemaManager();
 
-        foreach ($schemaManager->listTableColumns($table) as $column) {
+        foreach ($schemaManager->getTable($table)->getColumns() as $column) {
             \assert($column instanceof Column);
 
             if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
@@ -511,9 +516,7 @@ class Anonymizator implements LoggerAwareInterface
             }
         }
 
-        $platform = $this->connection->getDatabasePlatform();
-
-        if ($platform instanceof SqlitePlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLITE)) {
             // Do nothing, SQLite doesn't support DDL statements, you need to
             // recreate a new table with the new schema, then copy all data.
             // That's not what we want.
@@ -524,36 +527,28 @@ class Anonymizator implements LoggerAwareInterface
             return;
         }
 
-        if ($platform instanceof AbstractMySQLPlatform) {
+        if ($this->databaseSession->vendorIs([Vendor::MARIADB, Vendor::MYSQL])) {
             $this->addAnonymizerIdColumnMySql($table);
 
             return;
         }
 
-        if ($platform instanceof SQLServerPlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLSERVER)) {
             $this->addAnonymizerIdColumnSqlServer($table);
 
             return;
         }
 
-        $schemaManager->alterSchema(
-            new SchemaDiff(
-                changedTables: [
-                    new TableDiff(
-                        tableName: $table,
-                        addedColumns: [
-                            new Column(
-                                AbstractAnonymizer::JOIN_ID,
-                                Type::getType(Types::BIGINT),
-                                [
-                                    'autoincrement' => true,
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        );
+        $schemaManager
+            ->modify()
+            ->addColumn(
+                name: AbstractAnonymizer::JOIN_ID,
+                nullable: true,
+                table: $table,
+                type: Type::identityBig(),
+            )
+            ->commit()
+        ;
     }
 
     /**
@@ -597,50 +592,32 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function addAnonymizerIdColumnMySql(string $table): void
     {
-        $schemaManager = $this->connection->createSchemaManager();
-        $platform = $this->connection->getDatabasePlatform();
+        $this
+            ->databaseSession
+            ->getSchemaManager()
+            ->modify()
+            ->addColumn($table, AbstractAnonymizer::JOIN_ID, Type::intBig(), true)
+            ->commit()
+        ;
 
-        $schemaManager->alterSchema(
-            new SchemaDiff(
-                changedTables: [
-                    new TableDiff(
-                        tableName: $table,
-                        addedColumns: [
-                            new Column(
-                                AbstractAnonymizer::JOIN_ID,
-                                Type::getType(Types::BIGINT),
-                                [
-                                    'autoincrement' => false,
-                                    'notnull' => false,
-                                    'default' => null,
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        );
+        $sequenceTableName = '_db_tools_seq_' . $table;
+        $functionName = '_db_tools_seq_' . $table . '_get';
 
-        $queryBuilder = $this->getQueryBuilder();
-
-        $sequenceTableName = $platform->quoteIdentifier('_db_tools_seq_' . $table);
-        $functionName = $platform->quoteIdentifier('_db_tools_seq_' . $table . '_get');
-
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             DROP TABLE IF EXISTS ?::table
             SQL,
             [$sequenceTableName],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
-            DROP FUNCTION IF EXISTS ?::identifier
+            DROP FUNCTION IF EXISTS ?::id
             SQL,
             [$functionName],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             CREATE TABLE ?::table (
                 `value` BIGINT DEFAULT NULL
@@ -649,7 +626,7 @@ class Anonymizator implements LoggerAwareInterface
             [$sequenceTableName],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             INSERT INTO ?::table (`value`) VALUES (0);
             SQL,
@@ -657,9 +634,9 @@ class Anonymizator implements LoggerAwareInterface
         );
 
         try {
-            $queryBuilder->executeStatement(
+            $this->databaseSession->executeStatement(
                 <<<SQL
-                CREATE FUNCTION IF NOT EXISTS ?::identifier() RETURNS BIGINT
+                CREATE FUNCTION IF NOT EXISTS ?::id() RETURNS BIGINT
                 DETERMINISTIC
                 BEGIN
                     SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
@@ -675,9 +652,9 @@ class Anonymizator implements LoggerAwareInterface
                 ],
             );
 
-            $queryBuilder->executeStatement(
+            $this->databaseSession->executeStatement(
                 <<<SQL
-                UPDATE ?::table SET ?::column = ?::identifier();
+                UPDATE ?::table SET ?::column = ?::id();
                 SQL,
                 [
                     $table,
@@ -688,14 +665,14 @@ class Anonymizator implements LoggerAwareInterface
 
             $this->createNamedIndex(AbstractAnonymizer::JOIN_ID_INDEX, $table, AbstractAnonymizer::JOIN_ID);
         } finally {
-            $queryBuilder->executeStatement(
+            $this->databaseSession->executeStatement(
                 <<<SQL
-                DROP FUNCTION IF EXISTS ?::identifier;
+                DROP FUNCTION IF EXISTS ?::id;
                 SQL,
                 [$functionName],
             );
 
-            $queryBuilder->executeStatement(
+            $this->databaseSession->executeStatement(
                 <<<SQL
                 DROP TABLE IF EXISTS ?::table;
                 SQL,
@@ -713,12 +690,9 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function addAnonymizerIdColumnSqlServer(string $table): void
     {
-        $platform = $this->connection->getDatabasePlatform();
-        $queryBuilder = $this->getQueryBuilder();
+        $sequenceName = '_db_tools_seq_' . $table;
 
-        $sequenceName = $platform->quoteIdentifier('_db_tools_seq_' . $table);
-
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             ALTER TABLE ?::table DROP COLUMN IF EXISTS ?::column
             SQL,
@@ -728,16 +702,16 @@ class Anonymizator implements LoggerAwareInterface
             ],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
-            DROP SEQUENCE IF EXISTS ?::identifier;
+            DROP SEQUENCE IF EXISTS ?::id;
             SQL,
             [$sequenceName],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
-            CREATE SEQUENCE ?::identifier
+            CREATE SEQUENCE ?::id
                 AS int
                 START WITH 1
                 INCREMENT BY 1;
@@ -745,11 +719,11 @@ class Anonymizator implements LoggerAwareInterface
             [$sequenceName],
         );
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             ALTER TABLE ?::table
                 ADD ?::column int NOT NULL DEFAULT (
-                    NEXT VALUE FOR ?::identifier
+                    NEXT VALUE FOR ?::id
                 );
             SQL,
             [
@@ -765,9 +739,9 @@ class Anonymizator implements LoggerAwareInterface
         // later when anonymizator will proceed to cleanup.
         $this->dropColumnConstraintsSqlServer($table, AbstractAnonymizer::JOIN_ID);
 
-        $queryBuilder->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
-            DROP SEQUENCE IF EXISTS ?::identifier;
+            DROP SEQUENCE IF EXISTS ?::id;
             SQL,
             [$sequenceName],
         );
@@ -782,15 +756,12 @@ class Anonymizator implements LoggerAwareInterface
     {
         $columnList = \implode(', ', \array_map(fn ($value) => '?::column', $column));
 
-        $this
-            ->getQueryBuilder()
-            ->executeStatement(
-                <<<SQL
-                CREATE INDEX ?::identifier ON ?::table ({$columnList})
-                SQL,
-                [$indexName, $table, ...$column]
-            )
-        ;
+        $this->databaseSession->executeStatement(
+            <<<SQL
+            CREATE INDEX ?::id ON ?::table ({$columnList})
+            SQL,
+            [$indexName, $table, ...$column]
+        );
     }
 
     /**
@@ -808,30 +779,12 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function dropIndex(string $table, string $indexName): void
     {
-        $platform = $this->connection->getDatabasePlatform();
-
-        if ($platform instanceof AbstractMySQLPlatform || $platform instanceof SQLServerPlatform) {
-            $this
-                ->getQueryBuilder()
-                ->executeStatement(
-                    <<<SQL
-                    DROP INDEX ?::identifier ON ?::table
-                    SQL,
-                    [$indexName, $table]
-                )
-            ;
-
-            return;
-        }
-
         $this
-            ->getQueryBuilder()
-            ->executeStatement(
-                <<<SQL
-                DROP INDEX ?::identifier
-                SQL,
-                [$indexName]
-            )
+            ->databaseSession
+            ->getSchemaManager()
+            ->modify()
+            ->dropIndex($table, $indexName)
+            ->commit()
         ;
     }
 
@@ -840,31 +793,25 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function dropColumn(string $tableName, string $columnName): void
     {
-        $schemaManager = $this->connection->createSchemaManager();
-        $platform = $this->connection->getDatabasePlatform();
+        $schemaManager = $this->databaseSession->getSchemaManager();
 
-        foreach ($schemaManager->listTableColumns($tableName) as $column) {
+        foreach ($schemaManager->getTable($tableName)->getColumns() as $column) {
             \assert($column instanceof Column);
 
             if ($column->getName() === $columnName) {
-
-                if ($platform instanceof SQLServerPlatform) {
+                if ($this->databaseSession->vendorIs(Vendor::SQLSERVER)) {
                     // SQL server requires that you drop constraints on column
                     // prior to deleting the column. So let's do that.
                     $this->dropColumnConstraintsSqlServer($tableName, $columnName);
                 }
 
                 $schemaManager
-                    ->alterSchema(
-                        new SchemaDiff(
-                            changedTables: [
-                                new TableDiff(
-                                    tableName: $tableName,
-                                    droppedColumns: [$column],
-                                ),
-                            ],
-                        ),
-                    )
+                    ->modify()
+                        ->dropColumn(
+                            table: $tableName,
+                            name: $columnName
+                        )
+                    ->commit()
                 ;
             }
         }
@@ -876,7 +823,7 @@ class Anonymizator implements LoggerAwareInterface
     protected function dropColumnConstraintsSqlServer(string $tableName, string $columnName): void
     {
         // @see https://stackoverflow.com/questions/1364526/how-do-you-drop-a-default-value-from-a-column-in-a-table
-        $this->getQueryBuilder()->executeStatement(
+        $this->databaseSession->executeStatement(
             <<<SQL
             DECLARE @ConstraintName nvarchar(200)
             SELECT @ConstraintName = Name

@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer;
 
-use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Types\Types;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
@@ -16,6 +11,8 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
+use MakinaCorpus\QueryBuilder\Type\Type;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 class AnonymizatorTest extends FunctionalTestCase
 {
@@ -24,50 +21,28 @@ class AnonymizatorTest extends FunctionalTestCase
     {
         $this->dropTableIfExist('table_test');
 
-        $connection = $this->getConnection();
-        $connection
-            ->createSchemaManager()
-            ->createTable(
-                (new Table(
-                    'table_test',
-                    [
-                        new Column(
-                            'id',
-                            Type::getType(Types::BIGINT),
-                            [
-                                'autoincrement' => true,
-                            ]
-                        ),
-                        new Column(
-                            'value',
-                            Type::getType(Types::TEXT),
-                            [
-                                'notnull' => null,
-                            ]
-                        ),
-                        new Column(
-                            'my_iban',
-                            Type::getType(Types::TEXT),
-                            [
-                                'notnull' => null,
-                            ]
-                        ),
-                        new Column(
-                            'my_bic',
-                            Type::getType(Types::TEXT),
-                            [
-                                'notnull' => null,
-                            ]
-                        ),
-                    ],
-                ))->setPrimaryKey(['id'])
-            )
+        $session = $this->getDatabaseSession();
+
+        $session
+            ->getSchemaManager()
+            ->modify()
+            ->createTable('table_test')
+                ->column(name: 'id', type: Type::identity(), nullable: false)
+                ->column(name: 'value', type: Type::text(), nullable: true)
+                ->column(name: 'my_iban', type: Type::text(), nullable: true)
+                ->column(name: 'my_bic', type: Type::text(), nullable: true)
+                ->primaryKey(['id'])
+            ->endTable()
+            ->commit()
         ;
 
-        $builder = $connection->createQueryBuilder();
-        $builder->insert('table_test')->values(['value' => "'foo'"])->executeStatement();
-        $builder->insert('table_test')->values(['value' => "'bar'"])->executeStatement();
-        $builder->insert('table_test')->values(['value' => "'baz'"])->executeStatement();
+        $session
+            ->insert('table_test')
+            ->values(['value' => 'foo'])
+            ->values(['value' => 'bar'])
+            ->values(['value' => 'baz'])
+            ->executeStatement()
+        ;
     }
 
     public function testMultipleAnonymizersAtOnce(): void
@@ -91,7 +66,7 @@ class AnonymizatorTest extends FunctionalTestCase
             ]),
         ));
 
-        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), $config);
+        $anonymizator = new Anonymizator($this->getDoctrineConnection(), new AnonymizerRegistry(), $config);
         $anonymizator->addAnonymizerIdColumn('table_test');
         $anonymizator->anonymize();
 
@@ -104,7 +79,7 @@ class AnonymizatorTest extends FunctionalTestCase
         $actual = \array_map(
             fn (array $item) => ['id' => (int) $item['id']] + $item,
             $this
-                ->getConnection()
+                ->getDatabaseSession()
                 ->executeQuery(
                     'select id, value from table_test order by id'
                 )
@@ -120,12 +95,10 @@ class AnonymizatorTest extends FunctionalTestCase
             $actual,
         );
 
-        $anonymizator = new Anonymizator($this->getConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
+        $anonymizator = new Anonymizator($this->getDoctrineConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
         $anonymizator->addAnonymizerIdColumn('table_test');
 
-        $platform = $this->getConnection()->getDatabasePlatform();
-
-        if ($platform instanceof SqlitePlatform) {
+        if (Vendor::SQLITE === $this->getDatabaseSession()->getVendorName()) {
             $query = 'select id, value, rowid as _db_tools_id from table_test order by id';
         } else {
             $query = 'select id, value, _db_tools_id from table_test order by id';
@@ -138,7 +111,7 @@ class AnonymizatorTest extends FunctionalTestCase
                 'value' => $item['value'],
                 AbstractAnonymizer::JOIN_ID => (int) $item[AbstractAnonymizer::JOIN_ID],
             ],
-            $this->getConnection()->executeQuery($query)->fetchAllAssociative(),
+            $this->getDatabaseSession()->executeQuery($query)->fetchAllAssociative(),
         );
 
         self::assertSame(

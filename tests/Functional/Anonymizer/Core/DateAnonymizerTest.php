@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class DateAnonymizerTest extends FunctionalTestCase
@@ -27,22 +24,22 @@ class DateAnonymizerTest extends FunctionalTestCase
             ],
             [
                 [
-                    'id' => '1',
+                    'id' => 1,
                     'date1' => '1983-03-22 08:25:00',
                     'date2' => '1983-03-22',
                 ],
                 [
-                    'id' => '2',
+                    'id' => 2,
                     'date1' => '1793-12-31 21:20:00',
                     'date2' => '1793-12-31',
                 ],
                 [
-                    'id' => '3',
+                    'id' => 3,
                     'date1' => '2178-01-01 21:20:00',
                     'date2' => '2178-01-01',
                 ],
                 [
-                    'id' => '4',
+                    'id' => 4,
                 ],
             ],
         );
@@ -50,8 +47,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithRangeAsDate(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date1',
             'date',
@@ -62,20 +58,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
-            $this->getConnection()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('2010-05-01 00:00:00', $datas[0]);
         $this->assertLessThanOrEqual('2010-08-31 23:59:59', $datas[0]);
@@ -94,8 +84,7 @@ class DateAnonymizerTest extends FunctionalTestCase
      */
     public function testAnonymizeWithRangeAsDateHuge(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date1',
             'date',
@@ -106,20 +95,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
-            $this->getConnection()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('1710-01-01 00:00:00', $datas[0]);
         $this->assertLessThanOrEqual('2560-03-31 23:59:59', $datas[0]);
@@ -135,8 +118,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithRangeAsDateTime(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date1',
             'date',
@@ -147,20 +129,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
-            $this->getConnection()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('2010-05-01 12:30:00', $datas[0]);
         $this->assertLessThanOrEqual('2010-08-31 18:25:00', $datas[0]);
@@ -179,8 +155,7 @@ class DateAnonymizerTest extends FunctionalTestCase
      */
     public function testAnonymizeWithRangeAsDateTimeHuge(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date1',
             'date',
@@ -191,20 +166,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
-            $this->getConnection()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('1700-01-01 00:00:00', $datas[0]);
         $this->assertLessThanOrEqual('2100-12-31 23:59:59', $datas[0]);
@@ -220,8 +189,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDeltaAsDate(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date2',
             'date',
@@ -231,20 +199,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22",
-            $this->getConnection()->executeQuery('select date2 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date2 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date2 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date2 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('1983-02-14', $datas[0]);
         $this->assertLessThanOrEqual('1983-04-30', $datas[0]);
@@ -260,8 +222,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDeltaAsDateTime(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'date1',
             'date',
@@ -271,20 +232,14 @@ class DateAnonymizerTest extends FunctionalTestCase
             ])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
-            $this->getConnection()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select date1 from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select date1 from table_test order by id asc')->fetchFirstColumn();
         $this->assertNotNull($datas[0]);
         $this->assertGreaterThanOrEqual('1983-02-14 04:25:00', $datas[0]);
         $this->assertLessThanOrEqual('1983-04-28 12:25:00', $datas[0]);

@@ -9,7 +9,7 @@ class MysqlStatsProvider extends AbstractStatsProvider
     #[\Override]
     protected function doGetGlobalStats(): iterable
     {
-        $result = $this->connection->executeQuery(
+        $result = $this->databaseSession->executeQuery(
             <<<SQL
             SELECT
                 sum(DATA_LENGTH) AS total_table_size,
@@ -44,7 +44,7 @@ class MysqlStatsProvider extends AbstractStatsProvider
     #[\Override]
     protected function doGetTableStats(): iterable
     {
-        $result = $this->connection->executeQuery(
+        $result = $this->databaseSession->executeQuery(
             <<<SQL
             SELECT
                 concat(TABLE_SCHEMA, '.', TABLE_NAME) AS table_name,

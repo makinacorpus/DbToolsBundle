@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\SQLServerPlatform;
-use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Type;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Query\Update;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 abstract class AbstractAnonymizer
 {
@@ -26,7 +22,7 @@ abstract class AbstractAnonymizer
     final public function __construct(
         protected string $tableName,
         protected string $columnName,
-        protected Connection $connection,
+        protected DatabaseSession $databaseSession,
         protected Options $options,
     ) {
         $this->validateOptions();
@@ -146,7 +142,8 @@ abstract class AbstractAnonymizer
      */
     protected function countTable(string $table): int
     {
-        return (int) (new DoctrineQueryBuilder($this->connection))
+        return (int) $this
+            ->databaseSession
             ->select($table)
             ->columnRaw('count(*)')
             ->executeQuery()
@@ -173,50 +170,40 @@ abstract class AbstractAnonymizer
         $columnCount = \count($columns);
         $tableName = $this->generateTempTableName();
 
-        $tableColumns = [];
-        foreach ($columns as $index => $name) {
-            $type = $types[$index] ?? null;
-            if (!$type) {
-                $type = Type::getType('text');
-            } elseif (!$type instanceof Type) {
-                $type = Type::getType($type);
-            }
-            $tableColumns[] = new Column($name, $type);
-        }
-
-        $this->connection
-            ->createSchemaManager()
-            ->createTable(new Table($tableName, $tableColumns))
+        $transaction = $this
+            ->databaseSession
+            ->getSchemaManager()
+            ->modify()
+            ->createTable($tableName)
         ;
 
-        $this->connection->beginTransaction();
-        try {
-            foreach ($values as $key => $value) {
-                // Allow single raw value when there is only one column.
-                $value = (array) $value;
-
-                if ($columnCount !== \count($value)) {
-                    throw new \InvalidArgumentException(\sprintf("Row %s in sample list column count (%d) mismatch with table column count (%d)", $key, \count($values), $columnCount));
-                }
-
-                $this->connection
-                    ->createQueryBuilder()
-                    ->insert($tableName)
-                    ->values(\array_combine(
-                        $columns,
-                        \array_map(fn ($column) => ':'. $column, $columns)
-                    ))
-                    ->setParameters(\array_combine($columns, $value))
-                    ->executeQuery()
-                ;
-            }
-
-            $this->connection->commit();
-        } catch (\Exception $e) {
-            $this->connection->rollBack();
-
-            throw $e;
+        foreach ($columns as $index => $name) {
+            $transaction->column($name, $types[$index] ?? 'text', false);
         }
+
+        $transaction->endTable()->commit();
+
+        $insert = $this
+            ->databaseSession
+            ->insert($tableName)
+            ->columns($columns)
+        ;
+
+        foreach ($values as $key => $value) {
+            // Allow single raw value when there is only one column.
+            $value = (array) $value;
+            if ($columnCount !== \count($value)) {
+                throw new \InvalidArgumentException(\sprintf(
+                    "Row %s in sample list column count (%d) mismatch with table column count (%d)",
+                    $key,
+                    \count($values),
+                    $columnCount
+                ));
+            }
+            $insert->values($value);
+        }
+
+        $insert->executeStatement();
 
         return $tableName;
     }
@@ -244,7 +231,7 @@ abstract class AbstractAnonymizer
      */
     protected function getRandomExpression(): Expression
     {
-        if ($this->connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLSERVER)) {
             return ExpressionFactory::raw('rand(abs(checksum(newid())))');
         }
         return ExpressionFactory::random();
@@ -255,7 +242,7 @@ abstract class AbstractAnonymizer
      */
     protected function getRandomIntExpression(int $max, int $min = 0): Expression
     {
-        if ($this->connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLSERVER)) {
             return ExpressionFactory::raw(
                 'FLOOR(? * (? - ? + 1) + ?)',
                 [$this->getRandomExpression(), ExpressionFactory::cast($max, 'int'), $min, $min]

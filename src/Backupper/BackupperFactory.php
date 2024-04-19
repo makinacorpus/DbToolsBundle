@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\Platform;
+use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerInterface;
 
 class BackupperFactory
@@ -75,23 +75,23 @@ class BackupperFactory
         $connectionName ??= $this->doctrineRegistry->getDefaultConnectionName();
         /** @var Connection $connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $queryBuilder = new DoctrineQueryBuilder($connection);
-        $platform = $queryBuilder->getServerFlavor();
+        $session = new DoctrineQueryBuilder($connection);
+        $vendorName = $session->getVendorName();
 
-        $backupper = match ($platform) {
-            Platform::MARIADB => MariadbBackupper::class,
-            Platform::MYSQL => MysqlBackupper::class,
-            Platform::POSTGRESQL => PgsqlBackupper::class,
-            Platform::SQLITE => SqliteBackupper::class,
+        $backupper = match ($vendorName) {
+            Vendor::MARIADB => MariadbBackupper::class,
+            Vendor::MYSQL => MysqlBackupper::class,
+            Vendor::POSTGRESQL => PgsqlBackupper::class,
+            Vendor::SQLITE => SqliteBackupper::class,
             default => throw new NotImplementedException(\sprintf(
                 "Backup is not implemented or configured for platform '%s' while using connection '%s'",
-                $platform,
+                $vendorName,
                 $connectionName
             )),
         };
 
         $backupper = new $backupper(
-            $this->backupperBinaries[$platform],
+            $this->backupperBinaries[$vendorName],
             $connection,
             $this->backupperOptions[$connectionName] ?? null
         );

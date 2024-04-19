@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
-use MakinaCorpus\QueryBuilder\Platform;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 class Md5AnonymizerTest extends FunctionalTestCase
 {
@@ -25,19 +22,19 @@ class Md5AnonymizerTest extends FunctionalTestCase
             ],
             [
                 [
-                    'id' => '1',
+                    'id' => 1,
                     'data' => 'test1',
                 ],
                 [
-                    'id' => '2',
+                    'id' => 2,
                     'data' => 'test2',
                 ],
                 [
-                    'id' => '3',
+                    'id' => 3,
                     'data' => 'test3',
                 ],
                 [
-                    'id' => '4',
+                    'id' => 4,
                 ],
             ],
         );
@@ -45,32 +42,25 @@ class Md5AnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        $this->skipIfDatabase(Platform::SQLITE, 'SQLite does not implement MD5() neither any other hash function.');
+        $this->skipIfDatabase(Vendor::SQLITE, 'SQLite does not implement MD5() neither any other hash function.');
 
         $sample = ['sample1', 'sample2', 'sample3', 'sample4', 'sample5'];
 
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'data',
             'md5',
             new Options(['sample' => $sample])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertSame(
             'test1',
-            $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+            $this->getDatabaseSession()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = $datas[0];
         $this->assertNotNull($data);

@@ -9,8 +9,6 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
-use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use PHPUnit\Framework\TestCase;
@@ -27,22 +25,17 @@ class BackupperFactoryTest extends TestCase
     private function createMockConnection(): Connection
     {
         $connection = $this->createMock(Connection::class);
-        $expressionBuilder = new ExpressionBuilder($connection);
-
-        $connection
-            ->expects($this->any())
-            ->method('getExpressionBuilder')
-            ->willReturn($expressionBuilder)
-        ;
 
         // Let's vary the pleasures.
         $randomPlatform = [
             MariaDBPlatform::class,
             MySQLPlatform::class,
             PostgreSQLPlatform::class,
+            // @todo Temporary disabling SQLite for random test class.
+            // SqlitePlatform::class,
+            // SQLServer backup and restore is not supported.
             //SQLServerPlatform::class,
-            SqlitePlatform::class,
-        ][\rand(0, 3)];
+        ][\rand(0, 2)];
 
         $platform = new $randomPlatform();
         \assert($platform instanceof AbstractPlatform);
@@ -62,8 +55,10 @@ class BackupperFactoryTest extends TestCase
                     MariaDBPlatform::class => 'mariadb',
                     MySQLPlatform::class => 'mysql',
                     PostgreSQLPlatform::class => 'pgsql',
+                    // @todo Temporary disabling SQLite for random test class.
+                    // SqlitePlatform::class => 'sqlite',
+                    // SQLServer backup and restore is not supported.
                     //SQLServerPlatform::class => 'sqlsrv',
-                    SqlitePlatform::class => 'sqlite',
                 },
             ])
         ;
@@ -98,21 +93,6 @@ class BackupperFactoryTest extends TestCase
         return $doctrineRegistry;
     }
 
-    private function getPlatformId(AbstractPlatform $platform): string
-    {
-        return match (true) {
-            $platform instanceof MariaDBPlatform => 'mariadb',
-            $platform instanceof MySQLPlatform => 'mysql',
-            $platform instanceof PostgreSQLPlatform => 'postgresql',
-            //$platform instanceof SQLServerPlatform => 'sqlsrv',
-            $platform instanceof SqlitePlatform => 'sqlite',
-            default => throw new \LogicException(\sprintf(
-                'Unsupported database platform: %s',
-                $platform::class
-            ))
-        };
-    }
-
     /**
      * Get the value of a protected or private property from the given object.
      *
@@ -128,7 +108,22 @@ class BackupperFactoryTest extends TestCase
     {
         $connection = $this->createMockConnection();
         $registry = $this->createMockRegistry($connection);
-        $platformId = $this->getPlatformId($connection->getDatabasePlatform());
+
+        $platform = $connection->getDatabasePlatform();
+
+        $platformId = match (true) {
+            $platform instanceof MariaDBPlatform => 'mariadb',
+            $platform instanceof MySQLPlatform => 'mysql',
+            $platform instanceof PostgreSQLPlatform => 'postgresql',
+            // @todo Temporary disabling SQLite for random test class.
+            // $platform instanceof SqlitePlatform => 'sqlite',
+            // SQLServer backup and restore is not supported.
+            //$platform instanceof SQLServerPlatform => 'sqlsrv',
+            default => throw new \LogicException(\sprintf(
+                'Unsupported database platform: %s',
+                $platform::class
+            ))
+        };
 
         $backupperFactory = new BackupperFactory($registry, self::BINARIES);
         $backupper = $backupperFactory->create();

@@ -15,7 +15,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'min' => 12,
                 'max' => 14,
@@ -32,7 +32,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'min' => 15,
                 'max' => 14,
@@ -45,7 +45,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'delta' => 12,
             ]),
@@ -61,7 +61,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'delta' => -12,
             ]),
@@ -73,7 +73,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'percent' => 12,
             ]),
@@ -89,7 +89,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'percent' => -12,
             ]),
@@ -103,7 +103,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'min' => 12,
                 'max' => 14,
@@ -116,7 +116,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'min' => 12,
                 'max' => 14,
@@ -129,7 +129,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'delta' => 14,
                 'percent' => 14,
@@ -144,7 +144,7 @@ class IntegerAnonymizerTest extends UnitTestCase
         new IntegerAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
     }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use Doctrine\DBAL\Platforms\SqlitePlatform;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -146,7 +146,7 @@ class DateAnonymizer extends AbstractAnonymizer
 
         $randomDeltaExpr = $this->getRandomIntExpression($delta, 0 - $delta);
 
-        if ($this->connection->getDatabasePlatform() instanceof SqlitePlatform) {
+        if ($this->databaseSession->vendorIs(Vendor::SQLITE)) {
             $update->set(
                 $this->columnName,
                 $this->getSetIfNotNullExpression(

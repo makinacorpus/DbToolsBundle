@@ -9,7 +9,7 @@ class PgsqlStatsProvider extends AbstractStatsProvider
     #[\Override]
     protected function doGetTableStats(): iterable
     {
-        $result = $this->connection->executeQuery(
+        $result = $this->databaseSession->executeQuery(
             <<<SQL
             SELECT * FROM (
                 SELECT
@@ -257,7 +257,7 @@ class PgsqlStatsProvider extends AbstractStatsProvider
     #[\Override]
     protected function doGetIndexStats(): iterable
     {
-        $result = $this->connection->executeQuery(
+        $result = $this->databaseSession->executeQuery(
             <<<SQL
             SELECT
                 concat(stats.schemaname, '.', stats.relname) as table_name,

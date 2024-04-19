@@ -31,8 +31,9 @@ class SqliteRestorer extends AbstractRestorer
     #[\Override]
     protected function afterProcess(): void
     {
+        // We don't need to re-open connection, doctrine/dbal connection does
+        // reconnect lazily when queries are submitted.
         $this->connection->close();
-        $this->connection->connect();
     }
 
     #[\Override]

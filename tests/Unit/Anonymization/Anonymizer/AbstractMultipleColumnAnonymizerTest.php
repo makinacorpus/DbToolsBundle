@@ -15,7 +15,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
         new TestMultipleColumnAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'column_1' => 'actual_column_1',
                 'column_2' => 'actual_column_2',
@@ -30,7 +30,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
         new TestMultipleColumnAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'column_2' => 'actual_column_2',
             ]),
@@ -46,7 +46,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
         new TestMultipleColumnAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
     }
@@ -58,7 +58,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
         new TestMultipleColumnAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'column_1' => 'actual_column_1',
                 'column_2' => 'actual_column_1',

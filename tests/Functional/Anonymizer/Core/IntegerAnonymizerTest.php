@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class IntegerAnonymizerTest extends FunctionalTestCase
@@ -24,19 +21,19 @@ class IntegerAnonymizerTest extends FunctionalTestCase
             ],
             [
                 [
-                    'id' => '1',
-                    'data' => '10',
+                    'id' => 1,
+                    'data' => 10,
                 ],
                 [
-                    'id' => '2',
-                    'data' => '20',
+                    'id' => 2,
+                    'data' => 20,
                 ],
                 [
-                    'id' => '3',
-                    'data' => '30',
+                    'id' => 3,
+                    'data' => 30,
                 ],
                 [
-                    'id' => '4',
+                    'id' => 4,
                 ],
             ],
         );
@@ -44,28 +41,21 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithMinAndMax(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'data',
             'integer',
             new Options(['min' => 200, 'max' => 10000])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertSame(
             10,
-            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+            (int) $this->getDatabaseSession()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
         $this->assertNotNull($data);
@@ -92,28 +82,21 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDelta(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'data',
             'integer',
             new Options(['delta' => 10])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertSame(
             10,
-            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+            (int) $this->getDatabaseSession()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
         $this->assertNotNull($data);
@@ -141,28 +124,21 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithPercent(): void
     {
-        $config = new AnonymizationConfig();
-        $config->add(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'data',
             'integer',
             new Options(['percent' => 50])
         ));
 
-        $anonymizator = new Anonymizator(
-            $this->getConnection(),
-            new AnonymizerRegistry(),
-            $config
-        );
-
         $this->assertSame(
             10,
-            (int) $this->getConnection()->executeQuery('select data from table_test where id = 1')->fetchOne(),
+            (int) $this->getDatabaseSession()->executeQuery('select data from table_test where id = 1')->fetchOne(),
         );
 
         $anonymizator->anonymize();
 
-        $datas = $this->getConnection()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
+        $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
         $this->assertNotNull($data);

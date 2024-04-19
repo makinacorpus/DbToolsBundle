@@ -6,30 +6,100 @@ namespace MakinaCorpus\DbToolsBundle\Test;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver\Middleware\EnableForeignKeys;
 use Doctrine\DBAL\Driver\OCI8\Middleware\InitializeSession;
-use Doctrine\DBAL\Exception\DatabaseObjectNotFoundException;
-use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
-use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Schema\Exception\TableDoesNotExist;
-use Doctrine\DBAL\Types\Type;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use Doctrine\DBAL\Logging\Middleware;
+use MakinaCorpus\QueryBuilder\DatabaseSession;
+use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
 use Psr\Log\AbstractLogger;
 
 abstract class FunctionalTestCase extends UnitTestCase
 {
+    private bool $initialized = false;
+    /**
+     * @deprecated
+     *   Remove when hard dependency on doctrine/dbal will be gone.
+     */
+    private ?Connection $connection = null;
+    /**
+     * @var string[]
+     */
     private array $createdTables = [];
+
+    /** @after */
+    protected function disconnect(): void
+    {
+        try {
+            foreach ($this->createdTables as $tableName) {
+                $this->dropTableIfExist($tableName);
+            }
+        } finally {
+            $this->createdTables = [];
+        }
+
+        if ($this->connection) {
+            while ($this->connection->isTransactionActive()) {
+                $this->connection->rollBack();
+            }
+            unset($this->connection);
+        }
+    }
+
+    /**
+     * Initialize database.
+     */
+    protected function initializeDatabase(): void
+    {
+        $privConnection = $this->createPrivConnection();
+        try {
+            $privConnection->createSchemaManager()->createDatabase('test_db');
+        } catch(\Exception $e) {
+
+        } finally {
+            $privConnection->close();
+        }
+    }
+
+    /**
+     * Get testing connection object.
+     *
+     * @deprecated
+     *   Remove when hard dependency on doctrine/dbal will is gone.
+     */
+    protected function getDoctrineConnection(): Connection
+    {
+        if (!$this->initialized) {
+            $this->initializeDatabase();
+
+            $this->initialized = true;
+        }
+
+        return $this->connection ??= $this->createDoctrineConnection();
+    }
+
+    /**
+     * Create new query builder.
+     */
+    #[\Override]
+    protected function getDatabaseSession(): DatabaseSession
+    {
+        return new DoctrineQueryBuilder($this->getDoctrineConnection());
+    }
 
     /**
      * Skip for given database.
      */
     protected function skipIfDatabase(string $database, ?string $message = null): void
     {
-        if ($this->getDoctrineQueryBuilder()->getServerFlavor() === $database) {
+        if ($this->getDatabaseSession()->vendorIs($database)) {
             self::markTestSkipped(\sprintf("Test disabled for database '%s'", $database));
         }
     }
@@ -39,7 +109,7 @@ abstract class FunctionalTestCase extends UnitTestCase
      */
     protected function skipIfDatabaseNot(string $database, ?string $message = null): void
     {
-        if ($this->getDoctrineQueryBuilder()->getServerFlavor() !== $database) {
+        if (!$this->getDatabaseSession()->vendorIs($database)) {
             self::markTestSkipped(\sprintf("Test disabled for database '%s'", $database));
         }
     }
@@ -51,7 +121,7 @@ abstract class FunctionalTestCase extends UnitTestCase
     {
         $this->skipIfDatabase($database);
 
-        if ($this->getDoctrineQueryBuilder()->isVersionGreaterOrEqualThan($version)) {
+        if ($this->getDatabaseSession()->vendorVersionIs($version, '>=')) {
             self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version >= '%s'", $database, $version));
         }
     }
@@ -61,21 +131,13 @@ abstract class FunctionalTestCase extends UnitTestCase
      */
     protected function skipIfDatabaseLessThan(string $database, string $version, ?string $message = null): void
     {
-        if ($this->getDoctrineQueryBuilder()->getServerFlavor() !== $database) {
+        if (!$this->getDatabaseSession()->vendorIs($database)) {
             return;
         }
 
-        if ($this->getDoctrineQueryBuilder()->isVersionLessThan($version)) {
+        if ($this->getDatabaseSession()->vendorVersionIs($version, '<')) {
             self::markTestSkipped($message ?? \sprintf("Test disabled for database '%s' at version <= '%s'", $database, $version));
         }
-    }
-
-    /**
-     * Get real query builder.
-     */
-    protected function getDoctrineQueryBuilder(): DoctrineQueryBuilder
-    {
-        return new DoctrineQueryBuilder($this->getConnection());
     }
 
     /**
@@ -89,38 +151,41 @@ abstract class FunctionalTestCase extends UnitTestCase
         array $columns,
         array $rows = [],
     ): void {
-        $defaultColumnOptions = [
-            'notnull' => false,
-        ];
+        $this->dropTableIfExist($tableName);
+
+        $tableBuilder = $this
+            ->getDatabaseSession()
+            ->getSchemaManager()
+            ->modify()
+            ->createTable($tableName)
+        ;
 
         foreach ($columns as $name => $column) {
             if (\is_string($column)) {
-                $columns[$name] = new Column($name, Type::getType($column), $defaultColumnOptions);
+                $tableBuilder->column(
+                    name: $name,
+                    type: $column,
+                    nullable: true,
+                );
             } elseif (\is_array($column)) {
-                if (isset($column['type'])) {
-                    $type = Type::getType($column['type']);
-                    unset($column['type']);
-                } else {
-                    $type = Type::getType('string');
-                }
-                $columns[$name] = new Column($name, $type, $column + $defaultColumnOptions);
+                $tableBuilder->column(
+                    name: $name,
+                    type: $column['type'] ?? 'text',
+                    nullable: !($column['notnull'] ?? true),
+                );
             } elseif (!$column instanceof Column) {
                 throw new \InvalidArgumentException(\sprintf("Column must be a string (type), and array (doctrine/dbal Column class options) or a %s instance", Column::class));
             }
         }
 
-        $this->dropTableIfExist($tableName);
-
-        $connection = $this->getConnection();
-        $connection->createSchemaManager()->createTable(new Table($tableName, $columns));
+        $tableBuilder->endTable()->commit();
 
         $this->createdTables[] = $tableName;
 
         // We have to insert one by one because the test case might
         // use a different set of columns for each row.
-        $queryBuilder = $this->getDoctrineQueryBuilder();
         foreach ($rows as $row) {
-            $queryBuilder->insert($tableName)->values($row)->executeStatement();
+            $this->getDatabaseSession()->insert($tableName)->values($row)->executeStatement();
         }
     }
 
@@ -131,31 +196,45 @@ abstract class FunctionalTestCase extends UnitTestCase
     {
         try {
             $this
-                ->getConnection()
-                ->createSchemaManager()
-                ->dropTable($tableName)
+                ->getDatabaseSession()
+                ->getSchemaManager()
+                ->modify()
+                    ->dropTable($tableName)
+                ->commit()
             ;
-        } catch (TableDoesNotExist|TableNotFoundException|DatabaseObjectNotFoundException) {
+        } catch (DatabaseObjectDoesNotExistError) {
         }
     }
 
-    /** @after */
-    #[\Override]
-    protected function disconnect(): void
+    /**
+     * For anonymizers unit test, creates an anonymizator with the given
+     * configuration, which should register all anonymizers required for
+     * the test.
+     */
+    protected function createAnonymizatorWithConfig(AnonymizerConfig ...$anonymizerConfig): Anonymizator
     {
-        parent::disconnect();
+        $config = new AnonymizationConfig();
 
-        try {
-            foreach ($this->createdTables as $tableName) {
-                $this->dropTableIfExist($tableName);
-            }
-        } finally {
-            $this->createdTables = [];
+        foreach ($anonymizerConfig as $userConfig) {
+            $config->add($userConfig);
         }
+
+        return new Anonymizator(
+            $this->getDoctrineConnection(),
+            new AnonymizerRegistry(),
+            $config
+        );
     }
 
-    #[\Override]
-    protected function createConnection(): Connection
+    /**
+     * Create database connection.
+     *
+     * Default will use a mock object.
+     *
+     * @deprecated
+     *   Remove when hard dependency on doctrine/dbal will be gone.
+     */
+    private function createDoctrineConnection(): Connection
     {
         $params = $this->getConnectionParameters();
 
@@ -163,19 +242,6 @@ abstract class FunctionalTestCase extends UnitTestCase
             $params,
             self::createConfiguration($params['driver']),
         );
-    }
-
-    #[\Override]
-    protected function initializeDatabase(): void
-    {
-        $privConnection = $this->createPrivConnection();
-        try {
-            $privConnection->createSchemaManager()->createDatabase('test_db');
-        } catch(\Exception $e) {
-
-        } finally {
-            $privConnection->close();
-        }
     }
 
     /**
@@ -199,7 +265,7 @@ abstract class FunctionalTestCase extends UnitTestCase
             'driverOptions' => $driverOptions,
             'host' => \getenv('DBAL_HOST'),
             'password' => \getenv('DBAL_PASSWORD'),
-            'port' => \getenv('DBAL_PORT'),
+            'port' => ($port = \getenv('DBAL_PORT')) ? ((int) $port) : null,
             'user' => \getenv('DBAL_USER'),
             'path' => \getenv('DBAL_PATH'),
         ]);
@@ -267,7 +333,6 @@ abstract class FunctionalTestCase extends UnitTestCase
         }
 
         $configuration->setMiddlewares($middlewares);
-
         $configuration->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
 
         return $configuration;

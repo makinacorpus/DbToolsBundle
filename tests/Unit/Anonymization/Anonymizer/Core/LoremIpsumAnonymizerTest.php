@@ -15,7 +15,7 @@ class LoremIpsumAnonymizerTest extends UnitTestCase
         new LoremIpsumAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
 
@@ -27,7 +27,7 @@ class LoremIpsumAnonymizerTest extends UnitTestCase
         new LoremIpsumAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'words' => 15,
             ]),
@@ -43,7 +43,7 @@ class LoremIpsumAnonymizerTest extends UnitTestCase
         new LoremIpsumAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'words' => -15,
             ]),
@@ -55,7 +55,7 @@ class LoremIpsumAnonymizerTest extends UnitTestCase
         new LoremIpsumAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'paragraphs' => 15,
             ]),
@@ -71,7 +71,7 @@ class LoremIpsumAnonymizerTest extends UnitTestCase
         new LoremIpsumAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'paragraphs' => -15,
             ]),

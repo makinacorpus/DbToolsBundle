@@ -15,7 +15,7 @@ class ConstantAnonymizerTest extends UnitTestCase
         new ConstantAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([
                 'value' => 'test',
             ]),
@@ -31,7 +31,7 @@ class ConstantAnonymizerTest extends UnitTestCase
         new ConstantAnonymizer(
             'some_table',
             'some_column',
-            $this->getConnection(),
+            $this->getDatabaseSession(),
             new Options([]),
         );
     }

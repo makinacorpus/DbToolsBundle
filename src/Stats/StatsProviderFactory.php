@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\Platform;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 class StatsProviderFactory
 {
@@ -23,21 +23,19 @@ class StatsProviderFactory
     {
         /** @var Connection */
         $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $queryBuilder = new DoctrineQueryBuilder($connection);
-        $platform = $queryBuilder->getServerFlavor();
+        $session = new DoctrineQueryBuilder($connection);
+        $vendorName = $session->getVendorName();
 
-        $statsProvider = match ($platform) {
-            Platform::POSTGRESQL => PgsqlStatsProvider::class,
-            Platform::MYSQL, Platform::MARIADB => MysqlStatsProvider::class,
+        $statsProvider = match ($vendorName) {
+            Vendor::POSTGRESQL => PgsqlStatsProvider::class,
+            Vendor::MYSQL, Vendor::MARIADB => MysqlStatsProvider::class,
             default => throw new NotImplementedException(\sprintf(
                 "Stat collection is not implemented for platform '%s' while using connection '%s'",
-                $platform,
+                $vendorName,
                 $connectionName
             )),
         };
 
-        return new $statsProvider(
-            $connection
-        );
+        return new $statsProvider(new DoctrineQueryBuilder($connection));
     }
 }
