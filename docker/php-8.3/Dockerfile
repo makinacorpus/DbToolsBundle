@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-bookworm
+FROM php:8.3-fpm-bookworm
 
 # Basic requirements
 RUN apt-get update
@@ -24,6 +24,9 @@ RUN apt-get -y --no-install-recommends install msodbcsql18 unixodbc-dev
 RUN pecl install sqlsrv
 RUN pecl install pdo_sqlsrv
 RUN docker-php-ext-enable sqlsrv pdo_sqlsrv
+
+# Install Xdebug
+RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
 
 # Cleanup.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
