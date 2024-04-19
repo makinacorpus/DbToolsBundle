@@ -21,6 +21,9 @@ while getopts ":xp:l" opt; do
         p)
             p=${OPTARG}
             case "${OPTARG}" in
+                "8.1")
+                    PHPVER="8-1"
+                    ;;
                 "8.3")
                     PHPVER="8-3"
                     ;;
