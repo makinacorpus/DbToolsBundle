@@ -4,6 +4,12 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+if [[ -z "${PHPVER}" ]]; then
+    PHPVER="8-2"
+fi
+
+PHPUNIT_CONTAINER="phpunit-${PHPVER}"
+
 section_title() {
     printf "${RED}\n-------------------------------- ${NC}"
     printf "${RED}$1${NC}"
@@ -30,7 +36,11 @@ do_down() {
 
 do_composer_update() {
     echo 'composer update'
-    docker compose -p db_tools_bundle_test exec phpunit composer update
+    if [[ -z "${LOWEST}" ]]; then
+        docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer update
+    else
+        docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer update --prefer-lowest
+    fi
 }
 
 # Launch composer checks (for Static analysis & Code style fixer)
@@ -40,13 +50,17 @@ do_checks() {
     do_composer_update
 
     echo 'composer checks'
-    docker compose -p db_tools_bundle_test exec phpunit composer checks
+    docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer checks
 }
 
 # Launch PHPUnit tests without any database vendor
 do_unittest() {
     section_title "PHPUnit unit tests"
-    docker compose -p db_tools_bundle_test exec phpunit vendor/bin/phpunit
+    docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER vendor/bin/phpunit
+}
+
+do_ps() {
+    docker compose -p db_tools_bundle_test ps
 }
 
 do_test_mysql57() {
@@ -61,7 +75,7 @@ do_test_mysql57() {
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql57:3306/test_db?serverVersion=5.7 \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_mysql80() {
@@ -76,7 +90,7 @@ do_test_mysql80() {
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8 \
-        phpunit vendor/bin/phpunit $@
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit $@
 }
 
 do_test_mysql83() {
@@ -91,7 +105,7 @@ do_test_mysql83() {
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql83:3306/test_db?serverVersion=8 \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_mariadb11() {
@@ -106,7 +120,7 @@ do_test_mariadb11() {
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db?serverVersion=mariadb-11.1.3 \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_mysql() {
@@ -130,7 +144,7 @@ do_test_postgresql10() {
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql10:5432/test_db?serverVersion=10&charset=utf8" \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_postgresql16() {
@@ -145,7 +159,7 @@ do_test_postgresql16() {
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql16:5432/test_db?serverVersion=16&charset=utf8" \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_postgresql() {
@@ -165,7 +179,7 @@ do_test_sqlsrv2019() {
         -e DBAL_ROOT_USER=sa \
         -e DBAL_USER=sa \
         -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_sqlsrv2022() {
@@ -180,7 +194,7 @@ do_test_sqlsrv2022() {
         -e DBAL_ROOT_USER=sa \
         -e DBAL_USER=sa \
         -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2022&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 do_test_sqlsrv() {
@@ -198,7 +212,7 @@ do_test_sqlite() {
         -e DBAL_HOST=127.0.0.1 \
         -e DBAL_PATH="test_db.sqlite" \
         -e DATABASE_URL="pdo-sqlite:///test_db.sqlite" \
-        phpunit vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
 }
 
 # Run PHPunit tests for all database vendors
@@ -288,6 +302,6 @@ action=${1-}
 if [[ -n $@ ]];then shift;fi
 
 case $action in
-    build|up|down|checks|test_all|unittest|test|composer_update|notice) do_$action "$@";;
+    build|up|down|ps|checks|test_all|unittest|test|composer_update|notice) do_$action "$@";;
     *) do_notice;;
 esac
