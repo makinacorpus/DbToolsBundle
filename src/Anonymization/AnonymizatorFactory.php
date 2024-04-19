@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\LoaderInterface;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use Psr\Log\LoggerInterface;
 
 class AnonymizatorFactory
@@ -19,24 +18,27 @@ class AnonymizatorFactory
     private array $configurationLoaders = [];
 
     public function __construct(
-        private ManagerRegistry $doctrineRegistry,
+        private DatabaseSessionRegistry $registry,
         private AnonymizerRegistry $anonymizerRegistry,
         private ?LoggerInterface $logger = null,
     ) {}
 
+    /**
+     * Add configuration loader.
+     */
     public function addConfigurationLoader(LoaderInterface $loader): void
     {
         $this->configurationLoaders[] = $loader;
     }
 
+    /**
+     * Get anonymizator instance for given connection name.
+     */
     public function getOrCreate(string $connectionName): Anonymizator
     {
         if (isset($this->anonymizators[$connectionName])) {
             return $this->anonymizators[$connectionName];
         }
-
-        $connection = $this->doctrineRegistry->getConnection($connectionName);
-        \assert($connection instanceof Connection);
 
         $config = new AnonymizationConfig($connectionName);
 
@@ -45,7 +47,7 @@ class AnonymizatorFactory
         }
 
         $anonymizator = new Anonymizator(
-            $connection,
+            $this->registry->getDatabaseSession($connectionName),
             $this->anonymizerRegistry,
             $config
         );
@@ -58,12 +60,14 @@ class AnonymizatorFactory
     }
 
     /**
+     * Get all anonymizators for each known connection name.
+     *
      * @return array<string, Anonymizator>
      */
     public function all(): array
     {
         $ret = [];
-        foreach (\array_keys($this->doctrineRegistry->getConnections()) as $connectionName) {
+        foreach ($this->registry->getConnectionNames() as $connectionName) {
             $ret[$connectionName] = $this->getOrCreate($connectionName);
         }
 

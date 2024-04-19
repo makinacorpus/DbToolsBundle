@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Stats;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Vendor;
 
 class StatsProviderFactory
 {
     public function __construct(
-        private ManagerRegistry $doctrineRegistry,
+        private DatabaseSessionRegistry $registry,
     ) {}
 
     /**
@@ -21,9 +19,7 @@ class StatsProviderFactory
      */
     public function create(?string $connectionName = null): AbstractStatsProvider
     {
-        /** @var Connection */
-        $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $session = new DoctrineQueryBuilder($connection);
+        $session = $this->registry->getDatabaseSession($connectionName);
         $vendorName = $session->getVendorName();
 
         $statsProvider = match ($vendorName) {
@@ -36,6 +32,6 @@ class StatsProviderFactory
             )),
         };
 
-        return new $statsProvider(new DoctrineQueryBuilder($connection));
+        return new $statsProvider($session);
     }
 }

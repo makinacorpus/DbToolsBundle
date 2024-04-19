@@ -4,31 +4,28 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Tests\Mock\TestingAnonymizationLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
+use MakinaCorpus\DbToolsBundle\Tests\Mock\TestingAnonymizationLoader;
 
 class AnonymizatorFactoryTest extends UnitTestCase
 {
     public function testGetOrCreateWithEmptyConfig(): void
     {
-        $entityManager = $this->createMock(Connection::class);
-
-        $doctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $doctrineRegistry
+        $databaseSessionRegistry = $this->createMock(DatabaseSessionRegistry::class);
+        $databaseSessionRegistry
             ->expects($this->exactly(1))
-            ->method('getConnection')
-            ->willReturn($entityManager)
+            ->method('getDatabaseSession')
+            ->willReturn($this->getDatabaseSession())
         ;
 
         $factory = new AnonymizatorFactory(
-            $doctrineRegistry,
+            $databaseSessionRegistry,
             $this->createMock(AnonymizerRegistry::class)
         );
         $factory->addConfigurationLoader(new TestingAnonymizationLoader());
@@ -38,9 +35,9 @@ class AnonymizatorFactoryTest extends UnitTestCase
         self::assertInstanceOf(Anonymizator::class, $anonymizator);
         self::assertCount(0, $anonymizator->getAnonymizationConfig()->all());
 
-        $doctrineRegistry
+        $databaseSessionRegistry
             ->expects($this->exactly(1))
-            ->method('getConnections')
+            ->method('getConnectionNames')
             ->willReturn([])
         ;
 
@@ -49,17 +46,15 @@ class AnonymizatorFactoryTest extends UnitTestCase
 
     public function testGetOrCreateWithConfig(): void
     {
-        $entityManager = $this->createMock(Connection::class);
-
-        $doctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $doctrineRegistry
+        $databaseSessionRegistry = $this->createMock(DatabaseSessionRegistry::class);
+        $databaseSessionRegistry
             ->expects($this->exactly(1))
-            ->method('getConnection')
-            ->willReturn($entityManager)
+            ->method('getDatabaseSession')
+            ->willReturn($this->getDatabaseSession())
         ;
 
         $factory = new AnonymizatorFactory(
-            $doctrineRegistry,
+            $databaseSessionRegistry,
             $this->createMock(AnonymizerRegistry::class),
         );
 
