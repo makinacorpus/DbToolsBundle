@@ -4,10 +4,39 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-if [[ -z "${PHPVER}" ]]; then
-    PHPVER="8-2"
-fi
+# PHP version.
+PHPVER="8-2"
+# Extra parameters passed to all docker command lines.
+EXTRA_DOCKER_ENV=""
 
+# Parse arguments.
+while getopts ":xp:l" opt; do
+    case "${opt}" in
+        x)
+            EXTRA_DOCKER_ENV="${EXTRA_DOCKER_ENV} -e XDEBUG_TRIGGER=1"
+            ;;
+        l)
+            LOWEST=1
+            ;;
+        p)
+            p=${OPTARG}
+            case "${OPTARG}" in
+                "8.3")
+                    PHPVER="8-3"
+                    ;;
+                *)
+                    PHPVER="8-2"
+                    ;;
+            esac
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+# phpunit container variant to use.
 PHPUNIT_CONTAINER="phpunit-${PHPVER}"
 
 section_title() {
@@ -16,30 +45,35 @@ section_title() {
     printf "${RED} --------------------------------\n${NC}"
 }
 
+# Run docker compose for project
+do_docker_compose() {
+    docker compose -p db_tools_bundle_test $@
+}
+
 # Build docker containers
 do_build() {
     section_title "Rebuilding containers"
-    docker compose -p db_tools_bundle_test build;
+    do_docker_compose build;
 }
 
 # Start docker containers
 do_up() {
     section_title "Up containers"
-    docker compose -p db_tools_bundle_test up -d --force-recreate --remove-orphans
+    do_docker_compose up -d --force-recreate --remove-orphans
 }
 
 # Stop docker containers
 do_down() {
     section_title "Down containers"
-    docker compose -p db_tools_bundle_test down
+    do_docker_compose down
 }
 
 do_composer_update() {
     echo 'composer update'
     if [[ -z "${LOWEST}" ]]; then
-        docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer update
+        do_docker_compose exec $PHPUNIT_CONTAINER composer update
     else
-        docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer update --prefer-lowest
+        do_docker_compose exec $PHPUNIT_CONTAINER composer update --prefer-lowest
     fi
 }
 
@@ -50,22 +84,22 @@ do_checks() {
     do_composer_update
 
     echo 'composer checks'
-    docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER composer checks
+    do_docker_compose exec $PHPUNIT_CONTAINER composer checks
 }
 
 # Launch PHPUnit tests without any database vendor
 do_unittest() {
     section_title "PHPUnit unit tests"
-    docker compose -p db_tools_bundle_test exec $PHPUNIT_CONTAINER vendor/bin/phpunit
+    do_docker_compose exec $PHPUNIT_CONTAINER vendor/bin/phpunit
 }
 
 do_ps() {
-    docker compose -p db_tools_bundle_test ps
+    do_docker_compose ps
 }
 
 do_test_mysql57() {
     section_title "Running tests with MySQL 5.7"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_mysql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=mysql57 \
@@ -80,7 +114,7 @@ do_test_mysql57() {
 
 do_test_mysql80() {
     section_title "Running tests with MySQL 8.0"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_mysql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=mysql80 \
@@ -95,7 +129,7 @@ do_test_mysql80() {
 
 do_test_mysql83() {
     section_title "Running tests with MySQL 8.3"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_mysql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=mysql83 \
@@ -110,7 +144,7 @@ do_test_mysql83() {
 
 do_test_mariadb11() {
     section_title "Running tests with MariaDB 11"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_mysql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=mariadb11 \
@@ -134,7 +168,7 @@ do_test_mysql() {
 
 do_test_postgresql10() {
     section_title "Running tests with PostgreSQL 10"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_pgsql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=postgresql10 \
@@ -149,7 +183,7 @@ do_test_postgresql10() {
 
 do_test_postgresql16() {
     section_title "Running tests with PostgreSQL 16"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_pgsql \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=postgresql16 \
@@ -169,7 +203,7 @@ do_test_postgresql() {
 
 do_test_sqlsrv2019() {
     section_title "Running tests with SQL Server 2019"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_sqlsrv \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=sqlsrv2019 \
@@ -184,7 +218,7 @@ do_test_sqlsrv2019() {
 
 do_test_sqlsrv2022() {
     section_title "Running tests with SQL Server 2022"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_sqlsrv \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=sqlsrv2022 \
@@ -206,7 +240,7 @@ do_test_sqlsrv() {
 # library, we cannot target X or Y version.
 do_test_sqlite() {
     section_title "Running tests with SQLite"
-    docker compose -p db_tools_bundle_test exec \
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
         -e DBAL_DRIVER=pdo_sqlite \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=127.0.0.1 \
@@ -293,6 +327,12 @@ do_notice() {
     printf "\n  - ${GREEN}test${NC}: Run PHPUnit tests for a specific database vendors or version"
     printf "\n  - ${GREEN}unittest${NC}: Run PHPUnit tests without any database vendor"
     printf "\n  - ${GREEN}notice${NC}: Display this help"
+    printf "\n"
+    printf "\nAvailable options:"
+    printf "\n  ${GREEN}-l${NC}: run ${GREEN}composer update${NC} with ${GREEN}--prefer-lowest${NC} option"
+    printf "\n  ${GREEN}-x${NC}: trigger ${GREEN}xdebug${NC} when running test suites (ignored otherwise)"
+    printf "\n  ${GREEN}-p 8.3${NC}: choose PHP version to run, ${GREEN}8.2${NC} or ${GREEN}8.3${NC}"
+    printf "\n"
     printf "\n\n"
 }
 
