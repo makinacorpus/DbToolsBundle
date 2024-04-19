@@ -47,7 +47,7 @@ section_title() {
 
 # Run docker compose for project
 do_docker_compose() {
-    docker compose -p db_tools_bundle_test $@
+    docker compose -p db_tools_bundle_test "$@"
 }
 
 # Build docker containers
@@ -109,7 +109,7 @@ do_test_mysql57() {
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql57:3306/test_db?serverVersion=5.7 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_mysql80() {
@@ -124,7 +124,7 @@ do_test_mysql80() {
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8 \
-        "$PHPUNIT_CONTAINER" vendor/bin/phpunit $@
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 do_test_mysql83() {
@@ -139,7 +139,7 @@ do_test_mysql83() {
         -e DBAL_ROOT_USER=root \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mysql83:3306/test_db?serverVersion=8 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_mariadb11() {
@@ -154,16 +154,16 @@ do_test_mariadb11() {
         -e DBAL_ROOT_USER="root" \
         -e DBAL_USER=root \
         -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db?serverVersion=mariadb-11.1.3 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_mysql() {
     # @todo Temporary deactivated MySQL 5.7 due to a bug.
     # https://github.com/makinacorpus/DbToolsBundle/issues/124
     # do_test_mysql57
-    do_test_mysql80 $@
-    do_test_mysql83 $@
-    do_test_mariadb11 $@
+    do_test_mysql80 "$@"
+    do_test_mysql83 "$@"
+    do_test_mariadb11 "$@"
 }
 
 do_test_postgresql10() {
@@ -178,7 +178,7 @@ do_test_postgresql10() {
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql10:5432/test_db?serverVersion=10&charset=utf8" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_postgresql16() {
@@ -193,12 +193,12 @@ do_test_postgresql16() {
         -e DBAL_ROOT_USER=postgres \
         -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql16:5432/test_db?serverVersion=16&charset=utf8" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_postgresql() {
-    do_test_postgresql10 $@
-    do_test_postgresql16 $@
+    do_test_postgresql10 "$@"
+    do_test_postgresql16 "$@"
 }
 
 do_test_sqlsrv2019() {
@@ -213,7 +213,7 @@ do_test_sqlsrv2019() {
         -e DBAL_ROOT_USER=sa \
         -e DBAL_USER=sa \
         -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_sqlsrv2022() {
@@ -228,12 +228,12 @@ do_test_sqlsrv2022() {
         -e DBAL_ROOT_USER=sa \
         -e DBAL_USER=sa \
         -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2022&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 do_test_sqlsrv() {
-    do_test_sqlsrv2019 $@
-    do_test_sqlsrv2022 $@
+    do_test_sqlsrv2019 "$@"
+    do_test_sqlsrv2022 "$@"
 }
 
 # SQLite version depends upon the PHP embeded version or linked
@@ -246,7 +246,7 @@ do_test_sqlite() {
         -e DBAL_HOST=127.0.0.1 \
         -e DBAL_PATH="test_db.sqlite" \
         -e DATABASE_URL="pdo-sqlite:///test_db.sqlite" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit $@
+        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
 }
 
 # Run PHPunit tests for all database vendors
@@ -256,14 +256,14 @@ do_test_all() {
     # @todo Temporary deactivated MySQL 5.7 due to a bug.
     # https://github.com/makinacorpus/DbToolsBundle/issues/124
     # do_test_mysql57
-    do_test_mysql80 $@
-    do_test_mysql83 $@
-    do_test_mariadb11 $@
-    do_test_postgresql10 $@
-    do_test_postgresql16 $@
-    do_test_sqlsrv2019 $@
-    do_test_sqlsrv2022 $@
-    do_test_sqlite $@
+    do_test_mysql80 "$@"
+    do_test_mysql83 "$@"
+    do_test_mariadb11 "$@"
+    do_test_postgresql10 "$@"
+    do_test_postgresql16 "$@"
+    do_test_sqlsrv2019 "$@"
+    do_test_sqlsrv2022 "$@"
+    do_test_sqlite "$@"
 }
 
 do_test_notice() {
