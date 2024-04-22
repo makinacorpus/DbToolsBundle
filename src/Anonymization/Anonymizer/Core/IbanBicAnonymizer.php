@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Common;
+namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractMultipleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Helper\Iban;
