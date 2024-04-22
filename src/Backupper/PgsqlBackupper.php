@@ -11,17 +11,16 @@ class PgsqlBackupper extends AbstractBackupper
     #[\Override]
     public function buildCommandLine(): CommandLine
     {
-        $dbParams = $this->connection->getParams();
         $command = new CommandLine($this->binary);
 
-        if (isset($dbParams['host'])) {
-            $command->addArg('-h', $dbParams['host']);
+        if ($host = $this->databaseDsn->getHost()) {
+            $command->addArg('-h', $host);
         }
-        if (isset($dbParams['user'])) {
-            $command->addArg('-U', $dbParams['user']);
+        if ($user = $this->databaseDsn->getUser()) {
+            $command->addArg('-U', $user);
         }
-        if (isset($dbParams['port'])) {
-            $command->addArg('-p', $dbParams['port']);
+        if ($port = $this->databaseDsn->getPort()) {
+            $command->addArg('-p', $port);
         }
 
         $command->addArg('-w');
@@ -42,7 +41,7 @@ class PgsqlBackupper extends AbstractBackupper
             $command->addArg('-f', $this->destination);
         }
 
-        $command->addArg($dbParams['dbname']);
+        $command->addArg($this->databaseDsn->getDatabase());
 
         return $command;
     }
@@ -51,8 +50,8 @@ class PgsqlBackupper extends AbstractBackupper
     protected function beforeProcess(): void
     {
         parent::beforeProcess();
-        $dbParams = $this->connection->getParams();
-        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
+
+        $this->process->setEnv(['PGPASSWORD' => $this->databaseDsn->getPassword() ?? '']);
     }
 
     #[\Override]

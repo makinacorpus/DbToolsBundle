@@ -67,7 +67,7 @@ services:
     db_tools.backupper.factory:
         class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory
         arguments:
-            - '@doctrine'
+            - '@db_tools.database_session.registry'
             - '%db_tools.backupper.binaries%'
             - '%db_tools.backupper.options%'
             - '%db_tools.excluded_tables%'
@@ -78,7 +78,7 @@ services:
     db_tools.restorer.factory:
         class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory
         arguments:
-            - '@doctrine'
+            - '@db_tools.database_session.registry'
             - '%db_tools.restorer.binaries%'
             - '%db_tools.restorer.options%'
             - '@logger'

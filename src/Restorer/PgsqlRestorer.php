@@ -11,17 +11,16 @@ class PgsqlRestorer extends AbstractRestorer
     #[\Override]
     public function buildCommandLine(): CommandLine
     {
-        $dbParams = $this->connection->getParams();
         $command = new CommandLine($this->binary);
 
-        if (isset($dbParams['host'])) {
-            $command->addArg('-h', $dbParams['host']);
+        if ($host = $this->databaseDsn->getHost()) {
+            $command->addArg('-h', $host);
         }
-        if (isset($dbParams['user'])) {
-            $command->addArg('-U', $dbParams['user']);
+        if ($user = $this->databaseDsn->getUser()) {
+            $command->addArg('-U', $user);
         }
-        if (isset($dbParams['port'])) {
-            $command->addArg('-p', $dbParams['port']);
+        if ($port = $this->databaseDsn->getPort()) {
+            $command->addArg('-p', $port);
         }
 
         $command->addArg('-w');
@@ -31,7 +30,7 @@ class PgsqlRestorer extends AbstractRestorer
         }
 
         $this->addCustomOptions($command);
-        $command->addArg('-d', $dbParams['dbname']);
+        $command->addArg('-d', $this->databaseDsn->getDatabase());
         $command->addArg($this->backupFilename);
 
         return $command;
@@ -41,8 +40,8 @@ class PgsqlRestorer extends AbstractRestorer
     protected function beforeProcess(): void
     {
         parent::beforeProcess();
-        $dbParams = $this->connection->getParams();
-        $this->process->setEnv(['PGPASSWORD' => $dbParams['password'] ?? '']);
+
+        $this->process->setEnv(['PGPASSWORD' => $this->databaseDsn->getPassword() ?? '']);
     }
 
     #[\Override]

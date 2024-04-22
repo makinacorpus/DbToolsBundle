@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
@@ -71,42 +69,40 @@ class BackupperRestorerTest extends FunctionalTestCase
         );
     }
 
-    private function getBackupperFactory(?Connection $connection = null): BackupperFactory
+    /**
+     * Get backup binary file names.
+     */
+    private function getBinaryConfigBackup(): array
     {
-        $connection = $connection ?? $this->getDoctrineConnection();
-
-        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $mockDoctrineRegistry
-            ->expects($this->atLeast(1))
-            ->method('getConnection')
-            ->willReturn($connection)
-        ;
-
-        return new BackupperFactory($mockDoctrineRegistry, [
+        return [
             'mariadb' => 'mariadb-dump',
             'mysql' => 'mysqldump',
             'postgresql' => 'pg_dump',
             'sqlite' => 'sqlite3',
-        ]);
+        ];
     }
 
-    private function getRestorerFactory(?Connection $connection = null): RestorerFactory
+    /**
+     * Get restore binary file names.
+     */
+    private function getBinaryConfigRestore(): array
     {
-        $connection = $this->getDoctrineConnection();
-
-        $mockDoctrineRegistry = $this->createMock(ManagerRegistry::class);
-        $mockDoctrineRegistry
-            ->expects($this->atLeast(1))
-            ->method('getConnection')
-            ->willReturn($connection)
-        ;
-
-        return new RestorerFactory($mockDoctrineRegistry, [
+        return [
             'mariadb' => 'mariadb',
             'mysql' => 'mysql',
             'postgresql' => 'pg_restore',
             'sqlite' => 'sqlite3',
-        ]);
+        ];
+    }
+
+    private function getBackupperFactory(): BackupperFactory
+    {
+        return new BackupperFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigBackup());
+    }
+
+    private function getRestorerFactory(): RestorerFactory
+    {
+        return new RestorerFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigRestore());
     }
 
     public function testBackupper(): void
@@ -118,44 +114,11 @@ class BackupperRestorerTest extends FunctionalTestCase
         }
 
         $backupper->checkBinary();
-        $backupFilename = $this->prepareAndGetBackupFilename($backupper->getExtension());
+        $backupFilename = $this->prepareBackupFilename($backupper->getExtension());
 
         $backupper
             ->setDestination($backupFilename)
             ->setVerbose(true)
-            ->execute()
-        ;
-
-        self::assertFileExists($backupFilename);
-    }
-
-    /**
-     * @depends testRestorer
-     */
-    public function testBackupperWithExtraOptions(): void
-    {
-        $backupperFactory = $this->getBackupperFactory($this->getDoctrineConnection());
-
-        try {
-            $backupper = $backupperFactory->create();
-        } catch (NotImplementedException $e) {
-            $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
-        }
-
-        $backupper->checkBinary();
-        $backupFilename = $this->prepareAndGetBackupFilename($backupper->getExtension());
-
-        $backupper
-            ->setDestination($backupFilename)
-            ->setExtraOptions(match ($this->getDatabaseSession()->getVendorName()) {
-                Vendor::MARIADB => '-v --no-tablespaces --add-drop-table --skip-quote-names',
-                Vendor::MYSQL => '-v --no-tablespaces --add-drop-table --skip-quote-names',
-                Vendor::POSTGRESQL => '-v --no-owner -Z 5 --lock-wait-timeout=120',
-                Vendor::SQLITE => '-bail -readonly', // No interesting options for SQLite.
-                default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
-            })
-            ->ignoreDefaultOptions()
-            ->setVerbose(false) // Enable via an extra option.
             ->execute()
         ;
 
@@ -167,18 +130,20 @@ class BackupperRestorerTest extends FunctionalTestCase
      */
     public function testRestorer(): void
     {
-        $connection = $this->getDoctrineConnection();
-
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
-        $connection
-            ->createQueryBuilder()
+
+        $databaseSession = $this->getDatabaseSession();
+
+        $databaseSession
             ->delete('table_in_backup_1')
-            ->where('id = 1')
+            ->where('id', 1)
             ->executeStatement()
         ;
 
-        $restorerFactory = $this->getRestorerFactory($connection);
+        $this->assertSame(5, (int) $databaseSession->executeQuery('select count(*) from table_in_backup_1')->fetchOne());
+
+        $restorerFactory = $this->getRestorerFactory();
 
         try {
             $restorer = $restorerFactory->create();
@@ -188,10 +153,10 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         $restorer->checkBinary();
 
-        $connection->close();
+        $databaseSession->close();
 
         $restorer
-            ->setBackupFilename($this->prepareAndGetBackupFilename($restorer->getExtension()))
+            ->setBackupFilename($this->prepareBackupFilename($restorer->getExtension()))
             ->setVerbose(true)
             ->execute()
         ;
@@ -200,14 +165,46 @@ class BackupperRestorerTest extends FunctionalTestCase
         // - All data from initial insert (see self::createTestData) should be there
         // - Deleted data from our previous modifications should not be
 
-        $schemaManager = $this->getDatabaseSession()->getSchemaManager();
+        $schemaManager = $databaseSession->getSchemaManager();
         self::assertTrue($schemaManager->tableExists('table_in_backup_1'));
         self::assertTrue($schemaManager->tableExists('table_in_backup_2'));
 
-        $this->assertSame(
-            6,
-            $this->getDatabaseSession()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
-        );
+        $this->assertSame(6, (int) $databaseSession->executeQuery('select count(*) from table_in_backup_1')->fetchOne());
+    }
+
+    /**
+     * @depends testRestorer
+     */
+    public function testBackupperWithExtraOptions(): void
+    {
+        $backupperFactory = $this->getBackupperFactory();
+
+        try {
+            $backupper = $backupperFactory->create();
+        } catch (NotImplementedException $e) {
+            $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER'));
+        }
+
+        $backupper->checkBinary();
+        $backupFilename = $this->prepareBackupFilename($backupper->getExtension());
+
+        $backupper
+            ->setDestination($backupFilename)
+            ->setExtraOptions(
+                match ($this->getDatabaseSession()->getVendorName()) {
+                    Vendor::MARIADB => '-v --no-tablespaces --add-drop-table --skip-quote-names',
+                    Vendor::MYSQL => '-v --no-tablespaces --add-drop-table --skip-quote-names',
+                    Vendor::POSTGRESQL => '-v --no-owner -Z 5 --lock-wait-timeout=120',
+                    Vendor::SQLITE => '-bail -readonly', // No interesting options for SQLite.
+                    default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
+                },
+            )
+            ->ignoreDefaultOptions()
+            ->setVerbose(false) // Enable via an extra option.
+            ->execute()
+        ;
+
+        self::assertFileExists($backupFilename);
     }
 
     /**
@@ -215,18 +212,20 @@ class BackupperRestorerTest extends FunctionalTestCase
      */
     public function testRestorerWithExtraOptions(): void
     {
-        $session = $this->getDatabaseSession();
+        $databaseSession = $this->getDatabaseSession();
 
         // First we do some modifications to the database
         $this->dropTableIfExist('table_in_backup_2');
 
-        $session
+        $databaseSession
             ->delete('table_in_backup_1')
             ->where('id', 1)
             ->executeStatement()
         ;
 
-        $restorerFactory = $this->getRestorerFactory($this->getDoctrineConnection());
+        $this->assertSame(5, (int) $databaseSession->executeQuery('select count(*) from table_in_backup_1')->fetchOne());
+
+        $restorerFactory = $this->getRestorerFactory();
 
         try {
             $restorer = $restorerFactory->create();
@@ -235,17 +234,19 @@ class BackupperRestorerTest extends FunctionalTestCase
         }
 
         $restorer->checkBinary();
-        $session->close();
+        $databaseSession->close();
 
         $restorer
-            ->setBackupFilename($this->prepareAndGetBackupFilename($restorer->getExtension()))
-            ->setExtraOptions(match ($this->getDatabaseSession()->getVendorName()) {
-                Vendor::MARIADB => '-v --no-auto-rehash --skip-progress-reports',
-                Vendor::MYSQL => '-v --no-auto-rehash',
-                Vendor::POSTGRESQL => '-v -j 2 --disable-triggers --clean --if-exists',
-                Vendor::SQLITE => '-bail', // No interesting options for SQLite.
-                default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
-            })
+            ->setBackupFilename($this->prepareBackupFilename($restorer->getExtension()))
+            ->setExtraOptions(
+                match ($databaseSession->getVendorName()) {
+                    Vendor::MARIADB => '-v --no-auto-rehash --skip-progress-reports',
+                    Vendor::MYSQL => '-v --no-auto-rehash',
+                    Vendor::POSTGRESQL => '-v -j 2 --disable-triggers --clean --if-exists',
+                    Vendor::SQLITE => '-bail', // No interesting options for SQLite.
+                    default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
+                },
+            )
             ->ignoreDefaultOptions()
             ->setVerbose(false) // Enable via an extra option.
             ->execute()
@@ -259,27 +260,109 @@ class BackupperRestorerTest extends FunctionalTestCase
         self::assertTrue($schemaManager->tableExists('table_in_backup_1'));
         self::assertTrue($schemaManager->tableExists('table_in_backup_2'));
 
-        $this->assertSame(
-            6,
-            $this->getDatabaseSession()->executeQuery('select count(*) from table_in_backup_1')->fetchOne(),
-        );
+        $this->assertSame(6, (int) $databaseSession->executeQuery('select count(*) from table_in_backup_1')->fetchOne());
     }
 
-    private function prepareAndGetBackupFilename(string $extension): string
+    /**
+     * Unit test, but requires the database session.
+     */
+    public function testCreateBackupper(): void
     {
-        $dir = \sprintf(
-            '/tmp/%s',
-            \getenv('DBAL_DRIVER')
+        $this->skipIfDatabase(Vendor::SQLSERVER);
+
+        $backupperFactory = new BackupperFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigBackup());
+
+        $backupper = $backupperFactory->create();
+
+        // $this->assertSame($this->getDatabaseSession()->getVendorName(), $this->getPropertyValue($backupper, 'binary'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
+    }
+
+    /**
+     * Unit test, but requires the database session.
+     */
+    public function testCreateAnonymizerWithDefaultOptions(): void
+    {
+        $this->skipIfDatabase(Vendor::SQLSERVER);
+
+        $backupperFactory = new BackupperFactory(
+            $this->getDatabaseSessionRegistry(),
+            $this->getBinaryConfigBackup(),
+            [
+                'default' => '--fake-opt --mock-opt',
+                'another' => '-x -y -z',
+            ]
         );
+
+        $backupper = $backupperFactory->create();
+
+        $this->assertSame('--fake-opt --mock-opt', $this->getPropertyValue($backupper, 'defaultOptions'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
+
+        $backupper = $backupperFactory->create('another');
+
+        $this->assertSame('-x -y -z', $this->getPropertyValue($backupper, 'defaultOptions'));
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertEmpty($this->getPropertyValue($backupper, 'excludedTables'));
+    }
+
+    /**
+     * Unit test, but requires the database session.
+     */
+    public function testCreateAnonymizerWithExcludedTables(): void
+    {
+        $this->skipIfDatabase(Vendor::SQLSERVER);
+
+        $backupperFactory = new BackupperFactory(
+            $this->getDatabaseSessionRegistry(),
+            $this->getBinaryConfigBackup(),
+            [],
+            [
+                'default' => ['table1', 'table2'],
+                'another' => ['table3', 'table4'],
+            ]
+        );
+
+        $backupper = $backupperFactory->create();
+
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertSame(['table1', 'table2'], $this->getPropertyValue($backupper, 'excludedTables'));
+
+        $backupper = $backupperFactory->create('another');
+
+        $this->assertNull($this->getPropertyValue($backupper, 'extraOptions'));
+        $this->assertIsArray($this->getPropertyValue($backupper, 'excludedTables'));
+        $this->assertSame(['table3', 'table4'], $this->getPropertyValue($backupper, 'excludedTables'));
+    }
+
+    /**
+     * Get the value of a protected or private property from the given object.
+     *
+     * Internally, it binds a closure to the given object and calls this closure
+     * to extract the protected or private property value.
+     */
+    private function getPropertyValue(object $object, string $property): mixed
+    {
+        return (fn () => $this->{$property})->call($object);
+    }
+
+    /**
+     * Prepare file system for database backup.
+     */
+    private function prepareBackupFilename(string $extension): string
+    {
+        $dir = \sprintf('/tmp/%s', \getenv('DBAL_DRIVER'));
 
         if (!\is_dir($dir)) {
             \mkdir($dir, 777, true);
         }
 
-        return \sprintf(
-            '%s/backup_test.%s',
-            $dir,
-            $extension
-        );
+        return \sprintf('%s/backup_test.%s', $dir, $extension);
     }
 }
