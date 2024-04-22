@@ -220,7 +220,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         }
 
         return new Anonymizator(
-            $this->getDoctrineConnection(),
+            $this->getDatabaseSession(),
             new AnonymizerRegistry(),
             $config
         );

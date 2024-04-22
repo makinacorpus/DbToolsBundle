@@ -66,7 +66,7 @@ class AnonymizatorTest extends FunctionalTestCase
             ]),
         ));
 
-        $anonymizator = new Anonymizator($this->getDoctrineConnection(), new AnonymizerRegistry(), $config);
+        $anonymizator = new Anonymizator($this->getDatabaseSession(), new AnonymizerRegistry(), $config);
         $anonymizator->addAnonymizerIdColumn('table_test');
         $anonymizator->anonymize();
 
@@ -95,7 +95,7 @@ class AnonymizatorTest extends FunctionalTestCase
             $actual,
         );
 
-        $anonymizator = new Anonymizator($this->getDoctrineConnection(), new AnonymizerRegistry(), new AnonymizationConfig());
+        $anonymizator = new Anonymizator($this->getDatabaseSession(), new AnonymizerRegistry(), new AnonymizationConfig());
         $anonymizator->addAnonymizerIdColumn('table_test');
 
         if (Vendor::SQLITE === $this->getDatabaseSession()->getVendorName()) {

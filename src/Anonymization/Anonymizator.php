@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
-use Doctrine\DBAL\Connection;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
@@ -12,7 +11,6 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
 use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
 use MakinaCorpus\QueryBuilder\Query\Update;
@@ -30,17 +28,15 @@ class Anonymizator implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     private OutputInterface $output;
-    private DatabaseSession $databaseSession;
 
     public function __construct(
-        Connection $connection,
+        private DatabaseSession $databaseSession,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
-        $this->databaseSession = new DoctrineQueryBuilder($connection);
     }
 
     /**
