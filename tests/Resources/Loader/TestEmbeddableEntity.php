@@ -14,6 +14,10 @@ class TestEmbeddableEntity
     #[Anonymize(type:'integer', options: ['min' => 0, 'max' => 65])]
     private ?int $age = null;
 
+    #[ORM\Column]
+    #[Anonymize(type:'integer', options: ['min' => 60, 'max' => 250])]
+    private ?int $size = null;
+
     public function getAge(): ?int
     {
         return $this->age;
@@ -22,6 +26,18 @@ class TestEmbeddableEntity
     public function setAge(int $age): static
     {
         $this->age = $age;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(int $size): static
+    {
+        $this->size = $size;
 
         return $this;
     }

@@ -32,8 +32,21 @@ class AttributesLoader implements LoaderInterface
 
         foreach ($metadatas as $metadata) {
             \assert($metadata instanceof ClassMetadata);
-            if ($metadata->isMappedSuperclass) {
+            if ($metadata->isMappedSuperclass || $metadata->isEmbeddedClass) {
                 continue;
+            }
+
+            $embeddedClassesConfig = [];
+            foreach($metadata->embeddedClasses as $name => $embeddedClass) {
+                $className = $embeddedClass['class'];
+                $embeddedClassesConfig[$className] = [];
+                $reflexionClass = new \ReflectionClass($className);
+                foreach ($reflexionClass->getProperties() as $reflexionProperty) {
+                    if ($attributes = $reflexionProperty->getAttributes(Anonymize::class)) {
+                        $anonymization = $attributes[0]->newInstance();
+                        $embeddedClassesConfig[$className][$reflexionProperty->getName()] = $anonymization;
+                    }
+                }
             }
 
             $reflexionClass = $metadata->getReflectionClass();
@@ -50,12 +63,21 @@ class AttributesLoader implements LoaderInterface
                 }
             }
 
-            foreach ($metadata->getFieldNames() as $fieldName) {
+            foreach ($metadata->fieldMappings as $fieldName => $fieldValues) {
                 // Field name with dot are part of Embeddables
-                // @see
-                //  - https://www.doctrine-project.org/projects/doctrine-orm/en/3.0/tutorials/embeddables.html#separating-concerns-using-embeddables
-                //  - https://github.com/makinacorpus/DbToolsBundle/issues/105
                 if (\str_contains($fieldName, '.')) {
+                    if (\key_exists($fieldValues['originalClass'], $embeddedClassesConfig)) {
+                        $embeddedClassConfig = $embeddedClassesConfig[$fieldValues['originalClass']];
+                        if(\key_exists($fieldValues['originalField'], $embeddedClassConfig)) {
+                            $propertyConfig = $embeddedClassConfig[$fieldValues['originalField']];
+                            $config->add(new AnonymizerConfig(
+                                $metadata->getTableName(),
+                                $metadata->getColumnName($fieldName),
+                                $propertyConfig->type,
+                                new Options($propertyConfig->options),
+                            ));
+                        }
+                    }
                     continue;
                 }
 
