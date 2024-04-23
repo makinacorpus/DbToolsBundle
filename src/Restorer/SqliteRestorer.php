@@ -15,13 +15,17 @@ class SqliteRestorer extends AbstractRestorer
             throw new \Exception(\sprintf('Backup file not found (%s)', $this->backupFilename));
         }
 
-        $dbParams = $this->connection->getParams();
+        $filename = $this->databaseDsn->getFilename();
         // Remove existing database to restore file in an empty one.
-        \unlink($dbParams['path']);
+        if (\file_exists($filename)) {
+            if (!@\unlink($filename)) {
+                throw new \Exception(\sprintf('Database file could not be deleted (%s)', $filename));
+            }
+        }
 
         $command = new CommandLine($this->binary);
         $this->addCustomOptions($command);
-        $command->addArg($dbParams['path']);
+        $command->addArg($filename);
         $command->addRaw('<');
         $command->addArg($this->backupFilename);
 
@@ -33,7 +37,7 @@ class SqliteRestorer extends AbstractRestorer
     {
         // We don't need to re-open connection, doctrine/dbal connection does
         // reconnect lazily when queries are submitted.
-        $this->connection->close();
+        $this->databaseSession->close();
     }
 
     #[\Override]

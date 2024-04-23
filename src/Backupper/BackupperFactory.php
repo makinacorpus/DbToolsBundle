@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerInterface;
 
@@ -21,18 +19,23 @@ class BackupperFactory
      * @param array<string, string[]> $excludedTables
      */
     public function __construct(
-        private ManagerRegistry $doctrineRegistry,
+        private DatabaseSessionRegistry $registry,
         private array $backupperBinaries,
         private array $backupperOptions = [],
         private array $excludedTables = [],
         private ?LoggerInterface $logger = null,
     ) {
-        $connectionNames = $this->doctrineRegistry->getConnectionNames();
+        $connectionNames = $this->registry->getConnectionNames();
+
+        // Normalize vendor names otherwise automatic creation might fail.
+        foreach ($this->backupperBinaries as $vendorName => $binary) {
+            $this->backupperBinaries[Vendor::vendorNameNormalize($vendorName)] = $binary;
+        }
 
         foreach ($this->backupperOptions as $connectionName => $options) {
-            if (!isset($connectionNames[$connectionName])) {
+            if (!\in_array($connectionName, $connectionNames)) {
                 throw new \DomainException(\sprintf(
-                    "'%s' is not a valid Doctrine connection name.",
+                    "'%s' is not a valid connection name.",
                     $connectionName
                 ));
             }
@@ -44,9 +47,9 @@ class BackupperFactory
         }
 
         foreach ($this->excludedTables as $connectionName => $tableNames) {
-            if (!isset($connectionNames[$connectionName])) {
+            if (!\in_array($connectionName, $connectionNames)) {
                 throw new \DomainException(\sprintf(
-                    "'%s' is not a valid Doctrine connection name.",
+                    "'%s' is not a valid connection name.",
                     $connectionName
                 ));
             }
@@ -72,11 +75,9 @@ class BackupperFactory
      */
     public function create(?string $connectionName = null): AbstractBackupper
     {
-        $connectionName ??= $this->doctrineRegistry->getDefaultConnectionName();
-        /** @var Connection $connection */
-        $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $session = new DoctrineQueryBuilder($connection);
-        $vendorName = $session->getVendorName();
+        $connectionName ??= $this->registry->getDefaultConnectionName();
+        $dsn = $this->registry->getConnectionDsn($connectionName);
+        $vendorName = $dsn->getVendor();
 
         $backupper = match ($vendorName) {
             Vendor::MARIADB => MariadbBackupper::class,
@@ -92,7 +93,8 @@ class BackupperFactory
 
         $backupper = new $backupper(
             $this->backupperBinaries[$vendorName],
-            $connection,
+            $this->registry->getDatabaseSession($connectionName),
+            $dsn,
             $this->backupperOptions[$connectionName] ?? null
         );
 

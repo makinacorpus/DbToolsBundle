@@ -118,7 +118,7 @@ do_test_mysql57() {
 do_test_mysql80() {
     section_title "Running tests with MySQL 8.0"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_mysql \
+        -e DBAL_DRIVER=mysqli \
         -e DBAL_DBNAME=test_db \
         -e DBAL_HOST=mysql80 \
         -e DBAL_PASSWORD=password \

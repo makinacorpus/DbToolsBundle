@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerInterface;
 
@@ -20,11 +18,16 @@ class RestorerFactory
      * @param array<string, string> $restorerOptions
      */
     public function __construct(
-        private ManagerRegistry $doctrineRegistry,
+        private DatabaseSessionRegistry $registry,
         private array $restorerBinaries,
         private array $restorerOptions = [],
         private ?LoggerInterface $logger = null,
-    ) {}
+    ) {
+        // Normalize vendor names otherwise automatic creation might fail.
+        foreach ($this->restorerBinaries as $vendorName => $binary) {
+            $this->restorerBinaries[Vendor::vendorNameNormalize($vendorName)] = $binary;
+        }
+    }
 
     /**
      * Get a Restorer for given connection
@@ -33,10 +36,9 @@ class RestorerFactory
      */
     public function create(?string $connectionName = null): AbstractRestorer
     {
-        /** @var Connection */
-        $connection = $this->doctrineRegistry->getConnection($connectionName);
-        $session = new DoctrineQueryBuilder($connection);
-        $vendorName = $session->getVendorName();
+        $connectionName ??= $this->registry->getDefaultConnectionName();
+        $dsn = $this->registry->getConnectionDsn($connectionName);
+        $vendorName = $dsn->getVendor();
 
         $restorer = match ($vendorName) {
             Vendor::MARIADB => MariadbRestorer::class,
@@ -52,7 +54,8 @@ class RestorerFactory
 
         $restorer = new $restorer(
             $this->restorerBinaries[$vendorName],
-            $connection,
+            $this->registry->getDatabaseSession($connectionName),
+            $dsn,
             $this->restorerOptions[$connectionName] ?? null
         );
 

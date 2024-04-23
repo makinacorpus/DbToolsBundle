@@ -12,10 +12,13 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
+use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
+use MakinaCorpus\DbToolsBundle\Database\DoctrineDatabaseSessionRegistry;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
@@ -86,12 +89,40 @@ abstract class FunctionalTestCase extends UnitTestCase
     }
 
     /**
-     * Create new query builder.
+     * Get database session.
      */
     #[\Override]
     protected function getDatabaseSession(): DatabaseSession
     {
         return new DoctrineQueryBuilder($this->getDoctrineConnection());
+    }
+
+    /**
+     * Create database session registry.
+     */
+    protected function getDatabaseSessionRegistry(): DatabaseSessionRegistry
+    {
+        $doctrineConnection = $this->getDoctrineConnection();
+
+        $doctrineRegistry = $this->createMock(ManagerRegistry::class);
+        $doctrineRegistry
+            ->method('getConnection')
+            ->willReturn($doctrineConnection)
+        ;
+        $doctrineRegistry
+            ->method('getConnections')
+            ->willReturn([
+                'default' => $doctrineConnection,
+                // For backupper and restorer tests.
+                'another' => $doctrineConnection,
+            ])
+        ;
+        $doctrineRegistry
+            ->method('getDefaultConnectionName')
+            ->willReturn('default')
+        ;
+
+        return new DoctrineDatabaseSessionRegistry($doctrineRegistry);
     }
 
     /**

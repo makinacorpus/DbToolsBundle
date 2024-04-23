@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
 use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Where;
 
 class SqliteBackupper extends AbstractBackupper
@@ -13,7 +12,6 @@ class SqliteBackupper extends AbstractBackupper
     #[\Override]
     public function buildCommandLine(): CommandLine
     {
-        $dbParams = $this->connection->getParams();
         $tablesToBackup = \implode(' ', $this->getTablesToBackup());
 
         // The CommandLine instance below will generate something like:
@@ -25,7 +23,7 @@ class SqliteBackupper extends AbstractBackupper
         ));
         $command->addArg($this->binary);
         $this->addCustomOptions($command);
-        $command->addArg($dbParams['path']);
+        $command->addArg($this->databaseDsn->getFilename());
         $command->addRaw('>');
         $command->addArg($this->destination);
 
@@ -46,7 +44,8 @@ class SqliteBackupper extends AbstractBackupper
 
     private function getTablesToBackup(): array
     {
-        $query = (new DoctrineQueryBuilder($this->connection))
+        $query = $this
+            ->databaseSession
             ->select('sqlite_master')
             ->column('name')
             ->where('type', 'table')
