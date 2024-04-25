@@ -630,23 +630,43 @@ class Anonymizator implements LoggerAwareInterface
         );
 
         try {
-            $this->databaseSession->executeStatement(
-                <<<SQL
-                CREATE FUNCTION IF NOT EXISTS ?::id() RETURNS BIGINT
-                DETERMINISTIC
-                BEGIN
-                    SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
-                    UPDATE ?::table SET value = @value;
-                    RETURN @value;
-                END;
-                ;;
-                SQL,
-                [
-                    $functionName,
-                    $sequenceTableName,
-                    $sequenceTableName,
-                ],
-            );
+            if ($this->databaseSession->vendorVersionIs('8.0', '<')) {
+                $this->databaseSession->executeStatement(
+                    <<<SQL
+                    CREATE FUNCTION ?::id() RETURNS INTEGER
+                    DETERMINISTIC
+                    BEGIN
+                        SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
+                        UPDATE ?::table SET value = @value;
+                        RETURN @value;
+                    END;
+                    ;;
+                    SQL,
+                    [
+                        $functionName,
+                        $sequenceTableName,
+                        $sequenceTableName,
+                    ],
+                );
+            } else {
+                $this->databaseSession->executeStatement(
+                    <<<SQL
+                    CREATE FUNCTION IF NOT EXISTS ?::id() RETURNS BIGINT
+                    DETERMINISTIC
+                    BEGIN
+                        SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
+                        UPDATE ?::table SET value = @value;
+                        RETURN @value;
+                    END;
+                    ;;
+                    SQL,
+                    [
+                        $functionName,
+                        $sequenceTableName,
+                        $sequenceTableName,
+                    ],
+                );
+            }
 
             $this->databaseSession->executeStatement(
                 <<<SQL

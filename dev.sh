@@ -161,9 +161,7 @@ do_test_mariadb11() {
 }
 
 do_test_mysql() {
-    # @todo Temporary deactivated MySQL 5.7 due to a bug.
-    # https://github.com/makinacorpus/DbToolsBundle/issues/124
-    # do_test_mysql57
+    do_test_mysql57 "$@"
     do_test_mysql80 "$@"
     do_test_mysql83 "$@"
     do_test_mariadb11 "$@"
@@ -256,9 +254,7 @@ do_test_sqlite() {
 do_test_all() {
     do_composer_update
 
-    # @todo Temporary deactivated MySQL 5.7 due to a bug.
-    # https://github.com/makinacorpus/DbToolsBundle/issues/124
-    # do_test_mysql57
+    do_test_mysql57 "$@"
     do_test_mysql80 "$@"
     do_test_mysql83 "$@"
     do_test_mariadb11 "$@"

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Select;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
@@ -50,11 +51,25 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
         $sampleCount = $this->countTable($this->sampleTableName);
 
         $joinAlias = $this->sampleTableName . '_' . $this->columnName;
-        $join = (new Select($this->sampleTableName))
-            ->column('value')
-            ->columnRaw('ROW_NUMBER() OVER (ORDER BY ?)', 'rownum', [$expr->random()])
-            ->range($targetCount) // Avoid duplicate rows.
-        ;
+
+        if ($this->databaseSession->vendorIs(Vendor::MYSQL, '8.0', '<')) {
+            $inner = (new Select($this->sampleTableName))
+                ->column('value')
+                ->orderBy($expr->random())
+                ->range($targetCount) // Avoid duplicate rows.
+            ;
+            $join = (new Select($inner))
+                ->from($expr->raw('(SELECT @rownum := 0)'))
+                ->column('value')
+                ->columnRaw('@rownum := @rownum + 1', 'rownum')
+            ;
+        } else {
+            $join = (new Select($this->sampleTableName))
+                ->column('value')
+                ->columnRaw('ROW_NUMBER() OVER (ORDER BY ?)', 'rownum', [$expr->random()])
+                ->range($targetCount) // Avoid duplicate rows.
+            ;
+        }
 
         $update->leftJoin(
             $join,

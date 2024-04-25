@@ -40,6 +40,7 @@ services:
         restart: 'no'
         environment:
             MYSQL_DATABASE: test_db
+            MYSQL_ROOT_USER: root
             MYSQL_ROOT_PASSWORD: password
         ports:
             - 9501:3306
