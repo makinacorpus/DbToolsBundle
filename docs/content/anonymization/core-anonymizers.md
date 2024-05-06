@@ -785,3 +785,60 @@ customer:
 Note that you don't have to provide a column for each part. You can use this *Anonymizer* to
 only anonymize some parts of an address. To do so, remove options you don't want in the example below.
 :::
+
+## IbanBicAnonymizer
+
+This *Anonymizer* is multicolumn. It let you anonymize, at once, an IBAN and a BIC code.
+You can choose to anonymize either one of IBAN or BIC, or both.
+
+Available options:
+- `country`: (string) two-letters country code for generating the IBAN number with the target country
+  validation rules (default is `fr`),
+- `sample_size`: (int) generated random sample table size (default is 500).
+
+Available columns are:
+
+| Part   | Definition                            | Example                     |
+|--------|---------------------------------------|-----------------------------|
+| `iban` | The International Bank Account Number | FR1711881618378130962836522 |
+| `bic`  | The Bank Identifier Code              | QFWXOC6L                    |
+
+::: code-group
+```php [Attribute]
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+
+#[ORM\Entity()]
+#[ORM\Table(name: 'customer')]
+#[Anonymize(type: 'iban-bic', options: [ // [!code ++]
+    'iban' => 'account_iban', // [!code ++]
+    'bic': 'account_bic' // [!code ++]
+])] // [!code ++]
+class Customer
+{
+    // ...
+
+    #[ORM\Column(length: 255)]
+    private ?string $accountIban = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $accountBic = null;
+
+    // ...
+}
+```
+
+```yaml [YAML]
+# config/anonymization.yaml
+customer:
+    address:
+        target: table
+        anonymizer: iban-bic
+        options:
+            iban: 'account_iban'
+            bic: 'account_bic'
+  #...
+```
+:::
