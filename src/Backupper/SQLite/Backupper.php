@@ -38,7 +38,7 @@ class Backupper extends AbstractBackupper
             null,
             null,
             null,
-            600
+            $this->timeout
         );
 
         $this->process->start();

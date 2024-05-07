@@ -57,7 +57,7 @@ class Backupper extends AbstractBackupper
             null,
             ['PGPASSWORD' => $dbParams['password'] ?? ''],
             null,
-            600
+            $this->timeout
         );
 
         $this->process->start();

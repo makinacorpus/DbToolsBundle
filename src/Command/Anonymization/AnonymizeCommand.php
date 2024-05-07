@@ -27,6 +27,8 @@ class AnonymizeCommand extends Command
     private SymfonyStyle $io;
 
     private string $connectionName;
+    private float $backupTimeout;
+    private float $restoreTimeout;
 
     private ?string $backupFilename = null;
     private ?string $initialDatabaseBackupFilename = null;
@@ -47,10 +49,14 @@ class AnonymizeCommand extends Command
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
         private DbToolsStorage $storage,
+        float $backupTimeout,
+        float $restoreTimeout
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->backupTimeout = $backupTimeout;
+        $this->restoreTimeout = $restoreTimeout;
     }
 
     /**
@@ -246,6 +252,7 @@ class AnonymizeCommand extends Command
         $backupper
             ->setDestination($this->initialDatabaseBackupFilename)
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->startBackup()
         ;
 
@@ -271,6 +278,7 @@ class AnonymizeCommand extends Command
         $restorer
             ->setBackupFilename($this->backupFilename)
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->startRestore()
         ;
 
@@ -328,6 +336,7 @@ class AnonymizeCommand extends Command
         $backupper
             ->setDestination($destination)
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->startBackup()
         ;
 
@@ -353,6 +362,7 @@ class AnonymizeCommand extends Command
         $restorer
             ->setBackupFilename($this->initialDatabaseBackupFilename)
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->startRestore()
         ;
 

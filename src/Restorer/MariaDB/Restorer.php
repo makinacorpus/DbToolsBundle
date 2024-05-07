@@ -62,7 +62,7 @@ class Restorer extends AbstractRestorer
             null,
             null,
             $this->backupStream,
-            1800
+            $this->timeout
         );
 
         $this->process->start();

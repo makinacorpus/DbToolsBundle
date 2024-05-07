@@ -33,7 +33,7 @@ class Restorer extends AbstractRestorer
             null,
             null,
             null,
-            1800
+            $this->timeout
         );
 
         $this->process->start();

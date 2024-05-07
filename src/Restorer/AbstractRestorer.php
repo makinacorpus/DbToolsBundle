@@ -14,6 +14,7 @@ abstract class AbstractRestorer implements \IteratorAggregate
 {
     protected ?string $backupFilename = null;
     protected bool $verbose = false;
+    protected float $timeout = 1800;
 
     public function __construct(
         protected string $binary,
@@ -60,6 +61,18 @@ abstract class AbstractRestorer implements \IteratorAggregate
     public function isVerbose(): bool
     {
         return $this->verbose;
+    }
+
+    public function setTimeout(float $timeout): self
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
     }
 
     abstract public function startRestore(): self;

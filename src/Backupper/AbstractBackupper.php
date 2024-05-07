@@ -17,6 +17,7 @@ abstract class AbstractBackupper implements \IteratorAggregate
     protected ?string $destination = null;
     protected bool $verbose = false;
     protected array $excludedTables = [];
+    protected float $timeout = 600;
 
     public function __construct(
         protected string $binary,
@@ -81,6 +82,18 @@ abstract class AbstractBackupper implements \IteratorAggregate
     public function getExcludedTables(): array
     {
         return $this->excludedTables;
+    }
+
+    public function setTimeout(float $timeout): self
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
     }
 
     abstract public function startBackup(): self;

@@ -21,6 +21,7 @@ class RestoreCommand extends Command
     private SymfonyStyle $io;
     private string $connectionName;
     private AbstractRestorer $restorer;
+    private float $timeout;
     private ?string $backupFilename = null;
     private $force = false;
 
@@ -28,10 +29,12 @@ class RestoreCommand extends Command
         string $defaultConnectionName,
         private RestorerFactory $restorerFactory,
         private DbToolsStorage $storage,
+        float $timeout
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -145,6 +148,7 @@ class RestoreCommand extends Command
         $this->restorer
             ->setBackupFilename($this->backupFilename)
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->timeout)
             ->startRestore()
         ;
 

@@ -21,6 +21,7 @@ class BackupCommand extends Command
 {
     private SymfonyStyle $io;
     private string $connectionName;
+    private float $timeout;
     private AbstractBackupper $backupper;
 
     public function __construct(
@@ -28,10 +29,12 @@ class BackupCommand extends Command
         private array $excludedTables,
         private BackupperFactory $backupperFactory,
         private DbToolsStorage $storage,
+        float $timeout
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->timeout = $timeout;
     }
 
     /**
@@ -100,6 +103,7 @@ class BackupCommand extends Command
             ->setDestination($filename)
             ->setVerbose($this->io->isVerbose())
             ->setExcludedTables($this->excludedTables[$this->connectionName] ?? [])
+            ->setTimeout($this->timeout)
             ->startBackup()
         ;
 

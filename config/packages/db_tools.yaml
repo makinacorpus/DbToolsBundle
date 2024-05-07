@@ -6,6 +6,9 @@ db_tools:
     # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
     #backup_expiration_age: '6 months ago' # default '3 months ago'
 
+    # Timeout for backups.
+    # backup_timeout: 1200 # default 600
+
     # List here tables (per connection) you don't want in your backups
     #excluded_tables:
         #- default: ['table1', 'table2']
@@ -22,6 +25,9 @@ db_tools:
         #mysql: '/usr/bin/mysql' # default 'mysql'
         #postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
         #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
+
+    # Timeout for restores.
+    # restore_timeout: 2400 # default 1800
 
     # Update this configuration if you want to look for anonymizers in a custom folder.
     # These are default paths that will always be registered even if you override the

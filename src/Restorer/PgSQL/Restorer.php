@@ -57,7 +57,7 @@ class Restorer extends AbstractRestorer
             null,
             ['PGPASSWORD' => $dbParams['password'] ?? ''],
             null,
-            1800
+            $this->timeout
         );
 
         $this->process->start();
