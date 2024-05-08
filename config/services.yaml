@@ -8,6 +8,8 @@ services:
             - '@db_tools.backupper.factory'
             - '@db_tools.anonymization.anonymizator.factory'
             - '@db_tools.storage'
+            - '%db_tools.backup_timeout%'
+            - '%db_tools.restore_timeout%'
         tags: ['console.command']
     db_tools.command.anonymization.list:
         class: MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand
@@ -31,6 +33,7 @@ services:
             - '%doctrine.default_connection%'
             - '@db_tools.backupper.factory'
             - '@db_tools.storage'
+            - '%db_tools.backup_timeout%'
         tags: ['console.command']
     db_tools.command.check:
         class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
@@ -45,6 +48,7 @@ services:
             - '%doctrine.default_connection%'
             - '@db_tools.restorer.factory'
             - '@db_tools.storage'
+            - '%db_tools.restore_timeout%'
         tags: ['console.command']
     db_tools.command.stats:
         class: MakinaCorpus\DbToolsBundle\Command\StatsCommand

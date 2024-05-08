@@ -28,6 +28,7 @@ abstract class AbstractBackupper implements LoggerAwareInterface
     protected bool $ignoreDefaultOptions = false;
     protected array $excludedTables = [];
     protected bool $verbose = false;
+    protected float $timeout = 600;
 
     public function __construct(
         protected string $binary,
@@ -138,9 +139,21 @@ abstract class AbstractBackupper implements LoggerAwareInterface
         return $this->verbose;
     }
 
+    public function setTimeout(float $timeout): self
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
+    }
+
     protected function beforeProcess(): void
     {
-        $this->process->setTimeout(600);
+        $this->process->setTimeout($this->timeout);
     }
 
     /**
