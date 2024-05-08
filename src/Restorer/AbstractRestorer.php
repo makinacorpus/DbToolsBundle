@@ -25,6 +25,7 @@ abstract class AbstractRestorer implements LoggerAwareInterface
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
     protected bool $verbose = false;
+    protected float $timeout = 1800;
 
     public function __construct(
         protected string $binary,
@@ -104,9 +105,21 @@ abstract class AbstractRestorer implements LoggerAwareInterface
         return $this->verbose;
     }
 
+    public function setTimeout(float $timeout): self
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
+    }
+
     protected function beforeProcess(): void
     {
-        $this->process->setTimeout(1800);
+        $this->process->setTimeout($this->timeout);
     }
 
     /**

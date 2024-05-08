@@ -31,6 +31,8 @@ final class DbToolsConfiguration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->scalarNode('backup_expiration_age')->defaultValue('3 months ago')->end()
+                    ->scalarNode('backup_timeout')->defaultValue(600)->end()
+                    ->scalarNode('restore_timeout')->defaultValue(1800)->end()
                     ->arrayNode('excluded_tables')
                         ->useAttributeAsKey('connection')
                         ->arrayPrototype()

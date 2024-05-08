@@ -28,6 +28,8 @@ class AnonymizeCommand extends Command
     private SymfonyStyle $io;
 
     private string $connectionName;
+    private float $backupTimeout;
+    private float $restoreTimeout;
 
     private ?string $backupFilename = null;
     private ?string $initialBackupFilename = null;
@@ -48,10 +50,14 @@ class AnonymizeCommand extends Command
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
         private Storage $storage,
+        float $backupTimeout,
+        float $restoreTimeout,
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->backupTimeout = $backupTimeout;
+        $this->restoreTimeout = $restoreTimeout;
     }
 
     #[\Override]
@@ -245,6 +251,7 @@ class AnonymizeCommand extends Command
             ->setDestination($this->initialBackupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->execute()
         ;
 
@@ -270,6 +277,7 @@ class AnonymizeCommand extends Command
             ->setBackupFilename($this->backupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->execute()
         ;
 
@@ -323,6 +331,7 @@ class AnonymizeCommand extends Command
             ->setDestination($this->backupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->execute()
         ;
 
@@ -348,6 +357,7 @@ class AnonymizeCommand extends Command
             ->setBackupFilename($this->initialBackupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->execute()
         ;
 

@@ -26,15 +26,18 @@ class RestoreCommand extends Command
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
     private $force = false;
+    private float $timeout;
 
     public function __construct(
         string $defaultConnectionName,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
+        float $timeout,
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->timeout = $timeout;
     }
 
     #[\Override]
@@ -165,6 +168,7 @@ class RestoreCommand extends Command
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->timeout)
             ->execute()
         ;
 

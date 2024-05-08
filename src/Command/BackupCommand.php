@@ -26,15 +26,18 @@ class BackupCommand extends Command
     private ?array $excludedTables = null;
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
+    private float $timeout;
 
     public function __construct(
         string $defaultConnectionName,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
+        float $timeout,
     ) {
         parent::__construct();
 
         $this->connectionName = $defaultConnectionName;
+        $this->timeout = $timeout;
     }
 
     #[\Override]
@@ -123,6 +126,7 @@ class BackupCommand extends Command
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->timeout)
             ->execute()
         ;
 
