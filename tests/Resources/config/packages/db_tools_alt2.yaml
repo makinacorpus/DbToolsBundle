@@ -4,6 +4,8 @@ db_tools:
         filename_strategy:
             connection_two: app.db_tools.custom_filename_strategy
     backup_expiration_age: '6 months ago'
+    backup_timeout: 1800
+    restore_timeout: 3200
     excluded_tables:
         connection_two: ['table1', 'table2']
 
