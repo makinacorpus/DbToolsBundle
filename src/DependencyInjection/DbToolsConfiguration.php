@@ -7,8 +7,16 @@ namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
-final class DbToolsConfiguration implements ConfigurationInterface
+class DbToolsConfiguration implements ConfigurationInterface
 {
+    /**
+     * Default storage path cannot use variable when standalone.
+     */
+    protected function getDefaultStoragePath(): ?string
+    {
+        return '%kernel.project_dir%/var/db_tools';
+    }
+
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -46,7 +54,7 @@ final class DbToolsConfiguration implements ConfigurationInterface
                     ->arrayNode('storage')
                         ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('root_dir')->defaultValue('%kernel.project_dir%/var/db_tools')->end()
+                            ->scalarNode('root_dir')->defaultValue($this->getDefaultStoragePath())->end()
                             ->arrayNode('filename_strategy')
                                 ->useAttributeAsKey('connection')
                                 ->scalarPrototype()->end()

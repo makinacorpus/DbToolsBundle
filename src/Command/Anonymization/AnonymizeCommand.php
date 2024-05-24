@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'db-tools:anonymization:run',
-    description: 'Anonymize given backup file or the local database.',
+    description: 'Anonymize given backup file or the local database',
     aliases: ['db-tools:anonymize']
 )]
 class AnonymizeCommand extends Command

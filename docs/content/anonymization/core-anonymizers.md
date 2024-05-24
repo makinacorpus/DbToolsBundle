@@ -388,7 +388,7 @@ Dates you give for `min` and `max` values will inherit from the PHP default
 configured timezone.
 :::
 
-:::note
+:::info
 When using a date range over 68 years, random granularity stops at the hour
 in order to avoid date add operation to be given an overflowing int value.
 :::
