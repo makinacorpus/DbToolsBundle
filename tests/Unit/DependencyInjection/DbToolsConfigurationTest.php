@@ -35,6 +35,8 @@ class DbToolsConfigurationTest extends TestCase
                     'filename_strategy' => [],
                 ],
                 'backup_expiration_age' => '3 months ago',
+                'backup_timeout' => 600,
+                'restore_timeout' => 1800,
                 'excluded_tables' => [],
                 'backupper_binaries' => [
                     'mariadb' => 'mariadb-dump',
@@ -68,6 +70,8 @@ class DbToolsConfigurationTest extends TestCase
             [
                 'storage_directory' => '%kernel.project_dir%/var/backup',
                 'backup_expiration_age' => '6 months ago',
+                'backup_timeout' => 1200,
+                'restore_timeout' => 2400,
                 'excluded_tables' => [
                     'default' => ['table1', 'table2'],
                 ],
@@ -124,6 +128,8 @@ class DbToolsConfigurationTest extends TestCase
                     ],
                 ],
                 'backup_expiration_age' => '6 months ago',
+                'backup_timeout' => 1800,
+                'restore_timeout' => 3200,
                 'excluded_tables' => [
                     'connection_two' => ['table1', 'table2'],
                 ],
