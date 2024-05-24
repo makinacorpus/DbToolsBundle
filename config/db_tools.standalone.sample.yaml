@@ -1,0 +1,63 @@
+# This configuration file is an example for standalone usage.
+#
+# The given parameters you will find in this file must not be set in a Symfony
+# application context, and will ignored if so.
+#
+# All other configuration you can find in the ./packages/db_tools.yaml file
+# can be added in this file, you must simply omit the 'db_tools:' top level
+# node.
+
+# Working directory is the path to which all relative file references will
+# be relative to. If none set, the path will be this file directory instead.
+workdir: /var/www/my_project/
+
+# Database connections.
+# One line per connection, a single database URL, all options as query
+# parameters. Connections will be made using makincorpus/query-builder
+# which will raise exceptions when invalid options are found.
+# There is less configuration amplitude than using doctrine/dbal in
+# Symfony, yet it should be enough in most case.
+# In case any options or specific behaviour is missing, please file
+# an issue at https://github.com/makinacorpus/php-query-builder/issues
+connections:
+    connection_one: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+    connection_two: "mysql://username:password@hostname:port?version=8.1&other_option=..."
+
+# You can explicitely set which will be default connection in use when
+# none providen in the command line options. If you omit this configuration
+# vlaue, then the first one in the list will be used.
+default_connection: connection_one
+
+# Storage is autoconfigured when using Symfony, but when using this
+# application standalone, it's on your own. You must provide at least
+# a root directory for backups.
+storage:
+    # Path can be relative, it will be relative to the configuration file.
+    # If none provided, the default will be the following one.
+    root_dir: ./var/db_tools
+
+# From here, all options in the 'db_tools' section of Symfony configuration
+# can be added, including anonymization files configuration.
+
+anonymization:
+    # From here you can proceed with manual file inclusion. Pathes can be
+    # either relative or absolute. Relative paths are relative to and resolved
+    # from this configuration file.
+    yaml:
+        connection_one: ./db_tools.anonymizer.connection_one.yaml
+        # ... other connections ...
+
+    # Extra configuration options, if you don't want to split the anonymization
+    # configuration into multiple files, you can directly write it here. If you
+    # use the entity dump capability, you can copy paste the result directly
+    # here.
+    tables:
+        connection_one:
+            # From here, please refer to 'anonymizations.sample.yaml' for sample
+            # and documentation.
+            table_name:
+                column_name:
+                    anonymizer: anonymizer_name
+                    # ... other options...
+        connection_two:
+            # ...

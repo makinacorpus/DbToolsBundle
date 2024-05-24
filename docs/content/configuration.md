@@ -7,6 +7,9 @@ all will take place in the `config/packages/db_tools.yaml` file.
 A complete example of this file can be found in the bundle sources in: `vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`
 :::
 
+For detailed information about configuration options, please see the
+[configuration reference](../configuration/reference).
+
 ## Backup configuration
 
 Some options are available to customize how the `db-tools:backup` command works.
