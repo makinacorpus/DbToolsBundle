@@ -12,7 +12,7 @@ user:
         anonymizer: email
         options: {domain: 'toto.com'}
     # Or not
-    email: email
+    #email: email
     level:
         anonymizer: string
         options: {sample: ['none', 'bad', 'good', 'expert']}

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'db-tools:anonymization:dump-config',
-    description: 'Dump anonymization configuration.'
+    description: 'Dump anonymization configuration'
 )]
 class ConfigDumpCommand extends Command
 {

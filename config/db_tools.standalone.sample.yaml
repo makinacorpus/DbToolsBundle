@@ -1,0 +1,137 @@
+# This configuration file is an example for standalone usage.
+#
+# The given parameters you will find in this file must not be set in a Symfony
+# application context, and will be ignored if so.
+#
+# All other configuration you can find in the ./packages/db_tools.yaml file
+# can be added in this file, you must simply omit the 'db_tools:' top level
+# node.
+
+# Working directory is the path to which all relative file references will
+# be relative to. If none set, the path will be this file directory instead.
+workdir: /var/www/my_project/
+
+# Database connections.
+# One line per connection, a single database URL, all options as query
+# parameters. Connections will be made using makincorpus/query-builder
+# which will raise exceptions when invalid options are found.
+# There is less configuration amplitude than using doctrine/dbal in
+# Symfony, yet it should be enough in most case.
+# In case any options or specific behaviour is missing, please file
+# an issue at https://github.com/makinacorpus/php-query-builder/issues
+connections:
+    connection_one: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+    connection_two: "mysql://username:password@hostname:port?version=8.1&other_option=..."
+
+# If you have a single connection, you can use this syntax. In this case
+# the connection name will be "default".
+# connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+
+# You can explicitely set which will be default connection in use when
+# none providen in the command line options. If you omit this configuration
+# value, then the first one in the list will be used.
+#default_connection: connection_one
+
+# Using the DbToolsBundle standalone, you must provide at least
+# a root directory for backups.
+storage:
+    # Path can be relative or absolute, Relative paths are relative to the
+    # workdir option if specified, or from this configuration file directory
+    # otherwise.
+    # If none provided, the default will be the following one.
+    root_dir: ./var/db_tools
+    # Filename strategies. You may specify one strategy for each doctrine
+    # connection. Keys are doctrine connection names. Values are strategy
+    # names, "default" (or null) or omitting the connection will use the
+    # default implementation.
+    # If you created and registered a custom one into the container as a
+    # service, you may simply set the service identifier. If no service
+    # exists, and your implementation does not require parameters, simply
+    # set the class name.
+    #filename_strategy:
+        # Backup filename strategy.
+        # "default" is an alias of "datetime"
+        #default: default
+        # "datetime" implementation is ROOT_DIR/YYYY/MM/<connection-name>-<datestamp>.<ext>"
+        #other_connection_strategy: datetime
+        # Example of using a service name:
+        #yet_another_connection: app.db_tools.filename.custom_strategy
+        # Or a classe name:
+        #another_one: App\DbTools\Storage\MyCustomStrategy
+
+# When old backups are considered obsolete
+# (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+#backup_expiration_age: '6 months ago' # default '3 months ago'
+
+# Timeout for backups.
+# backup_timeout: 1200 # default 600
+
+# Timeout for restores.
+# restore_timeout: 2400 # default 1800
+
+# List here tables (per connection) you don't want in your backups
+#excluded_tables:
+    #default: ['table1', 'table2']
+
+# Specify here paths to binaries, only if the system can't find them by himself
+# platform are 'mysql', 'postgresql', 'sqlite'
+#backupper_binaries:
+    #mariadb: '/usr/bin/mariadb-dump' # default 'mariadb-dump'
+    #mysql: '/usr/bin/mysqldump' # default 'mysqldump'
+    #postgresql: '/usr/bin/pg_dump' # default 'pg_dump'
+    #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
+#restorer_binaries:
+    #mariadb: '/usr/bin/mariadb' # default 'mariadb'
+    #mysql: '/usr/bin/mysql' # default 'mysql'
+    #postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
+    #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
+
+# Default options to pass to the binary when backing up or restoring
+# a database. Those options must be defined per connection.
+# If you do not define some default options, here or by using the
+# "--extra-options" option when invoking the command, the following
+# ones will be used according to the database vendor:
+# - When backing up:
+#   - MariaDB: --no-tablespaces
+#   - MySQL: --no-tablespaces
+#   - PostgreSQL: -Z 5 --lock-wait-timeout=120
+#   - SQLite: -bail
+# - When restoring:
+#   - MariaDB: None
+#   - MySQL: None
+#   - PostgreSQL: -j 2 --clean --if-exists --disable-triggers
+#   - SQLite: None
+#backupper_options:
+    #default: ''
+    #another_connection: ''
+#restorer_options:
+    #default: ''
+    #another_connection: ''
+
+# Update this configuration if you want to look for anonymizers in a custom folder.
+# These are default paths that will always be registered even if you override
+# the setting and don't repeat them:
+#anonymizer_paths:
+    #- ./src/Anonymization/Anonymizer'
+
+anonymization:
+    # From here you can proceed with manual file inclusion. Pathes can be
+    # either relative or absolute. Relative paths are relative to the workdir
+    # option if specified, or from this configuration file directory
+    # otherwise.
+    yaml:
+        connection_one: ./db_tools.anonymizer.connection_one.yaml
+        # ... other connections ...
+
+    # Extra configuration options, if you don't want to split the anonymization
+    # configuration into multiple files, you can directly write it here.
+    tables:
+        connection_one:
+            # From here, please refer to 'anonymizations.sample.yaml' for sample
+            # and documentation.
+            table_name:
+                column_name:
+                    anonymizer: anonymizer_name
+                    # ... other options...
+        connection_two:
+            # ...
