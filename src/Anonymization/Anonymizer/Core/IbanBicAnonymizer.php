@@ -8,29 +8,41 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractMultipleColumnAn
 use MakinaCorpus\DbToolsBundle\Helper\Iban;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 
-/**
- * Anonymize an IBAN/BIC couple.
- *
- * This anonymizer handle:
- *  - "iban": A valid IBAN,
- *  - "bic": The associated to IBAN BIC number (bank identifier)
- *
- * You may specify the following two options:
- *  - "country": 2-chars country code for the IBAN to use for generation, default
- *    is to randomly choose a country for each generated IBAN, default is 500.
- *  - "sample_size": total number of different IBAN that will be generated, the higher
- *    is this number, the less duplicates you will have in the end.
- */
 #[AsAnonymizer(
     name: 'iban-bic',
     pack: 'core',
     description: <<<TXT
     Anonymize IBAN and BIC on two columns.
     Map columns for each part with options ('iban' and 'bic')
+    You can specify the 'country' option, which must be a two-letter country
+    code (default is 'FR').
+    You can also specify the sample table size using the 'sample_size' option
+    (default is 500). The more samples you have, the less duplicates you will
+    end up with.
+    Generated BIC code will be 100% random.
     TXT
 )]
 class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
 {
+    #[\Override]
+    protected function validateOptions(): void
+    {
+        parent::validateOptions();
+
+        if ($this->options->has('sample_size')) {
+            $value = $this->options->getInt('sample_size');
+            if ($value <= 0) {
+                throw new \InvalidArgumentException("'sample_size' option must be a positive integer.");
+            }
+        }
+        if ($this->options->has('country')) {
+            $value = $this->options->getString('country');
+            if (!\ctype_alpha($value) || 2 !== \strlen($value)) {
+                throw new \InvalidArgumentException("'country' option must be a 2-letters country code.");
+            }
+        }
+    }
+
     #[\Override]
     protected function getColumnNames(): array
     {
@@ -43,12 +55,15 @@ class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
     #[\Override]
     protected function getSamples(): array
     {
+        $sampleSize = $this->options->getInt('sample_size', 500);
+        $countryCode = $this->options->getString('country', 'FR');
+
         // @todo, pas d'options, pas de count ni de country, désolé.
         $ret = [];
-        for ($i = 0; $i < 500; ++$i) {
+        for ($i = 0; $i < $sampleSize; ++$i) {
             $ret[] = [
-                Iban::iban('FR'),
-                'BDFEFR2L', // @todo génération de bic aléatoire selon l'IBAN
+                Iban::iban($countryCode),
+                Iban::bic(),
             ];
         }
         return $ret;
