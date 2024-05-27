@@ -25,6 +25,7 @@ abstract class AbstractRestorer implements LoggerAwareInterface
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
     protected bool $verbose = false;
+    protected ?int $timeout = 1800;
 
     public function __construct(
         protected string $binary,
@@ -104,9 +105,26 @@ abstract class AbstractRestorer implements LoggerAwareInterface
         return $this->verbose;
     }
 
+    public function setTimeout(?int $timeout): self
+    {
+        if ($timeout < 0) {
+            throw new \InvalidArgumentException("Timeout value must be a postive integer or null.");
+        }
+
+        // Accept 0 value as being null (no timeout).
+        $this->timeout = 0 === $timeout ? null : $timeout;
+
+        return $this;
+    }
+
+    public function getTimeout(): float
+    {
+        return $this->timeout;
+    }
+
     protected function beforeProcess(): void
     {
-        $this->process->setTimeout(1800);
+        $this->process->setTimeout(null === $this->timeout ? null : (float) $this->timeout);
     }
 
     /**

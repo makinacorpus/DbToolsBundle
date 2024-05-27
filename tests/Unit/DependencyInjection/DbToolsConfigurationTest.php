@@ -11,14 +11,14 @@ use Symfony\Component\Yaml\Yaml;
 
 class DbToolsConfigurationTest extends TestCase
 {
-    private function processYamlConfiguration(string $yamlFilename): array
+    private function processYamlConfiguration(array|string $dataOrFilename): array
     {
         $processor = new Processor();
         $configuration = new DbToolsConfiguration();
 
         return $processor->processConfiguration(
             $configuration,
-            Yaml::parseFile($yamlFilename)
+            \is_string($dataOrFilename) ? Yaml::parseFile($dataOrFilename) : ['db_tools' => $dataOrFilename],
         );
     }
 
@@ -35,6 +35,8 @@ class DbToolsConfigurationTest extends TestCase
                     'filename_strategy' => [],
                 ],
                 'backup_expiration_age' => '3 months ago',
+                'backup_timeout' => 600,
+                'restore_timeout' => 1800,
                 'excluded_tables' => [],
                 'backupper_binaries' => [
                     'mariadb' => 'mariadb-dump',
@@ -68,6 +70,8 @@ class DbToolsConfigurationTest extends TestCase
             [
                 'storage_directory' => '%kernel.project_dir%/var/backup',
                 'backup_expiration_age' => '6 months ago',
+                'backup_timeout' => 1200,
+                'restore_timeout' => 2400,
                 'excluded_tables' => [
                     'default' => ['table1', 'table2'],
                 ],
@@ -124,6 +128,8 @@ class DbToolsConfigurationTest extends TestCase
                     ],
                 ],
                 'backup_expiration_age' => '6 months ago',
+                'backup_timeout' => 1800,
+                'restore_timeout' => 3200,
                 'excluded_tables' => [
                     'connection_two' => ['table1', 'table2'],
                 ],
@@ -161,5 +167,59 @@ class DbToolsConfigurationTest extends TestCase
         );
 
         return $result;
+    }
+
+    public function testConfigurationBackupTimeoutInt(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'backup_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['backup_timeout']);
+    }
+
+    public function testConfigurationBackupTimeoutIntervalString(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'backup_timeout' => '1 minute 2 seconds',
+        ]);
+
+        self::assertSame(62, $result['backup_timeout']);
+    }
+
+    public function testConfigurationBackupTimeoutInvalid(): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        $this->processYamlConfiguration([
+            'backup_timeout' => "this is not parsable",
+        ]);
+    }
+
+    public function testConfigurationRestoreTimeoutInt(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['restore_timeout']);
+    }
+
+    public function testConfigurationRestoreTimeoutIntervalString(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => '1 minute 2 seconds',
+        ]);
+
+        self::assertSame(62, $result['restore_timeout']);
+    }
+
+    public function testConfigurationRestoreTimeoutInvalid(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['restore_timeout']);
     }
 }

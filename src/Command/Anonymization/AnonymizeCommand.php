@@ -27,8 +27,6 @@ class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
 
-    private string $connectionName;
-
     private ?string $backupFilename = null;
     private ?string $initialBackupFilename = null;
 
@@ -43,15 +41,15 @@ class AnonymizeCommand extends Command
     private bool $atOnce = true;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private RestorerFactory $restorerFactory,
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
         private Storage $storage,
+        private ?int $backupTimeout = null,
+        private ?int $restoreTimeout = null,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
     }
 
     #[\Override]
@@ -245,6 +243,7 @@ class AnonymizeCommand extends Command
             ->setDestination($this->initialBackupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->execute()
         ;
 
@@ -270,6 +269,7 @@ class AnonymizeCommand extends Command
             ->setBackupFilename($this->backupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->execute()
         ;
 
@@ -323,6 +323,7 @@ class AnonymizeCommand extends Command
             ->setDestination($this->backupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->backupTimeout)
             ->execute()
         ;
 
@@ -348,6 +349,7 @@ class AnonymizeCommand extends Command
             ->setBackupFilename($this->initialBackupFilename)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
+            ->setTimeout($this->restoreTimeout)
             ->execute()
         ;
 
