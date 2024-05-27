@@ -28,18 +28,21 @@
         "friendsofphp/php-cs-fixer": "^3.34",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.4",
+        "symfony/console": "^6.0|^7.0",
         "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/framework-bundle": "^6.0|^7.0",
         "symfony/password-hasher": "^6.0|^7.0",
         "symfony/validator": "^6.3|^7.0"
     },
     "suggest": {
+        "composer/pcre": "For PHAR compilation",
         "doctrine/doctrine-bundle": "For autoconfiguration in Symfony project context",
-        "symfony/console": "In order to use the standalone CLI tool or Symfony console commands",
+        "seld/phar-utils": "For PHAR compilation",
         "symfony/password-hasher": "In order to use the password hash anonymizer"
     },
     "conflict": {
-        "symfony/console": "<6.0|>=8.0",
+        "composer/pcre": "<3.1|>=4.0",
+        "seld/phar-utils": "<1.2|>=2.0",
         "symfony/password-hasher": "<6.0|>=8.0"
     },
     "autoload": {
