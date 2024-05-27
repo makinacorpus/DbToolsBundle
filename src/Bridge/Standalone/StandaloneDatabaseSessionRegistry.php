@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Database;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\ConfigurationException;
 use MakinaCorpus\QueryBuilder\BridgeFactory;
 use MakinaCorpus\QueryBuilder\DatabaseSession;

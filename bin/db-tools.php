@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle;
 
-use MakinaCorpus\DbToolsBundle\Helper\Cli\Bootstrap;
+use MakinaCorpus\DbToolsBundle\Bridge\Standalone\Bootstrap;
 
 (static function (): void {
     $autoloadFiles = [

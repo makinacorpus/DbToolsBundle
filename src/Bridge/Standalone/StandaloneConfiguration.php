@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Helper\Cli;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsConfiguration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
