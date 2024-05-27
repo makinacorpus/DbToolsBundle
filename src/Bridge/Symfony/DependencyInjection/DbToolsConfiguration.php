@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -45,6 +45,7 @@ class DbToolsConfiguration implements ConfigurationInterface
             throw throw new \InvalidArgumentException(\sprintf("Expected an int or valid date interval string value, got '%s'", \get_debug_type($v)));
         };
 
+        // @phpstan-ignore-next-line
         $treeBuilder
             ->getRootNode()
                 ->children()
