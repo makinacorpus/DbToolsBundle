@@ -13,25 +13,34 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
-        "doctrine/doctrine-bundle": "^2.10.0",
         "makinacorpus/query-builder": "^1.6.1",
+        "psr/log": "^3.0",
         "symfony/config": "^6.0|^7.0",
-        "symfony/console": "^6.0|^7.0",
-        "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/filesystem": "^6.0|^7.0",
         "symfony/finder": "^6.0|^7.0",
         "symfony/options-resolver": "^6.0|^7.0",
-        "symfony/password-hasher": "^6.0|^7.0",
         "symfony/process": "^6.0|^7.0",
         "symfony/yaml": "^6.0|^7.0"
     },
     "require-dev": {
+        "doctrine/doctrine-bundle": "^2.10.0",
         "doctrine/orm": "^2.15|^3.0",
         "friendsofphp/php-cs-fixer": "^3.34",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.4",
+        "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/framework-bundle": "^6.0|^7.0",
+        "symfony/password-hasher": "^6.0|^7.0",
         "symfony/validator": "^6.3|^7.0"
+    },
+    "suggest": {
+        "doctrine/doctrine-bundle": "For autoconfiguration in Symfony project context",
+        "symfony/console": "In order to use the standalone CLI tool or Symfony console commands",
+        "symfony/password-hasher": "In order to use the password hash anonymizer"
+    },
+    "conflict": {
+        "symfony/console": "<6.0|>=8.0",
+        "symfony/password-hasher": "<6.0|>=8.0"
     },
     "autoload": {
         "psr-4": {

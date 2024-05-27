@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\DbToolsBundle\Error\MissingDependencyException;
 use MakinaCorpus\QueryBuilder\Query\Update;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 
@@ -22,6 +23,8 @@ class PasswordAnonymizer extends AbstractAnonymizer
     #[\Override]
     protected function validateOptions(): void
     {
+        MissingDependencyException::check('symfony/password-hasher', PasswordHasherFactory::class);
+
         $algorithm = $this->options->getString('algorithm', 'auto');
         $this->options->getString('password', 'password');
 
