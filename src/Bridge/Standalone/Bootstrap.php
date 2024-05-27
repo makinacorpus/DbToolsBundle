@@ -195,13 +195,13 @@ class Bootstrap
         $anonymizerRegistry = self::createAnonymizeRegistry($config);
         $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
 
-        $backupperBinaries = $config['backupper_binaries'];
-        $backupperExcludedTables = $config['excluded_tables'] ?? [];
-        $backupperOptions = $config['backupper_options'];
+        $backupperBinaries = $config['backup_binaries'];
+        $backupperExcludedTables = $config['backup_excluded_tables'] ?? [];
+        $backupperOptions = $config['backup_options'];
         $backupperFactory = new BackupperFactory($databaseSessionRegistry, $backupperBinaries, $backupperOptions, $backupperExcludedTables, $logger);
 
-        $restorerBinaries = $config['restorer_binaries'];
-        $restorerOptions = $config['restorer_options'];
+        $restorerBinaries = $config['restore_binaries'];
+        $restorerOptions = $config['restore_options'];
         $restorerFactory = new RestorerFactory($databaseSessionRegistry, $restorerBinaries, $restorerOptions, $logger);
 
         $statsProviderFactory = new StatsProviderFactory($databaseSessionRegistry);
@@ -312,7 +312,8 @@ class Bootstrap
             $configs[] = self::configParseFile($filename);
         }
         $configs[] = $config;
-        $configs[] = self::configGetEnv();
+
+        $config = self::configGetEnv($config);
 
         // Use symfony/config and our bundle configuration, which allows us
         // to use it fully for validation and merge.
@@ -380,13 +381,56 @@ class Bootstrap
     /**
      * Get config variables from environment variables.
      */
-    private static function configGetEnv(): array
+    private static function configGetEnv(array $config): array
     {
-        $config = [];
-
-        // @todo read env variables, validate each, override $config
+        if (!isset($config['backup_binaries']['mariadb'])) {
+            $config['backup_binaries']['mariadb'] = self::getEnv('DBTOOLS_BACKUP_BINARY_MARIADB') ?? 'mariadb-dump';
+        }
+        if (!isset($config['backup_binaries']['mysql'])) {
+            $config['backup_binaries']['mysql'] = self::getEnv('DBTOOLS_BACKUP_BINARY_MYSQL') ?? 'mysqldump';
+        }
+        if (!isset($config['backup_binaries']['postgresql'])) {
+            $config['backup_binaries']['postgresql'] = self::getEnv('DBTOOLS_BACKUP_BINARY_POSTGRESQL') ?? 'pg_dump';
+        }
+        if (!isset($config['backup_binaries']['sqlite'])) {
+            $config['backup_binaries']['sqlite'] = self::getEnv('DBTOOLS_BACKUP_BINARY_SQLITE') ?? 'sqlite3';
+        }
+        if (!isset($config['backup_expiration_age'])) {
+            $config['backup_expiration_age'] = self::getEnv('DBTOOLS_BACKUP_EXPIRATION_AGE') ?? '3 months ago';
+        }
+        if (!isset($config['backup_timeout'])) {
+            $config['backup_timeout'] = self::getEnv('DBTOOLS_BACKUP_TIMEOUT') ?? '600';
+        }
+        if (!isset($config['restore_binaries']['mariadb'])) {
+            $config['restore_binaries']['mariadb'] = self::getEnv('DBTOOLS_RESTORE_BINARY_MARIADB') ?? 'mariadb';
+        }
+        if (!isset($config['restore_binaries']['mysql'])) {
+            $config['restore_binaries']['mysql'] = self::getEnv('DBTOOLS_RESTORE_BINARY_MYSQL') ?? 'mysql';
+        }
+        if (!isset($config['restore_binaries']['postgresql'])) {
+            $config['restore_binaries']['postgresql'] = self::getEnv('DBTOOLS_RESTORE_BINARY_POSTGRESQL') ?? 'pg_restore';
+        }
+        if (!isset($config['restore_binaries']['sqlite'])) {
+            $config['restore_binaries']['sqlite'] = self::getEnv('DBTOOLS_RESTORE_BINARY_SQLITE') ?? 'sqlite3';
+        }
+        if (!isset($config['restore_timeout'])) {
+            $config['restore_timeout'] = self::getEnv('DBTOOLS_RESTORE_TIMEOUT') ?? '1800';
+        }
+        if (!isset($config['storage']['filename_strategy'])) {
+            $config['storage']['filename_strategy'] = self::getEnv('DBTOOLS_STORAGE_FILENAME_STRATEGY') ?? 'datetime';
+        }
+        if (!isset($config['storage']['root_dir'])) {
+            $config['storage']['root_dir'] = self::getEnv('DBTOOLS_STORAGE_ROOT_DIR') ?? './var/db_tools';
+        }
 
         return $config;
+    }
+
+    private static function getEnv(string $name): string|null
+    {
+        $value = \getenv($name);
+
+        return (!$value && $value !== '0') ? null : (string) $value;
     }
 
     /**

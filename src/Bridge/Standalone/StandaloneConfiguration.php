@@ -10,12 +10,6 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 class StandaloneConfiguration extends DbToolsConfiguration
 {
     #[\Override]
-    protected function getDefaultStoragePath(): ?string
-    {
-        return './var/db_tools';
-    }
-
-    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = parent::getConfigTreeBuilder();
