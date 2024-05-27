@@ -41,6 +41,12 @@ class SqliteRestorer extends AbstractRestorer
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'sqlite3';
+    }
+
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

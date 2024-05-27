@@ -22,6 +22,7 @@ abstract class AbstractBackupper implements LoggerAwareInterface
 {
     use ProcessTrait;
 
+    protected string $binary;
     protected ?string $destination = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
@@ -31,11 +32,12 @@ abstract class AbstractBackupper implements LoggerAwareInterface
     protected ?int $timeout = 600;
 
     public function __construct(
-        protected string $binary,
         protected DatabaseSession $databaseSession,
         protected Dsn $databaseDsn,
+        ?string $binary = null,
         ?string $defaultOptions = null,
     ) {
+        $this->binary = $binary ?? $this->getDefaultBinary();
         $this->defaultOptions = $defaultOptions ?? $this->getBuiltinDefaultOptions();
 
         $this->destination = \sprintf(
@@ -160,6 +162,11 @@ abstract class AbstractBackupper implements LoggerAwareInterface
     {
         $this->process->setTimeout(null === $this->timeout ? null : (float) $this->timeout);
     }
+
+    /**
+     * Get default binary path and name (e.g. "/usr/bin/foosql-backup").
+     */
+    protected abstract function getDefaultBinary(): string;
 
     /**
      * Provide the built-in default options that will be used if none is given

@@ -10,14 +10,6 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 class DbToolsConfiguration implements ConfigurationInterface
 {
     /**
-     * Default storage path cannot use variable when standalone.
-     */
-    protected function getDefaultStoragePath(): ?string
-    {
-        return '%kernel.project_dir%/var/db_tools';
-    }
-
-    /**
      * Append values in configuration we cannot set a default.
      *
      * For example, 'anonymizer_paths', if set by the user, will loose the
@@ -66,57 +58,73 @@ class DbToolsConfiguration implements ConfigurationInterface
         $treeBuilder
             ->getRootNode()
                 ->children()
-                    ->scalarNode('storage_directory')
-                        ->setDeprecated('makinacorpus/db-tools-bundle', '1.0.1', 'Please use "db_tools.storage.root_dir" instead.')
-                    ->end()
                     ->arrayNode('storage')
                         ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('root_dir')->defaultValue($this->getDefaultStoragePath())->end()
+                            ->scalarNode('root_dir')->defaultNull()->end()
                             ->arrayNode('filename_strategy')
+                                ->beforeNormalization()->ifString()->then(function ($v) { return ['default' => $v]; })->end()
                                 ->useAttributeAsKey('connection')
                                 ->scalarPrototype()->end()
                             ->end()
                         ->end()
                     ->end()
-                    ->scalarNode('backup_expiration_age')->defaultValue('3 months ago')->end()
+                    ->scalarNode('backup_expiration_age')->end()
                     ->scalarNode('backup_timeout')
                         ->beforeNormalization()->always($intervalToInt)->end()
-                        ->defaultValue(600)
                     ->end()
                     ->scalarNode('restore_timeout')
                         ->beforeNormalization()->always($intervalToInt)->end()
-                        ->defaultValue(1800)
                     ->end()
+                    // @todo Remove in 3.x
                     ->arrayNode('excluded_tables')
+                        ->setDeprecated('makinacorpus/db-tools-bundle', '2.0.0', 'Please use "db_tools.backup_excluded_tables" instead.')
+                        ->beforeNormalization()->always(function ($v) { return \array_is_list($v) ? ['default' => $v] : $v; })->end()
                         ->useAttributeAsKey('connection')
                         ->arrayPrototype()
                             ->scalarPrototype()->end()
                         ->end()
                     ->end()
+                    ->arrayNode('backup_excluded_tables')
+                        ->beforeNormalization()->always(function ($v) { return \array_is_list($v) ? ['default' => $v] : $v; })->end()
+                        ->useAttributeAsKey('connection')
+                        ->arrayPrototype()
+                            ->scalarPrototype()->end()
+                        ->end()
+                    ->end()
+                    // @todo Remove in 3.x
                     ->arrayNode('backupper_binaries')
-                        ->defaultValue([
-                            'mariadb' => 'mariadb-dump',
-                            'mysql' => 'mysqldump',
-                            'postgresql' => 'pg_dump',
-                            'sqlite' => 'sqlite3',
-                        ])
+                        ->setDeprecated('makinacorpus/db-tools-bundle', '2.0.0', 'Please use "db_tools.backup_binaries" instead.')
                         ->scalarPrototype()->end()
                     ->end()
+                    ->arrayNode('backup_binaries')
+                        ->scalarPrototype()->end()
+                    ->end()
+                    // @todo Remove in 3.x
                     ->arrayNode('restorer_binaries')
-                        ->defaultValue([
-                            'mariadb' => 'mariadb',
-                            'mysql' => 'mysql',
-                            'postgresql' => 'pg_restore',
-                            'sqlite' => 'sqlite3',
-                        ])
+                        ->setDeprecated('makinacorpus/db-tools-bundle', '2.0.0', 'Please use "db_tools.restore_binaries" instead.')
                         ->scalarPrototype()->end()
                     ->end()
+                    ->arrayNode('restore_binaries')
+                        ->scalarPrototype()->end()
+                    ->end()
+                    // @todo Remove in 3.x
                     ->arrayNode('backupper_options')
+                        ->setDeprecated('makinacorpus/db-tools-bundle', '2.0.0', 'Please use "db_tools.backup_options" instead.')
                         ->useAttributeAsKey('connection')
                         ->scalarPrototype()->end()
                     ->end()
+                    ->arrayNode('backup_options')
+                        ->useAttributeAsKey('connection')
+                        ->scalarPrototype()->end()
+                    ->end()
+                    // @todo Remove in 3.x
                     ->arrayNode('restorer_options')
+                        ->setDeprecated('makinacorpus/db-tools-bundle', '2.0.0', 'Please use "db_tools.restore_options" instead.')
+                        ->useAttributeAsKey('connection')
+                        ->scalarPrototype()->end()
+                    ->end()
+                    ->arrayNode('restore_options')
                         ->useAttributeAsKey('connection')
                         ->scalarPrototype()->end()
                     ->end()

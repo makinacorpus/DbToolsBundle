@@ -52,6 +52,12 @@ class MariadbBackupper extends AbstractBackupper
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'mariadb-dump';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '--no-tablespaces';

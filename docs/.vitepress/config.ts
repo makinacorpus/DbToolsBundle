@@ -61,6 +61,7 @@ export default defineConfig({
           { text: 'Installation', link: '/getting-started/installation' },
           { text: 'Basics', link: '/getting-started/basics' },
           { text: 'Supported databases', link: '/getting-started/database-vendors' },
+          { text: 'CLI tool', link: '/console' },
         ]
       },
       {

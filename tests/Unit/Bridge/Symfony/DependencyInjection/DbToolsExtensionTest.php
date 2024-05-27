@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Bridge\Symfony\DependencyInjection;
 
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension;
-use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DependsExternal;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 
 class DbToolsExtensionTest extends TestCase
 {
     private function getContainer(array $parameters = [], array $bundles = []): ContainerBuilder
     {
-        $container = new ContainerBuilder(new ParameterBag($parameters + [
+        $container = new ContainerBuilder(new EnvPlaceholderParameterBag($parameters + [
             'kernel.bundles' => $bundles,
             'kernel.cache_dir' => \sys_get_temp_dir(),
             'kernel.debug' => false,

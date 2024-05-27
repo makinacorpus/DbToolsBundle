@@ -20,6 +20,7 @@ abstract class AbstractRestorer implements LoggerAwareInterface
 {
     use ProcessTrait;
 
+    protected string $binary;
     protected ?string $backupFilename = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
@@ -28,11 +29,12 @@ abstract class AbstractRestorer implements LoggerAwareInterface
     protected ?int $timeout = 1800;
 
     public function __construct(
-        protected string $binary,
         protected DatabaseSession $databaseSession,
         protected Dsn $databaseDsn,
+        ?string $binary = null,
         ?string $defaultOptions = null,
     ) {
+        $this->binary = $binary ?? $this->getDefaultBinary();
         $this->defaultOptions = $defaultOptions ?? $this->getBuiltinDefaultOptions();
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
@@ -126,6 +128,11 @@ abstract class AbstractRestorer implements LoggerAwareInterface
     {
         $this->process->setTimeout(null === $this->timeout ? null : (float) $this->timeout);
     }
+
+    /**
+     * Get default binary path and name (e.g. "/usr/bin/foosql-restore").
+     */
+    protected abstract function getDefaultBinary(): string;
 
     /**
      * Provide the built-in default options that will be used if none is given

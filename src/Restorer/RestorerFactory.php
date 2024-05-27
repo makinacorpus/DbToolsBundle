@@ -53,9 +53,9 @@ class RestorerFactory
         };
 
         $restorer = new $restorer(
-            $this->restorerBinaries[$vendorName],
             $this->registry->getDatabaseSession($connectionName),
             $dsn,
+            $this->restorerBinaries[$vendorName] ?? null,
             $this->restorerOptions[$connectionName] ?? null
         );
 

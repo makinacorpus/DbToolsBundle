@@ -92,9 +92,9 @@ class BackupperFactory
         };
 
         $backupper = new $backupper(
-            $this->backupperBinaries[$vendorName],
             $this->registry->getDatabaseSession($connectionName),
             $dsn,
+            $this->backupperBinaries[$vendorName] ?? null,
             $this->backupperOptions[$connectionName] ?? null
         );
 

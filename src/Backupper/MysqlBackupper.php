@@ -52,6 +52,12 @@ class MysqlBackupper extends AbstractBackupper
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'mysqldump';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '--no-tablespaces';

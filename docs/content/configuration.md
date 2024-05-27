@@ -91,7 +91,7 @@ This will allow the restore command to find your backups.
 
 ### Excluded tables
 
-The `excluded_tables` parameter let you configure tables to exclude from backups. You will need to give a
+The `backup_excluded_tables` parameter let you configure tables to exclude from backups. You will need to give a
 configuration per doctrine connection.
 
 Default value is `null`: no table are excluded.
@@ -105,7 +105,7 @@ db_tools:
 
     #...
 
-    excluded_tables:
+    backup_excluded_tables:
         default: ['table1', 'table2']
 
     #...
@@ -198,16 +198,16 @@ If the `db-tools:check` command returns you some errors:
 
       # Specify here paths to binaries, only if the system can't find them by himself
       # platform are 'mysql', 'postgresql', 'sqlite'
-      backupper_binaries:
-          mariadb: '/usr/bin/mariadb-dump' # default 'mariadb-dump'
-          mysql: '/usr/bin/mysqldump' # default 'mysqldump'
-          postgresql: '/usr/bin/pg_dump' # default 'pg_dump'
-          sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
-      restorer_binaries:
-          mariadb: '/usr/bin/mariadb' # default 'mariadb'
-          mysql: '/usr/bin/mysql' # default 'mysql'
-          postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
-          sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
+      backup_binaries:
+          mariadb: '/usr/bin/mariadb-dump'
+          mysql: '/usr/bin/mysqldump'
+          postgresql: '/usr/bin/pg_dump'
+          sqlite: '/usr/bin/sqlite3'
+      restore_binaries:
+          mariadb: '/usr/bin/mariadb'
+          mysql: '/usr/bin/mysql'
+          postgresql: '/usr/bin/pg_restore'
+          sqlite: '/usr/bin/sqlite3'
 
       #...
   ```
@@ -250,10 +250,10 @@ by configuring your own ones per operation type and DBAL connection:
 db_tools:
     # ...
 
-    backupper_options:
+    backup_options:
         default: '--an-option'
         another_connection: '-xyz --another'
-    restorer_options:
+    restore_options:
         default: '--a-first-one --a-second-one'
         another_connection: '-O sample-value'
 ```

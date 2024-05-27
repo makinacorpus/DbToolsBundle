@@ -61,6 +61,12 @@ class PgsqlBackupper extends AbstractBackupper
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'pg_dump';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         // -Z: compression level (0-9)
