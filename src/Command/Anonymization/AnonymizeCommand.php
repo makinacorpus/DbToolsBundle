@@ -27,10 +27,6 @@ class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
 
-    private string $connectionName;
-    private float $backupTimeout;
-    private float $restoreTimeout;
-
     private ?string $backupFilename = null;
     private ?string $initialBackupFilename = null;
 
@@ -45,19 +41,15 @@ class AnonymizeCommand extends Command
     private bool $atOnce = true;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private RestorerFactory $restorerFactory,
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
         private Storage $storage,
-        float $backupTimeout,
-        float $restoreTimeout,
+        private ?int $backupTimeout = null,
+        private ?int $restoreTimeout = null,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
-        $this->backupTimeout = $backupTimeout;
-        $this->restoreTimeout = $restoreTimeout;
     }
 
     #[\Override]

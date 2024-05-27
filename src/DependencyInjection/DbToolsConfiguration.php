@@ -14,6 +14,29 @@ final class DbToolsConfiguration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('db_tools');
 
+        $intervalToInt = function (mixed $v): null|int {
+            if (null === $v) {
+                return $v;
+            }
+            if (\is_string($v)) {
+                if (\ctype_digit($v)) {
+                    return (int) $v;
+                }
+                try {
+                    if (false !== ($i = @\DateInterval::createFromDateString($v))) {
+                        return $i->days * 86400 + $i->h * 3600 + $i->i * 60 + $i->s;
+                    }
+                } catch (\DateMalformedIntervalStringException) {
+                    // Pass, invalid format.
+                }
+                throw throw new \InvalidArgumentException(\sprintf("Given value '%s' is not an int and cannot be parsed as a date interval", $v));
+            }
+            if (\is_int($v) || \is_float($v)) {
+                return (int) $v;
+            }
+            throw throw new \InvalidArgumentException(\sprintf("Expected an int or valid date interval string value, got '%s'", \get_debug_type($v)));
+        };
+
         $treeBuilder
             ->getRootNode()
                 ->children()
@@ -31,8 +54,14 @@ final class DbToolsConfiguration implements ConfigurationInterface
                         ->end()
                     ->end()
                     ->scalarNode('backup_expiration_age')->defaultValue('3 months ago')->end()
-                    ->scalarNode('backup_timeout')->defaultValue(600)->end()
-                    ->scalarNode('restore_timeout')->defaultValue(1800)->end()
+                    ->scalarNode('backup_timeout')
+                        ->beforeNormalization()->always($intervalToInt)->end()
+                        ->defaultValue(600)
+                    ->end()
+                    ->scalarNode('restore_timeout')
+                        ->beforeNormalization()->always($intervalToInt)->end()
+                        ->defaultValue(1800)
+                    ->end()
                     ->arrayNode('excluded_tables')
                         ->useAttributeAsKey('connection')
                         ->arrayPrototype()

@@ -20,24 +20,19 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RestoreCommand extends Command
 {
     private SymfonyStyle $io;
-    private string $connectionName;
     private AbstractRestorer $restorer;
     private ?string $backupFilename = null;
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
-    private $force = false;
-    private float $timeout;
+    private bool $force = false;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
-        float $timeout,
+        private ?int $timeout = null,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
-        $this->timeout = $timeout;
     }
 
     #[\Override]

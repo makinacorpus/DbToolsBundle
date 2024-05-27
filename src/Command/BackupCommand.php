@@ -21,23 +21,18 @@ use Symfony\Component\Filesystem\Filesystem;
 class BackupCommand extends Command
 {
     private SymfonyStyle $io;
-    private string $connectionName;
     private AbstractBackupper $backupper;
     private ?array $excludedTables = null;
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
-    private float $timeout;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
-        float $timeout,
+        private ?int $timeout = null,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
-        $this->timeout = $timeout;
     }
 
     #[\Override]

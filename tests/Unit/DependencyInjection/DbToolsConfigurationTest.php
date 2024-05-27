@@ -11,14 +11,14 @@ use Symfony\Component\Yaml\Yaml;
 
 class DbToolsConfigurationTest extends TestCase
 {
-    private function processYamlConfiguration(string $yamlFilename): array
+    private function processYamlConfiguration(array|string $dataOrFilename): array
     {
         $processor = new Processor();
         $configuration = new DbToolsConfiguration();
 
         return $processor->processConfiguration(
             $configuration,
-            Yaml::parseFile($yamlFilename)
+            \is_string($dataOrFilename) ? Yaml::parseFile($dataOrFilename) : ['db_tools' => $dataOrFilename],
         );
     }
 
@@ -167,5 +167,59 @@ class DbToolsConfigurationTest extends TestCase
         );
 
         return $result;
+    }
+
+    public function testConfigurationBackupTimeoutInt(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'backup_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['backup_timeout']);
+    }
+
+    public function testConfigurationBackupTimeoutIntervalString(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'backup_timeout' => '1 minute 2 seconds',
+        ]);
+
+        self::assertSame(62, $result['backup_timeout']);
+    }
+
+    public function testConfigurationBackupTimeoutInvalid(): void
+    {
+        self::expectException(\InvalidArgumentException::class);
+
+        $this->processYamlConfiguration([
+            'backup_timeout' => "this is not parsable",
+        ]);
+    }
+
+    public function testConfigurationRestoreTimeoutInt(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['restore_timeout']);
+    }
+
+    public function testConfigurationRestoreTimeoutIntervalString(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => '1 minute 2 seconds',
+        ]);
+
+        self::assertSame(62, $result['restore_timeout']);
+    }
+
+    public function testConfigurationRestoreTimeoutInvalid(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'restore_timeout' => 123,
+        ]);
+
+        self::assertSame(123, $result['restore_timeout']);
     }
 }

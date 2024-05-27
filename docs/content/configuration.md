@@ -138,6 +138,34 @@ db_tools:
     #...
 ```
 
+### Backup and restore timeout
+
+The `backup_timeout` and `restore_timeout` options let you choose what is the backup and restore
+processes timeout in seconds.
+
+Default value is `600` (seconds) for backup, `1800` (seconds) for restore.
+
+Value can be either a [\DateInterval::createFromDateString()](https://www.php.net/manual/en/dateinterval.createfromdatestring.php)
+compatible string value or a number of seconds as an integer value.
+
+```yml
+# config/packages/db_tools.yaml
+
+db_tools:
+
+    #...
+
+    # As a date interval string.
+    backup_timeout: '6 minutes 30 seconds'
+    restore_timeout: '3 minutes 15 seconds'
+
+    # As a number of seconds integer value.
+    backup_timeout: 390
+    restore_timeout: 195
+
+    #...
+```
+
 ## Binaries
 
 `db-tools:backup` and `db-tools:restore` need your system/environment to provide some extra binaries
