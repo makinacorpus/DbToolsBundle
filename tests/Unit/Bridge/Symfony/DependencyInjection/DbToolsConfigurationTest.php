@@ -25,7 +25,7 @@ class DbToolsConfigurationTest extends TestCase
     public function testConfigurationMinimal(): array
     {
         $result = $this->processYamlConfiguration(
-            __DIR__ . '/../../Resources/config/packages/db_tools_min.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_min.yaml'
         );
 
         self::assertSame(
@@ -61,7 +61,7 @@ class DbToolsConfigurationTest extends TestCase
     public function testConfigurationAlternative1(): array
     {
         $result = $this->processYamlConfiguration(
-            __DIR__ . '/../../Resources/config/packages/db_tools_alt1.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt1.yaml'
         );
 
         self::assertSame(
@@ -112,7 +112,7 @@ class DbToolsConfigurationTest extends TestCase
     public function testConfigurationAlternative2(): array
     {
         $result = $this->processYamlConfiguration(
-            __DIR__ . '/../../Resources/config/packages/db_tools_alt2.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt2.yaml'
         );
 
         self::assertSame(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Helper\Cli;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 
 use Composer\InstalledVersions;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;

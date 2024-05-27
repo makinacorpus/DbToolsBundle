@@ -14,7 +14,7 @@ class AnonymizerRegistryTest extends UnitTestCase
     {
         $projectDir = $this->prepareDumbProjectDir();
 
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
+        $dbToolsBundleSrcPath = \dirname(__DIR__, 4) . '/src/';
 
         $anonymizerRegistry = new AnonymizerRegistry(
             $projectDir,
@@ -37,7 +37,7 @@ class AnonymizerRegistryTest extends UnitTestCase
     {
         $projectDir = $this->prepareDumbProjectDir(false);
 
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
+        $dbToolsBundleSrcPath = \dirname(__DIR__, 4) . '/src/';
 
         $anonymizerRegistry = new AnonymizerRegistry(
             $projectDir,
@@ -60,7 +60,7 @@ class AnonymizerRegistryTest extends UnitTestCase
 
         $filesystem->mkdir($projectDir . '/vendor');
         if ($withTestVendor) {
-            $filesystem->mirror(\dirname(\dirname(\dirname(__DIR__))) . '/Resources/vendor', $projectDir . '/vendor');
+            $filesystem->mirror(\dirname(__DIR__, 3) . '/Resources/vendor', $projectDir . '/vendor');
         }
 
         return $projectDir;
