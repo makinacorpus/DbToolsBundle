@@ -59,7 +59,7 @@ services:
 
     # Database registry.
     db_tools.database_session.registry:
-        class: MakinaCorpus\DbToolsBundle\Database\DoctrineDatabaseSessionRegistry
+        class: MakinaCorpus\DbToolsBundle\Bridge\Symfony\DoctrineDatabaseSessionRegistry
         arguments: ['@doctrine']
 
     # Utilities

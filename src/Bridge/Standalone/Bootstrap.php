@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Helper\Cli;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 
 use Composer\InstalledVersions;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
+use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsConfiguration;
 use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizeCommand;
 use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand;
 use MakinaCorpus\DbToolsBundle\Command\Anonymization\CleanCommand;
@@ -17,12 +18,10 @@ use MakinaCorpus\DbToolsBundle\Command\CheckCommand;
 use MakinaCorpus\DbToolsBundle\Command\RestoreCommand;
 use MakinaCorpus\DbToolsBundle\Command\StatsCommand;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
-use MakinaCorpus\DbToolsBundle\Database\StandaloneDatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\ConfigurationException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactory;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
-use MakinaCorpus\QueryBuilder\Error\ConfigurationError;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Config\Definition\Processor;
@@ -110,7 +109,7 @@ class Bootstrap
             ],
             'anonymization:run' => [
                 fn (Context $context) => new AnonymizeCommand(
-                    defaultConnectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
+                    connectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
                     restorerFactory: $context->restorerFactory,
                     backupperFactory: $context->backupperFactory,
                     anonymizatorFactory: $context->anonymizatorFactory,
@@ -121,7 +120,7 @@ class Bootstrap
             ],
             'database:backup' => [
                 fn (Context $context) => new BackupCommand(
-                    defaultConnectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
+                    connectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
                     backupperFactory: $context->backupperFactory,
                     storage: $context->storage,
                 ),
@@ -139,7 +138,7 @@ class Bootstrap
             ],
             'database:restore' => [
                 fn (Context $context) => new RestoreCommand(
-                    defaultConnectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
+                    connectionName: $context->databaseSessionRegistry->getDefaultConnectionName(),
                     restorerFactory: $context->restorerFactory,
                     storage: $context->storage,
                 ),
@@ -323,6 +322,7 @@ class Bootstrap
         $processor = new Processor();
 
         $config = $processor->processConfiguration($configuration, $configs);
+        $config = DbToolsConfiguration::appendPostConfig($config);
 
         return $config;
     }
@@ -404,11 +404,10 @@ class Bootstrap
      */
     private static function createDatabaseSessionRegistry(array $config): DatabaseSessionRegistry
     {
-        if (empty($config['connections'])) {
-            throw new ConfigurationError("No database connection found, this means that either you forgot it into your configuration file, or no configuration files were found. Please run using the -vvv switch for more information.");
-        }
-
-        return new StandaloneDatabaseSessionRegistry($config['connections'], $config['default_connection']);
+        // Do not crash on initialization, it will crash later when a connection
+        // will be request instead: this allows commands that don't act on
+        // database (such as anonymizer list) to work even if not configured.
+        return new StandaloneDatabaseSessionRegistry($config['connections'] ?? [], $config['default_connection']);
     }
 
     /**

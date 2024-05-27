@@ -4,10 +4,10 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony;
 
+use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\Compiler\DbToolsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension;
 
 class DbToolsBundle extends Bundle
 {

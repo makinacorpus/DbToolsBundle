@@ -8,7 +8,7 @@ A complete example of this file can be found in the bundle sources in: `vendor/m
 :::
 
 For detailed information about configuration options, please see the
-[configuration reference](../configuration/reference).
+[configuration reference](configuration/reference).
 
 ## Backup configuration
 

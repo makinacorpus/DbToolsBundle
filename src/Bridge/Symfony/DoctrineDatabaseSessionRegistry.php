@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Database;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
+use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Dsn;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 
 /**
  * doctrine/dbal based implementation.
