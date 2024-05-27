@@ -54,12 +54,10 @@ class Bootstrap
      */
     public static function createApplication(): Application
     {
-        // @todo Test in PHAR context.
         if (\class_exists(InstalledVersions::class)) {
             $version = InstalledVersions::getVersion('makinacorpus/db-tools-bundle');
         }
         $version ??= 'cli';
-        \assert($version !== null);
 
         $application = new Application('DbTools', $version);
         $application->setCatchExceptions(true);
