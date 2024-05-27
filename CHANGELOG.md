@@ -2,6 +2,19 @@
 
 ## Next
 
+* [feature] ⭐️ Add new standlone console/CLI tool running outside of the Symfony context,
+  this allows this bundle to run outside of a Symfony application on top of any other framework (#153).
+* [feature] ⭐️ Add experimental PHAR compiler (#155).
+* [deprecation] ⚠️ `excluded_tables` configuration option is deprecated, use `backup_excluded_tables` instead.
+* [deprecation] ⚠️ `backupper_binaries` configuration option is deprecated, use `backup_binaries` instead.
+* [deprecation] ⚠️ `restorer_binaries` configuration option is deprecated, use `restore_binaries` instead.
+* [deprecation] ⚠️ `backupper_options` configuration option is deprecated, use `backup_options` instead.
+* [deprecation] ⚠️ `restorer_options` configuration option is deprecated, use `restore_options` instead.
+* [deprecation] ⚠️ `MakinaCorpus\DbToolsBundle\DbToolsBundle` class is renamed, please use `MakinaCorpus\DbToolsBundle\Bridge\Symfony\DbToolsBundle` instead.
+* [removal] ⚠️ `storage_directory` configuration option is removed, use `storage.root_dir` instead.
+
+## 1.2.0
+
 * [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
 * [feature] ⭐️ Anonymization - Add Doctrine Embeddables support (#105).
 * [feature] ⭐️ As a side effect, Doctrine ORM 3.0 should now work (#140).
@@ -9,6 +22,7 @@
 * [internal] Introduce `DatabaseSessionRegistry` as single entry point for plugging-in database (#142).
 * [internal] Use `makinacorpus/query-builder` schema manager for DDL alteration (#140).
 * [internal] Raise `makinacorpus/query-builder` dependency to version 1.5.5 (#140).
+* [deprecation] ⚠️ `storage_directory` configuration option is deprecated, use `storage.root_dir` instead.
 
 ## 1.1.0
 

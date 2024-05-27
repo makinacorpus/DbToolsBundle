@@ -25,22 +25,34 @@ final class DbToolsExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
         $loader->load('services.yaml');
 
-        if (isset($config['storage_directory'])) {
-            \trigger_deprecation('makinacorpus/db-tools-bundle', '1.0.1', '"db_tools.storage_directory" configuration option is deprecated and renamed "db_tools.storage.root_dir"');
-            $container->setParameter('db_tools.storage.root_dir', $config['storage_directory']);
-        } else {
-            $container->setParameter('db_tools.storage.root_dir', $config['storage']['root_dir']);
+        // @todo Remove in 3.x.
+        $deprecationMap = [
+            'backupper_binaries' => 'backup_binaries',
+            'backupper_options' => 'backup_options',
+            'excluded_tables' => 'backup_excluded_tables',
+            'restorer_binaries' => 'restore_binaries',
+            'restorer_options' => 'restore_options',
+        ];
+        foreach ($deprecationMap as $legacyName => $newName) {
+            if (!empty($config[$legacyName])) {
+                \trigger_deprecation('makinacorpus/db-tools-bundle', '2.0.0', '"db_tools.%s" configuration option is deprecated and renamed "db_tools.%s"', $legacyName, $newName);
+                $config[$newName] = $config[$legacyName];
+            }
+            unset($config[$legacyName]);
         }
 
+        // Storage
+        $container->setParameter('db_tools.storage.root_dir', $config['storage']['root_dir']);
+
         // Backupper
-        $container->setParameter('db_tools.backupper.binaries', $config['backupper_binaries']);
-        $container->setParameter('db_tools.backupper.options', $config['backupper_options']);
+        $container->setParameter('db_tools.backupper.binaries', $config['backup_binaries']);
+        $container->setParameter('db_tools.backupper.options', $config['backup_options']);
         $container->setParameter('db_tools.backup_expiration_age', $config['backup_expiration_age']);
-        $container->setParameter('db_tools.excluded_tables', $config['excluded_tables'] ?? []);
+        $container->setParameter('db_tools.excluded_tables', $config['backup_excluded_tables'] ?? []);
 
         // Restorer
-        $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
-        $container->setParameter('db_tools.restorer.options', $config['restorer_options']);
+        $container->setParameter('db_tools.restorer.binaries', $config['restore_binaries']);
+        $container->setParameter('db_tools.restorer.options', $config['restore_options']);
 
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];
@@ -91,3 +103,4 @@ final class DbToolsExtension extends Extension
         return new DbToolsConfiguration();
     }
 }
+

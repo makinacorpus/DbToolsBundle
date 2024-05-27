@@ -198,13 +198,13 @@ class Bootstrap
         $anonymizerRegistry = self::createAnonymizeRegistry($config);
         $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
 
-        $backupperBinaries = $config['backupper_binaries'];
-        $backupperExcludedTables = $config['excluded_tables'] ?? [];
-        $backupperOptions = $config['backupper_options'];
+        $backupperBinaries = $config['backup_binaries'];
+        $backupperExcludedTables = $config['backup_excluded_tables'] ?? [];
+        $backupperOptions = $config['backup_options'];
         $backupperFactory = new BackupperFactory($databaseSessionRegistry, $backupperBinaries, $backupperOptions, $backupperExcludedTables, $logger);
 
-        $restorerBinaries = $config['restorer_binaries'];
-        $restorerOptions = $config['restorer_options'];
+        $restorerBinaries = $config['restore_binaries'];
+        $restorerOptions = $config['restore_options'];
         $restorerFactory = new RestorerFactory($databaseSessionRegistry, $restorerBinaries, $restorerOptions, $logger);
 
         $statsProviderFactory = new StatsProviderFactory($databaseSessionRegistry);

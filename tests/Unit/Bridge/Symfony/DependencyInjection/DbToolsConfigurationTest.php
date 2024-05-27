@@ -11,15 +11,27 @@ use Symfony\Component\Yaml\Yaml;
 
 class DbToolsConfigurationTest extends TestCase
 {
-    private function processYamlConfiguration(string $yamlFilename): array
+    private function processYamlConfiguration(array|string $dataOrFilename): array
     {
         $processor = new Processor();
         $configuration = new DbToolsConfiguration();
 
         return $processor->processConfiguration(
             $configuration,
-            Yaml::parseFile($yamlFilename)
+            \is_string($dataOrFilename) ? Yaml::parseFile($dataOrFilename) : ['db_tools' => $dataOrFilename],
         );
+    }
+
+    private function deprecatedDefaultValues(): array
+    {
+        return [
+            // @todo Remove in 3.x
+            'backupper_binaries' => [],
+            'backupper_options' => [],
+            'excluded_tables' => [],
+            'restorer_binaries' => [],
+            'restorer_options' => [],
+        ];
     }
 
     public function testConfigurationMinimal(): array
@@ -28,65 +40,64 @@ class DbToolsConfigurationTest extends TestCase
             \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_min.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
-                'storage' => [
-                    'root_dir' => '%kernel.project_dir%/var/db_tools',
-                    'filename_strategy' => [],
-                ],
-                'backup_expiration_age' => '3 months ago',
-                'excluded_tables' => [],
-                'backupper_binaries' => [
+                'anonymizer_paths' => [],
+                'backup_binaries' => [
                     'mariadb' => 'mariadb-dump',
                     'mysql' => 'mysqldump',
                     'postgresql' => 'pg_dump',
                     'sqlite' => 'sqlite3',
                 ],
-                'restorer_binaries' => [
+                'backup_expiration_age' => '3 months ago',
+                'backup_excluded_tables' => [],
+                'backup_options' => [],
+                'restore_binaries' => [
                     'mariadb' => 'mariadb',
                     'mysql' => 'mysql',
                     'postgresql' => 'pg_restore',
                     'sqlite' => 'sqlite3',
                 ],
-                'backupper_options' => [],
-                'restorer_options' => [],
-                'anonymizer_paths' => [],
-            ],
-            $result
+                'restore_options' => [],
+                'storage' => [
+                    'root_dir' => '%kernel.project_dir%/var/db_tools',
+                    'filename_strategy' => [],
+                ],
+            ] + $this->deprecatedDefaultValues(),
+            $result,
         );
 
         return $result;
     }
 
-    public function testConfigurationAlternative1(): array
+    public function testConfigurationAlternative1(): void
     {
         $result = $this->processYamlConfiguration(
             \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt1.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
-                'storage_directory' => '%kernel.project_dir%/var/backup',
                 'backup_expiration_age' => '6 months ago',
-                'excluded_tables' => [
+                'backup_excluded_tables' => [
                     'default' => ['table1', 'table2'],
                 ],
-                'backupper_binaries' => [
+                'backup_binaries' => [
                     'mariadb' => '/usr/bin/mariadb-dump',
                     'mysql' => '/usr/bin/mysqldump',
                     'postgresql' => '/usr/bin/pg_dump',
                     'sqlite' => '/usr/bin/sqlite3',
                 ],
-                'restorer_binaries' => [
+                'restore_binaries' => [
                     'mariadb' => '/usr/bin/mariadb',
                     'mysql' => '/usr/bin/mysql',
                     'postgresql' => '/usr/bin/pg_restore',
                     'sqlite' => '/usr/bin/sqlite3',
                 ],
-                'backupper_options' => [
+                'backup_options' => [
                     'default' => '--opt1 val1 -x -y -z --opt2 val2',
                 ],
-                'restorer_options' => [
+                'restore_options' => [
                     'default' => '-abc -x val1 -y val2',
                 ],
                 'anonymizer_paths' => [
@@ -99,23 +110,21 @@ class DbToolsConfigurationTest extends TestCase
                     ],
                 ],
                 'storage' => [
-                    'root_dir' => '%kernel.project_dir%/var/db_tools',
+                    'root_dir' => '%kernel.project_dir%/var/backup',
                     'filename_strategy' => [],
                 ],
-            ],
-            $result
+            ] + $this->deprecatedDefaultValues(),
+            $result,
         );
-
-        return $result;
     }
 
-    public function testConfigurationAlternative2(): array
+    public function testConfigurationAlternative2(): void
     {
         $result = $this->processYamlConfiguration(
             \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt2.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
                 'storage' => [
                     'root_dir' => '%kernel.project_dir%/var/backup',
@@ -124,25 +133,25 @@ class DbToolsConfigurationTest extends TestCase
                     ],
                 ],
                 'backup_expiration_age' => '6 months ago',
-                'excluded_tables' => [
+                'backup_excluded_tables' => [
                     'connection_two' => ['table1', 'table2'],
                 ],
-                'backupper_binaries' => [
+                'backup_binaries' => [
                     'mariadb' => '/usr/bin/mariadb-dump',
                     'mysql' => '/usr/bin/mysqldump',
                     'postgresql' => '/usr/bin/pg_dump',
                     'sqlite' => '/usr/bin/sqlite3',
                 ],
-                'restorer_binaries' => [
+                'restore_binaries' => [
                     'mariadb' => '/usr/bin/mariadb',
                     'mysql' => '/usr/bin/mysql',
                     'postgresql' => '/usr/bin/pg_restore',
                     'sqlite' => '/usr/bin/sqlite3',
                 ],
-                'backupper_options' => [
+                'backup_options' => [
                     'connection_one' => '--opt1 val1 -x -y -z --opt2 val2',
                 ],
-                'restorer_options' => [
+                'restore_options' => [
                     'connection_one' => '-abc -x val1 -y val2',
                     'connection_two' => '-a "Value 1" -bc -d val2 --end',
                 ],
@@ -156,10 +165,52 @@ class DbToolsConfigurationTest extends TestCase
                         'connection_two' => '%kernel.project_dir%/config/anonymizations/connection_two.yaml',
                     ],
                 ],
-            ],
-            $result
+            ] + $this->deprecatedDefaultValues(),
+            $result,
         );
+    }
 
-        return $result;
+    public function testConfigurationFilenameStrategyNull(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'storage' => [
+                'filename_strategy' => null,
+            ],
+        ]);
+
+        self::assertEqualsCanonicalizing(
+            [],
+            $result['storage']['filename_strategy'],
+        );
+    }
+
+    public function testConfigurationFilenameStrategyString(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'storage' => [
+                'filename_strategy' => 'some_strategy',
+            ],
+        ]);
+
+        self::assertSame(
+            ['default' => 'some_strategy'],
+            $result['storage']['filename_strategy'],
+        );
+    }
+
+    public function testConfigurationFilenameStrategyArray(): void
+    {
+        $result = $this->processYamlConfiguration([
+            'storage' => [
+                'filename_strategy' => [
+                    'default' => 'some_strategy'
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            ['default' => 'some_strategy'],
+            $result['storage']['filename_strategy'],
+        );
     }
 }
