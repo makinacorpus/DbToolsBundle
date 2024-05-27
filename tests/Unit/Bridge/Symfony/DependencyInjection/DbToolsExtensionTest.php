@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\Tests\Unit\DependencyInjection;
+namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Bridge\Symfony\DependencyInjection;
 
-use MakinaCorpus\DbToolsBundle\DependencyInjection\DbToolsExtension;
+use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
