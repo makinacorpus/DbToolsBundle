@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\DependencyInjection;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection;
 
 use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -12,7 +13,6 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class DbToolsExtension extends Extension
 {
@@ -22,7 +22,7 @@ final class DbToolsExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/../config'));
+        $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
         $loader->load('services.yaml');
 
         if (isset($config['storage_directory'])) {

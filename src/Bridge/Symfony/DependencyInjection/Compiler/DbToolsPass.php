@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MakinaCorpus\DbToolsBundle\DependencyInjection\Compiler;
+namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\Compiler;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\YamlLoader;
-use MakinaCorpus\DbToolsBundle\DependencyInjection\DbToolsConfiguration;
+use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsConfiguration;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
