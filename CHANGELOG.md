@@ -5,6 +5,7 @@
 * [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
 * [feature] ⭐️ Anonymization - Add Doctrine Embeddables support (#105).
 * [feature] ⭐️ As a side effect, Doctrine ORM 3.0 should now work (#140).
+* [fix] Fix Doctrine ORM joined inheritance anonymization (#160)
 * [internal] Remove `doctrine/dbal` dependency from all code except the database session registry (#142).
 * [internal] Introduce `DatabaseSessionRegistry` as single entry point for plugging-in database (#142).
 * [internal] Use `makinacorpus/query-builder` schema manager for DDL alteration (#140).

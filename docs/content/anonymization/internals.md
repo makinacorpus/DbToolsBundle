@@ -8,14 +8,14 @@ Each anonymizer adds its own `SET` statements to the query, and a few `JOIN` cla
 
 ## PHP query builder
 
-Generating this kind of queries is quiet complexe and mostly impossible without a complete
+Generating this kind of queries is quite complex and mostly impossible without a complete
 and robust SQL query builder.
 
 Our first thought was to use the [DBAL query builder](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.0/reference/query-builder.html#sql-query-builder).
 But, while it is very robust, it lacks many features. Features such as
 update with join, which are essential for our use case.
 
-Instead, we decided to re-use one of our tool: the [makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package.
+Instead, we decided to re-use one of our tool: [makinacorpus/php-query-builder](https://github.com/makinacorpus/query-builder-bundle).
 
 This query builder lets you write SQL queries using a concise and easy to read fluent PHP API
 and [implements a lot of features](https://php-query-builder.readthedocs.io/en/stable/introduction/features.html).

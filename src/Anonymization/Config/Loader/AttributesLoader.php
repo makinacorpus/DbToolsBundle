@@ -28,7 +28,8 @@ class AttributesLoader implements LoaderInterface
             return;
         }
 
-        $metadatas = $entityManager->getMetadataFactory()->getAllMetadata();
+        $metadataFactory = $entityManager->getMetadataFactory();
+        $metadatas = $metadataFactory->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
             \assert($metadata instanceof ClassMetadata);
@@ -51,11 +52,13 @@ class AttributesLoader implements LoaderInterface
 
             $reflexionClass = $metadata->getReflectionClass();
             if ($attributes = $reflexionClass->getAttributes(Anonymize::class)) {
+                // There can only be one of those attributes, foreach() is
+                // required because of reflection API signature.
                 foreach ($attributes as $key => $attribute) {
                     $anonymization = $attribute->newInstance();
                     $config->add(new AnonymizerConfig(
                         $metadata->getTableName(),
-                        // For a anonymization setted on table, we give an arbitrary name
+                        // For a anonymization setted on table, we give an arbitrary name.
                         $anonymization->type . '_' . $key,
                         $anonymization->type,
                         new Options($anonymization->options),
@@ -64,11 +67,11 @@ class AttributesLoader implements LoaderInterface
             }
 
             foreach ($metadata->fieldMappings as $fieldName => $fieldValues) {
-                // Field name with dot are part of Embeddables
+                // Field name with dot are part of Embeddables.
                 if (\str_contains($fieldName, '.')) {
                     if (\key_exists($fieldValues['originalClass'], $embeddedClassesConfig)) {
                         $embeddedClassConfig = $embeddedClassesConfig[$fieldValues['originalClass']];
-                        if(\key_exists($fieldValues['originalField'], $embeddedClassConfig)) {
+                        if (\key_exists($fieldValues['originalField'], $embeddedClassConfig)) {
                             $propertyConfig = $embeddedClassConfig[$fieldValues['originalField']];
                             $config->add(new AnonymizerConfig(
                                 $metadata->getTableName(),
@@ -81,12 +84,29 @@ class AttributesLoader implements LoaderInterface
                     continue;
                 }
 
-                $reflexionProperty = $reflexionClass->getProperty($fieldName);
-                if ($attributes = $reflexionProperty->getAttributes(Anonymize::class)) {
+                $columnName = $metadata->getColumnName($fieldName);
+                if ($metadata->isInheritedField($fieldName)) {
+                    $fieldMapping = $metadata->getFieldMapping($fieldName);
+                    // @phpstan-ignore-next-line
+                    if (\is_array($fieldMapping)) {
+                        // Code for doctrine/orm:^2.0.
+                        $ownerClass = $fieldMapping['inherited'];
+                    } else {
+                        // Code for doctrine/orm:^3.0.
+                        $ownerClass = $fieldMapping->inherited;
+                    }
+                    $parentMetadata = $metadataFactory->getMetadataFor($ownerClass);
+                    \assert($parentMetadata instanceof ClassMetadata);
+                    $tableName = $parentMetadata->getTableName();
+                } else {
+                    $tableName = $metadata->getTableName();
+                }
+
+                if ($attributes = $metadata->getReflectionProperty($fieldName)->getAttributes(Anonymize::class)) {
                     $anonymization = $attributes[0]->newInstance();
                     $config->add(new AnonymizerConfig(
-                        $metadata->getTableName(),
-                        $metadata->getColumnName($fieldName),
+                        $tableName,
+                        $columnName,
                         $anonymization->type,
                         new Options($anonymization->options),
                     ));

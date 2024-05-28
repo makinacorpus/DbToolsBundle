@@ -74,9 +74,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 class MyEnumAnonymizer extends AbstractEnumAnonymizer
 {
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSample(): array
     {
         // Generate here your sample.
@@ -108,9 +106,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class MyMulticolumnAnonymizer extends AbstractMultipleColumnAnonymizer
 {
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     protected function getColumnNames(): array
     {
         // Declare here name fo each part of your multicolumn
@@ -122,9 +118,7 @@ class MyMulticolumnAnonymizer extends AbstractMultipleColumnAnonymizer
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSample(): array
     {
         // Generate here your sample.
