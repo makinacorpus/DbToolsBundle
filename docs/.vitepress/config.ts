@@ -73,6 +73,7 @@ export default defineConfig({
           { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
           { text: 'Anonymization command', link: '/anonymization/command' },
           { text: 'GDPR-friendly workflow', link: '/anonymization/workflow' },
+          { text: 'Doctrine and inheritance', link: '/anonymization/doctrine-inheritance' },
           { text: 'Performance', link: '/anonymization/performance' },
           { text: 'Internals', link: '/anonymization/internals' },
         ]

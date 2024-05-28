@@ -21,6 +21,11 @@ If Doctrine ORM is enabled, the *DbToolsBundle* will automatically look for attr
 If you want to use YAML configuration, look at the [Bundle Configuration
 section](../configuration#anonymization) to see how to configure it.
 
+:::info
+All anonymizers can be configured via attributes on Doctrine ORM entities, but inheritance
+is not fully supported yet, [please read this page](doctrine-inheritance) for more information.
+:::
+
 The anonymization is based on *Anonymizers*. An *Anonymizer* represents a way to anonymize a column (or
 multiple columns in certain cases). For example, you will use the EmailAnonymizer to anonymize a column that
 represents an email address.
