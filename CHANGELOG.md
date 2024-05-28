@@ -1,6 +1,6 @@
 # Changelog
 
-## Next
+## 1.2.0
 
 * [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
 * [feature] ⭐️ Add Doctrine ORM 3.0 compatibility as a side effect of Doctrine DBAL 4.0 support (#140).
