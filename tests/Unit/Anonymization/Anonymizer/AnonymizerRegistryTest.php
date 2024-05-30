@@ -14,14 +14,7 @@ class AnonymizerRegistryTest extends UnitTestCase
     {
         $projectDir = $this->prepareDumbProjectDir();
 
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
-
-        $anonymizerRegistry = new AnonymizerRegistry(
-            $projectDir,
-            [
-                $dbToolsBundleSrcPath . '/Anonymization/Anonymizer'
-            ]
-        );
+        $anonymizerRegistry = new AnonymizerRegistry($projectDir, [], true);
 
         $anonymizers = $anonymizerRegistry->getAnonymizers();
 
@@ -35,16 +28,7 @@ class AnonymizerRegistryTest extends UnitTestCase
 
     public function testAnonymizerRegistryWithoutTestPack(): void
     {
-        $projectDir = $this->prepareDumbProjectDir(false);
-
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
-
-        $anonymizerRegistry = new AnonymizerRegistry(
-            $projectDir,
-            [
-                $dbToolsBundleSrcPath . '/Anonymization/Anonymizer'
-            ]
-        );
+        $anonymizerRegistry = new AnonymizerRegistry();
 
         self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
 
@@ -60,7 +44,7 @@ class AnonymizerRegistryTest extends UnitTestCase
 
         $filesystem->mkdir($projectDir . '/vendor');
         if ($withTestVendor) {
-            $filesystem->mirror(\dirname(\dirname(\dirname(__DIR__))) . '/Resources/vendor', $projectDir . '/vendor');
+            $filesystem->mirror(\dirname(__DIR__, 3) . '/Resources/vendor', $projectDir . '/vendor');
         }
 
         return $projectDir;
