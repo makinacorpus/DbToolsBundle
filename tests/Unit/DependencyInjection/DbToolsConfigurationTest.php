@@ -94,7 +94,6 @@ class DbToolsConfigurationTest extends TestCase
                     'default' => '-abc -x val1 -y val2',
                 ],
                 'anonymizer_paths' => [
-                    '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer',
                     '%kernel.project_dir%/src/Anonymization/Anonymizer',
                 ],
                 'anonymization' => [
@@ -153,7 +152,6 @@ class DbToolsConfigurationTest extends TestCase
                     'connection_two' => '-a "Value 1" -bc -d val2 --end',
                 ],
                 'anonymizer_paths' => [
-                    '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer',
                     '%kernel.project_dir%/src/Anonymization/Anonymizer',
                 ],
                 'anonymization' => [

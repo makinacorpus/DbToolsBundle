@@ -29,7 +29,6 @@ db_tools:
         connection_two: '-a "Value 1" -bc -d val2 --end'
 
     anonymizer_paths:
-        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
         - '%kernel.project_dir%/src/Anonymization/Anonymizer'
 
     anonymization:

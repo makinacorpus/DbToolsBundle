@@ -39,7 +39,7 @@ abstract class AbstractAnonymizer
             return $attributes[0]->newInstance();
         }
 
-        throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");
+        throw new \LogicException(\sprintf("Class '%s' should have an '%s' attribute.", static::class, AsAnonymizer::class));
     }
 
     /**

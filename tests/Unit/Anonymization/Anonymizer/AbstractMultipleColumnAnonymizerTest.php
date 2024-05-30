@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractMultipleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
@@ -67,6 +68,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
     }
 }
 
+#[AsAnonymizer('test-multiple', 'core-test')]
 class TestMultipleColumnAnonymizer extends AbstractMultipleColumnAnonymizer
 {
     #[\Override]
