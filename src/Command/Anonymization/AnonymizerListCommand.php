@@ -43,7 +43,6 @@ class AnonymizerListCommand extends Command
                 $list[$metadata->pack] = [];
             }
 
-
             $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $metadata->description;
         }
 

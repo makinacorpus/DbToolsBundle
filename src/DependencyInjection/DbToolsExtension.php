@@ -58,7 +58,6 @@ final class DbToolsExtension extends Extension
         if (\is_dir($defaultDirectory)) {
             $anonymizerPaths[] = '%kernel.project_dir%/src/Anonymizer';
         }
-        $anonymizerPaths[] = \realpath(\dirname(__DIR__)) . '/Anonymization/Anonymizer';
 
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
 

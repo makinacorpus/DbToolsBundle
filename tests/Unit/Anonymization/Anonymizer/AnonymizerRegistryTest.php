@@ -4,47 +4,35 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer;
 
+use Composer\InstalledVersions;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
-use Symfony\Component\Filesystem\Filesystem;
 
 class AnonymizerRegistryTest extends UnitTestCase
 {
     public function testAnonymizerRegistryWithTestPack(): void
     {
-        $projectDir = $this->prepareDumbProjectDir();
+        try {
+            $this->composerProjectAdd();
 
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
+            $anonymizerRegistry = new AnonymizerRegistry();
 
-        $anonymizerRegistry = new AnonymizerRegistry(
-            $projectDir,
-            [
-                $dbToolsBundleSrcPath . '/Anonymization/Anonymizer'
-            ]
-        );
+            $anonymizers = $anonymizerRegistry->getAnonymizers();
 
-        $anonymizers = $anonymizerRegistry->getAnonymizers();
+            self::assertNotEmpty($anonymizers);
+            self::assertArrayHasKey('string', $anonymizers);
+            self::assertArrayHasKey('test.my-anonymizer', $anonymizers);
 
-        self::assertNotEmpty($anonymizers);
-        self::assertArrayHasKey('string', $anonymizers);
-        self::assertArrayHasKey('test.my-anonymizer', $anonymizers);
-
-        self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
-        self::assertEquals('DbToolsBundle\PackTest\Anonymizer\MyAnonymizer', $anonymizerRegistry->get('test.my-anonymizer'));
+            self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
+            self::assertEquals('DbToolsBundle\PackTest\Anonymizer\MyAnonymizer', $anonymizerRegistry->get('test.my-anonymizer'));
+        } finally {
+            $this->composerProjectRemove();
+        }
     }
 
     public function testAnonymizerRegistryWithoutTestPack(): void
     {
-        $projectDir = $this->prepareDumbProjectDir(false);
-
-        $dbToolsBundleSrcPath = \dirname(\dirname(\dirname(\dirname(__DIR__)))) . '/src/';
-
-        $anonymizerRegistry = new AnonymizerRegistry(
-            $projectDir,
-            [
-                $dbToolsBundleSrcPath . '/Anonymization/Anonymizer'
-            ]
-        );
+        $anonymizerRegistry = new AnonymizerRegistry();
 
         self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
 
@@ -52,17 +40,30 @@ class AnonymizerRegistryTest extends UnitTestCase
         $anonymizerRegistry->get('test.my_anonymizer');
     }
 
-    private function prepareDumbProjectDir(bool $withTestVendor = true): string
+    private function composerProjectRemove(): void
     {
-        $projectDir = sys_get_temp_dir().'/'.uniqid('db_tools_', true);
+        $installed = InstalledVersions::getAllRawData();
 
-        $filesystem = new Filesystem();
+        // @phpstan-ignore-next-line
+        unset($installed[0]['vendor-name/pack-example']);
 
-        $filesystem->mkdir($projectDir . '/vendor');
-        if ($withTestVendor) {
-            $filesystem->mirror(\dirname(\dirname(\dirname(__DIR__))) . '/Resources/vendor', $projectDir . '/vendor');
-        }
+        InstalledVersions::reload($installed[0]);
+    }
 
-        return $projectDir;
+    private function composerProjectAdd(): void
+    {
+        $installed = InstalledVersions::getAllRawData();
+
+        $installed[0]['versions']['vendor-name/pack-example'] = [
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '84a55833baf4d2ce3efc1ee302d7acc8d9253c4b',
+            'type' => 'db-tools-bundle-pack',
+            'install_path' => \dirname(__DIR__, 3) . '/Resources/vendor/vendor-name/pack-example',
+            'aliases' => [],
+            'dev_requirement' => false,
+        ];
+
+        InstalledVersions::reload($installed[0]);
     }
 }

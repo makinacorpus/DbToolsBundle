@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+
+* [internal] More efficient anonymizer pack lookup (#165).
+
 ## 1.2.0
 
 * [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
