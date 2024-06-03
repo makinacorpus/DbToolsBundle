@@ -34,10 +34,18 @@ class Format
     public static function time(float $msec): string
     {
         if ($msec > 1000 * 60) {
-            return \sprintf("%d mn %d sec", $msec / 60000, \round(($msec % 60000) / 60000 * 60));
+            return \sprintf(
+                "%d mn %d sec",
+                $msec / 60000,
+                \round((\floor($msec) % 60000) / 60000 * 60)
+            );
         }
         if ($msec > 1000) {
-            return \sprintf('%d sec %d ms', $msec / 1000, \round($msec % 1000));
+            return \sprintf(
+                "%d sec %d ms",
+                $msec / 1000,
+                \round((\floor($msec) % 1000) / 1000)
+            );
         }
         return \round($msec) . ' ms';
     }
