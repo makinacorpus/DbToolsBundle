@@ -189,9 +189,26 @@ abstract class AbstractAnonymizer
             ->columns($columns)
         ;
 
+        // SQL Server supports a maximum of 2100 parameters per query.
+        // This limit probably also exists with other RDBMSs, to avoid
+        // errors, we insert rows each 2000 parameters.
+        $parametersCount = 0;
         foreach ($values as $key => $value) {
             // Allow single raw value when there is only one column.
             $value = (array) $value;
+            $parametersCount += \count($value);
+
+            if ($parametersCount >= 2000) {
+                $insert->executeStatement();
+
+                $insert = $this
+                    ->databaseSession
+                    ->insert($tableName)
+                    ->columns($columns)
+                ;
+                $parametersCount = 0;
+            }
+
             if ($columnCount !== \count($value)) {
                 throw new \InvalidArgumentException(\sprintf(
                     "Row %s in sample list column count (%d) mismatch with table column count (%d)",
