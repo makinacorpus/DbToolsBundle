@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+* [fix] Anonymization - Sample table creation fails if sample is too big with sqlsrv (#174)
+
 ## 1.2.0
 
 * [feature] ⭐️ Add Doctrine DBAL 4.0 compatibility (#140).
