@@ -269,7 +269,7 @@ class Customer
     // of the initial value in the [-percent%, +percent%] interval. // [!code ++]
     // In this example, a value between -10% and 10% of the initial value // [!code ++]
     // will be added to the initial value. // [!code ++]
-    #[Anonymize(type: 'float', options: ['min' => 10, 'max' => 99, 'precision' => 4])] // [!code ++]
+    #[Anonymize(type: 'float', options: ['percent' => 10])] // [!code ++]
     private ?float $size = null;
 
     // ...
