@@ -35,17 +35,17 @@ db_tools:
     # restore_timeout: 2400 # default 1800
 
     # List here tables (per connection) you don't want in your backups
-    #excluded_tables:
+    #backup_excluded_tables:
         #default: ['table1', 'table2']
 
     # Specify here paths to binaries, only if the system can't find them by himself
     # platform are 'mysql', 'postgresql', 'sqlite'
-    #backupper_binaries:
+    #backup_binaries:
         #mariadb: '/usr/bin/mariadb-dump' # default 'mariadb-dump'
         #mysql: '/usr/bin/mysqldump' # default 'mysqldump'
         #postgresql: '/usr/bin/pg_dump' # default 'pg_dump'
         #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
-    #restorer_binaries:
+    #restore_binaries:
         #mariadb: '/usr/bin/mariadb' # default 'mariadb'
         #mysql: '/usr/bin/mysql' # default 'mysql'
         #postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
@@ -66,10 +66,10 @@ db_tools:
     #   - MySQL: None
     #   - PostgreSQL: -j 2 --clean --if-exists --disable-triggers
     #   - SQLite: None
-    #backupper_options:
+    #backup_options:
         #default: ''
         #another_connection: ''
-    #restorer_options:
+    #restore_options:
         #default: ''
         #another_connection: ''
 

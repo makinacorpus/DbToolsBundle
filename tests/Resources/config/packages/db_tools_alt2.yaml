@@ -6,25 +6,25 @@ db_tools:
     backup_expiration_age: '6 months ago'
     backup_timeout: 1800
     restore_timeout: 3200
-    excluded_tables:
+    backup_excluded_tables:
         connection_two: ['table1', 'table2']
 
-    backupper_binaries:
+    backup_binaries:
         mariadb: '/usr/bin/mariadb-dump'
         mysql: '/usr/bin/mysqldump'
         postgresql: '/usr/bin/pg_dump'
         sqlite: '/usr/bin/sqlite3'
-    restorer_binaries:
+    restore_binaries:
         mariadb: '/usr/bin/mariadb'
         mysql: '/usr/bin/mysql'
         postgresql: '/usr/bin/pg_restore'
         sqlite: '/usr/bin/sqlite3'
 
-    backupper_options:
+    backup_options:
         connection_one: '--opt1 val1 -x -y -z --opt2 val2'
         # Let's say we have no options for connection_two.
         #connection_two: ''
-    restorer_options:
+    restore_options:
         connection_one: '-abc -x val1 -y val2'
         connection_two: '-a "Value 1" -bc -d val2 --end'
 

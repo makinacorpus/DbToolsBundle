@@ -26,24 +26,59 @@ final class DbToolsExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
         $loader->load('services.yaml');
 
-        if (isset($config['storage_directory'])) {
-            \trigger_deprecation('makinacorpus/db-tools-bundle', '1.0.1', '"db_tools.storage_directory" configuration option is deprecated and renamed "db_tools.storage.root_dir"');
-            $container->setParameter('db_tools.storage.root_dir', $config['storage_directory']);
-        } else {
+        // @todo Remove in 3.x.
+        $deprecationMap = [
+            'backupper_binaries' => 'backup_binaries',
+            'backupper_options' => 'backup_options',
+            'excluded_tables' => 'backup_excluded_tables',
+            'restorer_binaries' => 'restore_binaries',
+            'restorer_options' => 'restore_options',
+        ];
+        foreach ($deprecationMap as $legacyName => $newName) {
+            if (!empty($config[$legacyName])) {
+                \trigger_deprecation('makinacorpus/db-tools-bundle', '2.0.0', '"db_tools.%s" configuration option is deprecated and renamed "db_tools.%s"', $legacyName, $newName);
+                $config[$newName] = $config[$legacyName];
+            }
+            unset($config[$legacyName]);
+        }
+
+        // Those parameters default values are environment variable defaults
+        // as seen in ../Resources/config/services.yaml. We override parameter
+        // values only if the user explicitely defined it; otherwise it would
+        // prevent environment variables completely.
+        if (isset($config['backup_expiration_age'])) {
+            $container->setParameter('db_tools.backup_expiration_age', $config['backup_expiration_age']);
+        }
+        if (isset($config['backup_options'])) { // @todo Not in env. variables yet.
+            $container->setParameter('db_tools.backup_options', $config['backup_options']);
+        }
+        if (isset($config['backup_timeout'])) {
+            $container->setParameter('db_tools.backup_timeout', $config['backup_timeout']);
+        }
+        if (isset($config['restore_options'])) { // @todo Not in env. variables yet.
+            $container->setParameter('db_tools.restore_options', $config['restore_options']);
+        }
+        if (isset($config['restore_timeout'])) {
+            $container->setParameter('db_tools.restore_timeout', $config['restore_timeout']);
+        }
+        if (isset($config['storage']['root_dir'])) {
             $container->setParameter('db_tools.storage.root_dir', $config['storage']['root_dir']);
         }
 
-        // Backupper
-        $container->setParameter('db_tools.backupper.binaries', $config['backupper_binaries']);
-        $container->setParameter('db_tools.backupper.options', $config['backupper_options']);
-        $container->setParameter('db_tools.backup_expiration_age', $config['backup_expiration_age']);
-        $container->setParameter('db_tools.excluded_tables', $config['excluded_tables'] ?? []);
-        $container->setParameter('db_tools.backup_timeout', $config['backup_timeout']);
+        // Special treatment for binaries, because the backupper and restorer
+        // services await for an array of values.
+        foreach (['backup_binaries', 'restore_binaries'] as $prefix) {
+            foreach (['mariadb', 'mysql', 'postgresql', 'sqlite'] as $vendor) {
+                if (isset($config[$prefix][$vendor])) {
+                    $container->setParameter('db_tools.' . $prefix . '.' . $vendor, $config[$prefix][$vendor]);
+                }
+            }
+        }
 
-        // Restorer
-        $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
-        $container->setParameter('db_tools.restorer.options', $config['restorer_options']);
-        $container->setParameter('db_tools.restore_timeout', $config['restore_timeout']);
+        // Those parameters are NOT in environment variables.
+        // Excluded tables is dependent on the application schema and not
+        // a runtime parameter, its place is not in environment variables.
+        $container->setParameter('db_tools.backup_excluded_tables', $config['backup_excluded_tables'] ?? []);
 
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];
