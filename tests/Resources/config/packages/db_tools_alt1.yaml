@@ -1,25 +1,26 @@
 db_tools:
-    storage_directory: '%kernel.project_dir%/var/backup'
+    storage:
+        root_dir: '%kernel.project_dir%/var/backup'
     backup_expiration_age: '6 months ago'
     backup_timeout: 1200
     restore_timeout: 2400
-    excluded_tables:
+    backup_excluded_tables:
         default: ['table1', 'table2']
 
-    backupper_binaries:
+    backup_binaries:
         mariadb: '/usr/bin/mariadb-dump'
         mysql: '/usr/bin/mysqldump'
         postgresql: '/usr/bin/pg_dump'
         sqlite: '/usr/bin/sqlite3'
-    restorer_binaries:
+    restore_binaries:
         mariadb: '/usr/bin/mariadb'
         mysql: '/usr/bin/mysql'
         postgresql: '/usr/bin/pg_restore'
         sqlite: '/usr/bin/sqlite3'
 
-    backupper_options:
+    backup_options:
         default: '--opt1 val1 -x -y -z --opt2 val2'
-    restorer_options:
+    restore_options:
         default: '-abc -x val1 -y val2'
 
     anonymizer_paths:

@@ -81,6 +81,6 @@ class Storage
 
     protected function getFilenameStrategy(string $connectionName): FilenameStrategyInterface
     {
-        return $this->filenameStrategies[$connectionName] ?? new DefaultFilenameStrategy();
+        return $this->filenameStrategies[$connectionName] ?? $this->filenameStrategies['default'] ?? new DefaultFilenameStrategy();
     }
 }
