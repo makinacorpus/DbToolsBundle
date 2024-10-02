@@ -342,7 +342,7 @@ class Customer
     #[ORM\Column]
     // Will add to the existing date a random interval // [!code ++]
     // in the [-delta, +delta] interval. // [!code ++]
-    #[Anonymize(type: 'date', options: ['delta' => '1 month 15 day')] // [!code ++]
+    #[Anonymize(type: 'date', options: ['delta' => '1 month 15 day'])] // [!code ++]
     private ?\DateTime $birthDate = null;
 
     #[ORM\Column]
@@ -353,7 +353,7 @@ class Customer
 
     #[ORM\Column]
     // And example with absolute dates. // [!code ++]
-    #[Anonymize(type: 'date', options: ['min' => '1789-05-05', 'max' => '2024-03-15', 'format' => 'date')] // [!code ++]
+    #[Anonymize(type: 'date', options: ['min' => '1789-05-05', 'max' => '2024-03-15', 'format' => 'date'])] // [!code ++]
     private ?\DateTime $createdAt = null;
 }
 ```
