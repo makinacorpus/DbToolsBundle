@@ -1,3 +1,42 @@
+parameters:
+    # Environment variables with default option values. All those environment
+    # variables will be used per default, if defined, but will be ignored when
+    # you override the related parameter in the "config/packages/db_tools.yaml"
+    # file.
+    env(DBTOOLS_BACKUP_BINARY_MARIADB): 'mariadb-dump'
+    env(DBTOOLS_BACKUP_BINARY_MYSQL): 'mysqldump'
+    env(DBTOOLS_BACKUP_BINARY_POSTGRESQL): 'pg_dump'
+    env(DBTOOLS_BACKUP_BINARY_SQLITE): 'sqlite3'
+    env(DBTOOLS_BACKUP_EXPIRATION_AGE): '3 months ago'
+    #env(DBTOOLS_BACKUP_OPTIONS): ~
+    env(DBTOOLS_BACKUP_TIMEOUT): '600'
+    env(DBTOOLS_RESTORE_BINARY_MARIADB): 'mariadb'
+    env(DBTOOLS_RESTORE_BINARY_MYSQL): 'mysql'
+    env(DBTOOLS_RESTORE_BINARY_POSTGRESQL): 'pg_restore'
+    env(DBTOOLS_RESTORE_BINARY_SQLITE): 'sqlite3'
+    #env(DBTOOLS_RESTORE_OPTIONS): ~
+    env(DBTOOLS_RESTORE_TIMEOUT): '1800'
+    env(DBTOOLS_STORAGE_FILENAME_STRATEGY): datetime
+    env(DBTOOLS_STORAGE_ROOT_DIR): "%kernel.project_dir%/var/db_tools"
+
+    # Container parameters that maps per default on the environment variables
+    # and will be injected to services. Those parameter values will be overriden
+    # by user given values from the "config/packages/db_tools.yaml" file in the
+    # MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension
+    # class.
+    db_tools.backup_binaries.mariadb: "%env(resolve:DBTOOLS_BACKUP_BINARY_MARIADB)%"
+    db_tools.backup_binaries.mysql: "%env(resolve:DBTOOLS_BACKUP_BINARY_MYSQL)%"
+    db_tools.backup_binaries.postgresql: "%env(resolve:DBTOOLS_BACKUP_BINARY_POSTGRESQL)%"
+    db_tools.backup_binaries.sqlite: "%env(resolve:DBTOOLS_BACKUP_BINARY_SQLITE)%"
+    db_tools.backup_expiration_age: "%env(DBTOOLS_BACKUP_EXPIRATION_AGE)%"
+    db_tools.backup_timeout: "%env(int:DBTOOLS_BACKUP_TIMEOUT)%"
+    db_tools.restore_binaries.mariadb: "%env(resolve:DBTOOLS_RESTORE_BINARY_MARIADB)%"
+    db_tools.restore_binaries.mysql: "%env(resolve:DBTOOLS_RESTORE_BINARY_MYSQL)%"
+    db_tools.restore_binaries.postgresql: "%env(resolve:DBTOOLS_RESTORE_BINARY_POSTGRESQL)%"
+    db_tools.restore_binaries.sqlite: "%env(resolve:DBTOOLS_RESTORE_BINARY_SQLITE)%"
+    db_tools.restore_timeout: '%env(int:DBTOOLS_RESTORE_TIMEOUT)%'
+    db_tools.storage.root_dir: '%env(resolve:DBTOOLS_STORAGE_ROOT_DIR)%'
+
 services:
     # Commands
     db_tools.command.anonymization.run:
@@ -72,9 +111,13 @@ services:
         class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory
         arguments:
             - '@db_tools.database_session.registry'
-            - '%db_tools.backupper.binaries%'
-            - '%db_tools.backupper.options%'
-            - '%db_tools.excluded_tables%'
+            -
+                mariadb: '%db_tools.backup_binaries.mariadb%'
+                mysql: '%db_tools.backup_binaries.mysql%'
+                postgresql: '%db_tools.backup_binaries.postgresql%'
+                sqlite: '%db_tools.backup_binaries.sqlite%'
+            - '%db_tools.backup_options%'
+            - '%db_tools.backup_excluded_tables%'
             - '@logger'
         tags: [{ name: 'monolog.logger', channel: 'db_tools_backup' }]
 
@@ -83,8 +126,12 @@ services:
         class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory
         arguments:
             - '@db_tools.database_session.registry'
-            - '%db_tools.restorer.binaries%'
-            - '%db_tools.restorer.options%'
+            -
+                mariadb: '%db_tools.restore_binaries.mariadb%'
+                mysql: '%db_tools.restore_binaries.mysql%'
+                postgresql: '%db_tools.restore_binaries.postgresql%'
+                sqlite: '%db_tools.restore_binaries.sqlite%'
+            - '%db_tools.restore_options%'
             - '@logger'
         tags: [{ name: monolog.logger, channel: db_tools_restoration }]
 
