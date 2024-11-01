@@ -202,6 +202,7 @@ class RestoreCommand extends Command
     private function listBackups(): int
     {
         $this->io->section('Backups list');
+        $this->restorer = $this->restorerFactory->create($this->connectionName);
 
         $backupLists = $this->storage->listBackups(
             $this->connectionName,

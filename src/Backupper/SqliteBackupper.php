@@ -54,7 +54,7 @@ class SqliteBackupper extends AbstractBackupper
 
         $tables = [];
         foreach ($query->executeQuery() as $table) {
-            if(!\in_array($table['name'], $this->excludedTables)) {
+            if (!\in_array($table['name'], $this->excludedTables)) {
                 $tables[] = $table['name'];
             }
         }
