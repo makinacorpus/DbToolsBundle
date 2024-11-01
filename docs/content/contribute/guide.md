@@ -47,6 +47,12 @@ When you finish to develop, stop the stack with:
 ./dev.sh down
 ```
 
+If you need to clean up everything (containers, images and volumes), you can use:
+
+```sh
+./dev.sh clean
+```
+
 To learn more about `dev.sh` script, launch:
 
 ```sh
