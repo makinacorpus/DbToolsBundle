@@ -71,6 +71,12 @@ do_down() {
     do_docker_compose down
 }
 
+# Clean all containers, images and volumes
+do_clean() {
+    section_title "Cleanup containers and images"
+    do_docker_compose down --rmi all --volumes --remove-orphans
+}
+
 do_composer_update() {
     echo 'composer update'
     if [[ -z "${LOWEST}" ]]; then
@@ -325,6 +331,7 @@ do_notice() {
     printf "\n              ${GREEN}./dev.sh test_all --filter AnonymizatorFactoryTest${NC}"
     printf "\n  - ${GREEN}test${NC}: Run PHPUnit tests for a specific database vendors or version"
     printf "\n  - ${GREEN}unittest${NC}: Run PHPUnit tests without any database vendor"
+    printf "\n  - ${GREEN}clean${NC}: Cleanup containers and images"
     printf "\n  - ${GREEN}notice${NC}: Display this help"
     printf "\n"
     printf "\nAvailable options:"
@@ -341,6 +348,6 @@ action=${1-}
 if [[ -n $@ ]];then shift;fi
 
 case $action in
-    build|up|down|ps|checks|test_all|unittest|test|composer_update|notice) do_$action "$@";;
+    build|up|down|ps|checks|test_all|unittest|test|composer_update|notice|clean) do_$action "$@";;
     *) do_notice;;
 esac
