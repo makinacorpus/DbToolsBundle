@@ -29,7 +29,7 @@ class DbToolsPass implements CompilerPassInterface
             }
 
             if (isset($config['anonymization']) && isset($config['anonymization']['yaml'])) {
-                foreach($config['anonymization']['yaml'] as $connectionName => $file) {
+                foreach ($config['anonymization']['yaml'] as $connectionName => $file) {
                     $loaderId = $this->registerYamlLoader($file, $connectionName, $container);
                     $anonymazorFactoryDef->addMethodCall('addConfigurationLoader', [new Reference($loaderId)]);
                 }

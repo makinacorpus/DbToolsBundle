@@ -8,16 +8,6 @@ hero:
     light: ./logo.svg
     dark: ./logo-d.svg
     alt: DbToolsBundle by Makina Corpus
-  actions:
-    - theme: brand
-      text: Get Started
-      link: ./getting-started/introduction
-    - theme: alt
-      text: View on GitHub
-      link: https://github.com/makinacorpus/DbToolsBundle
-    - theme: alt
-      text: View on Packagist
-      link: https://packagist.org/packages/makinacorpus/db-tools-bundle
 
 features:
   - icon:
