@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Command;
 
-use MakinaCorpus\DbToolsBundle\Test\FunctionalKernelTestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Tester\CommandTester;
 use MakinaCorpus\DbToolsBundle\Command\RestoreCommand;
 use MakinaCorpus\DbToolsBundle\Restorer\AbstractRestorer;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
+use MakinaCorpus\DbToolsBundle\Test\FunctionalKernelTestCase;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 
 class RestoreCommandTest extends FunctionalKernelTestCase
 {
@@ -33,9 +33,10 @@ class RestoreCommandTest extends FunctionalKernelTestCase
     }
 
     /**
-     * Creates a command tester with mocked dependencies for listBackups method
+     * Creates a command tester with mocked dependencies for listBackups method.
      *
-     * @param array $backupFiles List of backup files to be returned by storage
+     * @param array $backupFiles
+     *   List of backup files to be returned by storage.
      */
     private function createCommandTester(array $backupFiles = []): CommandTester
     {
