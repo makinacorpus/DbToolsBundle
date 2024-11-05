@@ -2,7 +2,7 @@
 
 ## Next
 
-* [feature] ⭐️ Add `bin/db-tools` CLI command allowing standalone usage (#153).
+* [feature] 🌟 Add `bin/db-tools` CLI command allowing standalone usage (#153).
 * [experimental] ⭐️ Add `bin/compile` CLI command for building a PHAR file (#154).
 * [bc] Password anonymizer `symfony/password-hasher` dependency is now optional and must be manually installed (#155).
 * [fix] Property must not be accessed before initialization error when using `--list` option (#183, @iNem0o).
