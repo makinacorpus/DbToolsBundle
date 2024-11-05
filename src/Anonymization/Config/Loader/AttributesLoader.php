@@ -38,7 +38,7 @@ class AttributesLoader implements LoaderInterface
             }
 
             $embeddedClassesConfig = [];
-            foreach($metadata->embeddedClasses as $name => $embeddedClass) {
+            foreach ($metadata->embeddedClasses as $name => $embeddedClass) {
                 $className = $embeddedClass['class'];
                 $embeddedClassesConfig[$className] = [];
                 $reflexionClass = new \ReflectionClass($className);
