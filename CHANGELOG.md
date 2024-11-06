@@ -6,6 +6,13 @@
 * [experimental] ⭐️ Add `bin/compile` CLI command for building a PHAR file (#154).
 * [bc] Password anonymizer `symfony/password-hasher` dependency is now optional and must be manually installed (#155).
 * [fix] Property must not be accessed before initialization error when using `--list` option (#183, @iNem0o).
+* [deprecation] ⚠️ `excluded_tables` configuration option is deprecated, use `backup_excluded_tables` instead.
+* [deprecation] ⚠️ `backupper_binaries` configuration option is deprecated, use `backup_binaries` instead.
+* [deprecation] ⚠️ `restorer_binaries` configuration option is deprecated, use `restore_binaries` instead.
+* [deprecation] ⚠️ `backupper_options` configuration option is deprecated, use `backup_options` instead.
+* [deprecation] ⚠️ `restorer_options` configuration option is deprecated, use `restore_options` instead.
+* [deprecation] ⚠️ `MakinaCorpus\DbToolsBundle\DbToolsBundle` class is renamed, please use `MakinaCorpus\DbToolsBundle\Bridge\Symfony\DbToolsBundle` instead.
+* [removal] ⚠️ `storage_directory` configuration option is removed, use `storage.root_dir` instead.
 * [internal] All Doctrine related dependencies are now optional (#155).
 * [internal] Move Symfony related code into the `src/Bridge/Symfony` folder and associated namespace (#155).
 * [internal] More efficient anonymizer pack lookup (#165).
@@ -22,6 +29,7 @@
 * [feature] ⭐️ Anonymization - Add Doctrine entity joined inheritance support (#160)
 * [feature] ⭐️ Anonymization - Finalized and improved IBAN/BIC anonymizer (#4)
 * [fix] Restored MySQL 5.7 support (#124)
+* [deprecation] ⚠️ `storage_directory` configuration option is deprecated, use `storage.root_dir` instead.
 * [internal] Remove `doctrine/dbal` dependency from all code except the database session registry (#142).
 * [internal] Introduce `DatabaseSessionRegistry` as single entry point for plugging-in database (#142).
 * [internal] Use `makinacorpus/query-builder` schema manager for DDL alteration (#140).
