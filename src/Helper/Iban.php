@@ -121,7 +121,7 @@ class Iban
         $parts = \str_split($number, 7);
         $rest = 0;
         foreach ($parts as $part) {
-            $rest = ((int)($rest . $part)) % 97;
+            $rest = (int)($rest . $part) % 97;
         }
         return (int)$rest;
     }
