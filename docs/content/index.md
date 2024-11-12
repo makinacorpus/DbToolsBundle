@@ -4,10 +4,6 @@ layout: home
 hero:
   name: DbToolsBundle
   text: Backup, restore and anonymize your data
-  image:
-    light: ./logo.svg
-    dark: ./logo-d.svg
-    alt: DbToolsBundle by Makina Corpus
 
 features:
   - icon:
