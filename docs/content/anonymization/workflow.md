@@ -24,7 +24,7 @@ production data on your local environment.
 
 Let's assume the environment we have besides *production* is the *preprod* environment.
 
-![The GDPR workflow](/public/gdpr-workflow.gif)
+![The GDPR workflow](/gdpr-workflow.gif)
 
 1. Run `console db-tools:backup` on *production* environment or
    choose an existing backup with `console db-tools:restore --list`,

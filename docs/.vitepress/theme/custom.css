@@ -20,15 +20,15 @@
 }
 
 .dark {
-  --vp-c-brand: #bec931;
-  --vp-c-brand-1: #bec931;
-  --vp-c-brand-2: #bec931;
-  --vp-c-green-light: #ced65c;
-  --vp-c-brand-light: #ced65c;
-  --vp-c-brand-lighter: #ced65c;
-  --vp-c-brand-dark: #D0DD2A;
-  --vp-c-brand-darker: #D0DD2A;
-  --vp-c-text-code: #bec931;
+  --vp-c-brand: #50AF55;
+  --vp-c-brand-1: #50AF55;
+  --vp-c-brand-2: #50AF55;
+  --vp-c-green-light: #9fd6a2;
+  --vp-c-brand-light: #9fd6a2;
+  --vp-c-brand-lighter: #e4f4e4;
+  --vp-c-brand-dark: #2e6731;
+  --vp-c-brand-darker: #234426;
+  --vp-c-text-code: #50AF55;
   --vp-makina-logo-text: white;
 }
 
