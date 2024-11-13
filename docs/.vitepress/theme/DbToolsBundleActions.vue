@@ -56,9 +56,14 @@ onMounted(() => {
 <style scoped>
 .actions {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   margin: -6px;
   padding-top: 24px;
+
+  .action:first-child {
+    flex-basis: 100%;
+  }
 }
 
 .actions small {
@@ -68,12 +73,15 @@ onMounted(() => {
 @media (min-width: 640px) {
   .actions {
     padding-top: 32px;
+    .action:first-child {
+      flex-basis: auto;
+    }
   }
 }
 
 @media (min-width: 960px) {
-  .VPHero.has-image .actions {
-    justify-content: flex-start;
+   .actions {
+    justify-content: start;
   }
 }
 

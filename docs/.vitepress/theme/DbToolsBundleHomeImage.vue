@@ -107,10 +107,9 @@
 
 <style scoped>
 svg {
-  margin-top: -2rem;
-  margin-bottom: -4rem;
+  margin-top: 1rem;
+  margin-bottom: -1rem;
 }
-
 .dark ellipse {
   stroke: #DEDED6;
 }
@@ -135,4 +134,10 @@ svg {
   }
 }
 
+@media (min-width: 960px) {
+  svg {
+    margin-top: -2rem;
+    margin-bottom: -4rem;
+  }
+}
 </style>
