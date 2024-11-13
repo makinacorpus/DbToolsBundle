@@ -1,0 +1,10 @@
+/.github export-ignore
+/docker export-ignore
+/docs export-ignore
+/tests export-ignore
+.php-cs-fixer.dist.php export-ignore
+.readthedocs.yaml export-ignore
+dev.sh export-ignore
+docker-compose.yaml export-ignore
+phpstan.neon.dist export-ignore
+phpunit.xml.dist export-ignore
