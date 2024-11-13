@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
     paths:
+      - .gitattributes
       - .github/workflows/build-and-publish-image.yml
       - docker/ci-image/Dockerfile
 

@@ -12,6 +12,7 @@ on:
     branches:
       - "main"
     paths:
+      - .gitattributes
       - .github/workflows/coding-standards.yml
       - composer.*
       - .php-cs-fixer.dist.php
