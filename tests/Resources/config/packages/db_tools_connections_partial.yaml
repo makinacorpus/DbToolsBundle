@@ -1,0 +1,22 @@
+#
+# Tests that, when using a partial connection, that unset values resolve from the defaults.
+#
+db_tools:
+    backup_binary: '/path/to/dump'
+    backup_excluded_tables: ['table1', 'table2']
+    backup_expiration_age: '2 minutes ago'
+    backup_options: '--dump'
+    backup_timeout: 135
+    connections:
+        connection_one:
+            storage_directory: '/one/storage'
+            storage_filename_strategy: one_strategy
+            backup_expiration_age: '1 minutes ago'
+            restore_timeout: 23
+            backup_excluded_tables: ['one1']
+    default_connection: connection_one
+    restore_binary: '/path/to/restore'
+    restore_options: '--restore'
+    restore_timeout: 357
+    storage_directory: '%kernel.project_dir%/var/db_tools'
+    storage_filename_strategy: datetime

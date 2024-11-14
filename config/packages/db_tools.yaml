@@ -1,96 +1,104 @@
 db_tools:
     # Where to put generated backups.
-    #storage:
-        # Root directory of the backup storage manager. Default filename
-        # strategy will always use this folder as root path.
-        #root_dir: '%kernel.project_dir%/var/db_tools'
+    # Root directory of the backup storage manager. Default filename
+    # strategy will always use this folder as root path.
+    #storage_directory: '%kernel.project_dir%/var/db_tools'
 
-        # Filename strategies. You may specify one strategy for each doctrine
-        # connection. Keys are doctrine connection names. Values are strategy
-        # names, "default" (or null) or omitting the connection will use the
-        # default implementation.
-        # If you created and registered a custom one into the container as a
-        # service, you may simply set the service identifier. If no service
-        # exists, and your implementation does not require parameters, simply
-        # set the class name.
-        #filename_strategy:
-            # Backup filename strategy.
-            # "default" is an alias of "datetime"
-            #default: default
-            # "datetime" implementation is "%db_tools.storage.root_dir%/YYYY/MM/<connection-name>-<datestamp>.<ext>"
-            #other_connection_strategy: datetime
-            # Example of using a service name:
-            #yet_another_connection: app.db_tools.filename.custom_strategy
-            # Or a classe name:
-            #another_one: App\DbTools\Storage\MyCustomStrategy
+    # Filename strategies. You may specify one strategy for each doctrine
+    # connection. Keys are doctrine connection names. Values are strategy
+    # names, "default" (or null) or omitting the connection will use the
+    # default implementation.
+    # If you created and registered a custom one into the container as a
+    # service, you may simply set the service identifier. If no service
+    # exists, and your implementation does not require parameters, simply
+    # set the class name.
+    # Allowed values are:
+    #  - "default": alias of "datetime".
+    #  - "datetime": implementation is "%db_tools.storage_directory%/YYYY/MM/<connection-name>-<datestamp>.<ext>".
+    #  - CLASS_NAME: a class name to use that implements a strategy.
+    #  - SERVICE_ID: A service identifier registered in container that implements a strategy.
+    #storage_filename_strategy: default
 
-    # When old backups are considered obsolete
+    # When old backups are considered obsolete.
     # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
     #backup_expiration_age: '6 months ago' # default '3 months ago'
 
-    # Timeout for backups.
-    # backup_timeout: 1200 # default 600
+    # Default timeout for backup process.
+    #backup_timeout: 1200 # default 600
 
-    # Timeout for restores.
-    # restore_timeout: 2400 # default 1800
+    # Default timeout for restore process.
+    #restore_timeout: 2400 # default 1800
 
-    # List here tables (per connection) you don't want in your backups
-    #excluded_tables:
-        #default: ['table1', 'table2']
+    # List here tables (you don't want in your backups.
+    # If you have more than one connection, it is strongly advised to configure
+    # this for each connection instead.
+    #backup_excluded_tables: ['table1', 'table2']
 
-    # Specify here paths to binaries, only if the system can't find them by himself
-    # platform are 'mysql', 'postgresql', 'sqlite'
-    #backupper_binaries:
-        #mariadb: '/usr/bin/mariadb-dump' # default 'mariadb-dump'
-        #mysql: '/usr/bin/mysqldump' # default 'mysqldump'
-        #postgresql: '/usr/bin/pg_dump' # default 'pg_dump'
-        #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
-    #restorer_binaries:
-        #mariadb: '/usr/bin/mariadb' # default 'mariadb'
-        #mysql: '/usr/bin/mysql' # default 'mysql'
-        #postgresql: '/usr/bin/pg_restore' # default 'pg_restore'
-        #sqlite: '/usr/bin/sqlite3' # default 'sqlite3'
+    # Specify here paths to backup and restore binaries and command line options.
+    # Warning: this will apply to all connections disregarding their database
+    # vendor. If you have more than one connection and if they use different
+    # database vendors or versions, please configure those for each connection
+    # instead.
+    # Default values depends upon vendor and are documented at
+    # https://dbtoolsbundle.readthedocs.io/en/stable/configuration.html
+    #backup_binary: '/usr/bin/pg_dump'
+    #backup_options: '-Z 5 --lock-wait-timeout=120'
+    #restore_binary: '/usr/bin/pg_restore'
+    #restore_options: '-j 2 --clean --if-exists --disable-triggers'
 
-    # Default options to pass to the binary when backing up or restoring
-    # a database. Those options must be defined per connection.
-    # If you do not define some default options, here or by using the
-    # "--extra-options" option when invoking the command, the following
-    # ones will be used according to the database vendor:
-    # - When backing up:
-    #   - MariaDB: --no-tablespaces
-    #   - MySQL: --no-tablespaces
-    #   - PostgreSQL: -Z 5 --lock-wait-timeout=120
-    #   - SQLite: -bail
-    # - When restoring:
-    #   - MariaDB: None
-    #   - MySQL: None
-    #   - PostgreSQL: -j 2 --clean --if-exists --disable-triggers
-    #   - SQLite: None
-    #backupper_options:
-        #default: ''
-        #another_connection: ''
-    #restorer_options:
-        #default: ''
-        #another_connection: ''
+    # For advanced usage, you may also override any parameter for each connection.
+    # Each key is a connection name, all parameters above are allowed for each
+    # unique connection.
+    # Keys are doctrine connection names.
+    #connections:
+    #    connection_one:
+    #        # Complete list of accepted parameters follows.
+    #        url: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+    #        backup_binary: /usr/local/bin/vendor-one-dump
+    #        backup_excluded_tables: ['table_one', 'table_two']
+    #        backup_expiration_age: '1 month ago'
+    #        backup_options: --no-table-lock
+    #        backup_timeout: 2000
+    #        restore_binary: /usr/local/bin/vendor-one-restore
+    #        restore_options: --disable-triggers --other-option
+    #        restore_timeout: 5000
+    #        storage_directory: /path/to/storage
+    #        storage_filename_strategy: datetime
+    #    connection_two:
+    #        # ...
 
     # Update this configuration if you want to look for anonymizers in a custom folder.
     # These are default paths that will always be registered even if you override
-    # the setting and don't repeat them:
+    # the setting so please don't repeat them:
     #anonymizer_paths:
         #- '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer/Core'
         #- '%kernel.project_dir%/src/Anonymization/Anonymizer'
 
-    # Anonymization configuration.
+    # For simple needs, you may simply write the anonymization configuration here.
+    # Keys are connection names, values are structures which are identical to what
+    # you may find in the "anonymizations.sample.yaml" example.
     #anonymization:
-        # If you want to configure anonymization with attributes on
-        # Doctrine entities, you have nothing to add here: if doctrine/orm
-        # is available the DbToolsBundle will automatically look for it.
-        #
-        # If you want to load configuration from a yaml:
-        # 1/ If you want to configure anonymization only for the default
-        # DBAL connection, declare it like this:
-        #yaml: '%kernel.project_dir%/config/anonymizations.yaml'
-        # 2/ If you use multiple connections, declare each configuration like this:
-        #yaml:
-            #- connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
-            #- connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
+    #    connection_one:
+    #        table1:
+    #            column1:
+    #                anonymizer: anonymizer_name
+    #                # ... anonymizer specific options...
+    #            column2:
+    #            # ...
+    #        table2:
+    #            # ...
+    #    connection_two:
+    #        # ...
+
+    # You can for organisation purpose delegate anonymization config into extra
+    # YAML configuration files, and simply reference them here.
+    # Pathes can be either relative or absolute. Relative paths are relative to
+    # the workdir option if specified, or from this configuration file directory
+    # otherwise.
+    # See the "anonymizations.sample.yaml" in this folder for an example.
+    #anonymization_files:
+    #    connection_one: '%kernel.project_dir%/config/anonymization/connection_one.yaml'
+    #    connection_two: '%kernel.project_dir%/config/anonymization/connection_two.yaml'
+
+    # If you have only one connection, you can adopt the following syntax.
+    #anonymization_files: '%kernel.project_dir%/config/anonymizations.yaml'

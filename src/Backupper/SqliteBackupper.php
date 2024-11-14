@@ -37,6 +37,12 @@ class SqliteBackupper extends AbstractBackupper
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'sqlite3';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '-bail';

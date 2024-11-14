@@ -3,7 +3,18 @@
 ## Next
 
 * [feature] 🌟 Add `bin/db-tools` CLI command allowing standalone usage (#153).
+* [feature] ⭐️ The CLI tool can run without configuration using only environment variables (#191).
+* [feature] ⭐️ All global options can now be configured on a per-connection basis in `connections.NAME.OPTION` (#191).
+* [feature] 🌟 In both CLI and Symfony, the `anonymyzation` configuration option may now directly hold the complete anonymization configuration without requiring an additional file. (#191).
 * [experimental] ⭐️ Add `bin/compile` CLI command for building a PHAR file (#154).
+* [deprecation] `anonymization.yaml` is replaced by `anonymization_files` (#191).
+* [deprecation] `excluded_tables` is replaced by either `backup_excluded_tables` or `connections.NAME.backup_excluded_tables` (#191).
+* [deprecation] `storage.filename_strategy` is replaced by either `storage_filename_strategy` or `connections.NAME.filename_strategy` (#191).
+* [deprecation] `storage.root_dir` is replaced by either `storage_directory` or `connections.NAME.storage_directory` (#191).
+* [bc] `backupper_binaries` (array) is replaced by either `backup_binary` (string) or `connections.NAME.backup_binary` (string) (#191).
+* [bc] `backupper_options` (array) is replaced by either `backup_options` (string) or `connections.NAME.backup_options` (string) (#191).
+* [bc] `restorer_binaries` (array) is replaced by either `restore_binary` (string) or `connections.NAME.restore_binary` (string) (#191).
+* [bc] `restorer_options` (array) is replaced by either `restore_options` (string) or `connections.NAME.restore_options` (string) (#191).
 * [bc] Password anonymizer `symfony/password-hasher` dependency is now optional and must be manually installed (#155).
 * [fix] Property must not be accessed before initialization error when using `--list` option (#183, @iNem0o).
 * [internal] All Doctrine related dependencies are now optional (#155).

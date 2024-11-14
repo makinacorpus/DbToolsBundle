@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection;
 
+use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
 use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 
 final class DbToolsExtension extends Extension
 {
@@ -21,29 +22,52 @@ final class DbToolsExtension extends Extension
     {
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
+
+        $config = DbToolsConfiguration::fixLegacyOptions($config);
         $config = DbToolsConfiguration::appendPostConfig($config);
 
         $loader = new YamlFileLoader($container, new FileLocator(\dirname(__DIR__).'/Resources/config'));
         $loader->load('services.yaml');
 
-        if (isset($config['storage_directory'])) {
-            \trigger_deprecation('makinacorpus/db-tools-bundle', '1.0.1', '"db_tools.storage_directory" configuration option is deprecated and renamed "db_tools.storage.root_dir"');
-            $container->setParameter('db_tools.storage.root_dir', $config['storage_directory']);
-        } else {
-            $container->setParameter('db_tools.storage.root_dir', $config['storage']['root_dir']);
+        $configDef = new Definition();
+        $configDef->setClass(Configuration::class);
+        $configDef->setArguments([
+            '$backupBinary' => $config['backup_binary'] ?? '%env(resolve:DBTOOLS_BACKUP_BINARY)%',
+            '$backupExcludedTables' => $config['backup_excluded_tables'] ?? null, // new Parameter('env(resolve:array:DBTOOLS_BACKUP_EXCLUDED_TABLES)'), // @todo
+            '$backupExpirationAge' => $config['backup_expiration_age'] ?? '%env(resolve:string:DBTOOLS_BACKUP_EXPIRATION_AGE)%',
+            '$backupOptions' => $config['backup_options'] ?? '%env(resolve:DBTOOLS_BACKUP_OPTIONS)%',
+            '$backupTimeout' => $config['backup_timeout'] ?? '%env(int:DBTOOLS_BACKUP_TIMEOUT)%',
+            '$parent' => null, // For Symfony 6.x.
+            '$restoreBinary' => $config['restore_binary'] ?? '%env(resolve:DBTOOLS_RESTORE_BINARY)%',
+            '$restoreOptions' => $config['restore_options'] ?? '%env(resolve:DBTOOLS_RESTORE_OPTIONS)%',
+            '$restoreTimeout' => $config['restore_timeout'] ?? '%env(int:DBTOOLS_RESTORE_TIMEOUT)%',
+            '$storageDirectory' => $config['storage_directory'] ?? '%env(resolve:DBTOOLS_STORAGE_DIRECTORY)%',
+            '$storageFilenameStrategy' => $config['storage_filename_strategy'] ?? '%env(resolve:DBTOOLS_STORAGE_FILENAME_STRATEGY)%',
+        ]);
+        $container->setDefinition('db_tools.configuration.default', $configDef);
+
+        $connectionDefs = [];
+        foreach ($config['connections'] as $name => $data) {
+            $connConfigDef = new Definition();
+            $connConfigDef->setClass(Configuration::class);
+            $connConfigDef->setArguments([
+                '$backupBinary' => $data['backup_binary'] ?? null,
+                '$backupExcludedTables' => $data['backup_excluded_tables'] ?? null,
+                '$backupExpirationAge' => $data['backup_expiration_age'] ?? null,
+                '$backupOptions' => $data['backup_options'] ?? null,
+                '$backupTimeout' => $data['backup_timeout'] ?? null,
+                '$restoreBinary' => $data['restore_binary'] ?? null,
+                '$restoreOptions' => $data['restore_options'] ?? null,
+                '$restoreTimeout' => $data['restore_timeout'] ?? null,
+                '$parent' => new Reference('db_tools.configuration.default'),
+                '$storageDirectory' => $data['storage_directory'] ?? null,
+                '$storageFilenameStrategy' => $data['storage_filename_strategy'] ?? null,
+            ]);
+            $container->setDefinition('db_tools.configuration.connection.' . $name, $connConfigDef);
+            $connectionDefs[$name] = new Reference('db_tools.configuration.connection.' . $name);
         }
 
-        // Backupper
-        $container->setParameter('db_tools.backupper.binaries', $config['backupper_binaries']);
-        $container->setParameter('db_tools.backupper.options', $config['backupper_options']);
-        $container->setParameter('db_tools.backup_expiration_age', $config['backup_expiration_age']);
-        $container->setParameter('db_tools.excluded_tables', $config['excluded_tables'] ?? []);
-        $container->setParameter('db_tools.backup_timeout', $config['backup_timeout']);
-
-        // Restorer
-        $container->setParameter('db_tools.restorer.binaries', $config['restorer_binaries']);
-        $container->setParameter('db_tools.restorer.options', $config['restorer_options']);
-        $container->setParameter('db_tools.restore_timeout', $config['restore_timeout']);
+        $container->getDefinition('db_tools.configuration.registry')->setArguments([new Reference('db_tools.configuration.default'), $connectionDefs]);
 
         // Validate user-given anonymizer paths.
         $anonymizerPaths = $config['anonymizer_paths'];
@@ -83,13 +107,13 @@ final class DbToolsExtension extends Extension
             }
         }
         if ($strategies) {
-            $container->getDefinition('db_tools.storage')->setArgument(2, $strategies);
+            $container->getDefinition('db_tools.storage')->setArgument(1, $strategies);
         }
     }
 
     #[\Override]
     public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
     {
-        return new DbToolsConfiguration();
+        return new DbToolsConfiguration(true, false);
     }
 }

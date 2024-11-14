@@ -1,0 +1,11 @@
+#
+# Deprecated but yet supported configuration options in ^2.0.
+#
+# Conflicts between old and new name will raise exceptions.
+#
+db_tools:
+    connections:
+        connection_one:
+            backup_excluded_tables: ['one3']
+    excluded_tables:
+        connection_one: ['one1', 'one2']

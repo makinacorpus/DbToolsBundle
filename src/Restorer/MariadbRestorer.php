@@ -61,6 +61,12 @@ class MariadbRestorer extends AbstractRestorer
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'mariadb';
+    }
+
+    #[\Override]
     public function getExtension(): string
     {
         return 'sql';

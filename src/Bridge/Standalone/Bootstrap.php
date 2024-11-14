@@ -7,16 +7,20 @@ namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 use Composer\InstalledVersions;
 use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\ArrayLoader;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\YamlLoader;
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsConfiguration;
-use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizeCommand;
-use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand;
-use MakinaCorpus\DbToolsBundle\Command\Anonymization\CleanCommand;
-use MakinaCorpus\DbToolsBundle\Command\Anonymization\ConfigDumpCommand;
 use MakinaCorpus\DbToolsBundle\Command\BackupCommand;
 use MakinaCorpus\DbToolsBundle\Command\CheckCommand;
 use MakinaCorpus\DbToolsBundle\Command\RestoreCommand;
 use MakinaCorpus\DbToolsBundle\Command\StatsCommand;
+use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizeCommand;
+use MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand;
+use MakinaCorpus\DbToolsBundle\Command\Anonymization\CleanCommand;
+use MakinaCorpus\DbToolsBundle\Command\Anonymization\ConfigDumpCommand;
+use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\ConfigurationException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
@@ -75,9 +79,13 @@ class Bootstrap
         // We need to parse a few arguments prior running the console
         // application in order to setup commands. This is hackish but
         // should work.
+        // @todo This does not work, fix it.
         $config = $configFiles = [];
         if ($input->hasOption('config')) {
             foreach ((array) $input->getOption('config') as $filename) {
+                if ($output->isVerbose()) {
+                    $output->writeln('Using configuration file: ' . $filename);
+                }
                 $configFiles[] = $filename;
             }
         }
@@ -190,22 +198,56 @@ class Bootstrap
         $logger ?? new NullLogger();
         $config = self::configParse($config, $configFiles, $logger);
 
-        $databaseSessionRegistry = self::createDatabaseSessionRegistry($config);
+        $default = new Configuration(
+            backupBinary: $config['backup_binary'] ?? null,
+            backupExcludedTables: $config['backup_excluded_tables'] ?? null,
+            backupExpirationAge: $config['backup_expiration_age'] ?? null,
+            backupOptions: $config['backup_options'] ?? null,
+            backupTimeout: $config['backup_timeout'] ?? null,
+            restoreBinary: $config['restore_binary'] ?? null,
+            restoreOptions: $config['restore_options'] ?? null,
+            restoreTimeout: $config['restore_timeout'] ?? null,
+            storageDirectory: $config['storage_directory'] ?? null,
+            storageFilenameStrategy: $config['storage_filename_strategy'] ?? null,
+        );
+
+        $connections = [];
+        foreach (($config['connections'] ?? []) as $name => $data) {
+            $connections[$name] = new Configuration(
+                backupBinary: $data['backup_binary'] ?? null,
+                backupExcludedTables: $data['backup_excluded_tables'] ?? null,
+                backupExpirationAge: $data['backup_expiration_age'] ?? null,
+                backupOptions: $data['backup_options'] ?? null,
+                backupTimeout: $data['backup_timeout'] ?? null,
+                restoreBinary: $data['restore_binary'] ?? null,
+                restoreOptions: $data['restore_options'] ?? null,
+                restoreTimeout: $data['restore_timeout'] ?? null,
+                parent: $default,
+                storageDirectory: $data['storage_directory'] ?? null,
+                storageFilenameStrategy: $data['storage_filename_strategy'] ?? null,
+                url: $data['url'] ?? null,
+            );
+        }
+
+        $configRegistry = new ConfigurationRegistry($default, $connections, $config['default_connection'] ?? null);
+
+        $databaseSessionRegistry = self::createDatabaseSessionRegistry($configRegistry);
 
         $anonymizerRegistry = self::createAnonymizeRegistry($config);
         $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
 
-        $backupperBinaries = $config['backupper_binaries'];
-        $backupperExcludedTables = $config['excluded_tables'] ?? [];
-        $backupperOptions = $config['backupper_options'];
-        $backupperFactory = new BackupperFactory($databaseSessionRegistry, $backupperBinaries, $backupperOptions, $backupperExcludedTables, $logger);
+        foreach (($config['anonymization_files'] ?? []) as $connectionName => $file) {
+            $anonymizatorFactory->addConfigurationLoader(new YamlLoader($file, $connectionName));
+        }
+        foreach (($config['anonymization'] ?? []) as $connectionName => $array) {
+            $anonymizatorFactory->addConfigurationLoader(new ArrayLoader($array, $connectionName));
+        }
 
-        $restorerBinaries = $config['restorer_binaries'];
-        $restorerOptions = $config['restorer_options'];
-        $restorerFactory = new RestorerFactory($databaseSessionRegistry, $restorerBinaries, $restorerOptions, $logger);
+        $backupperFactory = new BackupperFactory($databaseSessionRegistry, $configRegistry, $logger);
+        $restorerFactory = new RestorerFactory($databaseSessionRegistry, $configRegistry, $logger);
 
         $statsProviderFactory = new StatsProviderFactory($databaseSessionRegistry);
-        $storage = self::createStorage($config, $logger);
+        $storage = self::createStorage($configRegistry, $logger);
 
         return new Context(
             anonymizatorFactory: $anonymizatorFactory,
@@ -312,15 +354,17 @@ class Bootstrap
             $configs[] = self::configParseFile($filename);
         }
         $configs[] = $config;
-        $configs[] = self::configGetEnv();
+
+        $config = self::configGetEnv($config);
 
         // Use symfony/config and our bundle configuration, which allows us
         // to use it fully for validation and merge.
-        $configuration = new StandaloneConfiguration();
+        $configuration = new DbToolsConfiguration(true, true);
         $processor = new Processor();
 
         $config = $processor->processConfiguration($configuration, $configs);
         $config = DbToolsConfiguration::appendPostConfig($config);
+        $config = DbToolsConfiguration::fixLegacyOptions($config);
 
         return $config;
     }
@@ -353,19 +397,19 @@ class Bootstrap
         $workdir = \rtrim($config['workdir'] ?? \dirname($filename), '/');
 
         // Storage root directory.
-        if ($path = ($config['storage']['root_dir'] ?? null)) {
-            $config['storage']['root_dir'] = self::pathAbs($workdir, $path);
+        if ($path = ($config['storage_directory'] ?? null)) {
+            $config['storage_directory'] = self::pathAbs($workdir, $path);
         }
 
         // YAML anonymizer file paths.
-        $yaml = $config['anonymization']['yaml'] ?? null;
+        $yaml = $config['anonymization_files'] ?? null;
         if (isset($yaml)) {
             if (\is_array($yaml)) {
                 foreach ($yaml as $name => $path) {
-                    $config['anonymization']['yaml'][$name] = self::pathAbs($workdir, $path);
+                    $config['anonymization_files'][$name] = self::pathAbs($workdir, $path);
                 }
             } else {
-                $config['anonymization']['yaml'] = self::pathAbs($workdir, $yaml);
+                $config['anonymization_files'] = self::pathAbs($workdir, $yaml);
             }
         }
 
@@ -380,13 +424,49 @@ class Bootstrap
     /**
      * Get config variables from environment variables.
      */
-    private static function configGetEnv(): array
+    private static function configGetEnv(array $config): array
     {
-        $config = [];
-
-        // @todo read env variables, validate each, override $config
-
+        if (!isset($config['backup_binary'])) {
+            $config['backup_binary'] = self::getEnv('DBTOOLS_BACKUP_BINARY');
+        }
+        if (!isset($config['backup_excluded_tables'])) {
+            $config['backup_excluded_tables'] = self::getEnv('DBTOOLS_BACKUP_EXCLUDED_TABLES');
+        }
+        if (!isset($config['backup_expiration_age'])) {
+            $config['backup_expiration_age'] = self::getEnv('DBTOOLS_BACKUP_EXPIRATION_AGE');
+        }
+        if (!isset($config['backup_options'])) {
+            $config['backup_options'] = self::getEnv('DBTOOLS_BACKUP_OPTIONS');
+        }
+        if (!isset($config['backup_timeout'])) {
+            $config['backup_timeout'] = self::getEnv('DBTOOLS_BACKUP_TIMEOUT');
+        }
+        if (!isset($config['default_connection'])) {
+            $config['default_connection'] = self::getEnv('DBTOOLS_DEFAULT_CONNECTION');
+        }
+        if (!isset($config['restore_binary'])) {
+            $config['restore_binary'] = self::getEnv('DBTOOLS_RESTORE_BINARY');
+        }
+        if (!isset($config['restore_options'])) {
+            $config['restore_options'] = self::getEnv('DBTOOLS_RESTORE_OPTIONS');
+        }
+        if (!isset($config['restore_timeout'])) {
+            $config['restore_timeout'] = self::getEnv('DBTOOLS_RESTORE_TIMEOUT');
+        }
+        if (!isset($config['storage_directory'])) {
+            $config['storage_directory'] = self::getEnv('DBTOOLS_STORAGE_DIRECTORY');
+        }
+        if (!isset($config['storage_filename_strategy'])) {
+            $config['storage_filename_strategy'] = self::getEnv('DBTOOLS_STORAGE_FILENAME_STRATEGY');
+        }
         return $config;
+    }
+
+    private static function getEnv(string $name): string|null
+    {
+        $value = \getenv($name);
+
+        return (!$value && $value !== '0') ? null : (string) $value;
     }
 
     /**
@@ -400,20 +480,26 @@ class Bootstrap
     /**
      * Create database session registry from config-given connections.
      */
-    private static function createDatabaseSessionRegistry(array $config): DatabaseSessionRegistry
+    private static function createDatabaseSessionRegistry(ConfigurationRegistry $configRegistry): DatabaseSessionRegistry
     {
+        $connections = [];
+        foreach ($configRegistry->getConnectionConfigAll() as $name => $config) {
+            \assert($config instanceof Configuration);
+            $connections[$name] = $config->getUrl() ?? throw new ConfigurationException(\sprintf('Connection "%s" is missing the "url" option.', $name));
+        }
+
         // Do not crash on initialization, it will crash later when a connection
         // will be request instead: this allows commands that don't act on
         // database (such as anonymizer list) to work even if not configured.
-        return new StandaloneDatabaseSessionRegistry($config['connections'] ?? [], $config['default_connection']);
+        return new StandaloneDatabaseSessionRegistry($connections, $configRegistry->getDefaultConnection());
     }
 
     /**
      * Create storage.
      */
-    private static function createStorage(array $config, LoggerInterface $logger): Storage
+    private static function createStorage(ConfigurationRegistry $configRegistry, LoggerInterface $logger): Storage
     {
-        $rootdir = $config['storage']['root_dir'] ?? $config['workdir'];
+        $rootdir = $configRegistry->getDefaultConfig()->getStorageDirectory();
 
         if (!\is_dir($rootdir)) {
             if (\file_exists($rootdir)) {
@@ -425,7 +511,7 @@ class Bootstrap
             $logger->notice("Found storage root folder: {dir}", ['dir' => $rootdir]);
         }
 
-        return new Storage($config['storage']['root_dir'], $config['backup_expiration_age']);
+        return new Storage($configRegistry);
     }
 
     /**

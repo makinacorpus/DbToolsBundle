@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
+use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
@@ -69,40 +71,14 @@ class BackupperRestorerTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * Get backup binary file names.
-     */
-    private function getBinaryConfigBackup(): array
-    {
-        return [
-            'mariadb' => 'mariadb-dump',
-            'mysql' => 'mysqldump',
-            'postgresql' => 'pg_dump',
-            'sqlite' => 'sqlite3',
-        ];
-    }
-
-    /**
-     * Get restore binary file names.
-     */
-    private function getBinaryConfigRestore(): array
-    {
-        return [
-            'mariadb' => 'mariadb',
-            'mysql' => 'mysql',
-            'postgresql' => 'pg_restore',
-            'sqlite' => 'sqlite3',
-        ];
-    }
-
     private function getBackupperFactory(): BackupperFactory
     {
-        return new BackupperFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigBackup());
+        return new BackupperFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
     }
 
     private function getRestorerFactory(): RestorerFactory
     {
-        return new RestorerFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigRestore());
+        return new RestorerFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
     }
 
     public function testBackupper(): void
@@ -270,7 +246,7 @@ class BackupperRestorerTest extends FunctionalTestCase
     {
         $this->skipIfDatabase(Vendor::SQLSERVER);
 
-        $backupperFactory = new BackupperFactory($this->getDatabaseSessionRegistry(), $this->getBinaryConfigBackup());
+        $backupperFactory = new BackupperFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
 
         $backupper = $backupperFactory->create();
 
@@ -289,11 +265,16 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         $backupperFactory = new BackupperFactory(
             $this->getDatabaseSessionRegistry(),
-            $this->getBinaryConfigBackup(),
-            [
-                'default' => '--fake-opt --mock-opt',
-                'another' => '-x -y -z',
-            ]
+            new ConfigurationRegistry(
+                connections: [
+                    'default' => new Configuration(
+                        backupOptions: '--fake-opt --mock-opt',
+                    ),
+                    'another' => new Configuration(
+                        backupOptions: '-x -y -z',
+                    ),
+                ]
+            ),
         );
 
         $backupper = $backupperFactory->create();
@@ -320,12 +301,16 @@ class BackupperRestorerTest extends FunctionalTestCase
 
         $backupperFactory = new BackupperFactory(
             $this->getDatabaseSessionRegistry(),
-            $this->getBinaryConfigBackup(),
-            [],
-            [
-                'default' => ['table1', 'table2'],
-                'another' => ['table3', 'table4'],
-            ]
+            new ConfigurationRegistry(
+                connections: [
+                    'default' => new Configuration(
+                        backupExcludedTables: ['table1', 'table2'],
+                    ),
+                    'another' => new Configuration(
+                        backupExcludedTables: ['table3', 'table4'],
+                    ),
+                ]
+            ),
         );
 
         $backupper = $backupperFactory->create();

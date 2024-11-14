@@ -30,7 +30,6 @@ class RestoreCommand extends Command
         private string $connectionName,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
-        private ?int $timeout = null,
     ) {
         parent::__construct();
     }
@@ -163,7 +162,6 @@ class RestoreCommand extends Command
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
-            ->setTimeout($this->timeout)
             ->execute()
         ;
 

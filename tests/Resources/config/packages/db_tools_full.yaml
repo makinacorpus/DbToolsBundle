@@ -1,0 +1,40 @@
+#
+# Full configuration.
+#
+db_tools:
+    anonymization:
+        connection_one:
+            user:
+                last_name: fr-fr.firstname
+                email:
+                    anonymizer: email
+                    options: {domain: 'toto.com'}
+    anonymization_files:
+        connection_one: 'connection_one.yaml'
+        connection_two: 'connection_two.yaml'
+    anonymizer_paths:
+        - './'
+    backup_binary: '/path/to/dump'
+    backup_excluded_tables: ['table1', 'table2']
+    backup_expiration_age: '2 minutes ago'
+    backup_options: '--dump'
+    backup_timeout: 135
+    connections:
+        connection_one:
+            storage_directory: '/one/storage'
+            storage_filename_strategy: one_strategy
+            backup_expiration_age: '1 minutes ago'
+            backup_timeout: 11
+            restore_timeout: 23
+            backup_excluded_tables: ['one1']
+            backup_binary: '/path/to/dump/one'
+            backup_options: '--dump-one'
+            restore_binary: '/paht/to/restore/one'
+            restore_options: '--restore-one'
+    default_connection: connection_one
+    restore_binary: '/path/to/restore'
+    restore_options: '--restore'
+    restore_timeout: 357
+    storage_directory: '%kernel.project_dir%/var/db_tools'
+    storage_filename_strategy: datetime
+    #workdir: /path/to
