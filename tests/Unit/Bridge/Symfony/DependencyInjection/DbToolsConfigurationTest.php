@@ -14,157 +14,195 @@ class DbToolsConfigurationTest extends TestCase
     private function processYamlConfiguration(array|string $dataOrFilename): array
     {
         $processor = new Processor();
-        $configuration = new DbToolsConfiguration();
+        $configuration = new DbToolsConfiguration(true, true);
 
-        return $processor->processConfiguration(
+        $config = $processor->processConfiguration(
             $configuration,
             \is_string($dataOrFilename) ? Yaml::parseFile($dataOrFilename) : ['db_tools' => $dataOrFilename],
         );
+
+        return DbToolsConfiguration::fixLegacyOptions($config);
     }
 
-    public function testConfigurationMinimal(): array
+    public function testConfigurationEmpty(): array
     {
         $result = $this->processYamlConfiguration(
-            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_min.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_empty.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
-                'storage' => [
-                    'root_dir' => '%kernel.project_dir%/var/db_tools',
-                    'filename_strategy' => [],
-                ],
-                'backup_expiration_age' => '3 months ago',
-                'backup_timeout' => 600,
-                'restore_timeout' => 1800,
-                'excluded_tables' => [],
-                'backupper_binaries' => [
-                    'mariadb' => 'mariadb-dump',
-                    'mysql' => 'mysqldump',
-                    'postgresql' => 'pg_dump',
-                    'sqlite' => 'sqlite3',
-                ],
-                'restorer_binaries' => [
-                    'mariadb' => 'mariadb',
-                    'mysql' => 'mysql',
-                    'postgresql' => 'pg_restore',
-                    'sqlite' => 'sqlite3',
-                ],
-                'backupper_options' => [],
-                'restorer_options' => [],
+                'anonymization' => [],
+                'anonymization_files' => [],
                 'anonymizer_paths' => [],
+                'backup_binary' => null,
+                'backup_excluded_tables' => [],
+                'backup_options' => null,
+                'connections' => [],
+                'default_connection' => null,
+                'restore_binary' => null,
+                'restore_options' => null,
+                'storage_directory' => null,
+                'storage_filename_strategy' => null,
+                'workdir' => null,
             ],
-            $result
+            $result,
         );
 
         return $result;
     }
 
-    public function testConfigurationAlternative1(): array
+    public function testConfigurationFull(): array
     {
         $result = $this->processYamlConfiguration(
-            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt1.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_full.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
-                'storage_directory' => '%kernel.project_dir%/var/backup',
-                'backup_expiration_age' => '6 months ago',
-                'backup_timeout' => 1200,
-                'restore_timeout' => 2400,
-                'excluded_tables' => [
-                    'default' => ['table1', 'table2'],
-                ],
-                'backupper_binaries' => [
-                    'mariadb' => '/usr/bin/mariadb-dump',
-                    'mysql' => '/usr/bin/mysqldump',
-                    'postgresql' => '/usr/bin/pg_dump',
-                    'sqlite' => '/usr/bin/sqlite3',
-                ],
-                'restorer_binaries' => [
-                    'mariadb' => '/usr/bin/mariadb',
-                    'mysql' => '/usr/bin/mysql',
-                    'postgresql' => '/usr/bin/pg_restore',
-                    'sqlite' => '/usr/bin/sqlite3',
-                ],
-                'backupper_options' => [
-                    'default' => '--opt1 val1 -x -y -z --opt2 val2',
-                ],
-                'restorer_options' => [
-                    'default' => '-abc -x val1 -y val2',
-                ],
-                'anonymizer_paths' => [
-                    '%kernel.project_dir%/src/Anonymization/Anonymizer',
-                ],
                 'anonymization' => [
-                    'yaml' => [
-                        'default' => '%kernel.project_dir%/config/anonymization.yaml',
+                    'connection_one' => [
+                        'user' => [
+                            'last_name' => 'fr-fr.firstname',
+                            'email' => [
+                                'anonymizer' => 'email',
+                                'options' => [
+                                    'domain' => 'toto.com',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
-                'storage' => [
-                    'root_dir' => '%kernel.project_dir%/var/db_tools',
-                    'filename_strategy' => [],
+                'anonymization_files' => [
+                    'connection_one' => 'connection_one.yaml',
+                    'connection_two' => 'connection_two.yaml',
                 ],
+                'anonymizer_paths' => [
+                    './',
+                ],
+                'backup_binary' => '/path/to/dump',
+                'backup_excluded_tables' => ['table1', 'table2'],
+                'backup_expiration_age' => '2 minutes ago',
+                'backup_options' => '--dump',
+                'backup_timeout' => 135,
+                'connections' => [
+                    'connection_one' => [
+                        'backup_binary' => '/path/to/dump/one',
+                        'backup_excluded_tables' => ['one1'],
+                        'backup_expiration_age' => '1 minutes ago',
+                        'backup_options' => '--dump-one',
+                        'backup_timeout' => 11,
+                        'restore_binary' => '/paht/to/restore/one',
+                        'restore_options' => '--restore-one',
+                        'restore_timeout' => 23,
+                        'storage_directory' => '/one/storage',
+                        'storage_filename_strategy' => 'one_strategy',
+                        'url' => null,
+                    ],
+                ],
+                'default_connection' => 'connection_one',
+                'restore_binary' => '/path/to/restore',
+                'restore_options' => '--restore',
+                'restore_timeout' => 357,
+                'storage_directory' => '%kernel.project_dir%/var/db_tools',
+                'storage_filename_strategy' => 'datetime',
+                'workdir' => null, // '/path/to',
             ],
-            $result
+            $result,
         );
 
         return $result;
     }
 
-    public function testConfigurationAlternative2(): array
+    public function testConfigurationConnectionsPartial(): array
     {
         $result = $this->processYamlConfiguration(
-            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_alt2.yaml'
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_connections_partial.yaml'
         );
 
-        self::assertSame(
+        self::assertEquals(
             [
-                'storage' => [
-                    'root_dir' => '%kernel.project_dir%/var/backup',
-                    'filename_strategy' => [
-                        'connection_two' => 'app.db_tools.custom_filename_strategy',
+                'anonymization' => [],
+                'anonymization_files' => [],
+                'anonymizer_paths' => [],
+                'backup_binary' => '/path/to/dump',
+                'backup_excluded_tables' => ['table1', 'table2'],
+                'backup_expiration_age' => '2 minutes ago',
+                'backup_options' => '--dump',
+                'backup_timeout' => 135,
+                'connections' => [
+                    'connection_one' => [
+                        'backup_binary' => null,
+                        'backup_excluded_tables' => ['one1'],
+                        'backup_expiration_age' => '1 minutes ago',
+                        'backup_options' => null,
+                        //'backup_timeout' => null,
+                        'restore_binary' => null,
+                        'restore_options' => null,
+                        'restore_timeout' => 23,
+                        'storage_directory' => '/one/storage',
+                        'storage_filename_strategy' => 'one_strategy',
+                        'url' => null,
                     ],
                 ],
-                'backup_expiration_age' => '6 months ago',
-                'backup_timeout' => 1800,
-                'restore_timeout' => 3200,
-                'excluded_tables' => [
-                    'connection_two' => ['table1', 'table2'],
-                ],
-                'backupper_binaries' => [
-                    'mariadb' => '/usr/bin/mariadb-dump',
-                    'mysql' => '/usr/bin/mysqldump',
-                    'postgresql' => '/usr/bin/pg_dump',
-                    'sqlite' => '/usr/bin/sqlite3',
-                ],
-                'restorer_binaries' => [
-                    'mariadb' => '/usr/bin/mariadb',
-                    'mysql' => '/usr/bin/mysql',
-                    'postgresql' => '/usr/bin/pg_restore',
-                    'sqlite' => '/usr/bin/sqlite3',
-                ],
-                'backupper_options' => [
-                    'connection_one' => '--opt1 val1 -x -y -z --opt2 val2',
-                ],
-                'restorer_options' => [
-                    'connection_one' => '-abc -x val1 -y val2',
-                    'connection_two' => '-a "Value 1" -bc -d val2 --end',
-                ],
-                'anonymizer_paths' => [
-                    '%kernel.project_dir%/src/Anonymization/Anonymizer',
-                ],
-                'anonymization' => [
-                    'yaml' => [
-                        'connection_one' => '%kernel.project_dir%/config/anonymizations/connection_one.yaml',
-                        'connection_two' => '%kernel.project_dir%/config/anonymizations/connection_two.yaml',
-                    ],
-                ],
+                'default_connection' => 'connection_one',
+                'restore_binary' => '/path/to/restore',
+                'restore_options' => '--restore',
+                'restore_timeout' => 357,
+                'storage_directory' => '%kernel.project_dir%/var/db_tools',
+                'storage_filename_strategy' => 'datetime',
+                'workdir' => null, // '/path/to',
             ],
-            $result
+            $result,
         );
 
         return $result;
+    }
+
+    public function testDeprecatedV2(): void
+    {
+        $result = $this->processYamlConfiguration(
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_deprecated_v2.yaml'
+        );
+
+        self::assertEquals(
+            [
+                'anonymization' => [],
+                'anonymization_files' => [
+                    'connection_one' => 'connection_one.yaml',
+                    'connection_two' => 'connection_two.yaml',
+                ],
+                'anonymizer_paths' => [],
+                'backup_binary' => null,
+                'backup_excluded_tables' => [],
+                'backup_options' => null,
+                'connections' => [
+                    'connection_one' => [
+                        'backup_excluded_tables' => ['one1', 'one2'],
+                        'storage_filename_strategy' => 'some_strategy',
+                    ],
+                    'connection_two' => [
+                        'backup_excluded_tables' => ['two1', 'two2', 'two3'],
+                    ],
+                ],
+                'default_connection' => null,
+                'restore_binary' => null,
+                'restore_options' => null,
+                'storage_directory' => '/foo/bar',
+                'storage_filename_strategy' => null,
+                'workdir' => null,
+            ],
+            $result,
+        );
+    }
+
+    public function testDeprecatedV2Conflict(): void
+    {
+        self::expectExceptionMessage('Deprecated option "excluded_tables.connection_one" and actual option "connections.connection_one.backup_excluded_tables" are both defined, please fix your configuration.');
+
+        $this->processYamlConfiguration(
+            \dirname(__DIR__, 4) . '/Resources/config/packages/db_tools_deprecated_v2_conflict.yaml'
+        );
     }
 
     public function testConfigurationBackupTimeoutInt(): void

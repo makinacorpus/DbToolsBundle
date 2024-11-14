@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\Compiler;
 
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\ArrayLoader;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\YamlLoader;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsConfiguration;
@@ -28,13 +29,32 @@ class DbToolsPass implements CompilerPassInterface
                 $anonymazorFactoryDef->addMethodCall('addConfigurationLoader', [new Reference($loaderId)]);
             }
 
-            if (isset($config['anonymization']) && isset($config['anonymization']['yaml'])) {
-                foreach ($config['anonymization']['yaml'] as $connectionName => $file) {
+            if (isset($config['anonymization_files'])) {
+                foreach ($config['anonymization_files'] as $connectionName => $file) {
                     $loaderId = $this->registerYamlLoader($file, $connectionName, $container);
                     $anonymazorFactoryDef->addMethodCall('addConfigurationLoader', [new Reference($loaderId)]);
                 }
             }
+
+            if (isset($config['anonymization'])) {
+                foreach ($config['anonymization'] as $connectionName => $data) {
+                    $loaderId = $this->registerArrayLoader($data, $connectionName, $container);
+                    $anonymazorFactoryDef->addMethodCall('addConfigurationLoader', [new Reference($loaderId)]);
+                }
+            }
         }
+    }
+
+    private function registerArrayLoader(array $data, string $connectionName, ContainerBuilder $container): string
+    {
+        $definition = new Definition();
+        $definition->setClass(ArrayLoader::class);
+        $definition->setArguments([$data, $connectionName]);
+
+        $loaderId = 'db_tools.anonymization.loader.array.' . $connectionName;
+        $container->setDefinition($loaderId, $definition);
+
+        return $loaderId;
     }
 
     private function registerYamlLoader(string $file, string $connectionName, ContainerBuilder $container): string

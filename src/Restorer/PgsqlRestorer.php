@@ -51,6 +51,12 @@ class PgsqlRestorer extends AbstractRestorer
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'pg_restore';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '-j 2 --clean --if-exists --disable-triggers';

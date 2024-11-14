@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Restorer;
 
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Vendor;
@@ -11,23 +12,11 @@ use Psr\Log\LoggerInterface;
 
 class RestorerFactory
 {
-    /**
-     * Constructor.
-     *
-     * @param array<string, string> $restorerBinaries
-     * @param array<string, string> $restorerOptions
-     */
     public function __construct(
         private DatabaseSessionRegistry $registry,
-        private array $restorerBinaries,
-        private array $restorerOptions = [],
+        private ConfigurationRegistry $configRegistry = new ConfigurationRegistry(),
         private ?LoggerInterface $logger = null,
-    ) {
-        // Normalize vendor names otherwise automatic creation might fail.
-        foreach ($this->restorerBinaries as $vendorName => $binary) {
-            $this->restorerBinaries[Vendor::vendorNameNormalize($vendorName)] = $binary;
-        }
-    }
+    ) {}
 
     /**
      * Get a Restorer for given connection
@@ -53,10 +42,9 @@ class RestorerFactory
         };
 
         $restorer = new $restorer(
-            $this->restorerBinaries[$vendorName],
             $this->registry->getDatabaseSession($connectionName),
             $dsn,
-            $this->restorerOptions[$connectionName] ?? null
+            $this->configRegistry->getConnectionConfig($connectionName),
         );
 
         \assert($restorer instanceof AbstractRestorer);

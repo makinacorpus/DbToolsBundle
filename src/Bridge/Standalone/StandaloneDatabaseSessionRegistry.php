@@ -37,6 +37,7 @@ class StandaloneDatabaseSessionRegistry implements DatabaseSessionRegistry
             foreach (\array_keys($this->connections) as $name) {
                 return $this->defaultConnection = $name;
             }
+            throw new ConfigurationException("No connections were configured.");
         }
         return $this->defaultConnection;
     }

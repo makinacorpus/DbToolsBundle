@@ -54,7 +54,7 @@ class ConfigDumpCommand extends Command
                             $config->options->toDisplayString() .
                             (
                                 \key_exists($config->targetName, $tableErrors) ?
-                                \PHP_EOL . '<error>' . $tableErrors[$config->targetName] . '</>'
+                                '<error>' . $tableErrors[$config->targetName] . '</>'
                                 : ''
                             ),
                         ],

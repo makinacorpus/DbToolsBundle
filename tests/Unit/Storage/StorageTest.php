@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Storage;
 
+use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Storage\DefaultFilenameStrategy;
 use MakinaCorpus\DbToolsBundle\Storage\Storage;
 use MakinaCorpus\DbToolsBundle\Tests\Unit\Storage\Mock\OutOfRootFilenameStrategy;
@@ -31,9 +33,14 @@ class StorageTest extends TestCase
         (new Filesystem())->remove(\sys_get_temp_dir() . '/db-tools-bundle-test');
     }
 
+    protected function getConfigRegistry()
+    {
+        return new ConfigurationRegistry(new Configuration(storageDirectory: $this->rootDir, backupExpirationAge: 'now -6 month'));
+    }
+
     public function testGenerateFilenameUsesDefaultWhenUnspecified(): void
     {
-        $storage = new Storage($this->rootDir, 'now -6 month');
+        $storage = new Storage($this->getConfigRegistry());
 
         self::assertMatchesRegularExpression(
             '@^' . \preg_quote($this->rootDir) . '/foo/\d{1,4}/\d{1,2}/foo-\d{6,14}\.some_ext$@',
@@ -43,7 +50,7 @@ class StorageTest extends TestCase
 
     public function testGenerateFilenameUsesStrategy(): void
     {
-        $storage = new Storage($this->rootDir, 'now -6 month', [
+        $storage = new Storage($this->getConfigRegistry(), [
             'bar' => new TestFilenameStrategy(),
         ]);
 
@@ -60,7 +67,7 @@ class StorageTest extends TestCase
 
     public function testListBackups(): void
     {
-        $storage = new Storage($this->rootDir, 'now -6 month', [
+        $storage = new Storage($this->getConfigRegistry(), [
             'outside' => new OutOfRootFilenameStrategy($this->outsideOfRootDir),
             'inside' => new DefaultFilenameStrategy(),
             'another' => new DefaultFilenameStrategy(),

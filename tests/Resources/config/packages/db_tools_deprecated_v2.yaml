@@ -1,0 +1,15 @@
+#
+# Deprecated but yet supported configuration options in ^2.0.
+#
+db_tools:
+    anonymization:
+        yaml:
+            connection_one: 'connection_one.yaml'
+            connection_two: 'connection_two.yaml'
+    excluded_tables:
+        connection_one: ['one1', 'one2']
+        connection_two: ['two1', 'two2', 'two3']
+    storage:
+        filename_strategy:
+            connection_one: 'some_strategy'
+        root_dir: '/foo/bar'

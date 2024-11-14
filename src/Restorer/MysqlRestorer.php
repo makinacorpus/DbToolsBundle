@@ -60,6 +60,13 @@ class MysqlRestorer extends AbstractRestorer
         \fclose($this->backupStream);
     }
 
+
+    #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'mysql';
+    }
+
     #[\Override]
     public function getExtension(): string
     {

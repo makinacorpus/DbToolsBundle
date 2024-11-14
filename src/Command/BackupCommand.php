@@ -30,7 +30,6 @@ class BackupCommand extends Command
         private string $connectionName,
         private BackupperFactory $backupperFactory,
         private Storage $storage,
-        private ?int $timeout = null,
     ) {
         parent::__construct();
     }
@@ -121,7 +120,6 @@ class BackupCommand extends Command
             ->ignoreDefaultOptions($this->ignoreDefaultOptions)
             ->setOutput(new ConsoleOutput($this->io))
             ->setVerbose($this->io->isVerbose())
-            ->setTimeout($this->timeout)
             ->execute()
         ;
 

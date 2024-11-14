@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
 use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Process\CommandLine;
 use MakinaCorpus\DbToolsBundle\Helper\Process\ProcessTrait;
@@ -22,21 +23,24 @@ abstract class AbstractBackupper implements LoggerAwareInterface
 {
     use ProcessTrait;
 
+    protected string $binary;
     protected ?string $destination = null;
     protected string $defaultOptions = '';
     protected ?string $extraOptions = null;
     protected bool $ignoreDefaultOptions = false;
     protected array $excludedTables = [];
     protected bool $verbose = false;
-    protected ?int $timeout = 600;
+    protected ?int $timeout = null;
 
     public function __construct(
-        protected string $binary,
-        protected DatabaseSession $databaseSession,
-        protected Dsn $databaseDsn,
-        ?string $defaultOptions = null,
+        protected readonly DatabaseSession $databaseSession,
+        protected readonly Dsn $databaseDsn,
+        protected readonly Configuration $config,
     ) {
-        $this->defaultOptions = $defaultOptions ?? $this->getBuiltinDefaultOptions();
+        $this->excludedTables = $config->getBackupExcludedTables();
+        $this->binary = $config->getBackupBinary() ?? $this->getDefaultBinary();
+        $this->defaultOptions = $config->getBackupOptions() ?? $this->getBuiltinDefaultOptions();
+        $this->timeout = $config->getBackupTimeout();
 
         $this->destination = \sprintf(
             '%s/db-tools-backup-%s.dump',
@@ -160,6 +164,11 @@ abstract class AbstractBackupper implements LoggerAwareInterface
     {
         $this->process->setTimeout(null === $this->timeout ? null : (float) $this->timeout);
     }
+
+    /**
+     * Get default binary path and name (e.g. "/usr/bin/foosql-backup").
+     */
+    abstract protected function getDefaultBinary(): string;
 
     /**
      * Provide the built-in default options that will be used if none is given

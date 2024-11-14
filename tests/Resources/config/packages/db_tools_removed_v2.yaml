@@ -1,0 +1,14 @@
+#
+# Removed configuration options in ^2.0.
+#
+# Note: only the first will raise an error.
+#
+db_tools:
+    backupper_binaries:
+        postgresql: /usr/bin/pg_dump
+    backupper_options:
+        postgresql: '--foo'
+    restorer_binaries:
+        postgresql: /usr/bin/pg_restore
+    restorer_options:
+        postgresql: '--foo'

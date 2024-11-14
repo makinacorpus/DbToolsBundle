@@ -65,7 +65,6 @@ class RestoreCommandTest extends FunctionalKernelTestCase
             'default',
             $restorerFactory,
             $storage,
-            null // timeout
         );
 
         return new CommandTester($command);
