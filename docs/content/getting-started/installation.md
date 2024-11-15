@@ -53,7 +53,7 @@ Then, copy the default configuration file from the vendor directory:
 
 ```sh
 cd your_project_dir
-cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db-tools-bundle.yaml
+cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db_tools.config.yaml
 cp config/anonymizations.sample.yaml db_tools.anonymizer.connection_one.yaml
 ```
 
