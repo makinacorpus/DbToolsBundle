@@ -2,7 +2,7 @@
 
 ## Basics
 
-The *DbToolsBundle* allows you to create your own *Anonymizers*.
+*DbToolsBundle* allows you to create your own *Anonymizers*.
 
 To create one, you will need to
 
@@ -31,18 +31,15 @@ class MyAnonymizer extends AbstractAnonymizer
 To understand how an `Anonymizer` works, read `vendor/makinacorpus/db-tools-bundle/src/Anonymizer/AbstractAnonymizer.php`
 which is self-documented.
 
-To inspire you, browse existing *Anonymizers* in:
-
-* `vendor/makinacorpus/db-tools-bundle/src/Anonymizer/Core`
-* `vendor/makinacorpus/db-tools-bundle/src/Anonymizer/FrFR`
+To inspire you, browse existing *Anonymizers* in `vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer/Core`.
 
 ::: tip
-You can tell the *DbToolsBundle* your *Custom Anonymizers* live in a different directory
+You can tell *DbToolsBundle* your *Custom Anonymizers* live in a different directory
 with the [*Anonymizer paths* configuration](../configuration#anonymizer-paths).
 :::
 
 ::: tip
-To generate its update queries, the *DbToolsBundle* uses the *[makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package*.
+To generate its update queries, *DbToolsBundle* uses the *[makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package*.
 If you want to create your own anonymizers, you will problably need to take a look at
 [its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
 :::

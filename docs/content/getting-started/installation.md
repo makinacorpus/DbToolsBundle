@@ -54,7 +54,7 @@ Then, copy the default configuration file from the vendor directory:
 ```sh
 cd your_project_dir
 cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db_tools.config.yaml
-cp config/anonymizations.sample.yaml db_tools.anonymizer.connection_one.yaml
+cp config/anonymizations.sample.yaml db_tools.anonymization.yaml
 ```
 
 Update these file to your needs. The only required parameter is `connections` in which you

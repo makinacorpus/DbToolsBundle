@@ -88,7 +88,7 @@ With the DbToolsBundle, you can easily configure with a soimple YAML file a comp
 your sensitive data.
 
 ```yml
-# db-tools-bundle.yaml
+# db_tools.anonymization.yaml
 anonymization:
     tables:
         user:

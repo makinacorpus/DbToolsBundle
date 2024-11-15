@@ -1,11 +1,12 @@
 # Anonymization
 
-The *DbToolsBundle* provides a convinient way to anonymize data from your database.
+*DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching `php bin/console db-tools:anonymize` will be all you need to
+After some configurations, launching <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
-There is two ways to tell the *DbToolsBundle* how it should anonymize your data:
+<div class="symfony">
+With the Symfony bundle, there is two ways to tell *DbToolsBundle* how it should anonymize your data:
 
 1. you can use **PHP attributes** on Doctrine Entities' classes and properties
 2. you can declare it with a **YAML** file
@@ -25,6 +26,7 @@ section](../configuration#anonymization) to see how to configure it.
 All anonymizers can be configured via attributes on Doctrine ORM entities, but inheritance
 is not fully supported yet, [please read this page](doctrine-inheritance) for more information.
 :::
+</div>
 
 The anonymization is based on *Anonymizers*. An *Anonymizer* represents a way to anonymize a column (or
 multiple columns in certain cases). For example, you will use the EmailAnonymizer to anonymize a column that
@@ -47,10 +49,33 @@ This entity has several fields we want to anonymize, and others that we don't:
 - `secret`: A string **that we want to hash**
 - `lastLogin`: A DateTime we want to keep intact
 
+
+
+<div class="standalone">
+Here is how you can declare this configruation:
+
+```yaml
+# db_tools.anonymization.yaml
+anonymization:
+    tables:
+        customer:
+            email_address: email
+            level:
+                anonymizer: string
+                options: {sample: ['none', 'bad', 'good', 'expert']}
+            age:
+                anonymizer: integer
+                options: {min: 10, max: 99}
+            secret: md5
+#...
+```
+
+</div>
+<div class="symfony">
 Here is how you can declare this configruation with PHP attributes and with YAML:
 
 ::: code-group
-```php [Attribute]
+```php [PHP attributes]
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -103,12 +128,36 @@ customer:
 ```
 :::
 
+</div>
+
 ## Multicolumn Anonymizers
 
 Some *Anonymizers* are mutlicolumn. For example the *AddressAnonymizer* can, by himself, anonymize 6 columns.
 
 *Multicolumn anonymizers* are usefull when you want to keep coherent data after anonymization.
 
+<div class="standalone">
+
+```yaml [YAML]
+# db_tools.anonymization.yaml
+anonymization:
+    tables:
+        customer:
+            address:
+                target: table
+                anonymizer: address
+                options:
+                    street_address: 'street'
+                    secondary_address: 'street_address_2'
+                    postal_code: 'zip_code'
+                    locality: 'city'
+                    region: 'region'
+                    country: 'country'
+  #...
+```
+
+</div>
+<div class="symfony">
 When using PHP attributes, those anonymizers should be put on class:
 
 ::: code-group
@@ -171,6 +220,8 @@ customer:
 ```
 :::
 
+</div>
+
 ## Going further
 
 The DbToolsBundle provides a bunch of *Anonymizers* that should cover most of your needs. You can find a
@@ -186,5 +237,5 @@ If you can't find what you need from core anonymizers and in available packs, th
 you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
-You can list all available *Anonymizers* with `php bin/console db-tools:anonymization:list` command.
+You can list all available *Anonymizers* with <span class="standalone">`vendor/bin/db-tools anonymization:list`</span><span class="symfony">`php bin/console db-tools:anonymization:list`</span> command.
 :::
