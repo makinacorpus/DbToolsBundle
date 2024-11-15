@@ -1,13 +1,28 @@
 # Installation
 
-The DbToolsBundle follows [Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
+<FlavorSwitcher />
+
+<div class="symfony">
+
+*DbToolsBundle* follows [Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
 you should not be lost if you are a regular Symfony developer.
 
+</div>
+
 ## Requirements & Dependencies
+
+<div class="standalone">
+
+- PHP 8.1 or higher
+
+</div>
+<div class="symfony">
 
 - PHP 8.1 or higher
 - Symfony 6.0 or higher
 - Doctrine/DBAL, the DbToolsBundle takes advantage of available DBAL connections
+
+</div>
 
 Currently supported database vendors:
 
@@ -26,7 +41,28 @@ Check out the [supported database vendors](../getting-started/database-vendors) 
 
 ## Installation
 
-Add the *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
+<div class="standalone">
+
+Add *DbToolsBundle* to your PHP project with [composer](https://getcomposer.org):
+
+```sh
+composer require makinacorpus/db-tools-bundle
+```
+
+Then, copy the default configuration file from the vendor directory:
+
+```sh
+cd your_project_dir
+cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db-tools-bundle.yaml
+cp config/anonymizations.sample.yaml db_tools.anonymizer.connection_one.yaml
+```
+
+Update these file to your needs. The only required parameter is `connections` in which you
+must provided [URL connection string](../configuration/reference#connections).
+</div>
+<div class="symfony">
+
+Add *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
 
 ```sh
 composer require makinacorpus/db-tools-bundle
@@ -55,15 +91,28 @@ cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/pack
 ```
 
 Feel free to read this configuration file, it will learn you basics about this bundle.
+</div>
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
 But before starting to use it, check if the *DbToolsBundle* succeeds to find
 backup and restore binaries for your(s) Doctrine connection(s):
 
+<div class="standalone">
+
+```sh
+vendor/bin/db-tools check
+```
+
+</div>
+
+<div class="symfony">
+
 ```sh
 php bin/console db-tools:check
 ```
+
+</div>
 
 :::tip
 If this command returns some errors, go to the [binaries configuration](../configuration#binaries)

@@ -35,6 +35,6 @@
   max-width: 1152px;
 }
 .makina-corpus-horizontal .container svg {
-  max-width: 100%;
+  max-width: 300px;
 }
 </style>
