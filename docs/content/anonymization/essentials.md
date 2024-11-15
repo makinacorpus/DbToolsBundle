@@ -2,7 +2,7 @@
 
 The *DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching `console db-tools:anonymize` will be all you need to
+After some configurations, launching `php bin/console db-tools:anonymize` will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
 There is two ways to tell the *DbToolsBundle* how it should anonymize your data:
@@ -186,5 +186,5 @@ If you can't find what you need from core anonymizers and in available packs, th
 you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
-You can list all available *Anonymizers* with `console db-tools:anonymization:list` command.
+You can list all available *Anonymizers* with `php bin/console db-tools:anonymization:list` command.
 :::

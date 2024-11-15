@@ -182,7 +182,7 @@ You can verify if those binaries are well found by the *DbToolsBundle*,
 for each of your DBAL connections, by launching:
 
 ```sh
-php console db-tools:check
+php bin/console db-tools:check
 ```
 
 If the `db-tools:check` command returns you some errors:

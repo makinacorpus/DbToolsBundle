@@ -26,14 +26,14 @@ Let's assume the environment we have besides *production* is the *preprod* envir
 
 ![The GDPR workflow](/gdpr-workflow.gif)
 
-1. Run `console db-tools:backup` on *production* environment or
-   choose an existing backup with `console db-tools:restore --list`,
+1. Run `php bin/console db-tools:backup` on *production* environment or
+   choose an existing backup with `php bin/console db-tools:restore --list`,
 2. Securely download your backup file from *production* to *preprod* environment,
    and stop services on *preprod* to ensure no one is using it,
-3. Run `console db-tools:anonymize path/to/your/production/backup` to generate
+3. Run `php bin/console db-tools:anonymize path/to/your/production/backup` to generate
    a new backup cleaned from its sensitive data,
 4. Download the anonymized backup from *preprod* to your local machine
-5. Restore the backup with `console db-tools:restore --filename path/to/your/anonymized/backup`
+5. Restore the backup with `php bin/console db-tools:restore --filename path/to/your/anonymized/backup`
 
 That's it: you now have fully anonymized data on your local environment. But sensitive
 data *never* passed through an unsecured environment!

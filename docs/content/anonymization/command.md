@@ -10,7 +10,7 @@ Considering your anonymization has been configured, you can
 now anonymize a backup file by running:
 
 ```sh
-console db-tools:anonymize path/to/your/backup/to/anonymized
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized
 ```
 
 This command will successively:
@@ -43,7 +43,7 @@ The main purpose of this command is to provide a way to anonymize a backup file.
 it could also be used to anonymize local database with `--local-database`.
 
 ```sh
-console db-tools:anonymize --local-database
+php bin/console db-tools:anonymize --local-database
 ```
 
 ### Do not restore initial state after anonymization
@@ -52,7 +52,7 @@ You can choose to not restore initial database with the `--no-restore` option.
 With this option, steps 1 and 5 will be skipped during execution.
 
 ```sh
-console db-tools:anonymize --no-restore
+php bin/console db-tools:anonymize --no-restore
 ```
 
 ### Only anonymize specific targets
@@ -60,9 +60,9 @@ console db-tools:anonymize --no-restore
 Use this option if you want to anonymize only some specific targets during the process.
 
 ```sh
-console db-tools:anonymize --target target_1 --taget target_2
+php bin/console db-tools:anonymize --target target_1 --taget target_2
 # or
-console db-tools:anonymize -t target_1 -t target_2
+php bin/console db-tools:anonymize -t target_1 -t target_2
 ```
 
 ::: tip
@@ -74,9 +74,9 @@ To know all your available targets, launch `db-tools:anonymization:dump-config`
 Use this option if you want to exclude some specific targets from anonymization.
 
 ```sh
-console db-tools:anonymize --exclude target_1 --exclude target_2
+php bin/console db-tools:anonymize --exclude target_1 --exclude target_2
 # or
-console db-tools:anonymize -x target_1 -x target_2
+php bin/console db-tools:anonymize -x target_1 -x target_2
 ```
 
 ::: tip

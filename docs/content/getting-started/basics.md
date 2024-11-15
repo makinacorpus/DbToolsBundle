@@ -24,7 +24,7 @@ vendor/bin/db-tools backup
 <div class="symfony">
 
 ```sh
-console db-tools:backup
+php bin/console db-tools:backup
 ```
 
 </div>
@@ -49,7 +49,7 @@ vendor/bin/db-tools restore
 <div class="symfony">
 
 ```sh
-console db-tools:restore
+php bin/console db-tools:restore
 ```
 
 </div>
@@ -66,10 +66,10 @@ and execute them with the correct options for you.
 *You need to retrieve data from your production environment, but you don't want to
 have sensitive data on your local environment.*
 
-Let's say you have launched a <span class="standalone">`vendor/bin/db-tools backup`</span><span class="symfony">`console db-tools:backup`</span> on your production environment
+Let's say you have launched a <span class="standalone">`vendor/bin/db-tools backup`</span><span class="symfony">`php bin/console db-tools:backup`</span> on your production environment
 and downloaded the backup file on your machine.
 
-You could run the <span class="standalone">`vendor/bin/db-tools restore`</span><span class="symfony">`console db-tools:restore`</span> to populate your database from the
+You could run the <span class="standalone">`vendor/bin/db-tools restore`</span><span class="symfony">`php bin/console db-tools:restore`</span> to populate your database from the
 freshly downloaded backup file. But in doing so, you will end up with sensitive
 data on your machine, which is not what you want:
 * First of all, because in most cases that's **illegal**
@@ -130,7 +130,7 @@ class User
 
 </div>
 
-With the above configuration, after you used `console db-tools:anonymize` on a backup file,
+With the above configuration, after you used <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> on a backup file,
 all the user email addresses it contains will be replaced with hashed ones.
 
 ::: tip
@@ -155,7 +155,7 @@ vendor/bin/db-tools anonymize path/to/my_backup.dump
 <div class="symfony">
 
 ```sh
-console db-tools:anonymize path/to/my_backup.dump
+php bin/console db-tools:anonymize path/to/my_backup.dump
 ```
 
 </div>
@@ -192,7 +192,7 @@ vendor/bin/db-tools stats
 <div class="symfony">
 
 ```sh
-console db-tools:stats
+php bin/console db-tools:stats
 ```
 
 </div>
