@@ -9,7 +9,7 @@ import DbToolsBundleFlavorSwitcher from './DbToolsBundleFlavorSwitcher.vue';
     </summary>
     <div>
       <DbToolsBundleFlavorSwitcher />
-      <a href="/getting-started/flavors" class="info">?</a>
+      <a href="./getting-started/flavors" class="info">?</a>
     </div>
   </details>
 </template>
