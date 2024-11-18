@@ -92,6 +92,6 @@ input[type="radio"]:checked + label > svg {
   fill: var(--vp-c-brand-lighter);
 }
 small {
-  font-size: 8px;
+  font-size: 10px;
 }
 </style>

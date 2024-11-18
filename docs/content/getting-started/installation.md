@@ -1,5 +1,9 @@
 # Installation
 
+Installation method will depend on which flavor you want to use.
+
+Select below your target:
+
 <FlavorSwitcher />
 
 <div class="symfony">
