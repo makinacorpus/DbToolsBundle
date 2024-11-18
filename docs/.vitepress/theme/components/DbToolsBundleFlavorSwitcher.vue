@@ -40,11 +40,19 @@ const id = Math.random().toString(36).substring(2, 6);
 
 <style scoped>
 .flavour-switch {
-  margin-top: 10px;
   font-size: 12px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  align-items: start;
+  gap: 6px;
+}
+
+.main .flavour-switch {
+  flex-direction: row;
+  border-radius: 8px;
+  background-color: var(--vp-c-bg-alt);
+  padding: 6px ;
+  margin: 12px 0;
 }
 
 input[type="radio"] {
@@ -56,7 +64,8 @@ input[type="radio"] + label {
   cursor: pointer;
   padding: 0px 4px;
   border-radius: 4px;
-  border: solid 1px var(--vp-c-text-1);
+  border: solid 1px transparent;
+  /* var(--vp-c-text-1); */
   display: flex;
   gap: 2px;
   align-items: center;
@@ -67,7 +76,7 @@ input[type="radio"] + label > svg {
 
 input[type="radio"][disabled] + label {
   color: var(--vp-c-border);
-  border-color: var(--vp-c-border);
+  /* border-color: var(--vp-c-border); */
   cursor: not-allowed;
 }
 input[type="radio"][disabled] + label > svg {
