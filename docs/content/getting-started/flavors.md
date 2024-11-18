@@ -22,7 +22,7 @@ with [composer](https://getcomposer.org).
 After the [installation](/getting-started/installation), a binary will be available in
 your `vendor` directory : `vendor/bin/db-tools`.
 
-With the standalone edition, a minimum [configuration]('/configuration') is needed to tell the system where
+With the standalone edition, a minimum configuration is needed to tell the system where
 to find the database(s) you want to manage.
 
 ## Symfony
