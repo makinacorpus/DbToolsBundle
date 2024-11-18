@@ -61,8 +61,8 @@ cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db
 cp config/anonymizations.sample.yaml db_tools.anonymization.yaml
 ```
 
-Update these file to your needs. The only required parameter is `connections` in which you
-must provided [URL connection string](../configuration/reference#connections).
+Update these files to your needs. The only required parameter is `connections` in which you
+must provided an [URL connection string](../configuration/reference#connections).
 </div>
 <div class="symfony">
 
@@ -99,7 +99,7 @@ Feel free to read this configuration file, it will learn you basics about this b
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
-But before starting to use it, check if the *DbToolsBundle* succeeds to find
+But before starting to use it, check if it succeeds to find
 backup and restore binaries for your(s) Doctrine connection(s):
 
 <div class="standalone">
@@ -131,7 +131,7 @@ the `vendor/bin/` directory.
 
 **You must not use this binary but the Symfony Console commands.**
 
-The binary will try look for a config in `db_tools.config.yaml` while the Symfony Console commands
+The binary will try to look for a config in `db_tools.config.yaml` while the Symfony Console commands
 will use the bundle configuration (which autoconfigures the database connections).
 :::
 

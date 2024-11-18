@@ -84,8 +84,8 @@ As it could be tricky and time-consuming to try to nicely anonymize data:
 
 <div class="standalone">
 
-With the DbToolsBundle, you can easily configure with a soimple YAML file a complete anonymization for
-your sensitive data.
+With DbToolsBundle, you can easily configure a complete anonymization for
+your sensitive data with a simple YAML file.
 
 ```yml
 # db_tools.anonymization.yaml

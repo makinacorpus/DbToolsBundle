@@ -5,7 +5,7 @@
 <FlavorSwitcher />
 
 Currently, you can either use it as a *standalone* PHP library or with its *Symfony* bundle. Two
-additional flavors should be soon availabled : *Laravel* and *Docker*.
+additional flavors should be soon available: *Laravel* and *Docker*.
 
 ::: tip
 You can choose your favorite flavor from the menu in the top left-hand corner.
@@ -20,14 +20,14 @@ First and foremost, *DbToolsBundle* is a PHP library. It can easily be used on a
 with [composer](https://getcomposer.org).
 
 After the [installation](/getting-started/installation), a binary will be available in
-your `vendor` directory : `vendor/bin/db-tools`.
+your `vendor` directory: `vendor/bin/db-tools`.
 
 With the standalone edition, a minimum configuration is needed to tell the system where
 to find the database(s) you want to manage.
 
 ## Symfony
 
-*DbToolsBundle* was, in its first version, a tools for Symfony developpers only. The library can still
+*DbToolsBundle* was, in its first version, a tools for Symfony developers only. The library can still
 be fully integrated into any Symfony project via its dedicated bridge.
 
 After you installed the bundle:
