@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DbToolsBundleFlavorSwitcher from './DbToolsBundleFlavorSwitcher.vue';
+import { withBase } from 'vitepress'
 </script>
 
 <template>
@@ -9,7 +10,7 @@ import DbToolsBundleFlavorSwitcher from './DbToolsBundleFlavorSwitcher.vue';
     </summary>
     <div>
       <DbToolsBundleFlavorSwitcher />
-      <a href="./getting-started/flavors" class="info">?</a>
+      <a :href="withBase('/getting-started/flavors')" class="info">?</a>
     </div>
   </details>
 </template>
