@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: DbToolsBundle
-  text: Backup, restore and anonymize your data
+  text: Backup, restore and anonymize databases
 
 features:
   - icon:
@@ -22,7 +22,7 @@ features:
       light: '/anonymize.svg'
       dark: '/anonymize-d.svg'
     title: Anonymize
-    details: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
+    details: Set up database anonymization with a simple YAML configuration file (or with PHP attributes on Doctrine Entities).
     link: /anonymization/essentials
   - icon:
       light: '/gdpr.svg'

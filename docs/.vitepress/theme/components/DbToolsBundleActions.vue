@@ -26,7 +26,7 @@ onMounted(() => {
         size="medium"
         theme="brand"
         text="Get Started"
-        href="./getting-started/introduction"
+        href="./getting-started/installation"
       />
     </div>
     <div class="action">

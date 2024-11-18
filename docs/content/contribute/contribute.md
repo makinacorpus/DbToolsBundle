@@ -1,6 +1,6 @@
-# How to contribute to the DbToolsBundle
+# How to contribute to DbToolsBundle
 
-You want to help to build and improve the *DbToolsBundle*? Here is want you can do:
+You want to help to build and improve *DbToolsBundle*? Here is want you can do:
 
 * Talk about it: share this bundle to make it more visible
 * Help us with this documentation, you have seen a typo? something is missing? [Issues](https://github.com/makinacorpus/DbToolsBundle/issues) & PRs are welcome

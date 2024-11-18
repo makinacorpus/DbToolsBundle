@@ -4,7 +4,7 @@
   --vp-c-brand-2: #561fa8;
   --vp-c-green-light: #a279e0;
   --vp-c-brand-light: #a279e0;
-  --vp-c-brand-lighter: #a279e0;
+  --vp-c-brand-lighter: #f5f3ff;
   --vp-c-brand-dark: #221157;
   --vp-c-brand-darker: #221157;
   --vp-button-brand-bg: var(--vp-c-brand);
@@ -17,6 +17,8 @@
   --vp-button-alt-hover-border: transparent;
   --vp-button-alt-active-border: transparent;
   --vp-makina-logo-text: var(--vp-c-brand-dark);
+  --db-tools-standalone: unset;
+  --db-tools-symfony: none;
 }
 
 .dark {
@@ -34,4 +36,12 @@
 
 .main img {
   margin: auto;
+}
+
+.main .standalone {
+  display: var(--db-tools-standalone);
+}
+
+.main .symfony {
+  display: var(--db-tools-symfony);
 }

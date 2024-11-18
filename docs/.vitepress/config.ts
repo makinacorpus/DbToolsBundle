@@ -60,6 +60,7 @@ export default defineConfig({
           { text: 'Introduction', link: '/getting-started/introduction' },
           { text: 'Installation', link: '/getting-started/installation' },
           { text: 'Basics', link: '/getting-started/basics' },
+          { text: 'Flavors', link: '/getting-started/flavors' },
           { text: 'Supported databases', link: '/getting-started/database-vendors' },
         ]
       },

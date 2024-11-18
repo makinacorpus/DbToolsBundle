@@ -3,7 +3,7 @@
 You created a bunch of anonymizers and want to reuse them easily? May be you
 also want to share them with the community?
 
-The DbToolsBundle help you to do so with [a github template repository](https://github.com/DbToolsBundle/pack-template).
+*DbToolsBundle* help you to do so with [a github template repository](https://github.com/DbToolsBundle/pack-template).
 
 After [you created a fresh repository from this template](https://github.com/new?template_name=pack-template&template_owner=DbToolsBundle),
 follow these steps to set up your pack:

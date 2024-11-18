@@ -1,6 +1,6 @@
 # Performance
 
-Before we created the DbToolsBundle, we looked at other PHP tools to anonymize
+Before we created *DbToolsBundle*, we looked at other PHP tools to anonymize
 data. After a quick search, we can't find a project that seems to be over the
 top and most of the solutions we found was unmaintained.
 
@@ -13,12 +13,12 @@ This approach has a benefit: you can use an external library - such as
 [Faker](https://github.com/fzaninotto/Faker) - to anonymize your data.
 But it also has a big drawback: it is very slow.
 
-For the DbToolsBundle, we choose another methodology: **we anonymize with SQL
+For *DbToolsBundle*, we choose another methodology: **we anonymize with SQL
 queries**. We use database management systems for what they are good at: processing
 huge amounts of data.
 
 :::info
-Anonymizing through SQL, the DbToolsBundle generates long and complex
+Anonymizing through SQL, *DbToolsBundle* generates long and complex
 update queries. To get great performance for each one of the platform it addresses,
 a meticulous work has been made. Queries are optimized differently depending on the
 database platform on which they will be executed.
@@ -26,7 +26,7 @@ database platform on which they will be executed.
 [Learn more about these optimizations](./internals).
 :::
 
-We get pretty good results with this approach. And to demonstrate the DbToolsBundle
+We get pretty good results with this approach. And to demonstrate *DbToolsBundle*
 capabilities, we created a [benchmark app](https://github.com/DbToolsBundle/benchmark-app).
 
 In this app, you will find a Symfony application that uses 4 different
