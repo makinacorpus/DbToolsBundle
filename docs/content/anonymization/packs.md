@@ -5,7 +5,7 @@ import VPSocialLink from 'vitepress/dist/client/theme-default/components/VPSocia
 # Extra packs
 
 With *DbToolsBundle*, we chose to have a decentralized approach, we don't want the base
-code to become to big. The bundle comes with a short list of common purpose anonymizers and
+code to become too big. The bundle comes with a short list of common purpose anonymizers and
 we won't add too specific ones to it.
 
 Instead we added the possibility to create and include **extra packs of anonymizers**.

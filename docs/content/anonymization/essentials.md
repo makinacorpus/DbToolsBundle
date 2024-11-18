@@ -52,7 +52,7 @@ This entity has several fields we want to anonymize, and others that we don't:
 
 
 <div class="standalone">
-Here is how you can declare this configruation:
+Here is how you can declare this configuration:
 
 ```yaml
 # db_tools.anonymization.yaml
