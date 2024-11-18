@@ -122,3 +122,17 @@ php bin/console db-tools:check
 If this command returns some errors, go to the [binaries configuration](../configuration#binaries)
 section to understand how to solve them.
 :::
+
+<div class="symfony">
+
+:::warning
+While installing the bundle through composer, the standalone binary will also be installed in
+the `vendor/bin/` directory.
+
+**You must not use this binary but the Symfony Console commands.**
+
+The binary will try look for a config in `db_tools.config.yaml` while the Symfony Console commands
+will use the bundle configuration (which autoconfigures the database connections).
+:::
+
+</div>

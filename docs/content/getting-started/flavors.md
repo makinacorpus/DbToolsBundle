@@ -16,7 +16,7 @@ to this selected flavor.
 
 ## Standalone
 
-Before all, *DbToolsBundle* is a PHP library. It can easily be used on any project managed
+First and foremost, *DbToolsBundle* is a PHP library. It can easily be used on any project managed
 with [composer](https://getcomposer.org).
 
 After the [installation](/getting-started/installation), a binary will be available in
@@ -33,6 +33,6 @@ be fully integrated into any Symfony project via its dedicated bridge.
 After you installed the bundle:
 * All the *DbToolsBundle* commands will be accessible with
   the [Symfony Console](https://symfony.com/doc/current/components/console.html).
-* Database connection URL will be autoconfigured based on available DBAL connections
-* *DbToolsBundle* can be setup through its bundle configuration (`config/packages/db_tools.yaml`)
-* Anonymization can be set through PHP attributes on Doctrine Entities
+* Database connection URL will be autoconfigured based on available DBAL connections.
+* *DbToolsBundle* can be setup through its bundle configuration (`config/packages/db_tools.yaml`).
+* Anonymization can be set through PHP attributes on Doctrine Entities.
