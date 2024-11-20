@@ -9,9 +9,9 @@ Options are:
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             address:
                 sensible_content:

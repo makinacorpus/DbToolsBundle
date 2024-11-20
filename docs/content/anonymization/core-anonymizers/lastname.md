@@ -5,9 +5,9 @@ Works like the StringAnonymizer, but with a provided sample of 1000 worldwide la
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             lastname: lastname
   #...

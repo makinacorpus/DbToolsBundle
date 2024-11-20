@@ -5,9 +5,9 @@ This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymi
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             my_dirty_secret: md5
   #...

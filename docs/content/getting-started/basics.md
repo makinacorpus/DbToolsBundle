@@ -88,9 +88,9 @@ With DbToolsBundle, you can easily configure a complete anonymization for
 your sensitive data with a simple YAML file.
 
 ```yml
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         user:
             email_address: email
 ```

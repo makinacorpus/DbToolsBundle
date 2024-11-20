@@ -9,9 +9,9 @@ You may also specify a `precision` (default 2).
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             # Will fill the size column with a random float
             # in the [min, max] interval.

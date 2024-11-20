@@ -7,9 +7,9 @@ Anonymize integers by:
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             age:
                 anonymizer: integer

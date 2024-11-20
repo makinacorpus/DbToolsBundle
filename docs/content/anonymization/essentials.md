@@ -55,9 +55,9 @@ This entity has several fields we want to anonymize, and others that we don't:
 Here is how you can declare this configuration:
 
 ```yaml
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             email_address: email
             level:
@@ -139,9 +139,9 @@ Some *Anonymizers* are mutlicolumn. For example the *AddressAnonymizer* can, by 
 <div class="standalone">
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             address:
                 target: table

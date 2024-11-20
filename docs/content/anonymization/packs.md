@@ -25,7 +25,7 @@ Here is a list of official packs:
 A pack of anonymizers for fr-FR locale.
 
 ```sh
-composer require dbtoolsbundle/pack-fr-fr
+composer require db-tools-bundle/pack-fr-fr
 ```
 
 * `fr-fr.address`: Same as address from core but with a sample of 500 dumb french addresses

@@ -20,9 +20,9 @@ You can additionnally set the `format` parameter:
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             # Will add to the existing date a random interval in the [-delta, +delta] interval.
             birthDate:

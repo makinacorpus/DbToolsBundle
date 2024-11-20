@@ -13,9 +13,9 @@ For example `contact@makina-corpus.com` will give `826464d916e6052ad209037ca71ce
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             email_address: email
   #...
@@ -62,9 +62,9 @@ Or, with the domain option:
 <div class=standalone>
 
 ```yaml [YAML]
-# db_tools.anonymization.yaml
+# db_tools.config.yaml
 anonymization:
-    tables:
+    default:
         customer:
             email_address:
                 anonymizer: email
