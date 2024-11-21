@@ -6,6 +6,7 @@ After some configurations, launching <span class="standalone">`vendor/bin/db-too
 replace sensitive data by random and/or hashed ones in your database.
 
 <div class="symfony">
+
 With the Symfony bundle, there is two ways to tell *DbToolsBundle* how it should anonymize your data:
 
 1. you can use **PHP attributes** on Doctrine Entities' classes and properties
