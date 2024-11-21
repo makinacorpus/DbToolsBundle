@@ -117,14 +117,16 @@ class DbToolsConfiguration implements ConfigurationInterface
         $connectionsNode = $rootNode
             ->children()
                 ->arrayNode('connections')
+                    ->beforeNormalization()->ifString()->then(function ($v) { return ['default' => $v]; })->end()
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
-                    ->children()
-                        ->scalarNode('url')
-                            ->defaultNull()
+                        ->beforeNormalization()->ifString()->then(function ($v) { return ['url' => $v]; })->end()
+                        ->children()
+                            ->scalarNode('url')
+                                ->defaultNull()
+                            ->end()
                         ->end()
-                    ->end()
-                    // Do not close arrayNode() we use it below.
+                        // Do not close arrayNode() we use it below.
         ;
         \assert($connectionsNode instanceof ArrayNodeDefinition);
         $this->addConnectionConfigTreeBuilder($connectionsNode);
