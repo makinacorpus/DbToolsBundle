@@ -57,6 +57,7 @@
     "config": {
         "sort-packages": true
     },
+    "bin": ["bin/db-tools"],
     "scripts": {
         "phpcs": "./vendor/bin/php-cs-fixer fix --verbose --allow-risky=yes",
         "phpstan": "./vendor/bin/phpstan --memory-limit=1G",
