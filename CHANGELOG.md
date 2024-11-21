@@ -20,6 +20,7 @@
 * [internal] All Doctrine related dependencies are now optional (#155).
 * [internal] Move Symfony related code into the `src/Bridge/Symfony` folder and associated namespace (#155).
 * [internal] More efficient anonymizer pack lookup (#165).
+* [internal] Temporary tables and join columns for anonymization have their name changed to reduce conflict probability with user tables and columns.
 
 ## 1.2.1
 
