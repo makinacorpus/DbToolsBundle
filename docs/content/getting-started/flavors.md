@@ -31,7 +31,7 @@ to find the database(s) you want to manage.
 be fully integrated into any Symfony project via its dedicated bridge.
 
 After you installed the bundle:
-* All the *DbToolsBundle* commands will be accessible with
+* All *DbToolsBundle* commands will be accessible with
   the [Symfony Console](https://symfony.com/doc/current/components/console.html).
 * Database connection URL will be autoconfigured based on available DBAL connections.
 * *DbToolsBundle* can be setup through its bundle configuration (`config/packages/db_tools.yaml`).

@@ -5,13 +5,13 @@ your database but also a tiny backups manager which handle backup files for you.
 
 ## Backup command
 
-The backup command will use the [predefined or configured binary](./configuration#binaries) for your
+The backup command will use the [predefined or configured binary](./configuration/basics#binaries) for your
 database vendor with correct parameters to dump your database.
 
-Each time you launch the backup command, [a backup file is stored in a directory](./configuration#storage-directory) (See
+Each time you launch the backup command, [a backup file is stored in a directory](./configuration/basics#storage-directory) (See
 [Storage section](#storage) below for more information on how backup files are stored).
 
-With time, this directory will grow, that's why a [backup expiration age](./configuration#storage-directory#backup-expiration-age)
+With time, this directory will grow, that's why a [backup expiration age](./configuration/basics#storage-directory#backup-expiration-age)
 was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
 backup files (i.e. files that have passed their expiration date).
 
@@ -60,7 +60,7 @@ php bin/console db-tools:backup --connection other_connection_name
 
 ### Excluded tables
 
-You may have configured [tables to be exclude in the bundle configuration](./configuration#excluded-tables).
+You may have configured [tables to be exclude in the bundle configuration](./configuration/basics#excluded-tables).
 If so, these tables will be automatically excluded each time you launch the command.
 
 But if you want to temporarily exclude some tables, run the command with the `--excluded-table` option:
@@ -132,11 +132,11 @@ php bin/console db-tools:backup --extra-options "--opt1 val1 --opt2 val2 --flag"
 </div>
 
 Unless you specify the `--ignore-default-options` option, the custom options
-will be added to the [default options](./configuration#default-binary-options).
+will be added to the [default options](./configuration/basics#default-binary-options).
 
 ### Ignoring default options
 
-If necessary, [default options](./configuration#default-binary-options) can be
+If necessary, [default options](./configuration/basics#default-binary-options) can be
 ignored for a backup by using the `--ignore-default-options` option:
 
 <div class="standalone">
@@ -158,7 +158,7 @@ php bin/console db-tools:backup --ignore-default-options
 
 ## Restore command
 
-The restore command will use [predefined or configured binary](./configuration#binaries) for your database vendor with correct parameters
+The restore command will use [predefined or configured binary](./configuration/basics#binaries) for your database vendor with correct parameters
 to restore your database from an existing backup files.
 
 <div class="standalone">
@@ -280,11 +280,11 @@ php bin/console db-tools:restore --extra-options "--opt1 val1 --opt2 val2 --flag
 </div>
 
 Unless you specify the `--ignore-default-options` option, the custom options
-will be added to the [default options](./configuration#default-binary-options).
+will be added to the [default options](./configuration/basics#default-binary-options).
 
 ### Ignoring default options
 
-If necessary, [default options](./configuration#default-binary-options) can be
+If necessary, [default options](./configuration/basics#default-binary-options) can be
 ignored for a restoration by using the `--ignore-default-options` option:
 
 <div class="standalone">
@@ -307,11 +307,11 @@ php bin/console db-tools:restore --ignore-default-options
 
 ## Storage
 
-As mentioned earlier on this page, the *DbToolsBundle* can list existing backup files
+As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
 All backups are stored in a directory. By default this directory is <span class="standalone">`./var/db_tools` (relative to the yaml config file)</span><span class="symfony">`%kernel.project_dir%/var/db_tools`</span>
-but [you can choose the directory you want](./configuration#storage-directory).
+but [you can choose the directory you want](./configuration/basics#storage-directory).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
 is generated from the backup date and the DBAL connection name of the database.

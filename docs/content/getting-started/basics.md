@@ -97,12 +97,13 @@ anonymization:
 
 </div>
 <div class="symfony">
-With the DbToolsBundle, by adding some PHP attributes on your Doctrine Entities,
+
+With *DbToolsBundle*, by adding some PHP attributes on your Doctrine Entities,
 you can easily configure a complete anonymization for your sensitive data.
 
 ::: info
 Anonymization does not only work with Doctrine Entities. You can use it with
-*any* database and [configure it with YAML](../configuration#anonymization). All you need is a DBAL connection.
+*any* database and [configure it with YAML](../configuration/basics#anonymization). All you need is a DBAL connection.
 :::
 
 ```php
@@ -167,7 +168,7 @@ to download and restore it on your local environment without any security concer
 We know that a slow anonymization process can be real pain. That's why a meticulous work has been
 carried out to make this operation as quick as possible.
 
-Thanks to this work, the DbToolsBundle can now **anonymize 1 million rows in less than 20s**!
+Thanks to this work, *DbToolsBundle* can now **anonymize 1 million rows in less than 20s**!
 
 Learn more about performance in the [dedicated section](../anonymization/performance).
 :::
