@@ -13,13 +13,13 @@ With the Symfony bundle, there is two ways to tell *DbToolsBundle* how it should
 2. you can declare it with a **YAML** file
 
 ::: tip
-The *DbToolsBundle* does not only work with Doctrine Entities to anonymize data. You can use it with
+*DbToolsBundle* does not only work with Doctrine Entities to anonymize data. You can use it with
 *any* database, all you need is a DBAL connection.
 
 In such case, the [YAML configuration](../configuration#anonymization) is the only available option.
 :::
 
-If Doctrine ORM is enabled, the *DbToolsBundle* will automatically look for attributes on your entities.
+If Doctrine ORM is enabled, *DbToolsBundle* will automatically look for attributes on your entities.
 If you want to use YAML configuration, look at the [Bundle Configuration
 section](../configuration#anonymization) to see how to configure it.
 
@@ -225,7 +225,7 @@ customer:
 
 ## Going further
 
-The DbToolsBundle provides a bunch of *Anonymizers* that should cover most of your needs. You can find a
+*DbToolsBundle* provides a bunch of *Anonymizers* that should cover most of your needs. You can find a
 complete description of each one of them in the next section.
 
 You can also add *Anonymizers* from [community packs](./packs). For example, to add the `pack-fr-fr` run:
@@ -234,7 +234,7 @@ You can also add *Anonymizers* from [community packs](./packs). For example, to 
 composer require db-tools-bundle/pack-fr-fr
 ```
 
-If you can't find what you need from core anonymizers and in available packs, the *DbToolsBundle* allows
+If you can't find what you need from core anonymizers and in available packs, *DbToolsBundle* allows
 you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip

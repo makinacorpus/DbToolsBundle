@@ -307,7 +307,7 @@ php bin/console db-tools:restore --ignore-default-options
 
 ## Storage
 
-As mentioned earlier on this page, the *DbToolsBundle* can list existing backup files
+As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
 All backups are stored in a directory. By default this directory is <span class="standalone">`./var/db_tools` (relative to the yaml config file)</span><span class="symfony">`%kernel.project_dir%/var/db_tools`</span>

@@ -30,16 +30,16 @@ within.
 [`anonymization.tables` (standalone)](#anonymization-tables) |
 [`anonymization.yaml`](#anonymization-yaml) |
 [`anonymizer_paths`](#anonymizer-paths) |
+[`backup_binary`](#backup-binary) |
 [`backup_expiration_age`](#backup-expiration-age) |
+[`backup_options`](#backup-options) |
 [`backup_timeout`](#backup-timeout) |
-[`backupper_binaries`](#backupper-binaries) |
-[`backupper_options`](#backupper-options) |
 [`connections` (standalone)](#connections) |
 [`default_connection` (standalone)](#default-connection) |
 [`excluded_tables`](#excluded-tables) |
+[`restore_binary`](#restore-binary) |
+[`restore_options`](#restore-options) |
 [`restore_timeout`](#restore-timeout) |
-[`restorer_binaries`](#restorer-binaries) |
-[`restorer_options`](#restorer-options) |
 [`storage.filename_strategy`](#storage-filename-strategy) |
 [`workdir` (standalone)](#workdir)
 
@@ -177,7 +177,7 @@ excluded_tables:
 :::
 
 
-### `backupper_binaries`
+### `backup_binary`
 
 Path to backup command in filesystem.
 
@@ -188,7 +188,7 @@ work in most Linux distributions.
 :::code-group
 ```yaml [Symfony]
 db_tools:
-    backupper_binaries:
+    backup_binary:
         mariadb: /usr/bin/mariadb-dump
         mysql: /usr/bin/mysqldump
         postgresql: /usr/bin/pg_dump
@@ -196,7 +196,7 @@ db_tools:
 ```
 
 ```yaml [Standalone]
-backupper_binaries:
+backup_binary:
     mariadb: /usr/bin/mariadb-dump
     mysql: /usr/bin/mysqldump
     postgresql: /usr/bin/pg_dump
@@ -204,7 +204,7 @@ backupper_binaries:
 ```
 :::
 
-### `restorer_binaries`
+### `restore_binary`
 
 Path to restore command in filesystem.
 
@@ -214,7 +214,7 @@ work in most Linux distributions.
 :::code-group
 ```yaml [Symfony]
 db_tools:
-    restorer_binaries:
+    restore_binary:
         mariadb: /usr/bin/mariadb
         mysql: /usr/bin/mysql
         postgresql: /usr/bin/pg_restore
@@ -222,7 +222,7 @@ db_tools:
 ```
 
 ```yaml [Standalone]
-restorer_binaries:
+restore_binary:
     mariadb: /usr/bin/mariadb
     mysql: /usr/bin/mysql
     postgresql: /usr/bin/pg_restore
@@ -230,7 +230,7 @@ restorer_binaries:
 ```
 :::
 
-### `backupper_options`
+### `backup_options`
 
 Allows you to add specific command line options to the backup command, one for each connection.
 
@@ -246,13 +246,13 @@ By specifying options, the default ones will be dropped.
 :::code-group
 ```yaml [Symfony]
 db_tools:
-    backupper_options:
+    backup_options:
         connection_one: '-Z 5 --lock-wait-timeout=120'
         connection_two: '--no-tablespaces'
 ```
 
 ```yaml [Standalone]
-backupper_options:
+backup_options:
     connection_one: '-Z 5 --lock-wait-timeout=120'
     connection_two: '--no-tablespaces'
 ```
@@ -287,7 +287,7 @@ restore_timeout: 67
 ```
 :::
 
-### `restorer_options`
+### `restore_options`
 
 Allows you to add specific command line options to the restore command, one for each connection.
 
@@ -301,13 +301,13 @@ invoking the command, the following ones will be used according to the database 
 :::code-group
 ```yaml [Symfony]
 db_tools:
-    backupper_options:
+    restore_options:
         connection_one: '-j 2 --clean --if-exists --disable-triggers'
         connection_two: '--no-tablespaces'
 ```
 
 ```yaml [Standalone]
-backupper_options:
+restore_options:
     connection_one: '-j 2 --clean --if-exists --disable-triggers'
     connection_two: '--some-other-option
 ```

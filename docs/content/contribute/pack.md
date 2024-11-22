@@ -20,7 +20,7 @@ First, you will need to adapt the provided `composer.json`:
 {
     "name": "db-tools-bundle/pack-template",// [!code --]
     "name": "my-vendor/pack-awesome",// [!code ++]
-    "description": "An example pack of anonymizers for the DbToolsBundle",// [!code --]
+    "description": "An example pack of anonymizers for DbToolsBundle",// [!code --]
     "description": "An awesome pack for anonymizing many things!",// [!code ++]
     "type": "db-tools-bundle-pack",
     "license": "MIT",
@@ -130,7 +130,7 @@ Learn more about how to develop them reading the [Custom Anonymizers section](..
 ## 3. Test your anonymizers
 
 After you built your anonymizers, don't forget to test them. We recommend doing at least one functionnal test per anonymizer.
-To inspire you doing these tests, read [existing tests in the DbToolsBundle](https://github.com/makinacorpus/DbToolsBundle/tree/main/tests/Functional/Anonymizer/Core)
+To inspire you doing these tests, read [existing tests in DbToolsBundle](https://github.com/makinacorpus/DbToolsBundle/tree/main/tests/Functional/Anonymizer/Core)
 or in official packs.
 
 To help you launchning these tests, use provided `dev.sh` script, see [Development guide section](./guide) to learn how to use it.

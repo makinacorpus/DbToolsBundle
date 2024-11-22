@@ -24,7 +24,7 @@ you should not be lost if you are a regular Symfony developer.
 
 - PHP 8.1 or higher
 - Symfony 6.0 or higher
-- Doctrine/DBAL, the DbToolsBundle takes advantage of available DBAL connections
+- Doctrine/DBAL, *DbToolsBundle* takes advantage of available DBAL connections
 
 </div>
 
