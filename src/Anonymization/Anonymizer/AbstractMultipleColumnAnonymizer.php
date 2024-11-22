@@ -49,6 +49,8 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     #[\Override]
     protected function validateOptions(): void
     {
+        parent::validateOptions();
+
         if (0 === \count($this->options->all())) {
             throw new \InvalidArgumentException("You must provide at least one option.");
         }

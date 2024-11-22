@@ -35,6 +35,8 @@
         "symfony/validator": "^6.3|^7.0"
     },
     "suggest": {
+        "db-tools-bundle/pack-faker": "FakerPHP/Faker bridge anonyzer pack",
+        "db-tools-bundle/pack-fr-fr": "French anonymizers pack",
         "symfony/password-hasher": "In order to use the password hash anonymizer"
     },
     "conflict": {

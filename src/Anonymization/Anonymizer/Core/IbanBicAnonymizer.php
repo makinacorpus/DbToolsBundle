@@ -29,12 +29,6 @@ class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
     {
         parent::validateOptions();
 
-        if ($this->options->has('sample_size')) {
-            $value = $this->options->getInt('sample_size');
-            if ($value <= 0) {
-                throw new \InvalidArgumentException("'sample_size' option must be a positive integer.");
-            }
-        }
         if ($this->options->has('country')) {
             $value = $this->options->getString('country');
             if (!\ctype_alpha($value) || 2 !== \strlen($value)) {
@@ -53,9 +47,15 @@ class IbanBicAnonymizer extends AbstractMultipleColumnAnonymizer
     }
 
     #[\Override]
+    protected function hasSampleSizeOption(): bool
+    {
+        return true;
+    }
+
+    #[\Override]
     protected function getSamples(): array
     {
-        $sampleSize = $this->options->getInt('sample_size', 500);
+        $sampleSize = $this->getSampleSize();
         $countryCode = $this->options->getString('country', 'FR');
 
         // @todo, pas d'options, pas de count ni de country, désolé.
