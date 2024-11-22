@@ -35,7 +35,7 @@ To inspire you, browse existing *Anonymizers* in `vendor/makinacorpus/db-tools-b
 
 ::: tip
 You can tell *DbToolsBundle* your *Custom Anonymizers* live in a different directory
-with the [*Anonymizer paths* configuration](../configuration#anonymizer-paths).
+with the [*Anonymizer paths* configuration](../configuration/basics#anonymizer-paths).
 :::
 
 ::: tip

@@ -85,7 +85,7 @@ export default defineConfig({
         items: [
           { text: 'Backup & Restore', link: '/backup_restore' },
           { text: 'Statistics', link: '/stats' },
-          { text: 'Bundle configuration', link: '/configuration' },
+          { text: 'Configuration basics', link: '/configuration/basics' },
           { text: 'Configuration reference', link: '/configuration/reference' },
         ]
       },
