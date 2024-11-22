@@ -110,7 +110,41 @@ abstract class AbstractAnonymizer
      *
      * @throws \Exception if any option is invalid.
      */
-    protected function validateOptions(): void {}
+    protected function validateOptions(): void
+    {
+        if ($this->hasSampleSizeOption()) {
+            if ($this->options->has('sample_size')) {
+                $value = $this->options->getInt('sample_size');
+                if ($value <= 0) {
+                    throw new \InvalidArgumentException("'sample_size' option must be a positive integer.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Does this anonymizer has a "sample size" option.
+     */
+    protected function hasSampleSizeOption(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Default sample size, goes along the "sample size" option set to true.
+     */
+    protected function getDefaultSampleSize(): int
+    {
+        return 500;
+    }
+
+    /**
+     * Default sample size, goes along the "sample size" option set to true.
+     */
+    protected function getSampleSize(): int
+    {
+        return $this->options->getInt('sample_size', $this->getDefaultSampleSize());
+    }
 
     /**
      * Initialize your anonymizer.

@@ -43,7 +43,12 @@ class AnonymizerListCommand extends Command
                 $list[$metadata->pack] = [];
             }
 
-            $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $metadata->description;
+            $description = $metadata->description;
+            if ($metadata->missingRequirements()) {
+                $description .= "\n" . \sprintf('<error>Dependencies are missing: "%s"</error>', \implode('", "', $metadata->dependencies));
+            }
+
+            $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $description;
         }
 
         \array_walk($list, fn (array &$anonymizers) => \ksort($anonymizers, SORT_STRING));
