@@ -195,7 +195,7 @@ class Bootstrap
      */
     public static function bootstrap(array $config = [], array $configFiles = [], ?LoggerInterface $logger = null): Context
     {
-        $logger ?? new NullLogger();
+        $logger ??= new NullLogger();
         $config = self::configParse($config, $configFiles, $logger);
 
         $default = new Configuration(
