@@ -2,6 +2,7 @@
 
 ## Next
 
+* [feature] 🌟 PHP 8.4 support (#186).
 * [feature] 🌟 Add `bin/db-tools` CLI command allowing standalone usage (#153).
 * [feature] ⭐️ The CLI tool can run without configuration using only environment variables (#191).
 * [feature] ⭐️ All global options can now be configured on a per-connection basis in `connections.NAME.OPTION` (#191).
