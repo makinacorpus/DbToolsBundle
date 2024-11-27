@@ -50,7 +50,7 @@ For example, you can automate this workflow **as a CI job** and therefore use a 
 to play the *intermediate environment* role.
 
 This approach has many benefits:
-* You don't need to backup and restore initial state of this environment:
+* You don't need to back up and restore initial state of this environment:
   the <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span>
   will be faster,
 * You can store the anonymized backup as a CI artefact, it will then be automatically available for

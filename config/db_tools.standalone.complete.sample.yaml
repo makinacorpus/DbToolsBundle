@@ -33,12 +33,13 @@
 # Default timeout for restore process.
 #restore_timeout: 2400 # default 1800
 
-# List here tables (you don't want in your backups.
+# List here tables you don't want in your backups.
 # If you have more than one connection, it is strongly advised to configure
 # this for each connection instead.
 #backup_excluded_tables: ['table1', 'table2']
 
-# Specify here paths to backup and restore binaries and command line options.
+# Specify here paths to backup and restoration binaries and command line
+# options.
 # Warning: this will apply to all connections disregarding their database
 # vendor. If you have more than one connection and if they use different
 # database vendors or versions, please configure those for each connection
@@ -54,7 +55,7 @@
 # Connection name will be "default" when configured this way.
 connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
 
-# Alternatively, you are allowed to have more than one connections, case
+# Alternatively, you are allowed to have more than one connection, case
 # in which you might synthesize the configuration as this:
 #connections:
 #    connection_one: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
@@ -66,7 +67,8 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 #connections:
 #    connection_one:
 #        # Connection URL for connecting.
-#        # Please refer to makinacorpus/db-query-builder or  documentation for more information.
+#        # Please refer to makinacorpus/db-query-builder or documentation for
+#        # more information.
 #        # Any URL built for doctrine/dbal usage should work.
 #        # URL is the sole mandatory parameter.
 #        # Complete list of accepted parameters follows.
@@ -85,14 +87,15 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 #        url: "mysql://username:password@hostname:port?version=8.1&other_option=..."
 #        # ...
 
-# You can explicitely set which will be default connection in use when
-# none providen in the command line options. If you omit this configuration
+# You can explicitly set which will be default connection in use when none
+# is provided in the command line options. If you omit this configuration
 # value, then the first one in the list will be used.
 #default_connection: connection_one
 
-# Update this configuration if you want to look for anonymizers in a custom folder.
+# Update this configuration if you want to look for anonymizers in a custom
+# folder.
 #anonymizer_paths:
-    #- ./src/Anonymization/Anonymizer'
+#    - ./src/Anonymizer
 
 # For simple needs, you may simply write the anonymization configuration here.
 # Keys are connection names, values are structures which are identical to what
@@ -112,8 +115,8 @@ anonymization:
 
 # You can for organisation purpose delegate anonymization config into extra
 # YAML configuration files, and simply reference them here.
-# Pathes can be either relative or absolute. Relative paths are relative to
-# the workdir option if specified, or from this configuration file directory
+# Paths can be either relative or absolute. Relative paths are relative to
+# the workdir option if specified, or from this configuration file directory
 # otherwise.
 # See the "anonymizations.sample.yaml" in this folder for an example.
 anonymization_files:

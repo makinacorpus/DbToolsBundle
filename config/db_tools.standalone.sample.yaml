@@ -1,10 +1,10 @@
 # This configuration file is an example for standalone usage.
-# Only required parameter is the connection URL.
+# The only required parameter is the connection URL.
 
 # If you have a single connection, you can use this syntax.
 # Connection name will be "default" when configured this way.
 # If you have multiple connections, please refer to the exhaustive
-# sample in 'db_tools.standalone.complete.sample.yaml'.
+# sample in 'db_tools.standalone.complete.sample.yaml'.
 connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
 
 # Where to put generated backups.
@@ -27,21 +27,22 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 # (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
 #backup_expiration_age: '6 months ago' # default '3 months ago'
 
-# List here tables (you don't want in your backups.
+# List here tables you don't want in your backups.
 # If you have more than one connection, it is strongly advised to configure
 # this for each connection instead.
 #backup_excluded_tables: ['table1', 'table2']
 
-# Update this configuration if you want to look for anonymizers in a custom folder.
+# Update this configuration if you want to look for anonymizers in a custom
+# folder.
 #anonymizer_paths:
-    #- ./src/Anonymization/Anonymizer'
+#    - ./src/Anonymizer'
 
 # Write the anonymization configuration here.
 # You may also write anonymization configuration in extra files instead, please
-# see the 'db_tools.standalone.complete.sample.yaml' for more documentation.
+# see the 'db_tools.standalone.complete.sample.yaml' for more documentation.
 #anonymization:
-#    # Keys are connection names, values are structures which are identical to what
-#    # you may find in the "anonymizations.sample.yaml" example.
+#    # Keys are connection names, values are structures which are identical to
+#    # what you may find in the "anonymizations.sample.yaml" example.
 #    # If you only specified one URL in the "connections" parameter above, the
 #    # connection name is "default".
 #    default:

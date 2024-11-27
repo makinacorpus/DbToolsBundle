@@ -10,3 +10,4 @@ To build it locally :
 nvm use
 npm ci
 npm run docs:dev
+```

@@ -98,8 +98,8 @@ Feel free to read this configuration file, it will learn you basics about this b
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
-But before starting to use it, check if it succeeds to find
-backup and restore binaries for your(s) Doctrine connection(s):
+But before starting to use it, check if it succeeds to find backup and
+restoration binaries for your Doctrine connection(s):
 
 <div class="standalone">
 

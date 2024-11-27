@@ -1,5 +1,5 @@
 parameters:
-    # All allowed environement variables.
+    # All allowed environment variables.
     # When conflicting with options in the Symfony configuration, the Symfony
     # configuration will override the environment variables.
     env(DBTOOLS_BACKUP_BINARY): ~

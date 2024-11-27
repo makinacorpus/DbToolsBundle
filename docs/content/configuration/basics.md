@@ -8,15 +8,15 @@ Select below your target:
 
 <div class="symfony">
 
-*DbToolsBundle* let you configure some of its behaviors. As with any classic Symfony Bundle,
-all will take place in the `config/packages/db_tools.yaml` file.
+*DbToolsBundle* let you configure some of its behaviors. As with any classic
+Symfony Bundle, all will take place in the `config/packages/db_tools.yaml` file.
 
 :::tip
-A complete example of this file can be found in the bundle sources in: `vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`.
+A complete example of this file can be found in the bundle sources in:
+`vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`.
 :::
 
 </div>
-
 <div class="standalone">
 
 *DbToolsBundle* let you configure some of its behaviors
@@ -25,7 +25,8 @@ all will take place in your configuration file, usually `db_tools.yaml`.
 :::tip
 **In this page, all paths are relative to the `db_tools.yaml` configuration file.**
 
-A complete example of this file can be found in the library sources in: `vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.complete.sample.yaml`.
+A complete example of this file can be found in the library sources in:
+`vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.complete.sample.yaml`.
 :::
 
 </div>
@@ -34,8 +35,9 @@ For detailed information about configuration options, please see the
 [configuration reference](../configuration/reference).
 
 :::tip
-**Almost every configuration option can be configured at the connection level** for example the
-backup excluded tables can either be configured top-level (for all connections):
+**Almost every configuration option can be configured at the connection level**.
+For example, the backup excluded tables can either be configured top-level (for
+all connections):
 
 <div class="symfony">
 
@@ -78,8 +80,8 @@ connections:
 
 </div>
 
-When working with multiple connections, any connection which does not specify the option
-will inherit from the default.
+When working with multiple connections, any connection which does not specify
+the option will inherit from the default.
 :::
 
 ## Backup configuration
@@ -94,21 +96,21 @@ The `storage_directory` parameter let you choose where to put the generated dump
 
 <div class="symfony">
 
-Default value is `'%kernel.project_dir%/var/db_tools'`.
+Default value is `%kernel.project_dir%/var/db_tools`.
 
 </div>
-
 <div class="standalone">
 
-Default value is `./var/db_tools'`.
+Default value is `./var/db_tools`.
 
 </div>
 
 #### File and directory naming strategy
 
-Default behavior will store your backup using this strategy:
-`%storage_directory%/<YEAR>/<MONTH>/<CONNECTION-NAME>-<YEAR><MONTH><DAY><HOUR><MINUTES><SECOND>.<EXT>`
-where `<EXT>` is the file extension depending upon the database vendor (mostly `.sql` or `.dump`).
+Default behavior will store your backup under the [storage root directory](#root-directory)
+by using this filename strategy:
+`<YEAR>/<MONTH>/<CONNECTION-NAME>-<YEAR><MONTH><DAY><HOUR><MINUTES><SECOND>.<EXT>`
+where `<EXT>` is the file extension depending upon the database backend (mostly `.sql` or `.dump`).
 
 <div class="symfony">
 
@@ -133,22 +135,30 @@ class FooFilenameStrategy extends AbstractFilenameStrategy
 }
 ```
 
-Then registered this way, on a per-connection basis:
+Then registered this way to impact all connections:
 
 ```yaml
 # config/packages/db_tools.yaml
 db_tools:
-    storage:
-        filename_strategy:
-            connection_name: App\DbTools\Storage\FooFilenameStrategy
+    storage_filename_strategy: App\DbTools\Storage\FooFilenameStrategy
 ```
 
-Value can be a container service identifier, or directly a class name in case this
-has no constructor arguments.
+Or for a specific connection:
 
-If you need to store your dumps outside of the `%storage_directory%` directory,
-then implement the `MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface` directly
-and add the following method:
+```yaml
+# config/packages/db_tools.yaml
+db_tools:
+    connections:
+        connection_name:
+            storage_filename_strategy: App\DbTools\Storage\FooFilenameStrategy
+```
+
+Value can be a container service identifier, or directly a class name in case
+this has no constructor arguments.
+
+If you need to store your dumps outside the `%storage_directory%` directory,
+then implement the `MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface`
+directly and add the following method:
 
 ```php
 namespace App\DbTools\Storage;
@@ -170,15 +180,14 @@ class FooFilenameStrategy implements FilenameStrategyInterface
 }
 ```
 
-This will allow the restore command to find your backups.
+This will allow the _restore_ command to find your backups.
 
 </div>
-
 <div class="standalone">
 
 :::warning
-There is as of now no way to implement a custom filename strategy when using *DbToolsBundle* as a standalone
-CLI tool.
+There is as of now no way to implement a custom filename strategy when using
+*DbToolsBundle* as a standalone CLI tool.
 
 If you need this feature, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
 :::
@@ -186,8 +195,8 @@ If you need this feature, please let us know by [filing an issue](https://github
 </div>
 
 :::info
-More filename strategies may be implemented in core in the future. If you have any
-suggestions, please [open an discussion](https://github.com/makinacorpus/DbToolsBundle/issues) about it.
+More filename strategies may be implemented in core in the future. If you have
+any suggestions, please [open a discussion](https://github.com/makinacorpus/DbToolsBundle/issues) about it.
 :::
 
 ### Excluded tables
@@ -240,8 +249,8 @@ connections:
 </div>
 
 :::tip
-Note that you can override this configuration while running the `db-tools:backup` command using
-the `--exclude` option.
+Note that you can override this configuration while running the `db-tools:backup`
+command using the `--exclude` option.
 :::
 
 ### Binary options
@@ -250,7 +259,8 @@ See the [default binary options](#default-binary-options) section.
 
 ### Backup expiration age
 
-The `backup_expiration_age` parameter let you choose when a backup is considered as obsolete.
+The `backup_expiration_age` parameter let you choose when a backup is considered
+as obsolete.
 
 Default value is `'3 months ago'`.
 
@@ -300,10 +310,10 @@ connections:
 ```
 </div>
 
-### Backup and restore timeout
+### Backup and restoration timeout
 
-The `backup_timeout` and `restore_timeout` options let you choose what is the backup and restore
-processes timeout in seconds.
+The `backup_timeout` and `restore_timeout` options let you choose what is the
+backup and restoration processes timeout in seconds.
 
 Default value is `600` (seconds) for backup, `1800` (seconds) for restore.
 
@@ -396,8 +406,9 @@ php vendor/bin/db-tools database:check
 </div>
 
 If the `db-tools:check` command returns you some errors:
- * if your binaries are present on your system but *DbToolsBundle* can't find them you will need
-   to specify path for these binaries:
+
+* if your binaries are present on your system but *DbToolsBundle* can't find
+  them you will need to specify path for these binaries:
 
   <div class="symfony">
 
@@ -417,9 +428,9 @@ If the `db-tools:check` command returns you some errors:
   ```
   </div>
 
- * Backup and restore binaries, as well as command line arguments and options are
-   configured on a per-connection basis. If you have more than one connection,
-   use the following syntax instead:
+* Backup and restoration binaries, as well as command line arguments and
+  options, are configured on a per-connection basis. If you have more than
+  one connection, use the following syntax instead:
 
   <div class="symfony">
 
@@ -449,7 +460,8 @@ If the `db-tools:check` command returns you some errors:
   ```
   </div>
 
- * Or, if your binaries are not present on your system: you will need to install them.
+* Or, if your binaries are not present on your system: you will need to install
+  them.
 
 :::tip
 If your app lives in the [official PHP docker image](https://hub.docker.com/_/php/),
@@ -500,10 +512,10 @@ db_tools:
     connections:
         connection_one:
             backup_options: '--an-option'
-            restor_options: '-xyz --another'
+            restore_options: '-xyz --another'
         connection_two:
             backup_options: '--a-first-one --a-second-one'
-            restor_options: '-O sample-value'
+            restore_options: '-O sample-value'
 ```
 </div>
 <div class="standalone">
@@ -523,10 +535,10 @@ Or set a specific value list for each connection:
 connections:
     connection_one:
         backup_options: '--an-option'
-        restor_options: '-xyz --another'
+        restore_options: '-xyz --another'
     connection_two:
         backup_options: '--a-first-one --a-second-one'
-        restor_options: '-O sample-value'
+        restore_options: '-O sample-value'
 ```
 </div>
 
@@ -548,68 +560,67 @@ according to the database vendor:
 
 <div class="symfony">
 
-By default, *DbToolsBundle* will look for custom *anonymizers* in 2 directories:
+By default, *DbToolsBundle* will look for custom *anonymizers* in the
+`%kernel.project_dir%/src/Anonymizer` directory.
 
-* `%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer`
-* `%kernel.project_dir%/src/Anonymizer`
-
-If you want to put custom anonymizers in another directory or if you want to load
-a pack of anonymizers from an external library, you can modify/add paths:
-
+If you want to put custom anonymizers in another directory or if you want to
+load a pack of anonymizers from an external library, you can add paths to the
+`anonymizer_paths` parameter:
 
 ```yml
 # config/packages/db_tools.yaml
 db_tools:
     anonymizer_paths:
-        - '%kernel.project_dir%/src/Anonymizer'
-        - '%kernel.project_dir%/vendor/myAnonymizerProvider/anonymizers/src'
+        - '%kernel.project_dir%/src/Database/Anonymizer'
+        - '%kernel.project_dir%/vendor/anonymizer-provider/src'
         # ...
 ```
 </div>
 <div class="standalone">
 
-By default, *DbToolsBundle* when used as a standalone CLI tool will not lookup for
-custom *anonymizers*.
+By default, *DbToolsBundle* will only consider core *anonymizers* when used as
+a standalone CLI tool. It won't look for any custom anonymizers.
 
-If you want to write custom anonymizers, in order for them to be found, you must specify
-paths where the source code lies:
-
+If you want to write custom anonymizers, you will have to tell *DbToolsBundle*
+where to find their implementations by specifying concerned directories through
+the `anonymizer_paths` parameter:
 
 ```yml
 # db_tools.yaml
-db_tools:
-    anonymizer_paths:
-        - './src/Anonymizer'
-        - './vendor/myAnonymizerProvider/anonymizers/src'
-        # ...
+anonymizer_paths:
+    - './src/Anonymizer'
+    - './vendor/anonymizer-provider/src'
+    # ...
 ```
 </div>
 
 :::tip
-Core provided anonymizers and anonymizers that are in packs installed using composer
-will always be looked-up.
+Core provided anonymizers as well as those contained in packs installed with
+composer will always be loaded automatically.
 :::
 
 :::warning
-Packs must be installed using composer: *DbToolsBundle* uses composer generated metadata
-about installed packages to find them.
+Packs must be installed using composer: *DbToolsBundle* uses composer generated
+metadata about installed packages to find them.
 :::
 
 ## Anonymization
 
 <div class="symfony">
 
-Per default, **DbToolsBundle** will only look for anonymization configurations from PHP attributes on Doctrine Entities.
+By default, *DbToolsBundle* will only look for anonymization configurations
+from PHP attributes on Doctrine Entities.
 
-But *DbToolsBundle* does not necessary need Doctrine ORM to anonymize your data, it can do it just with a DBAL connection.
-In this case (or if you prefer YAML over attributes): you can configure *DbToolsBundle* to look for anonymization
-configurations in a YAML file:
+But *DbToolsBundle* does not necessary need Doctrine ORM to anonymize your data,
+it can do it just with a DBAL connection. In this case (or if you prefer YAML
+over attributes): you can configure *DbToolsBundle* to look for anonymization
+configurations in YAML files:
 
 ```yml
 # config/packages/db_tools.yaml
 db_tools:
 
-    # When you have a single connection, and a single file:
+    # When you have a single connection and prefer a single configuration file:
     anonymization_files: '%kernel.project_dir%/config/anonymizations.yaml'
 
     # Or with multiple connections:
@@ -617,7 +628,7 @@ db_tools:
         connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
         connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
 
-    # Each connection may have multiple files:
+    # Each connection may have multiple files:
     anonymization_files:
         connection_one:
             - '%kernel.project_dir%/config/anonymizations/connection_one_1.yaml'
@@ -628,13 +639,14 @@ db_tools:
 </div>
 <div class="standalone">
 
-You need to register your anonymization configuration for the anonymization feature to work:
+You need to register your anonymization configuration for the anonymization
+feature to work:
 
 ```yml
 # config/packages/db_tools.yaml
 db_tools:
 
-    # When you have a single connection, and a single file:
+    # When you have a single connection and prefer a single configuration file:
     anonymization_files: './anonymizations.yaml'
 
     # Or with multiple connections:
@@ -642,16 +654,17 @@ db_tools:
         connection_one: './anonymizations/connection_one.yaml'
         connection_two: './anonymizations/connection_two.yaml'
 
-    # Each connection may have multiple files:
+    # Each connection may have multiple files:
     anonymization_files:
         connection_one:
-            - './config/anonymizations/connection_one_1.yaml'
-            - './config/anonymizations/connection_one_2.yaml'
+            - './anonymizations/connection_one_1.yaml'
+            - './anonymizations/connection_one_2.yaml'
         # ...
 ```
 
 </div>
 
 :::tip
-For more information about anonymization and configuration file structure, refer to the [Anonymization section](../anonymization/essentials).
+For more information about anonymization and configuration file structure,
+refer to the [Anonymization section](../anonymization/essentials).
 :::

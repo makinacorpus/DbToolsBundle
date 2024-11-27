@@ -122,7 +122,7 @@ db_tools:
         connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
         connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
 
-# Each connection may have multiple files:
+# Each connection may have multiple files:
 db_tools:
     anonymization_files:
         connection_one:
@@ -152,7 +152,7 @@ anonymization_files:
     connection_one: './anonymizations/connection_one.yaml'
     connection_two: './anonymizations/connection_two.yaml'
 
-# Each connection may have multiple files:
+# Each connection may have multiple files:
 anonymization_files:
     connection_one:
         - './anonymizations/connection_one_1.yaml'
@@ -165,14 +165,15 @@ Whenever you have a single unamed connection, its name will be `default`.
 :::
 
 :::tip
-File paths can be relative, any relative path will be relative to this configuration
-file directory.
+File paths can be relative, any relative path will be relative to this
+configuration file directory.
 :::
 
 </div>
 
 :::tip
-For more information about anonymization and configuration file structure, refer to the [Anonymization section](../anonymization/essentials).
+For more information about anonymization and configuration file structure,
+refer to the [Anonymization section](../anonymization/essentials).
 :::
 
 
@@ -183,17 +184,20 @@ PHP source folders in which custom anonymizer implementations will be looked-up.
 This allows you to write custom implementations and use it.
 
 Path are local filesystem arbitrary paths, and you are allowed to set any path.
-A recursive file system iterator will lookup in those folders and find classes
-that extend the `MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer`
-class within, then register those as anonymizers.
+A recursive filesystem iterator will look in those folders for classes extending
+the `MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer`
+class and register them as anonymizers.
 
 <div class="symfony">
+
+Be aware that DbToolsBundle will always take a look at the default folder
+dedicated to your custom anonymizers: `%kernel.project_dir%/src/Anonymizer`,
+so you don't have to repeat it.
 
 ```yaml
 db_tools:
     anonymizer_paths:
-        - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
-        - '%kernel.project_dir%/src/Anonymization/Anonymizer'
+        - '%kernel.project_dir%/src/Database/Anonymizer'
 ```
 
 :::tip
@@ -205,25 +209,22 @@ File paths must be absolute, use Symfony parameters to refer the project root.
 
 ```yaml
 anonymizer_paths:
-    - './vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
-    - './src/Anonymization/Anonymizer'
+    - './src/Anonymizer'
 ```
 
 :::tip
-File paths can be relative, any relative path will be relative to this configuration
-file directory.
+File paths can be relative, any relative path will be relative to this
+configuration file directory.
 :::
 
 </div>
-
 
 ## `backup_binary`
 
 Path to backup command in filesystem.
 
-Defaults are the well known executable names without absolute file path, which should
-work in most Linux distributions.
-
+Defaults are the well known executable names without absolute file path, which
+should work in most Linux distributions.
 
 <div class="symfony">
 
@@ -242,11 +243,11 @@ backup_binary: /usr/bin/pg_dump
 
 :::warning
 This top level parameter applies to all connections per default.
-If you need a different value per connection, the setting can also be configured on a
-per connection basis under the `connections.CONNECTION.backup_binary` name.
+If you need a different value per connection, the setting can also be configured
+on a per-connection basis under the `connections.CONNECTION.backup_binary` name.
 
-If you have more than one connection using different database vendor, it is strongly
-advised to override at the connection level.
+If you have more than one connection using different database vendor, it is
+strongly advised to override at the connection level.
 :::
 
 

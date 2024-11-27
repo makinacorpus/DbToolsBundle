@@ -78,7 +78,7 @@ final class DbToolsExtension extends Extension
             }
         }
         // Only set the default provided one if the folder exists in order to
-        // prevent "directory does not exists" errors.
+        // prevent "directory does not exist" errors.
         $defaultDirectory = $container->getParameterBag()->resolveValue('%kernel.project_dir%/src/Anonymizer');
         if (\is_dir($defaultDirectory)) {
             $anonymizerPaths[] = '%kernel.project_dir%/src/Anonymizer';
@@ -88,20 +88,20 @@ final class DbToolsExtension extends Extension
 
         // Register filename strategies.
         $strategies = [];
-        foreach (($config['storage']['filename_strategy'] ?? []) as $connectioName => $strategyId) {
+        foreach (($config['storage']['filename_strategy'] ?? []) as $connectionName => $strategyId) {
             // Default is handled directly by the storage service.
             if ($strategyId !== null && $strategyId !== 'default' && $strategyId !== 'datetime') {
                 if ($container->hasDefinition($strategyId)) {
-                    $strategies[$connectioName] = new Reference($strategyId);
+                    $strategies[$connectionName] = new Reference($strategyId);
                 } elseif (\class_exists($strategyId)) {
                     if (!\is_subclass_of($strategyId, FilenameStrategyInterface::class)) {
-                        throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class "%s" does not implement "%s"', $connectioName, $strategyId, FilenameStrategyInterface::class));
+                        throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class "%s" does not implement "%s"', $connectionName, $strategyId, FilenameStrategyInterface::class));
                     }
                     $serviceId = '.db_tools.filename_strategy.' . \sha1($strategyId);
                     $container->setDefinition($serviceId, (new Definition())->setClass($strategyId));
-                    $strategies[$connectioName] = new Reference($serviceId);
+                    $strategies[$connectionName] = new Reference($serviceId);
                 } else {
-                    throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class or service "%s" does not exist or is not registered in container', $connectioName, $strategyId));
+                    throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class or service "%s" does not exist or is not registered in container', $connectionName, $strategyId));
                 }
                 break;
             }
