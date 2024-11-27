@@ -29,22 +29,152 @@ relative to the configuration file directory the path is defined
 within.
 :::
 
-## Index
+<div class="toc-inline">
 
-[`anonymizer_paths`](#anonymizer-paths) |
-[`backup_binary`](#backup-binary) |
-[`backup_excluded_tables`](#backup-excluded-tables) |
-[`backup_expiration_age`](#backup-expiration-age) |
-[`backup_options`](#backup-options) |
-[`backup_timeout`](#backup-timeout) |
-[`connections` (standalone)](#connections) |
-[`default_connection`](#default-connection) |
-[`restore_binary`](#restore-binary) |
-[`restore_options`](#restore-options) |
-[`restore_timeout`](#restore-timeout) |
-[`storage_directory`](#storage-directory) |
-[`storage_filename_strategy`](#storage-filename-strategy) |
-[`workdir`](#workdir)
+  [[toc]]
+
+</div>
+
+<style module>
+.toc-inline .table-of-contents ul {
+  list-style: none;
+  display: flex;
+}
+.toc-inline .table-of-contents li {
+  flex: 1;
+  display: inline-block;
+}
+</style>
+
+## `anonymization`
+
+Write the anonymization configuration directly in the main configuration file.
+
+Keys under the first dimension are connections names, then follows the structure
+expected in anonymization configuration files.
+
+<div class="symfony">
+
+```yaml
+# When you have a single connection, and a single file:
+db_tools:
+    anonymization:
+        connection_one:
+            table1:
+                column1:
+                    anonymizer: anonymizer_name
+                    # ... anonymizer specific options...
+                column2:
+                    # ...
+            table2:
+                # ...
+        connection_two:
+            # ...
+```
+
+:::tip
+Connection names are Doctrine bundle connection names. If you have a single
+one with Symfony default configuration, its name is `default`.
+:::
+
+</div>
+<div class="standalone">
+
+```yaml
+anonymization:
+    connection_one:
+        table1:
+            column1:
+                anonymizer: anonymizer_name
+                # ... anonymizer specific options...
+            column2:
+                # ...
+        table2:
+            # ...
+    connection_two:
+        # ...
+```
+
+:::tip
+Whenever you have a single unamed connection, its name will be `default`.
+:::
+
+</div>
+
+:::tip
+For more information about anonymization structure, refer to the [Anonymization section](../anonymization/essentials).
+:::
+
+## `anonymization_files`
+
+Files that contains anonymization configuration.
+
+<div class="symfony">
+
+```yaml
+# When you have a single connection, and a single file:
+db_tools:
+    anonymization_files: '%kernel.project_dir%/config/anonymizations.yaml'
+
+# Or with multiple connections:
+db_tools:
+    anonymization_files:
+        connection_one: '%kernel.project_dir%/config/anonymizations/connection_one.yaml'
+        connection_two: '%kernel.project_dir%/config/anonymizations/connection_two.yaml'
+
+# Each connection may have multiple files:
+db_tools:
+    anonymization_files:
+        connection_one:
+            - '%kernel.project_dir%/config/anonymizations/connection_one_1.yaml'
+            - '%kernel.project_dir%/config/anonymizations/connection_one_2.yaml'
+        # ...
+```
+
+:::tip
+Connection names are Doctrine bundle connection names. If you have a single
+one with Symfony default configuration, its name is `default`.
+:::
+
+:::tip
+File paths must be absolute, use Symfony parameters to refer the project root.
+:::
+
+</div>
+<div class="standalone">
+
+```yaml
+# When you have a single connection, and a single file:
+anonymization_files: './anonymizations.yaml'
+
+# Or with multiple connections:
+anonymization_files:
+    connection_one: './anonymizations/connection_one.yaml'
+    connection_two: './anonymizations/connection_two.yaml'
+
+# Each connection may have multiple files:
+anonymization_files:
+    connection_one:
+        - './anonymizations/connection_one_1.yaml'
+        - './anonymizations/connection_one_2.yaml'
+    # ...
+```
+
+:::tip
+Whenever you have a single unamed connection, its name will be `default`.
+:::
+
+:::tip
+File paths can be relative, any relative path will be relative to this configuration
+file directory.
+:::
+
+</div>
+
+:::tip
+For more information about anonymization and configuration file structure, refer to the [Anonymization section](../anonymization/essentials).
+:::
+
 
 ## `anonymizer_paths`
 
@@ -65,6 +195,11 @@ db_tools:
         - '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
         - '%kernel.project_dir%/src/Anonymization/Anonymizer'
 ```
+
+:::tip
+File paths must be absolute, use Symfony parameters to refer the project root.
+:::
+
 </div>
 <div class="standalone">
 
@@ -73,6 +208,11 @@ anonymizer_paths:
     - './vendor/makinacorpus/db-tools-bundle/src/Anonymizer'
     - './src/Anonymization/Anonymizer'
 ```
+
+:::tip
+File paths can be relative, any relative path will be relative to this configuration
+file directory.
+:::
 
 </div>
 
@@ -260,12 +400,20 @@ you need to add connection specific options.
 <div class="symfony">
 
 ```yaml
-# With connection specific options.
 db_tools:
     connections:
         connection_one:
-            # ... Apply here connection-specific options.
-            # @todo Add here all available options.
+            # Complete list of accepted parameters follows.
+            backup_binary: /usr/local/bin/vendor-one-dump
+            backup_excluded_tables: ['table_one', 'table_two']
+            backup_expiration_age: '1 month ago'
+            backup_options: --no-table-lock
+            backup_timeout: 2000
+            restore_binary: /usr/local/bin/vendor-one-restore
+            restore_options: --disable-triggers --other-option
+            restore_timeout: 5000
+            storage_directory: /path/to/storage
+            storage_filename_strategy: datetime
 ```
 </div>
 <div class="standalone">
@@ -274,10 +422,24 @@ db_tools:
 # With connection specific options.
 connections:
     connection_one:
+        # Connection URL for connecting.
+        # Please refer to makinacorpus/db-query-builder or  documentation for more information.
+        # Any URL built for doctrine/dbal usage should work.
+        # URL is the sole mandatory parameter.
+        # Complete list of accepted parameters follows.
         url: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
-        # ... Apply here connection-specific options.
-        # @todo Add here all available options.
-    connection_two: #...
+        backup_binary: /usr/local/bin/vendor-one-dump
+        backup_excluded_tables: ['table_one', 'table_two']
+        backup_expiration_age: '1 month ago'
+        backup_options: --no-table-lock
+        backup_timeout: 2000
+        restore_binary: /usr/local/bin/vendor-one-restore
+        restore_options: --disable-triggers --other-option
+        restore_timeout: 5000
+        storage_directory: /path/to/storage
+        storage_filename_strategy: datetime
+    connection_two:
+        #...
 
 # With all default options, only database DSN.
 connections:
@@ -289,7 +451,17 @@ connections:
 connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
 ```
 
+:::warning
+If you configure this parameter with a single URL string with no connection name,
+the connection name will be `default`.
+:::
+
 </div>
+
+:::tip
+All parameters for each connection are exactly the same as the top-level parameters
+documented in this file.
+:::
 
 
 ## `default_connection`
