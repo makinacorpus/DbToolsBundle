@@ -1,0 +1,37 @@
+fr-test:
+    firstname:
+        description: "Generates first names for the french language."
+        data: "./firstname.txt"
+        expressions:
+            - "{{firstname}}"
+            - "{{firstname}} {{firstname}}"
+
+    lastname:
+        description: "Generates last names for the french language."
+        data: "./lastname.txt"
+        expressions:
+            - "{{lastname}}"
+            - "{{lastname}}-{{lastname}}"
+            - "{{lastname}} {{lastname}}"
+            - "De {{lastname}}"
+
+    address_street_type:
+        description: "Generates french street types."
+        data: [Rue, Avenue, Impasse]
+    address_street:
+        description: "Generates french street first address lines."
+        data: "./address-street.txt"
+        expressions:
+            - "[1-128] {{address_street_type}} {{address_street}}"
+    address_city:
+        description: "Generates french city names."
+        data: "./address-street.txt"
+
+    address:
+        description: "Generates complete french addresses."
+        columns: [street, city, country]
+        invariant:
+            country: France
+        expressions:
+            street: "{{address_street}}"
+            city: "{{address_city}}"

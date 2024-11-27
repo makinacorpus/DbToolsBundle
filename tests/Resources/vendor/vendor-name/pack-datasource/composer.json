@@ -1,0 +1,11 @@
+{
+    "name": "vendor-name/pack-datasource",
+    "description": "A test with plain text datasources pack of anonymizers for the DbToolsBundle",
+    "type": "db-tools-bundle-pack",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "DbToolsBundle\\PackDatasource\\" : "src/"
+        }
+    }
+}

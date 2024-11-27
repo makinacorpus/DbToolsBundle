@@ -1,16 +1,11 @@
 {
     "name": "vendor-name/pack-test",
-    "description": "An test pack of anonymizers for the DbToolsBundle",
+    "description": "A test pack of anonymizers for the DbToolsBundle",
     "type": "db-tools-bundle-pack",
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
             "DbToolsBundle\\PackTest\\" : "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "DbToolsBundle\\PackTest\\Tests\\": "tests/"
         }
     }
 }
