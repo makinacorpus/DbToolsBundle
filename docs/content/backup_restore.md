@@ -5,15 +5,16 @@ but also a tiny backups manager which handle backup files for you.
 
 ## Backup command
 
-The backup command will use the [predefined or configured binary](./configuration/basics#binaries) for your
-database vendor with correct parameters to dump your database.
+The `backup` command will use the [predefined or configured binary](./configuration/basics#binaries)
+for your database vendor with correct parameters to dump your database.
 
 Each time you launch the backup command, [a backup file is stored in a directory](./configuration/basics#storage-directory) (See
 [Storage section](#storage) below for more information on how backup files are stored).
 
 With time, this directory will grow, that's why a [backup expiration age](./configuration/basics#storage-directory#backup-expiration-age)
-was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
-backup files (i.e. files that have passed their expiration date).
+was added. Every time you launch the command, at the end, it will be asked if
+you want to remove obsolete backup files (i.e. files that have passed their
+expiration date).
 
 <div class="standalone">
 
@@ -26,6 +27,13 @@ vendor/bin/db-tools backup
 
 ```sh
 php bin/console db-tools:backup
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:backup
 ```
 
 </div>
@@ -54,6 +62,18 @@ You can choose to back up a database from another connection with `--connection`
 
 ```sh
 php bin/console db-tools:backup --connection other_connection_name
+```
+
+</div>
+<div class="laravel">
+
+By default, the command will back up the database from the default connection.
+
+You can choose to back up a database from another connection with `--connection`
+option:
+
+```sh
+php artisan db-tools:backup --connection other_connection_name
 ```
 
 </div>
@@ -87,6 +107,17 @@ php bin/console db-tools:backup --excluded-table table_to_exclude_1 --excluded-t
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+# Exclude a table
+php artisan db-tools:backup --excluded-table table_to_exclude
+
+# Or more
+php artisan db-tools:backup --excluded-table table_to_exclude_1 --excluded-table table_to_exclude_2
+```
+
+</div>
 
 ### No cleanup
 
@@ -103,6 +134,13 @@ vendor/bin/db-tools backup --no-cleanup
 
 ```sh
 php bin/console db-tools:backup --no-cleanup
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:backup --no-cleanup
 ```
 
 </div>
@@ -127,6 +165,13 @@ vendor/bin/db-tools backup --extra-options "--opt1 val1 --opt2 val2 --flag"
 
 ```sh
 php bin/console db-tools:backup --extra-options "--opt1 val1 --opt2 val2 --flag"
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:backup --extra-options "--opt1 val1 --opt2 val2 --flag"
 ```
 
 </div>
@@ -155,11 +200,20 @@ php bin/console db-tools:backup --ignore-default-options
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+# Will run a backup without any special options except essential ones:
+php artisan db-tools:backup --ignore-default-options
+```
+
+</div>
 
 ## Restore command
 
-The restore command will use [predefined or configured binary](./configuration/basics#binaries) for your database vendor with correct parameters
-to restore your database from an existing backup files.
+The `restore` command will use [predefined or configured binary](./configuration/basics#binaries)
+for your database vendor with correct parameters to restore your database from
+an existing backup files.
 
 <div class="standalone">
 
@@ -172,6 +226,13 @@ vendor/bin/db-tools restore
 
 ```sh
 php bin/console db-tools:restore
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:restore
 ```
 
 </div>
@@ -203,6 +264,18 @@ php bin/console db-tools:restore --connection other_connection_name
 ```
 
 </div>
+<div class="laravel">
+
+By default, the command will restore the database from the default connection.
+
+You can choose to restore a database from another connection with `--connection`
+option:
+
+```sh
+php artisan db-tools:restore --connection other_connection_name
+```
+
+</div>
 
 ### Filename
 
@@ -226,6 +299,13 @@ php bin/console db-tools:restore --filename /path/to/my/backup.sql
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:restore --filename /path/to/my/backup.sql
+```
+
+</div>
 
 ### Force
 
@@ -244,6 +324,13 @@ vendor/bin/db-tools restore --force
 
 ```sh
 php bin/console db-tools:restore --force
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:restore --force
 ```
 
 </div>
@@ -278,6 +365,13 @@ php bin/console db-tools:restore --extra-options "--opt1 val1 --opt2 val2 --flag
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:restore --extra-options "--opt1 val1 --opt2 val2 --flag"
+```
+
+</div>
 
 Unless you specify the `--ignore-default-options` option, the custom options
 will be added to the [default options](./configuration/basics#default-binary-options).
@@ -303,20 +397,34 @@ php bin/console db-tools:restore --ignore-default-options
 ```
 
 </div>
+<div class="laravel">
 
+```sh
+# Will run a restoration without any special options except essential ones:
+php artisan db-tools:restore --ignore-default-options
+```
+
+</div>
 
 ## Storage
 
-As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
-when you want to restore a previous one with the restore command.
+As mentioned earlier on this page, *DbToolsBundle* can list existing backup
+files when you want to restore a previous one with the restore command.
 
-All backups are stored in a directory. By default this directory is <span class="standalone">`./var/db_tools` (relative to the yaml config file)</span><span class="symfony">`%kernel.project_dir%/var/db_tools`</span>
+All backups are stored in a directory. By default this directory is
+<span class="standalone">`./var/db_tools` (relative to the yaml config file)</span>
+<span class="symfony">`%kernel.project_dir%/var/db_tools`</span>
+<span class="laravel">`<project-dir>/storage/db_tools`</span>
 but [you can choose the directory you want](./configuration/basics#storage-directory).
 
-In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
-is generated from the backup date and the DBAL connection name of the database.
+In this directory, each backup is put in subdirectories depending on the backup
+date. The backup's filename is generated from the backup date and the database
+connection name.
 
-For a backup made the 2023-05-15 at 12:22:35 for the default connection, the filename will be :
-<span class="standalone">`./var/db_tools/2023/05/default-20230515122235.sql`</span><span class="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>.
+For a backup made the 2023-05-15 at 12:22:35 for the default connection,
+the filename will be:
+<span class="standalone">`./var/db_tools/2023/05/default-20230515122235.sql`</span>
+<span class="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>
+<span class="laravel">`<project-dir>/storage/db_tools/2023/05/default-20230515122235.sql`</span>.
 
 Note that the file extension may vary depending on the database vendor.

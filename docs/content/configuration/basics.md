@@ -30,6 +30,12 @@ A complete example of this file can be found in the library sources in:
 :::
 
 </div>
+<div class="laravel">
+
+*DbToolsBundle* let you configure some of its behaviors. As with any Laravel
+package, all will take place in the `config/db-tools.php` file.
+
+</div>
 
 For detailed information about configuration options, please see the
 [configuration reference](../configuration/reference).
@@ -79,6 +85,32 @@ connections:
 ```
 
 </div>
+<div class="laravel">
+
+```php
+// config/db-tools.php
+return [
+    'backup_excluded_tables' => ['table1', 'table2'],
+];
+```
+
+Or for each connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_one' => [
+            'backup_excluded_tables' => ['table1', 'table2'],
+        ],
+        'connection_two' => [
+            'backup_excluded_tables' => ['table3', 'table4'],
+        ],
+    ],
+];
+```
+
+</div>
 
 When working with multiple connections, any connection which does not specify
 the option will inherit from the default.
@@ -102,6 +134,11 @@ Default value is `%kernel.project_dir%/var/db_tools`.
 <div class="standalone">
 
 Default value is `./var/db_tools`.
+
+</div>
+<div class="laravel">
+
+Default value is `<project-dir>/storage/db_tools`.
 
 </div>
 
@@ -193,6 +230,81 @@ If you need this feature, please let us know by [filing an issue](https://github
 :::
 
 </div>
+<div class="laravel">
+
+Custom strategy can be implemented by extending the
+`MakinaCorpus\DbToolsBundle\Storage\AbstractFilenameStrategy` abstract class:
+
+```php
+namespace App\DbTools\Storage;
+
+use MakinaCorpus\DbToolsBundle\Storage\AbstractFilenameStrategy;
+
+class FooFilenameStrategy extends AbstractFilenameStrategy
+{
+    #[\Override]
+    public function generateFilename(
+        string $connectionName = 'default',
+        string $extension = 'sql',
+        bool $anonymized = false
+    ): string {
+        return '/some_folder/' . $connectionName . '.' . $extension;
+    }
+}
+```
+
+Then registered this way to impact all connections:
+
+```php
+// config/db-tools.php
+return [
+    'storage_filename_strategy' => App\DbTools\Storage\FooFilenameStrategy::class,
+];
+```
+
+Or for a specific connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_name' => [
+            'storage_filename_strategy' => App\DbTools\Storage\FooFilenameStrategy::class,
+        ],
+    ],
+];
+```
+
+Value can be a container service "identifier", or directly a class name not
+registered as a service if all its arguments are resolvable by the container.
+
+If you need to store your dumps outside the storage directory, then implement
+the `MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface` directly
+and add the following method:
+
+```php
+namespace App\DbTools\Storage;
+
+use MakinaCorpus\DbToolsBundle\Storage\FilenameStrategyInterface;
+
+class FooFilenameStrategy implements FilenameStrategyInterface
+{
+    #[\Override]
+    public function generateFilename(/* ... */): string {}
+
+    #[\Override]
+    public function getRootDir(
+        string $defaultRootDir,
+        string $connectionName = 'default',
+    ): string {
+        return '/some/path/' . $connectionName . '/foo';
+    }
+}
+```
+
+This will allow the _restore_ command to find your backups.
+
+</div>
 
 :::info
 More filename strategies may be implemented in core in the future. If you have
@@ -245,6 +357,33 @@ connections:
         backup_excluded_tables: ['table1', 'table2']
     connection_two:
         backup_excluded_tables: ['table3', 'table4']
+```
+</div>
+<div class="laravel">
+
+Here is an example for exclude `table1` and `table2` for all connections:
+
+```php
+// config/db-tools.php
+return [
+    'backup_excluded_tables' => ['table1', 'table2'],
+];
+```
+
+Or set a specific table list for each connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_one' => [
+            'backup_excluded_tables' => ['table1', 'table2'],
+        ],
+        'connection_two' => [
+            'backup_excluded_tables' => ['table3', 'table4'],
+        ],
+    ],
+];
 ```
 </div>
 
@@ -307,6 +446,33 @@ connections:
         backup_expiration_age: '1 week ago'
     connection_two:
         backup_expiration_age: '3 days ago'
+```
+</div>
+<div class="laravel">
+
+Here is an example that sets 1 week lifetime for backups for all connections:
+
+```php
+// config/db-tools.php
+return [
+    'backup_expiration_age' => '1 week ago',
+];
+```
+
+Or set a specific value list for each connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_one' => [
+            'backup_expiration_age' => '1 week ago',
+        ],
+        'connection_two' => [
+            'backup_expiration_age' => '3 days ago',
+        ],
+    ],
+];
 ```
 </div>
 
@@ -379,6 +545,41 @@ connections:
         restore_timeout: 195
 ```
 </div>
+<div class="laravel">
+
+Here is an example that sets timeouts for all connection:
+
+```php
+// config/db-tools.php
+return [
+    # As a date interval string.
+    'backup_timeout' => '6 minutes 30 seconds',
+    'restore_timeout' => '3 minutes 15 seconds',
+
+    # As a number of seconds integer value.
+    'backup_timeout' => 390,
+    'restore_timeout' => 195,
+];
+```
+
+Or set a different timeout for each connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_one' => [
+            'backup_timeout' => '6 minutes 30 seconds',
+            'restore_timeout' => '3 minutes 15 seconds',
+        ],
+        'connection_two' => [
+            'backup_timeout' => 390,
+            'restore_timeout' => 195,
+        ],
+    ],
+];
+```
+</div>
 
 ## Binaries
 
@@ -404,6 +605,12 @@ php bin/console db-tools:check
 php vendor/bin/db-tools database:check
 ```
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:check
+```
+</div>
 
 If the `db-tools:check` command returns you some errors:
 
@@ -425,6 +632,16 @@ If the `db-tools:check` command returns you some errors:
   # db_tools.yaml
   backup_binary: '/usr/local/bin/pg_dump'
   restore_binary: '/usr/local/bin/pg_restore'
+  ```
+  </div>
+  <div class="laravel">
+
+  ```php
+  // config/db-tools.php
+  return [
+      'backup_binary' => '/usr/local/bin/pg_dump',
+      'restore_binary' => '/usr/local/bin/pg_restore',
+  ];
   ```
   </div>
 
@@ -457,6 +674,24 @@ If the `db-tools:check` command returns you some errors:
       connection_two:
           backup_binary: '/usr/local/bin/mysqldump'
           restore_binary: '/usr/local/bin/mysql'
+  ```
+  </div>
+  <div class="laravel">
+
+  ```php
+  // config/db-tools.php
+  return [
+      'connections' => [
+          'connection_one' => [
+              'backup_binary' => '/usr/local/bin/pg_dump',
+              'restore_binary' => '/usr/local/bin/pg_restore',
+          ],
+          'connection_two' => [
+              'backup_binary' => '/usr/local/bin/mysqldump',
+              'restore_binary' => '/usr/local/bin/mysql',
+          ],
+      ],
+  ];
   ```
   </div>
 
@@ -541,6 +776,36 @@ connections:
         restore_options: '-O sample-value'
 ```
 </div>
+<div class="laravel">
+
+Here is an example that sets options for all connections:
+
+```php
+// config/db-tools.php
+return [
+    'backup_options' => '--an-option',
+    'restore_options' => '--a-first-one --a-second-one',
+];
+```
+
+Or set a specific value list for each connection:
+
+```php
+// config/db-tools.php
+return [
+    'connections' => [
+        'connection_one' => [
+            'backup_options' => '--an-option',
+            'restore_options' => '-xyz --another',
+        ],
+        'connection_two' => [
+            'backup_options' => '--a-first-one --a-second-one',
+            'restore_options' => '-O sample-value',
+        ],
+    ],
+];
+```
+</div>
 
 If you do not define your own default options, the following ones will be used
 according to the database vendor:
@@ -593,6 +858,28 @@ anonymizer_paths:
     # ...
 ```
 </div>
+<div class="laravel">
+
+By default, *DbToolsBundle* will look for *anonymizers* in 2 directories:
+
+* `<project-dir>/vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer/Core`
+* `<project-dir>/app/Anonymizer` (for your own custom anonymizers)
+
+If you want to put custom anonymizers in another directory or if you want to
+load a pack of anonymizers from an external library, you can add paths to the
+`anonymizer_paths` parameter:
+
+```php
+// config/db-tools.php
+return [
+    'anonymizer_paths' => [
+        app_path('Database/Anonymizer'),
+        base_path('vendor/anonymizer-provider/src'),
+        // ...
+    ],
+];
+```
+</div>
 
 :::tip
 Core provided anonymizers as well as those contained in packs installed with
@@ -640,7 +927,7 @@ db_tools:
 <div class="standalone">
 
 You need to register your anonymization configuration for the anonymization
-feature to work:
+feature to work.
 
 ```yml
 # config/packages/db_tools.yaml
@@ -660,6 +947,63 @@ db_tools:
             - './anonymizations/connection_one_1.yaml'
             - './anonymizations/connection_one_2.yaml'
         # ...
+```
+
+</div>
+<div class="laravel">
+
+You need to register your anonymization configuration for the anonymization
+feature to work.
+
+This can be done directly in the package configuration file through the
+`anonymization` parameter:
+
+```php
+// config/db-tools.php
+return [
+    'anonymization' => [
+        'specific_connection' => [
+             'table1' => [
+                 'column1' => [
+                     'anonymizer' => 'anonymizer_name',
+                     // Anonymizer specific options...
+                 ],
+                 'column2' => [
+                     // ...
+                 ],
+             ],
+             'table2' => [
+                 // ...
+             ],
+         ],
+    ],
+];
+```
+
+Or in specific files that you must reference via the `anonymization_files`
+parameter:
+
+```php
+// config/db-tools.php
+return [
+    // When you have a single connection and prefer a single configuration file:
+    'anonymization_files' => database_path('anonymization.php'),
+
+    // Or with multiple connections:
+    'anonymization_files' => [
+        'connection_one' => database_path('anonymization/connection_one.php'),
+        'connection_two' => database_path('anonymization/connection_two.php'),
+    ],
+
+    // Each connection may have multiple files:
+    'anonymization_files' => [
+        'connection_one' => [
+            database_path('anonymization/connection_one/schema_one.php'),
+            database_path('anonymization/connection_one/schema_two.php'),
+        ],
+        'connection_two' => database_path('anonymization/connection_two.php'),
+    ],
+];
 ```
 
 </div>

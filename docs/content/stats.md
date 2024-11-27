@@ -29,6 +29,13 @@ php bin/console db-tools:stats table -a
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:stats table -a
+```
+
+</div>
 
 If you want to specify only a set of tags, you may use the `--tag=TAG` or
 `-t TAG` switch, this option can be specified more than once:
@@ -44,6 +51,13 @@ vendor/bin/db-tools stats table -t read -t write
 
 ```sh
 php bin/console db-tools:stats table -t read -t write
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:stats table -t read -t write
 ```
 
 </div>
@@ -79,6 +93,13 @@ php bin/console db-tools:stats table
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:stats table
+```
+
+</div>
 
 Output will be ordered by table size in descending order.
 
@@ -104,6 +125,13 @@ php bin/console db-tools:stats index
 ```
 
 </div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:stats index
+```
+
+</div>
 
 Output will be ordered by index size in descending order.
 
@@ -122,6 +150,13 @@ vendor/bin/db-tools stats
 
 ```sh
 php bin/console db-tools:stats
+```
+
+</div>
+<div class="laravel">
+
+```sh
+php artisan db-tools:stats
 ```
 
 </div>
