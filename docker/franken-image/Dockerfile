@@ -1,5 +1,6 @@
 FROM dunglas/frankenphp:1-php8.3
 ARG TAG=dev-main
+ARG EXTRA_COMPOSER_REQUIREMENTS=''
 
 # Basic requirements
 RUN apt-get update
@@ -33,6 +34,14 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-RUN composer require makinacorpus/db-tools-bundle $TAG
+RUN composer require \
+    makinacorpus/db-tools-bundle:$TAG \
+    symfony/password-hasher:* \
+    # TODO uncomment these lines when those packages
+    # will have a compatible version available
+    # on packagist
+    # db-tools-bundle/pack-fr-fr:$TAG \
+    # db-tools-bundle/pack-faker:$TAG \
+    $EXTRA_COMPOSER_REQUIREMENTS
 
 ENTRYPOINT ["/var/www/vendor/bin/db-tools"]
