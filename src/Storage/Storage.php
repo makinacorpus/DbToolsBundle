@@ -23,7 +23,7 @@ class Storage
         string $connectionName = 'default',
         string $extension = 'sql',
         bool $onlyExpired = false,
-        string $preserveFile = null
+        ?string $preserveFile = null
     ): array {
         $config = $this->configReg->getConnectionConfig($connectionName);
         $storagePath = \rtrim($config->getStorageDirectory(), '/');

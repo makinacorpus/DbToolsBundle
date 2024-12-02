@@ -56,7 +56,7 @@ class Options
         ));
     }
 
-    public function getString(string $name, string $default = null, bool $required = false): ?string
+    public function getString(string $name, ?string $default = null, bool $required = false): ?string
     {
         $value = $this->get($name, $default, $required);
 
@@ -71,7 +71,7 @@ class Options
         throw new \InvalidArgumentException(\sprintf("Option '%s' must be a string", $name));
     }
 
-    public function getBool(string $name, bool $default = null, bool $required = false): ?bool
+    public function getBool(string $name, ?bool $default = null, bool $required = false): ?bool
     {
         $value = $this->get($name, $default, $required);
 
@@ -93,7 +93,7 @@ class Options
         return (bool) $value;
     }
 
-    public function getInt(string $name, int $default = null, bool $required = false): ?int
+    public function getInt(string $name, ?int $default = null, bool $required = false): ?int
     {
         $value = $this->get($name, $default, $required);
 
@@ -108,7 +108,7 @@ class Options
         throw new \InvalidArgumentException(\sprintf("Option '%s' must be an int", $name));
     }
 
-    public function getFloat(string $name, float $default = null, bool $required = false): ?float
+    public function getFloat(string $name, ?float $default = null, bool $required = false): ?float
     {
         $value = $this->get($name, $default, $required);
 
@@ -124,7 +124,7 @@ class Options
 
     }
 
-    public function getDate(string $name, \DateTimeImmutable $default = null, bool $required = false): ?\DateTimeImmutable
+    public function getDate(string $name, ?\DateTimeImmutable $default = null, bool $required = false): ?\DateTimeImmutable
     {
         $value = $this->get($name, $default, $required);
 
@@ -143,7 +143,7 @@ class Options
         }
     }
 
-    public function getInterval(string $name, \DateInterval $default = null, bool $required = false): ?\DateInterval
+    public function getInterval(string $name, ?\DateInterval $default = null, bool $required = false): ?\DateInterval
     {
         $value = $this->get($name, $default, $required);
 
