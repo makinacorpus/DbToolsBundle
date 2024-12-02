@@ -14,7 +14,7 @@ env:
 
 jobs:
   build-and-push-image:
-    name: Push Docker ci image to Docker Hub
+    name: Push Docker CI image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       contents: read

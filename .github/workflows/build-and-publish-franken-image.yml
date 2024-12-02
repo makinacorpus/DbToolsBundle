@@ -1,4 +1,4 @@
-name: Build Docker franken image
+name: Build Docker FrankenPHP image
 
 on:
   push:
@@ -18,7 +18,7 @@ env:
 
 jobs:
   build-and-push-image:
-    name: Push Docker image to Docker Hub
+    name: Push Docker FrankenPHP image to Docker Hub
     runs-on: ubuntu-latest
     permissions:
       contents: read
