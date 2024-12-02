@@ -16,7 +16,8 @@ db_tools:
     #  - "default": alias of "datetime".
     #  - "datetime": implementation is "%db_tools.storage_directory%/YYYY/MM/<connection-name>-<datestamp>.<ext>".
     #  - CLASS_NAME: a class name to use that implements a strategy.
-    #  - SERVICE_ID: A service identifier registered in container that implements a strategy.
+    #  - SERVICE_ID: A service identifier registered in container that
+    #    implements a strategy.
     #storage_filename_strategy: default
 
     # When old backups are considered obsolete.
@@ -29,12 +30,13 @@ db_tools:
     # Default timeout for restore process.
     #restore_timeout: 2400 # default 1800
 
-    # List here tables (you don't want in your backups.
+    # List here tables you don't want in your backups.
     # If you have more than one connection, it is strongly advised to configure
     # this for each connection instead.
     #backup_excluded_tables: ['table1', 'table2']
 
-    # Specify here paths to backup and restore binaries and command line options.
+    # Specify here paths to backup and restoration binaries and command line
+    # options.
     # Warning: this will apply to all connections disregarding their database
     # vendor. If you have more than one connection and if they use different
     # database vendors or versions, please configure those for each connection
@@ -67,16 +69,17 @@ db_tools:
     #    connection_two:
     #        # ...
 
-    # Update this configuration if you want to look for anonymizers in a custom folder.
-    # These are default paths that will always be registered even if you override
-    # the setting so please don't repeat them:
+    # Update this configuration if you want to look for anonymizers in a custom
+    # folder.
+    # Be aware that DbToolsBundle will always take a look at the default folder
+    # dedicated to your custom anonymizers: %kernel.project_dir%/src/Anonymizer,
+    # so you don't have to repeat it.
     #anonymizer_paths:
-        #- '%kernel.project_dir%/vendor/makinacorpus/db-tools-bundle/src/Anonymization/Anonymizer/Core'
-        #- '%kernel.project_dir%/src/Anonymization/Anonymizer'
+    #    - '%kernel.project_dir%/src/Database/Anonymizer'
 
-    # For simple needs, you may simply write the anonymization configuration here.
-    # Keys are connection names, values are structures which are identical to what
-    # you may find in the "anonymizations.sample.yaml" example.
+    # For simple needs, you may simply write the anonymization configuration
+    # here. Keys are connection names, values are structures which are identical
+    # to what you may find in the "anonymizations.sample.yaml" example.
     #anonymization:
     #    connection_one:
     #        table1:
@@ -92,8 +95,8 @@ db_tools:
 
     # You can for organisation purpose delegate anonymization config into extra
     # YAML configuration files, and simply reference them here.
-    # Pathes can be either relative or absolute. Relative paths are relative to
-    # the workdir option if specified, or from this configuration file directory
+    # Paths can be either relative or absolute. Relative paths are relative to
+    # the workdir option if specified, or from this configuration file directory
     # otherwise.
     # See the "anonymizations.sample.yaml" in this folder for an example.
     #anonymization_files:

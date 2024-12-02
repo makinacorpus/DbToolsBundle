@@ -6,7 +6,7 @@
 
 To create one, you will need to
 
-1. add a class in the `src/Anonymizer` directory extends `AbstractAnonymizer`
+1. add a class extending `AbstractAnonymizer` in the `src/Anonymizer` directory
 2. add the `AsAnonymizer` attribute on it
 
 ```php
@@ -24,8 +24,8 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class MyAnonymizer extends AbstractAnonymizer
 {
-
-  // ...
+    // ...
+}
 ```
 
 To understand how an `Anonymizer` works, read `vendor/makinacorpus/db-tools-bundle/src/Anonymizer/AbstractAnonymizer.php`
@@ -40,7 +40,7 @@ with the [*Anonymizer paths* configuration](../configuration/basics#anonymizer-p
 
 ::: tip
 To generate its update queries, *DbToolsBundle* uses the *[makinacorpus/query-builder-bundle](https://github.com/makinacorpus/query-builder-bundle) package*.
-If you want to create your own anonymizers, you will problably need to take a look at
+If you want to create your own anonymizers, you will probably need to take a look at
 [its basic uses](https://php-query-builder.readthedocs.io/en/stable/introduction/usage.html).
 :::
 
@@ -70,21 +70,19 @@ use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 )]
 class MyEnumAnonymizer extends AbstractEnumAnonymizer
 {
-
     #[\Override]
     protected function getSample(): array
     {
         // Generate here your sample.
-
         return ['Foo', 'Bar', 'Baz'];
     }
 }
 ```
 
-## Mutlicolumn Anonymizers
+## Multicolumn Anonymizers
 
-As for an enum anonymizer, if you need to create a mutlicolumn anonymizer based on a big sample, you can extend the
-*AbstractMultipleColumnAnonymizer*.
+As for an enum anonymizer, if you need to create a multicolumn anonymizer based
+on a big sample, you can extend the *AbstractMultipleColumnAnonymizer*.
 
 Here is a complete example:
 
@@ -106,8 +104,7 @@ class MyMulticolumnAnonymizer extends AbstractMultipleColumnAnonymizer
     #[\Override]
     protected function getColumnNames(): array
     {
-        // Declare here name fo each part of your multicolumn
-        // anonymizer
+        // Declare here name of each part of your multicolumn anonymizer.
         return [
             'part_one',
             'part_two',
@@ -119,12 +116,11 @@ class MyMulticolumnAnonymizer extends AbstractMultipleColumnAnonymizer
     protected function getSample(): array
     {
         // Generate here your sample.
-
         return [
-          ['Foo', 'Bar', 'Baz'],
-          ['Foo1', 'Bar1', 'Baz1'],
-          ['Foo2', 'Bar2', 'Baz2'],
-          ['Foo3', 'Bar3', 'Baz3'],
+            ['Foo', 'Bar', 'Baz'],
+            ['Foo1', 'Bar1', 'Baz1'],
+            ['Foo2', 'Bar2', 'Baz2'],
+            ['Foo3', 'Bar3', 'Baz3'],
         ];
     }
 }

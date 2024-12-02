@@ -1,7 +1,7 @@
-# Backup and Restore
+# Back up and Restore
 
-*DbToolsBundle* comes with two commands to back up and restore
-your database but also a tiny backups manager which handle backup files for you.
+*DbToolsBundle* comes with two commands to back up and restore your database
+but also a tiny backups manager which handle backup files for you.
 
 ## Backup command
 
@@ -36,7 +36,7 @@ You can specify the behavior of the command with some options detailed below.
 
 <div class="standalone">
 
-By default, the command will backup the database from the default connection.
+By default, the command will back up the database from the default connection.
 
 If you configured several ones, you can choose to back up a database from a specific
 connection with `--connection` option:
@@ -48,7 +48,7 @@ vendor/bin/db-tools backup --connection other_connection_name
 </div>
 <div class="symfony">
 
-By default, the command will backup the database from the default DBAL connection.
+By default, the command will back up the database from the default DBAL connection.
 
 You can choose to back up a database from another connection with `--connection` option:
 

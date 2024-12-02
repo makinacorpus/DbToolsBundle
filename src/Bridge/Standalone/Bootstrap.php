@@ -165,7 +165,7 @@ class Bootstrap
 
         // All commands are wrapped into LazyCommand instances, we do not
         // really care about performances here, we have really few commands
-        // and it's OK to initialiaze them all, but we need to change their
+        // and it's OK to initialize them all, but we need to change their
         // name to shorten them.
         foreach ($commands as $name => $data) {
             list($callback, $description, $aliases) = $data;
@@ -233,7 +233,7 @@ class Bootstrap
 
         $databaseSessionRegistry = self::createDatabaseSessionRegistry($configRegistry);
 
-        $anonymizerRegistry = self::createAnonymizeRegistry($config);
+        $anonymizerRegistry = self::createAnonymizerRegistry($config);
         $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
 
         foreach (($config['anonymization_files'] ?? []) as $connectionName => $file) {
@@ -472,7 +472,7 @@ class Bootstrap
     /**
      * Create anonymizer registry and register custom code and additional packs.
      */
-    private static function createAnonymizeRegistry(array $config): AnonymizerRegistry
+    private static function createAnonymizerRegistry(array $config): AnonymizerRegistry
     {
         return new AnonymizerRegistry($config['anonymizer_paths']);
     }

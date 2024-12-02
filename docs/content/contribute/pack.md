@@ -129,16 +129,18 @@ Learn more about how to develop them reading the [Custom Anonymizers section](..
 
 ## 3. Test your anonymizers
 
-After you built your anonymizers, don't forget to test them. We recommend doing at least one functionnal test per anonymizer.
-To inspire you doing these tests, read [existing tests in DbToolsBundle](https://github.com/makinacorpus/DbToolsBundle/tree/main/tests/Functional/Anonymizer/Core)
+After you built your anonymizers, don't forget to test them. We recommend doing
+at least one functional test per anonymizer. To inspire you doing these tests,
+read [existing tests in DbToolsBundle](https://github.com/makinacorpus/DbToolsBundle/tree/main/tests/Functional/Anonymizer/Core)
 or in official packs.
 
-To help you launchning these tests, use provided `dev.sh` script, see [Development guide section](./guide) to learn how to use it.
-
+To help you launch these tests, use provided `dev.sh` script, see
+[Development guide section](./guide) to learn how to use it.
 
 ## 5. Share your pack on packagist
 
-If you want to share it and make it easily installable, share your package on [Packagist](https://packagist.org/).
+If you want to share it and make it easily installable, share your package on
+[Packagist](https://packagist.org/).
 
 ## 6. Make it an official pack
 
@@ -146,12 +148,13 @@ If:
 
 * you find your package good enough,
 * it is well tested,
-* you think it is generic enough to interest a large number of people,
+* you think it is generic enough to interest a large number of people.
 
 Then, you should consider to add it to the official packs list.
 
-Doing so, your package will be more visible (it will be added to this documentation) but it will also be automatically tested
-by a CI every week from the [packs-status repository](https://github.com/DbToolsBundle/packs-status).
+Doing so, your package will be more visible (it will be added to this
+documentation) but it will also be automatically tested by a CI every week
+from the [packs-status repository](https://github.com/DbToolsBundle/packs-status).
 
 This CI will:
 
@@ -163,5 +166,6 @@ This CI will:
 To ask your package to be part of official list, [open an issue on the packs-status repository](https://github.com/DbToolsBundle/packs-status/issues).
 
 :::info
-Note that to have your pack becoming an official one, you will need to transfere the repository to the [DbToolsBundle Organization](https://github.com/DbToolsBundle).
+Note that to have your pack becoming an official one, you will need to transfer
+the repository to the [DbToolsBundle Organization](https://github.com/DbToolsBundle).
 :::

@@ -8,8 +8,8 @@ All statistics values are tagged using one of the following tags:
   - `info`: display global information,
   - `read`: read statistics,
   - `write`: write statistics,
-  - `maint`: maintainance statistics, such as PostgreSQL VACUUM,
-  - `code`: occasionaly display SQL code, such as CREATE statements.
+  - `maint`: maintenance statistics, such as PostgreSQL VACUUM,
+  - `code`: occasionally display SQL code, such as CREATE statements.
 
 Per default, all commands will display values using the `info` and `read` tags.
 
@@ -58,7 +58,7 @@ The <span class="standalone">`vendor/bin/db-tools stats table`</span><span class
  - table size on disk,
  - table indices size on disk,
  - row count,
- - sequentials read and index read counts (PostgreSQL only),
+ - sequential read and index read counts (PostgreSQL only),
  - index row fetch count (PostgreSQL only),
  - maintenance tasks such as `analyze` and `vacuum` count and date (PostgreSQL only),
  - and much more information, whenever the RDBMS allows you to get it.

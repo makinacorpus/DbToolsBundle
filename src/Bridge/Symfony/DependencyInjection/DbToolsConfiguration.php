@@ -18,17 +18,12 @@ class DbToolsConfiguration implements ConfigurationInterface
     /**
      * Append values in configuration we cannot set a default.
      *
-     * For example, 'anonymizer_paths', if set by the user, will loose the
-     * default anonymizer paths, and we need them to be set in all cases.
-     *
      * So we act after configuration has been processed and restore missing
      * values from here. This also allows the standalone configuration doing
-     * it outside of Symfony extension context.
+     * it outside the Symfony extension context.
      */
     public static function appendPostConfig(array $config): array
     {
-        $config['anonymizer_paths'][] = \realpath(\dirname(__DIR__, 3)) . '/Anonymization/Anonymizer';
-
         return $config;
     }
 
@@ -137,11 +132,11 @@ class DbToolsConfiguration implements ConfigurationInterface
             $rootNode
                 ->children()
                     ->scalarNode('workdir')
-                        ->info('Directory path all other files will be relative to, if none providen then the configuration file directory will be used instead.')
+                        ->info('Directory path all other files will be relative to, if none provided then the configuration file directory will be used instead.')
                         ->defaultNull()
                     ->end()
                     ->scalarNode('default_connection')
-                        ->info('Default connection name. If none providen, first one is used instead.')
+                        ->info('Default connection name. If none provided, first one is used instead.')
                         ->defaultNull()
                     ->end()
                 ->end()
