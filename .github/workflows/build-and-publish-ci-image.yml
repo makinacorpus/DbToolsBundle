@@ -6,7 +6,7 @@ on:
       - "main"
     paths:
       - .gitattributes
-      - .github/workflows/build-and-publish-image.yml
+      - .github/workflows/build-and-publish-ci-image.yml
       - docker/ci-image/Dockerfile
 
 env:
