@@ -7,6 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
+use MakinaCorpus\QueryBuilder\Vendor;
 
 class FloatAnonymizerTest extends FunctionalTestCase
 {
@@ -136,6 +137,9 @@ class FloatAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithPercent(): void
     {
+        // @see https://github.com/makinacorpus/DbToolsBundle/issues/210
+        $this->skipIfDatabaseLessThan(Vendor::MYSQL, '8', 'A well known issue appears randomly with MYSQL 5.7.');
+
         $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
             'table_test',
             'data',
