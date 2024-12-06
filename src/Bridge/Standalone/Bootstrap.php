@@ -427,6 +427,9 @@ class Bootstrap
     private static function configGetEnv(array $config): array
     {
         if (!isset($config['backup_binary'])) {
+            $config['connections'] = self::getEnv('DBTOOLS_CONNECTION');
+        }
+        if (!isset($config['backup_binary'])) {
             $config['backup_binary'] = self::getEnv('DBTOOLS_BACKUP_BINARY');
         }
         if (!isset($config['backup_excluded_tables'])) {
