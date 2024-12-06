@@ -47,4 +47,4 @@ jobs:
         file: docker/franken-image/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags == 'main' && 'unstable' || steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        annotations: ${{ steps.meta.outputs.annotations }}

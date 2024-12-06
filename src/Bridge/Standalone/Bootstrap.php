@@ -63,7 +63,7 @@ class Bootstrap
         }
         $version ??= 'cli';
 
-        $application = new Application('DbTools', $version);
+        $application = new Application('DbToolsBundle', $version);
         $application->setCatchExceptions(true);
         $application->setDefaultCommand('list');
 
@@ -426,7 +426,7 @@ class Bootstrap
      */
     private static function configGetEnv(array $config): array
     {
-        if (!isset($config['backup_binary'])) {
+        if (!isset($config['connections'])) {
             $config['connections'] = self::getEnv('DBTOOLS_CONNECTION');
         }
         if (!isset($config['backup_binary'])) {

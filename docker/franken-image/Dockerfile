@@ -13,9 +13,7 @@ RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc| gpg --dearmor
     apt-get update && apt-get install -y postgresql-16
 
 # PHP required extensions
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-RUN docker-php-ext-install -j$(nproc) pgsql pdo_pgsql pdo mysqli pdo_mysql zip xml gd curl bcmath
-RUN docker-php-ext-enable pdo_pgsql pdo_mysql sodium
+RUN install-php-extensions pgsql pdo_pgsql pdo mysqli pdo_mysql zip xml gd curl bcmath
 
 # SQL Server support
 ENV ACCEPT_EULA=Y
