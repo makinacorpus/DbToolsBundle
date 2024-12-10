@@ -468,7 +468,7 @@ class Bootstrap
     private static function getEnv(string $name): string|null
     {
         $value = \getenv($name);
-
+        var_dump($value);
         return (!$value && $value !== '0') ? null : (string) $value;
     }
 
