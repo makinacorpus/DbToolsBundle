@@ -2,7 +2,7 @@
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -13,8 +13,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -46,7 +46,7 @@ customer:
 ```
 :::
 
-</div>
+@@@
 
 :::info
 Hashing a string is not anonymizing it because hash functions have a reproducible output.

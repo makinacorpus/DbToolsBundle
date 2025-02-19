@@ -9,20 +9,17 @@ outline:
 Considering your anonymization has been configured, you can
 now anonymize a backup file by running:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/your/backup/to/anonymized
 ```
 
-</div>
+@@@
 
 This command will successively:
 
@@ -33,7 +30,7 @@ This command will successively:
 5. Restore your database to its original state from the backup produced at step 1.
 
 ::: warning
-The <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> command alone is not enough to ensure you follow GDPR best practices.
+The <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span> command alone is not enough to ensure you follow GDPR best practices.
 It depends on:
 
 * How you correctly configured your anonymization (obviously),
@@ -46,70 +43,58 @@ Learn more about a proper workflow in the [dedicated section](./workflow).
 
 ## Options
 
-You can specify the behavior of the <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> command with some options detailed below.
+You can specify the behavior of the <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span> command with some options detailed below.
 
 ### Anonymizing local database
 
 The main purpose of this command is to provide a way to anonymize a backup file. But
 it could also be used to anonymize local database with `--local-database`.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --local-database
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --local-database
 ```
-
-</div>
+@@@
 
 ### Do not restore initial state after anonymization
 
 You can choose to not restore initial database with the `--no-restore` option.
 With this option, steps 1 and 5 will be skipped during execution.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --no-restore
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --no-restore
 ```
-
-</div>
+@@@
 
 ### Only anonymize specific targets
 
 Use this option if you want to anonymize only some specific targets during the process.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --target target_1 --taget target_2
 # or
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized -t target_1 -t target_2
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --target target_1 --taget target_2
 # or
 php bin/console db-tools:anonymize -t target_1 -t target_2
 ```
-
-</div>
+@@@
 
 ::: tip
 To know all your available targets, launch `db-tools:anonymization:dump-config`
@@ -119,24 +104,20 @@ To know all your available targets, launch `db-tools:anonymization:dump-config`
 
 Use this option if you want to exclude some specific targets from anonymization.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --exclude target_1 --exclude target_2
 # or
 vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized -x target_1 -x target_2
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --exclude target_1 --exclude target_2
 # or
 php bin/console db-tools:anonymize -x target_1 -x target_2
 ```
-
-</div>
+@@@
 
 ::: tip
 To know all your available targets, launch `db-tools:anonymization:dump-config`

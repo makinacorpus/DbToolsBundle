@@ -2,7 +2,7 @@
 
 Works like the StringAnonymizer, but with a provided sample of 1000 worldwide lastnames.
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -13,8 +13,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -46,4 +46,4 @@ customer:
 ```
 :::
 
-</div>
+@@@

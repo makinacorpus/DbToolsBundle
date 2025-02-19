@@ -39,19 +39,3 @@
 .main img {
   margin: auto;
 }
-
-.main .standalone {
-  display: var(--db-tools-standalone);
-}
-
-.main .symfony {
-  display: var(--db-tools-symfony);
-}
-
-.main .laravel {
-  display: var(--db-tools-laravel);
-}
-
-.main .docker {
-  display: var(--db-tools-docker);
-}

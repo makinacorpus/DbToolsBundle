@@ -10,7 +10,7 @@ Available options:
 - `html`: (bool) surround each paragraph with `<p>`, default is false.
 - `sample_count`: (int) how many different values to use (default is 100).
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -35,8 +35,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -92,4 +92,4 @@ customer:
 ```
 :::
 
-</div>
+@@@

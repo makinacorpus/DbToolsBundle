@@ -17,7 +17,7 @@ You can additionnally set the `format` parameter:
 - `date` will cast the generated date as a date without time,
 - `datetime` will generate a full timestamp.
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -43,8 +43,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -103,7 +103,7 @@ customer:
 ```
 :::
 
-</div>
+@@@
 
 :::warning
 Dates you give for `min` and `max` values will inherit from the PHP default

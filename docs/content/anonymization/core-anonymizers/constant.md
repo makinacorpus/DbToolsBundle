@@ -6,8 +6,7 @@ Options are:
 * `type`: a SQL type for the given value
   (default value is `text`)
 
-<div class=standalone>
-
+@@@ standalone docker
 ```yaml [YAML]
 # db_tools.config.yaml
 anonymization:
@@ -25,10 +24,8 @@ anonymization:
                     options: {value: '2012-12-21', type: 'date'}
   #...
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ::: code-group
 ```php [Attribute]
 namespace App\Entity;
@@ -70,5 +67,4 @@ customer:
 #...
 ```
 :::
-
-</div>
+@@@

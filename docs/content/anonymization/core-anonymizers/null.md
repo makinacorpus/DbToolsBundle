@@ -2,8 +2,7 @@
 
 Set all values to `NULL`.
 
-<div class=standalone>
-
+@@@ standalone docker
 ```yaml [YAML]
 # db_tools.config.yaml
 anonymization:
@@ -12,10 +11,8 @@ anonymization:
             sensible_content: 'null'
   #...
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ::: code-group
 ```php [Attribute]
 namespace App\Entity;
@@ -46,5 +43,4 @@ customer:
 #...
 ```
 :::
-
-</div>
+@@@

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DbToolsBundleFlavorSwitcher from './DbToolsBundleFlavorSwitcher.vue';
+import DbToolsBundleFlavorSwitcher from './DbToolsBundleFlavorSwitcher.vue'
 import { withBase } from 'vitepress'
 </script>
 

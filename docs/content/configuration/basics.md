@@ -6,19 +6,16 @@ Select below your target:
 
 <FlavorSwitcher />
 
-<div class="symfony">
-
-*DbToolsBundle* let you configure some of its behaviors. As with any classic
-Symfony Bundle, all will take place in the `config/packages/db_tools.yaml` file.
+@@@ symfony
+*DbToolsBundle* let you configure some of its behaviors. As with any classic Symfony Bundle,
+all will take place in the `config/packages/db_tools.yaml` file.
 
 :::tip
 A complete example of this file can be found in the bundle sources in:
 `vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml`.
 :::
-
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 *DbToolsBundle* let you configure some of its behaviors
 all will take place in your configuration file, usually `db_tools.yaml`.
 
@@ -28,8 +25,7 @@ all will take place in your configuration file, usually `db_tools.yaml`.
 A complete example of this file can be found in the library sources in:
 `vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.complete.sample.yaml`.
 :::
-
-</div>
+@@@
 
 For detailed information about configuration options, please see the
 [configuration reference](../configuration/reference).
@@ -39,8 +35,7 @@ For detailed information about configuration options, please see the
 For example, the backup excluded tables can either be configured top-level (for
 all connections):
 
-<div class="symfony">
-
+@@@ symfony
 ```yml
 # config/packages/db_tools.yaml
 db_tools:
@@ -58,10 +53,8 @@ db_tools:
         connection_two:
             backup_excluded_tables: ['table3', 'table4']
 ```
-
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yml
 # db_tools.yaml
 backup_excluded_tables: ['table1', 'table2']
@@ -77,8 +70,7 @@ connections:
     connection_two:
         backup_excluded_tables: ['table3', 'table4']
 ```
-
-</div>
+@@@
 
 When working with multiple connections, any connection which does not specify
 the option will inherit from the default.
@@ -94,16 +86,12 @@ Some options are available to customize how the `db-tools:backup` command works.
 
 The `storage_directory` parameter let you choose where to put the generated dumps.
 
-<div class="symfony">
-
-Default value is `%kernel.project_dir%/var/db_tools`.
-
-</div>
-<div class="standalone">
-
-Default value is `./var/db_tools`.
-
-</div>
+@@@ symfony
+Default value is `'%kernel.project_dir%/var/db_tools'`.
+@@@
+@@@ standalone docker
+Default value is `./var/db_tools'`.
+@@@
 
 #### File and directory naming strategy
 
@@ -112,8 +100,7 @@ by using this filename strategy:
 `<YEAR>/<MONTH>/<CONNECTION-NAME>-<YEAR><MONTH><DAY><HOUR><MINUTES><SECOND>.<EXT>`
 where `<EXT>` is the file extension depending upon the database backend (mostly `.sql` or `.dump`).
 
-<div class="symfony">
-
+@@@ symfony
 Custom strategy can be implemented by extending the
 `MakinaCorpus\DbToolsBundle\Storage\AbstractFilenameStrategy` abstract class:
 
@@ -180,19 +167,16 @@ class FooFilenameStrategy implements FilenameStrategyInterface
 }
 ```
 
-This will allow the _restore_ command to find your backups.
-
-</div>
-<div class="standalone">
-
+This will allow the `restore` command to find your backups.
+@@@
+@@@ standalone docker
 :::warning
 There is as of now no way to implement a custom filename strategy when using
 *DbToolsBundle* as a standalone CLI tool.
 
 If you need this feature, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
 :::
-
-</div>
+@@@
 
 :::info
 More filename strategies may be implemented in core in the future. If you have
@@ -205,8 +189,7 @@ The `backup_excluded_tables` parameter let you configure tables to exclude from 
 
 Default value is `null`: no table are excluded.
 
-<div class="symfony">
-
+@@@ symfony
 Here is an example for exclude `table1` and `table2` for all connections:
 
 ```yml
@@ -226,9 +209,8 @@ db_tools:
         connection_two:
             backup_excluded_tables: ['table3', 'table4']
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 Here is an example for exclude `table1` and `table2` for all connections:
 
 ```yml
@@ -246,7 +228,7 @@ connections:
     connection_two:
         backup_excluded_tables: ['table3', 'table4']
 ```
-</div>
+@@@
 
 :::tip
 Note that you can override this configuration while running the `db-tools:backup`
@@ -267,8 +249,7 @@ Default value is `'3 months ago'`.
 Use [PHP relative date/time formats](https://www.php.net/manual/en/datetime.formats.relative.php)
 for this value.
 
-<div class="symfony">
-
+@@@ symfony
 Here is an example that sets 1 week lifetime for backups for all connections:
 
 ```yml
@@ -288,9 +269,8 @@ db_tools:
         connection_two:
             backup_expiration_age: '3 days ago'
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 Here is an example that sets 1 week lifetime for backups for all connections:
 
 ```yml
@@ -308,7 +288,7 @@ connections:
     connection_two:
         backup_expiration_age: '3 days ago'
 ```
-</div>
+@@@
 
 ### Backup and restoration timeout
 
@@ -320,8 +300,7 @@ Default value is `600` (seconds) for backup, `1800` (seconds) for restore.
 Value can be either a [\DateInterval::createFromDateString()](https://www.php.net/manual/en/dateinterval.createfromdatestring.php)
 compatible string value or a number of seconds as an integer value.
 
-<div class="symfony">
-
+@@@ symfony
 Here is an example that sets timeouts for all connection:
 
 ```yml
@@ -349,9 +328,8 @@ db_tools:
             backup_timeout: 390
             restore_timeout: 195
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 Here is an example that sets timeouts for all connection:
 
 ```yml
@@ -378,7 +356,7 @@ connections:
         backup_timeout: 390
         restore_timeout: 195
 ```
-</div>
+@@@
 
 ## Binaries
 
@@ -392,48 +370,43 @@ to be able to work. These binaries depend on the database vendor you use, you wi
 You can verify if those binaries are well found by *DbToolsBundle*,
 for each of your connections, by launching:
 
-<div class="symfony">
-
+@@@ symfony
 ```sh
 php bin/console db-tools:check
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```sh
 php vendor/bin/db-tools database:check
 ```
-</div>
+@@@
 
 If the `db-tools:check` command returns you some errors:
 
 * if your binaries are present on your system but *DbToolsBundle* can't find
   them you will need to specify path for these binaries:
 
-  <div class="symfony">
-
+  @@@ symfony
   ```yml
   # config/packages/db_tools.yaml
   db_tools:
       backup_binary: '/usr/local/bin/pg_dump'
       restore_binary: '/usr/local/bin/pg_restore'
   ```
-  </div>
-  <div class="standalone">
-
+  @@@
+  @@@ standalone docker
   ```yml
   # db_tools.yaml
   backup_binary: '/usr/local/bin/pg_dump'
   restore_binary: '/usr/local/bin/pg_restore'
   ```
-  </div>
+  @@@
 
 * Backup and restoration binaries, as well as command line arguments and
   options, are configured on a per-connection basis. If you have more than
   one connection, use the following syntax instead:
 
-  <div class="symfony">
-
+  @@@ symfony
   ```yml
   # config/packages/db_tools.yaml
   db_tools:
@@ -445,9 +418,8 @@ If the `db-tools:check` command returns you some errors:
               backup_binary: '/usr/local/bin/mysqldump'
               restore_binary: '/usr/local/bin/mysql'
   ```
-  </div>
-  <div class="standalone">
-
+  @@@
+  @@@ standalone docker
   ```yml
   # db_tools.yaml
   connections:
@@ -458,7 +430,7 @@ If the `db-tools:check` command returns you some errors:
           backup_binary: '/usr/local/bin/mysqldump'
           restore_binary: '/usr/local/bin/mysql'
   ```
-  </div>
+  @@@
 
 * Or, if your binaries are not present on your system: you will need to install
   them.
@@ -493,8 +465,7 @@ also passes a few default options to the binary depending on the operation being
 performed and the invoked binary itself. You can customize those default options
 by configuring your own ones per operation type and connection:
 
-<div class="symfony">
-
+@@@ symfony
 Here is an example that sets options for all connections:
 
 ```yml
@@ -517,9 +488,8 @@ db_tools:
             backup_options: '--a-first-one --a-second-one'
             restore_options: '-O sample-value'
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 Here is an example that sets options for all connections:
 
 ```yml
@@ -540,7 +510,7 @@ connections:
         backup_options: '--a-first-one --a-second-one'
         restore_options: '-O sample-value'
 ```
-</div>
+@@@
 
 If you do not define your own default options, the following ones will be used
 according to the database vendor:
@@ -558,14 +528,12 @@ according to the database vendor:
 
 ## Anonymizer paths
 
-<div class="symfony">
-
+@@@ symfony
 By default, *DbToolsBundle* will look for custom *anonymizers* in the
 `%kernel.project_dir%/src/Anonymizer` directory.
 
-If you want to put custom anonymizers in another directory or if you want to
-load a pack of anonymizers from an external library, you can add paths to the
-`anonymizer_paths` parameter:
+If you want to put custom anonymizers in another directory or if you want to load
+a pack of anonymizers from an external library, you can modify/add paths:
 
 ```yml
 # config/packages/db_tools.yaml
@@ -575,9 +543,8 @@ db_tools:
         - '%kernel.project_dir%/vendor/anonymizer-provider/src'
         # ...
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 By default, *DbToolsBundle* will only consider core *anonymizers* when used as
 a standalone CLI tool. It won't look for any custom anonymizers.
 
@@ -592,7 +559,7 @@ anonymizer_paths:
     - './vendor/anonymizer-provider/src'
     # ...
 ```
-</div>
+@@@
 
 :::tip
 Core provided anonymizers as well as those contained in packs installed with
@@ -606,8 +573,7 @@ metadata about installed packages to find them.
 
 ## Anonymization
 
-<div class="symfony">
-
+@@@ symfony
 By default, *DbToolsBundle* will only look for anonymization configurations
 from PHP attributes on Doctrine Entities.
 
@@ -636,9 +602,8 @@ db_tools:
         # ...
 ```
 
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 You need to register your anonymization configuration for the anonymization
 feature to work:
 
@@ -661,8 +626,7 @@ db_tools:
             - './anonymizations/connection_one_2.yaml'
         # ...
 ```
-
-</div>
+@@@
 
 :::tip
 For more information about anonymization and configuration file structure,

@@ -6,27 +6,23 @@ Select below your target:
 
 <FlavorSwitcher />
 
-<div class="symfony">
+@@@ symfony
 
 *DbToolsBundle* follows [Symfony Best Practices for Bundles](https://symfony.com/doc/current/bundles/best_practices.html),
 you should not be lost if you are a regular Symfony developer.
 
-</div>
+@@@
 
 ## Requirements & Dependencies
 
-<div class="standalone">
-
+@@@ standalone docker
 - PHP 8.1 or higher
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 - PHP 8.1 or higher
 - Symfony 6.0 or higher
 - Doctrine/DBAL, *DbToolsBundle* takes advantage of available DBAL connections
-
-</div>
+@@@
 
 Currently supported database vendors:
 
@@ -45,8 +41,7 @@ Check out the [supported database vendors](../getting-started/database-vendors) 
 
 ## Installation
 
-<div class="standalone">
-
+@@@ standalone docker
 Add *DbToolsBundle* to your PHP project with [composer](https://getcomposer.org):
 
 ```sh
@@ -62,9 +57,8 @@ cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db
 
 Update these files to your needs. The only required parameter is `connections` in which you
 must provided an [URL connection string](../configuration/reference#connections).
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 Add *DbToolsBundle* to your Symfony project with [composer](https://getcomposer.org):
 
 ```sh
@@ -94,36 +88,30 @@ cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/pack
 ```
 
 Feel free to read this configuration file, it will learn you basics about this bundle.
-</div>
+@@@
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
 But before starting to use it, check if it succeeds to find backup and
 restoration binaries for your Doctrine connection(s):
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools check
 ```
-
-</div>
-
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:check
 ```
-
-</div>
+@@@
 
 :::tip
 If this command returns some errors, go to the [binaries configuration](../configuration/basics#binaries)
 section to understand how to solve them.
 :::
 
-<div class="symfony">
-
+@@@ symfony
 :::warning
 While installing the bundle through composer, the standalone binary will also be installed in
 the `vendor/bin/` directory.
@@ -133,5 +121,4 @@ the `vendor/bin/` directory.
 The binary will try to look for a config in `db_tools.config.yaml` while the Symfony Console commands
 will use the bundle configuration (which autoconfigures the database connections).
 :::
-
-</div>
+@@@

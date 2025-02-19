@@ -15,7 +15,7 @@ Available columns are:
 | `iban` | The International Bank Account Number | FR1711881618378130962836522 |
 | `bic`  | The Bank Identifier Code              | QFWXOC6L                    |
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -31,8 +31,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -74,4 +74,4 @@ customer:
 ```
 :::
 
-</div>
+@@@

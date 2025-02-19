@@ -2,7 +2,7 @@
 
 This *Anonymizer* will fill configured column with a random value from a given sample.
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -15,8 +15,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -49,7 +49,7 @@ customer:
 ```
 :::
 
-</div>
+@@@
 
 :::tip
 If you use the same sample multiple times, if you use a large sample or if you use a generated one, it could be

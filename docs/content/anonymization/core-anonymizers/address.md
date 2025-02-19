@@ -16,8 +16,7 @@ Available parts are :
 | `street_address`     | The street address. For example, 5 rue de la Paix                       | 5 rue de la Paix   |
 | `secondary_address`  | Additional information (apartment, block)                               | Appartement 310    |
 
-<div class=standalone>
-
+@@@ standalone docker
 ```yaml [YAML]
 # db_tools.config.yaml
 anonymization:
@@ -35,10 +34,8 @@ anonymization:
                     country: 'country'
   #...
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ::: code-group
 ```php [Attribute]
 namespace App\Entity;
@@ -98,8 +95,7 @@ customer:
   #...
 ```
 :::
-
-</div>
+@@@
 
 :::tip
 Note that you don't have to provide a column for each part. You can use this *Anonymizer* to

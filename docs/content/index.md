@@ -22,7 +22,7 @@ features:
       light: '/anonymize.svg'
       dark: '/anonymize-d.svg'
     title: Anonymize
-    details: Set up database anonymization with a simple YAML configuration file (or with PHP attributes on Doctrine Entities).
+    details: Set up database anonymization with a simple YAML configuration file or with PHP attributes.
     link: /anonymization/essentials
   - icon:
       light: '/gdpr.svg'

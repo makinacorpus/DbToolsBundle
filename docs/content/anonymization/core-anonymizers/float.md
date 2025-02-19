@@ -6,7 +6,7 @@ Anonymize float by:
 
 You may also specify a `precision` (default 2).
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -39,8 +39,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -112,4 +112,4 @@ customer:
 ```
 :::
 
-</div>
+@@@

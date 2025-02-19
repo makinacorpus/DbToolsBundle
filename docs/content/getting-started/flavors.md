@@ -36,3 +36,9 @@ After you installed the bundle:
 * Database connection URL will be autoconfigured based on available DBAL connections.
 * *DbToolsBundle* can be setup through its bundle configuration (`config/packages/db_tools.yaml`).
 * Anonymization can be set through PHP attributes on Doctrine Entities.
+
+## Docker
+
+WIP
+
+## Laravel (experimental) {#laravel}

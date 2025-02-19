@@ -1,4 +1,6 @@
 import { defineConfig } from 'vitepress'
+import MarkdownItContainer from 'markdown-it-container'
+import { flavorList } from './theme/components/flavor'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -26,31 +28,6 @@ export default defineConfig({
     },
     nav: [
       { text: 'Home', link: '/' },
-    ],
-    editLink: {
-      pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
-      text: 'Edit this page on Github'
-    },
-    docFooter: {
-      prev: 'Previous page',
-      next: 'Next page'
-    },
-    outlineTitle: 'On this page',
-    lastUpdated: {
-      text: 'Last updated',
-      formatOptions: {
-        dateStyle: 'short'
-      }
-    },
-    search: {
-      provider: 'local'
-    },
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
-    },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
     ],
     sidebar: [
       {
@@ -101,6 +78,51 @@ export default defineConfig({
           { text: 'Code of conduct', link: '/contribute/code-of-conduct' },
         ]
       },
-    ]
+    ],
+    editLink: {
+      pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
+      text: 'Edit this page on Github'
+    },
+    docFooter: {
+      prev: 'Previous page',
+      next: 'Next page'
+    },
+    outlineTitle: 'On this page',
+    lastUpdated: {
+      text: 'Last updated',
+      formatOptions: {
+        dateStyle: 'short'
+      }
+    },
+    search: {
+      provider: 'local'
+    },
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
+    },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
+    ],
+  },
+  markdown: {
+    config: (md) => {
+      function render(tokens, idx) {
+        const m: string = tokens[idx].info.trim()
+
+        if (tokens[idx].nesting === 1) {
+          const flavors = m.split(' ').join('-')
+          // opening tag
+          return '<div db-tools-flavor="' + flavors + '" >\n'
+        } else {
+          // closing tag
+          return '</div>\n'
+        }
+      }
+
+      flavorList.forEach(f => {
+        md.use(MarkdownItContainer, f, { marker: '@', render })
+      })
+    }
   }
 })

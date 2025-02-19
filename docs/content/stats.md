@@ -15,45 +15,37 @@ Per default, all commands will display values using the `info` and `read` tags.
 
 In order to display all values, use the `--all` or `-a` switch, for example:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools stats table -a
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats table -a
 ```
-
-</div>
+@@@
 
 If you want to specify only a set of tags, you may use the `--tag=TAG` or
 `-t TAG` switch, this option can be specified more than once:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools stats table -t read -t write
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats table -t read -t write
 ```
-
-</div>
+@@@
 
 ## Table statistics
 
 How much size takes a table on your disk ? How many rows are they ? Does your
 RDBMS ran `analyze`, `vaccuum` or `optimize` enough ?
 
-The <span class="standalone">`vendor/bin/db-tools stats table`</span><span class="symfony">`php bin/console db-tools:stats table`</span> will attempt to give you as many details about table statistics:
+The <span db-tools-flavor="standalone docker">`vendor/bin/db-tools stats table`</span><span db-tools-flavor="symfony">`php bin/console db-tools:stats table`</span> will attempt to give you as many details about table statistics:
 
  - table size on disk,
  - table indices size on disk,
@@ -65,20 +57,16 @@ The <span class="standalone">`vendor/bin/db-tools stats table`</span><span class
 
 Simply run:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools stats table
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats table
 ```
-
-</div>
+@@@
 
 Output will be ordered by table size in descending order.
 
@@ -90,20 +78,16 @@ performance problems.
 
 Simply run:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools stats index
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats index
 ```
-
-</div>
+@@@
 
 Output will be ordered by index size in descending order.
 
@@ -111,20 +95,16 @@ Output will be ordered by index size in descending order.
 
 If you run the command without any arguments:
 
-<div class="standalone">
-
+@@@ standalone docker
 ```sh
 vendor/bin/db-tools stats
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats
 ```
-
-</div>
+@@@
 
 depending upon your current database driver, you might have few or no output.
 

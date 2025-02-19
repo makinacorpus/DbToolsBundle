@@ -2,11 +2,10 @@
 
 *DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> will be all you need to
+After some configurations, launching <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span> will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
-<div class="symfony">
-
+@@@ symfony
 With the Symfony bundle, there is two ways to tell *DbToolsBundle* how it should anonymize your data:
 
 1. you can use **PHP attributes** on Doctrine Entities' classes and properties
@@ -27,7 +26,7 @@ section](../configuration/basics#anonymization) to see how to configure it.
 All anonymizers can be configured via attributes on Doctrine ORM entities, but inheritance
 is not fully supported yet, [please read this page](doctrine-inheritance) for more information.
 :::
-</div>
+@@@
 
 The anonymization is based on *Anonymizers*. An *Anonymizer* represents a way to anonymize a column (or
 multiple columns in certain cases). For example, you will use the EmailAnonymizer to anonymize a column that
@@ -51,8 +50,7 @@ This entity has several fields we want to anonymize, and others that we don't:
 - `lastLogin`: A DateTime we want to keep intact
 
 
-
-<div class="standalone">
+@@@ standalone docker
 Here is how you can declare this configuration:
 
 ```yaml
@@ -70,9 +68,8 @@ anonymization:
             secret: md5
 #...
 ```
-
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 Here is how you can declare this configruation with PHP attributes and with YAML:
 
 ::: code-group
@@ -128,8 +125,7 @@ customer:
 #...
 ```
 :::
-
-</div>
+@@@
 
 ## Multicolumn Anonymizers
 
@@ -137,8 +133,7 @@ Some *Anonymizers* are mutlicolumn. For example the *AddressAnonymizer* can, by 
 
 *Multicolumn anonymizers* are usefull when you want to keep coherent data after anonymization.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```yaml [YAML]
 # db_tools.config.yaml
 anonymization:
@@ -156,9 +151,8 @@ anonymization:
                     country: 'country'
   #...
 ```
-
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 When using PHP attributes, those anonymizers should be put on class:
 
 ::: code-group
@@ -220,8 +214,7 @@ customer:
   #...
 ```
 :::
-
-</div>
+@@@
 
 ## Going further
 
@@ -238,5 +231,5 @@ If you can't find what you need from core anonymizers and in available packs, *D
 you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
-You can list all available *Anonymizers* with <span class="standalone">`vendor/bin/db-tools anonymization:list`</span><span class="symfony">`php bin/console db-tools:anonymization:list`</span> command.
+You can list all available *Anonymizers* with <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymization:list`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymization:list`</span> command.
 :::
