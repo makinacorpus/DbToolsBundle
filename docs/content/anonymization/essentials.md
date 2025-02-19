@@ -229,7 +229,7 @@ composer require db-tools-bundle/pack-fr-fr
 
 @@@ docker
 ::: tip
-All offical packs are included in the Docker image. No need to add them with a custom build.
+All official packs are included in the Docker image. No need to add them with a custom build.
 :::
 @@@
 

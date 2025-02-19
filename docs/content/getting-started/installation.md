@@ -118,7 +118,7 @@ services:
     networks: // [!code ++]
       - site // [!code ++]
     volumes: // [!code ++]
-      - ./db_tools.yaml:/var/www/db_tools.config.yaml // [!code ++]
+      - ./db_tools.config.yaml:/var/www/db_tools.config.yaml // [!code ++]
 
 networks:
   site:
@@ -135,7 +135,7 @@ cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db
 ```
 
 Update this file to your needs. The only required parameter is `connections` in which you
-must provided an [URL connection string](../configuration/reference#connections).
+must provided a [URL connection string](../configuration/reference#connections).
 
 In our example, the connection string will be `pgsql://db:password@postgres:5432/db?version=15.0`.
 @@@

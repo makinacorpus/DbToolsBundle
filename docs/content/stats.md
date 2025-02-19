@@ -52,10 +52,10 @@ docker compose run dbtools stats table -t read -t write
 
 ## Table statistics
 
-How much size takes a table on your disk ? How many rows are they ? Does your
-RDBMS ran `analyze`, `vaccuum` or `optimize` enough ?
+How much size takes a table on your disk? How many rows are they? Does your
+RDBMS ran `analyze`, `vaccuum` or `optimize` enough?
 
-The <span db-tools-flavor="standalone">`vendor/bin/db-tools stats table`</span><span db-tools-flavor="symfony">`php bin/console db-tools:stats table`</span><span db-tools-flavor="docker">`docker compose run dbtools stats table`</span> will attempt to give you as many details about table statistics:
+The <span db-tools-flavor="standalone">`vendor/bin/db-tools stats table`</span><span db-tools-flavor="symfony">`php bin/console db-tools:stats table`</span><span db-tools-flavor="docker">`docker compose run dbtools stats table`</span> will attempt to give you as many details as possible about table statistics:
 
  - table size on disk,
  - table indices size on disk,
