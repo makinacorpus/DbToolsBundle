@@ -1,6 +1,6 @@
 # Database statistics
 
-The bundle comes with a handy `db-tools:stats` command that can help you analyze
+The bundle comes with a handy `stats` command that can help you analyze
 your database state and performance.
 
 All statistics values are tagged using one of the following tags:
@@ -15,7 +15,7 @@ Per default, all commands will display values using the `info` and `read` tags.
 
 In order to display all values, use the `--all` or `-a` switch, for example:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats table -a
 ```
@@ -25,11 +25,16 @@ vendor/bin/db-tools stats table -a
 php bin/console db-tools:stats table -a
 ```
 @@@
+@@@ docker
+```sh
+docker compose run dbtools stats table -a
+```
+@@@
 
 If you want to specify only a set of tags, you may use the `--tag=TAG` or
 `-t TAG` switch, this option can be specified more than once:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats table -t read -t write
 ```
@@ -39,13 +44,18 @@ vendor/bin/db-tools stats table -t read -t write
 php bin/console db-tools:stats table -t read -t write
 ```
 @@@
+@@@ docker
+```sh
+docker compose run dbtools stats table -t read -t write
+```
+@@@
 
 ## Table statistics
 
 How much size takes a table on your disk ? How many rows are they ? Does your
 RDBMS ran `analyze`, `vaccuum` or `optimize` enough ?
 
-The <span db-tools-flavor="standalone docker">`vendor/bin/db-tools stats table`</span><span db-tools-flavor="symfony">`php bin/console db-tools:stats table`</span> will attempt to give you as many details about table statistics:
+The <span db-tools-flavor="standalone">`vendor/bin/db-tools stats table`</span><span db-tools-flavor="symfony">`php bin/console db-tools:stats table`</span><span db-tools-flavor="docker">`docker compose run dbtools stats table`</span> will attempt to give you as many details about table statistics:
 
  - table size on disk,
  - table indices size on disk,
@@ -57,7 +67,7 @@ The <span db-tools-flavor="standalone docker">`vendor/bin/db-tools stats table`<
 
 Simply run:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats table
 ```
@@ -65,6 +75,11 @@ vendor/bin/db-tools stats table
 @@@ symfony
 ```sh
 php bin/console db-tools:stats table
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools stats table
 ```
 @@@
 
@@ -78,7 +93,7 @@ performance problems.
 
 Simply run:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats index
 ```
@@ -88,6 +103,11 @@ vendor/bin/db-tools stats index
 php bin/console db-tools:stats index
 ```
 @@@
+@@@ docker
+```sh
+docker compose run dbtools stats index
+```
+@@@
 
 Output will be ordered by index size in descending order.
 
@@ -95,7 +115,7 @@ Output will be ordered by index size in descending order.
 
 If you run the command without any arguments:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats
 ```
@@ -103,6 +123,11 @@ vendor/bin/db-tools stats
 @@@ symfony
 ```sh
 php bin/console db-tools:stats
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools stats
 ```
 @@@
 

@@ -2,7 +2,7 @@
 
 *DbToolsBundle* provides a convinient way to anonymize data from your database.
 
-After some configurations, launching <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span> will be all you need to
+After some configurations, launching <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymize`</span> will be all you need to
 replace sensitive data by random and/or hashed ones in your database.
 
 @@@ symfony
@@ -227,9 +227,15 @@ You can also add *Anonymizers* from [community packs](./packs). For example, to 
 composer require db-tools-bundle/pack-fr-fr
 ```
 
+@@@ docker
+::: tip
+All offical packs are included in the Docker image. No need to add them with a custom build.
+:::
+@@@
+
 If you can't find what you need from core anonymizers and in available packs, *DbToolsBundle* allows
 you to [create your own *Custom Anonymizers*](./custom-anonymizers).
 
 ::: tip
-You can list all available *Anonymizers* with <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymization:list`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymization:list`</span> command.
+You can list all available *Anonymizers* with <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymization:list`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymization:list`</span><span db-tools-flavor="docker">`docker compose run dbtools list`</span> command.
 :::

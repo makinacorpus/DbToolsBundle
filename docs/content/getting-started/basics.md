@@ -13,7 +13,7 @@ happen, that's why, ideally, you always backup your database before upgrading.
 
 Get this task done quickly with:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools backup
 ```
@@ -21,6 +21,11 @@ vendor/bin/db-tools backup
 @@@ symfony
 ```sh
 php bin/console db-tools:backup
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools backup
 ```
 @@@
 
@@ -34,7 +39,7 @@ quickly, so you decide to rollback for now.
 
 Simply run:
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools restore
 ```
@@ -42,6 +47,11 @@ vendor/bin/db-tools restore
 @@@ symfony
 ```sh
 php bin/console db-tools:restore
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools restore
 ```
 @@@
 
@@ -57,10 +67,10 @@ and execute them with the correct options for you.
 *You need to retrieve data from your production environment, but you don't want to
 have sensitive data on your local environment.*
 
-Let's say you have launched a <span db-tools-flavor="standalone docker">`vendor/bin/db-tools backup`</span><span db-tools-flavor="symfony">`php bin/console db-tools:backup`</span> on your production environment
+Let's say you have launched a <span db-tools-flavor="standalone">`vendor/bin/db-tools backup`</span><span db-tools-flavor="symfony">`php bin/console db-tools:backup`</span><span db-tools-flavor="docker">`docker compose run dbtools backup`</span> on your production environment
 and downloaded the backup file on your machine.
 
-You could run the <span db-tools-flavor="standalone docker">`vendor/bin/db-tools restore`</span><span db-tools-flavor="symfony">`php bin/console db-tools:restore`</span> to populate your database from the
+You could run the <span db-tools-flavor="standalone">`vendor/bin/db-tools restore`</span><span db-tools-flavor="symfony">`php bin/console db-tools:restore`</span><span db-tools-flavor="docker">`docker compose run dbtools restore`</span> to populate your database from the
 freshly downloaded backup file. But in doing so, you will end up with sensitive
 data on your machine, which is not what you want:
 * First of all, because in most cases that's **illegal**
@@ -118,7 +128,7 @@ class User
 ```
 @@@
 
-With the above configuration, after you used <span db-tools-flavor="standalone docker">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span> on a backup file,
+With the above configuration, after you used <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymize`</span> on a backup file,
 all the user email addresses it contains will be replaced with hashed ones.
 
 ::: tip
@@ -133,7 +143,7 @@ We should therefore, for example, perform this task on the preproduction environ
 [Learn more about a good GDPR-friendly workflow](../anonymization/workflow).
 :::
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools anonymize path/to/my_backup.dump
 ```
@@ -141,6 +151,11 @@ vendor/bin/db-tools anonymize path/to/my_backup.dump
 @@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/my_backup.dump
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/my_backup.dump
 ```
 @@@
 
@@ -166,7 +181,7 @@ SQL queries in a shell prompt.
 If this sounds familiar to you, try to launch:
 
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats
 ```
@@ -174,6 +189,11 @@ vendor/bin/db-tools stats
 @@@ symfony
 ```sh
 php bin/console db-tools:stats
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools stats
 ```
 @@@
 

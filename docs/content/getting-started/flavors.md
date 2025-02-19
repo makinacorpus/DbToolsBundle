@@ -4,8 +4,8 @@
 
 <FlavorSwitcher />
 
-Currently, you can either use it as a *standalone* PHP library or with its *Symfony* bundle. Two
-additional flavors should be soon available: *Laravel* and *Docker*.
+Currently, you can either use this tool as a *standalone PHP library*, with its *Symfony bundle* or via its *Docker image*. An experimental
+integration is also available for *Laravel*.
 
 ::: tip
 You can choose your favorite flavor from the menu in the top left-hand corner.
@@ -30,7 +30,7 @@ to find the database(s) you want to manage.
 *DbToolsBundle* was, in its first version, a tools for Symfony developers only. The library can still
 be fully integrated into any Symfony project via its dedicated bridge.
 
-After you installed the bundle:
+Right after you installed the bundle, and with zero configuration:
 * All *DbToolsBundle* commands will be accessible with
   the [Symfony Console](https://symfony.com/doc/current/components/console.html).
 * Database connection URL will be autoconfigured based on available DBAL connections.
@@ -39,6 +39,13 @@ After you installed the bundle:
 
 ## Docker
 
-WIP
+*DbToolsBundle* can be used in any CI/CD using its [Docker image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).
+
+Every commands will be accessible with the `docker container run` utility.
+
+All configuration can be set up mounting a config file (see [installation section](/getting-started/installation) for an example). This config file uses the exact same syntax as for the
+standalone flavor.
 
 ## Laravel (experimental) {#laravel}
+
+WIP

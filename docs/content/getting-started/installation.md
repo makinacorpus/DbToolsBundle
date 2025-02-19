@@ -15,7 +15,7 @@ you should not be lost if you are a regular Symfony developer.
 
 ## Requirements & Dependencies
 
-@@@ standalone docker
+@@@ standalone
 - PHP 8.1 or higher
 @@@
 @@@ symfony
@@ -23,6 +23,7 @@ you should not be lost if you are a regular Symfony developer.
 - Symfony 6.0 or higher
 - Doctrine/DBAL, *DbToolsBundle* takes advantage of available DBAL connections
 @@@
+<!--- NB: There is no specific requirements for Docker flavor -->
 
 Currently supported database vendors:
 
@@ -41,7 +42,7 @@ Check out the [supported database vendors](../getting-started/database-vendors) 
 
 ## Installation
 
-@@@ standalone docker
+@@@ standalone
 Add *DbToolsBundle* to your PHP project with [composer](https://getcomposer.org):
 
 ```sh
@@ -55,7 +56,7 @@ cd your_project_dir
 cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db_tools.config.yaml
 ```
 
-Update these files to your needs. The only required parameter is `connections` in which you
+Update this file to your needs. The only required parameter is `connections` in which you
 must provided an [URL connection string](../configuration/reference#connections).
 @@@
 @@@ symfony
@@ -89,13 +90,62 @@ cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/pack
 
 Feel free to read this configuration file, it will learn you basics about this bundle.
 @@@
+@@@ docker
+You can, for example, add the [*DbToolsBundle* image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle) to your docker compose stack like this:
+
+
+```yaml
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+      POSTGRES_USER: db
+    ports:
+      - 5439:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - site
+
+  dbtools: // [!code ++]
+    image: makinacorpus/dbtoolsbundle:stable // [!code ++]
+    networks: // [!code ++]
+      - site // [!code ++]
+    volumes: // [!code ++]
+      - ./db_tools.yaml:/var/www/db_tools.config.yaml // [!code ++]
+
+networks:
+  site:
+
+volumes:
+  pgdata:
+```
+
+Then, copy the default configuration file from the vendor directory:
+
+```sh
+cd your_project_dir
+cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db_tools.config.yaml
+```
+
+Update this file to your needs. The only required parameter is `connections` in which you
+must provided an [URL connection string](../configuration/reference#connections).
+
+In our example, the connection string will be `pgsql://db:password@postgres:5432/db?version=15.0`.
+@@@
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
 But before starting to use it, check if it succeeds to find backup and
 restoration binaries for your Doctrine connection(s):
 
-@@@ standalone docker
+@@@ standalone
 ```sh
 vendor/bin/db-tools check
 ```
@@ -103,6 +153,11 @@ vendor/bin/db-tools check
 @@@ symfony
 ```sh
 php bin/console db-tools:check
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools check
 ```
 @@@
 

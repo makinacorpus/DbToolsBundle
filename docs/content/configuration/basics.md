@@ -17,10 +17,10 @@ A complete example of this file can be found in the bundle sources in:
 @@@
 @@@ standalone docker
 *DbToolsBundle* let you configure some of its behaviors
-all will take place in your configuration file, usually `db_tools.yaml`.
+all will take place in your configuration file, usually `db_tools.config.yaml`.
 
 :::tip
-**In this page, all paths are relative to the `db_tools.yaml` configuration file.**
+**In this page, all paths are relative to the `db_tools.config.yaml` configuration file.**
 
 A complete example of this file can be found in the library sources in:
 `vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.complete.sample.yaml`.
@@ -56,14 +56,14 @@ db_tools:
 @@@
 @@@ standalone docker
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 backup_excluded_tables: ['table1', 'table2']
 ```
 
 Or for each connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 connections:
     connection_one:
         backup_excluded_tables: ['table1', 'table2']
@@ -78,7 +78,7 @@ the option will inherit from the default.
 
 ## Backup configuration
 
-Some options are available to customize how the `db-tools:backup` command works.
+Some options are available to customize how the `backup` command works.
 
 ### Storage
 
@@ -172,7 +172,7 @@ This will allow the `restore` command to find your backups.
 @@@ standalone docker
 :::warning
 There is as of now no way to implement a custom filename strategy when using
-*DbToolsBundle* as a standalone CLI tool.
+*DbToolsBundle* as a standalone CLI tool or with the Docker image.
 
 If you need this feature, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
 :::
@@ -214,14 +214,14 @@ db_tools:
 Here is an example for exclude `table1` and `table2` for all connections:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 backup_excluded_tables: ['table1', 'table2']
 ```
 
 Or set a specific table list for each connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 connections:
     connection_one:
         backup_excluded_tables: ['table1', 'table2']
@@ -274,14 +274,14 @@ db_tools:
 Here is an example that sets 1 week lifetime for backups for all connections:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 backup_expiration_age: '1 week ago'
 ```
 
 Or set a specific value list for each connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 connections:
     connection_one:
         backup_expiration_age: '1 week ago'
@@ -333,7 +333,7 @@ db_tools:
 Here is an example that sets timeouts for all connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 
 # As a date interval string.
 backup_timeout: '6 minutes 30 seconds'
@@ -347,7 +347,7 @@ restore_timeout: 195
 Or set a different timeout for each connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 connections:
     connection_one:
         backup_timeout: '6 minutes 30 seconds'
@@ -375,16 +375,21 @@ for each of your connections, by launching:
 php bin/console db-tools:check
 ```
 @@@
-@@@ standalone docker
+@@@ standalone
 ```sh
 php vendor/bin/db-tools database:check
 ```
 @@@
+@@@ docker
+```sh
+docker compose run dbtools database:check
+```
+@@@
 
-If the `db-tools:check` command returns you some errors:
+If the `check` command returns you some errors:
 
-* if your binaries are present on your system but *DbToolsBundle* can't find
-  them you will need to specify path for these binaries:
+ * if your binaries are present on your system but *DbToolsBundle* can't find
+   them you will need to specify path for these binaries:
 
   @@@ symfony
   ```yml
@@ -396,7 +401,7 @@ If the `db-tools:check` command returns you some errors:
   @@@
   @@@ standalone docker
   ```yml
-  # db_tools.yaml
+  # db_tools.config.yaml
   backup_binary: '/usr/local/bin/pg_dump'
   restore_binary: '/usr/local/bin/pg_restore'
   ```
@@ -421,7 +426,7 @@ If the `db-tools:check` command returns you some errors:
   @@@
   @@@ standalone docker
   ```yml
-  # db_tools.yaml
+  # db_tools.config.yaml
   connections:
       connection_one:
           backup_binary: '/usr/local/bin/pg_dump'
@@ -435,6 +440,15 @@ If the `db-tools:check` command returns you some errors:
 * Or, if your binaries are not present on your system: you will need to install
   them.
 
+
+@@@ docker
+:::tip
+With the Docker image, all binaries should be avaible as is.
+
+If you encounter difficulties, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
+:::
+@@@
+@@@ standalone symfony
 :::tip
 If your app lives in the [official PHP docker image](https://hub.docker.com/_/php/),
 you can install correct binaries adding these lines to your Dockerfile,
@@ -453,6 +467,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends default-mysql-client
 ```
 :::
+@@@
 
 :::warning
 Dump and restore is not supported yet for SQL Server.
@@ -493,7 +508,7 @@ db_tools:
 Here is an example that sets options for all connections:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 backup_options: '--an-option'
 restore_options: '--a-first-one --a-second-one'
 ```
@@ -501,7 +516,7 @@ restore_options: '--a-first-one --a-second-one'
 Or set a specific value list for each connection:
 
 ```yml
-# db_tools.yaml
+# db_tools.config.yaml
 connections:
     connection_one:
         backup_options: '--an-option'
@@ -566,10 +581,12 @@ Core provided anonymizers as well as those contained in packs installed with
 composer will always be loaded automatically.
 :::
 
+@@@ symfony standalone
 :::warning
 Packs must be installed using composer: *DbToolsBundle* uses composer generated
 metadata about installed packages to find them.
 :::
+@@@
 
 ## Anonymization
 
@@ -608,7 +625,7 @@ You need to register your anonymization configuration for the anonymization
 feature to work:
 
 ```yml
-# config/packages/db_tools.yaml
+# db_tools.config.yaml
 db_tools:
 
     # When you have a single connection and prefer a single configuration file:
