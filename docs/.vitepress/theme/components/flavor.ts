@@ -27,20 +27,16 @@ export const flavorCombinationList = getCombos(flavorList)
 const flavor = ref('standalone')
 
 export function useFlavor() {
-  watch(() => flavor.value, (flavor) => {
-    const root = document.documentElement
-    flavorCombinationList.forEach(f => {
-      root.style.setProperty('--db-tools-' + f, f.includes(flavor) ? 'unset' : 'none')
-    })
-
-    localStorage.setItem("db-tools-flavor", flavor)
-  }, { immediate: true })
+  watch(() => flavor.value, () => {
+    onFlavorUpdate()
+  })
 
   onMounted(() => {
     const storedFlavor = localStorage.getItem("db-tools-flavor")
     if (storedFlavor) {
       flavor.value = storedFlavor
     }
+    onFlavorUpdate()
 
     // initialize style
     // we display standalone flavor at start
@@ -58,6 +54,15 @@ export function useFlavor() {
     })
     document.head.appendChild(style)
   })
+
+  const onFlavorUpdate = () => {
+    const root = document.documentElement
+    flavorCombinationList.forEach(f => {
+      root.style.setProperty('--db-tools-' + f, f.includes(flavor.value) ? 'unset' : 'none')
+    })
+
+    localStorage.setItem("db-tools-flavor", flavor.value)
+  }
 
   return {
     flavor
