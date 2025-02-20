@@ -83,8 +83,8 @@ account:
 ## Enjoy full integration with Symfony & Laravel
 
 *DbToolsBundle* provides a bundle for Symfony and an
-experimental bridge for Laravel. These integrations let you use the
-library with zero configuration after you installed the package.
+experimental package for Laravel. These integrations include
+autoconfiguration of database connection.
 
 ![](/symfony-laravel.svg)
 
