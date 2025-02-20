@@ -36,14 +36,20 @@ within.
 
 </div>
 
-<style module>
+<style>
 .toc-inline .table-of-contents ul {
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
 }
 .toc-inline .table-of-contents li {
-  flex: 1;
+  margin: 2px 4px;
+  padding: 1px 4px;
+  border-radius: 4px;
   display: inline-block;
+  background: var(--vp-code-bg);
+
 }
 </style>
 

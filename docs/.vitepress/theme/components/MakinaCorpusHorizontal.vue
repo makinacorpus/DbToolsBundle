@@ -27,7 +27,6 @@
 
 <style scoped>
 .makina-corpus-horizontal {
-  padding: 0 64px;
   margin-top: 64px;
 }
 .makina-corpus-horizontal .container {
