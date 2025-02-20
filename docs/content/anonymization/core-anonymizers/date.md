@@ -1,4 +1,4 @@
-## DateAnonymizer
+## Date
 
 Anonymize dates by either:
 - randomly choosing an date or datetime in a given range delimited by `min` and `max` options,

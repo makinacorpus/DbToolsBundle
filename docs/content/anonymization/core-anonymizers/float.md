@@ -1,4 +1,4 @@
-## FloatAnonymizer
+## Float
 
 Anonymize float by:
 - randomly choosing an integer in a range delimited by `min` and `max` options

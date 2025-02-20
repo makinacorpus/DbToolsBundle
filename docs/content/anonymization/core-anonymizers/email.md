@@ -1,4 +1,4 @@
-## EmailAnonymizer
+## Email address
 
 EmailAnonymizer uses a hash function on the original value to make each unique email
 anonymization reproducible accross tables.

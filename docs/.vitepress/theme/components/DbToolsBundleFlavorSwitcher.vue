@@ -47,7 +47,7 @@ const id = Math.random().toString(36).substring(2, 6);
   </div>
 </template>
 
-<style scoped>
+<style>
 .flavor-switch {
   font-size: 12px;
   display: flex;
@@ -105,7 +105,7 @@ input[value="symfony"]:checked + label {
 input[value="symfony"]:checked + label > svg {
   fill: #FFFFFF;
 }
-.dark {
+html.dark {
   input[value="symfony"]:checked + label {
     color: #000000;
     background-color: #FFFFFF;

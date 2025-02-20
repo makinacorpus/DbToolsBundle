@@ -1,4 +1,4 @@
-## ConstantAnonymizer
+## Constant value
 
 Set all value to a constant value.
 Options are:

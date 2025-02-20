@@ -1,4 +1,4 @@
-## IbanBicAnonymizer
+## Iban/Bic
 
 This *Anonymizer* is multicolumn. It let you anonymize, at once, an IBAN and a BIC code.
 You can choose to anonymize either one of IBAN or BIC, or both.

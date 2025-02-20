@@ -1,4 +1,4 @@
-## NullAnonymizer
+## Null
 
 Set all values to `NULL`.
 
