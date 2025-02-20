@@ -67,6 +67,9 @@ account:
     options: {domain: 'db-tools-bundle.org'}
   hashed_password: password
 ```
+
+[Learn more about anonymiztion](./anonymization/essentials)
+
   </div>
 </div>
 
@@ -77,6 +80,10 @@ account:
 ## Enjoy full integration with Symfony & Laravel
 
 ![](/symfony-laravel.svg)
+
+
+[Learn more about Symony integration](./getting-started/flavors#symfony)
+[Learn more about Laravel integration](./getting-started/flavors#laravel)
 
   </div>
   <div class="home-grid-60">
@@ -150,6 +157,8 @@ networks:
 
 ![](/docker.svg)
 
+[Learn more about Docker image](./getting-started/flavors#docker)
+
   </div>
 </div>
 
@@ -173,11 +182,31 @@ networks:
     &.img {
       margin-top: auto;
       margin-bottom: auto;
-      p {
-      border-radius: 12px;
-      background: var(--vp-c-bg-soft);
-      overflow: hidden;
-    }
+      p:first-child {
+        border-radius: 12px;
+        background: var(--vp-c-bg-soft);
+        overflow: hidden;
+      }
+
+      a {
+        display: block;
+        margin: 10px 0;
+        text-decoration: none;
+        border-color: var(--vp-button-alt-border);
+        color: var(--vp-button-alt-text);
+        background-color: var(--vp-button-alt-bg);
+        border-radius: 20px;
+        padding: 0 20px;
+        line-height: 38px;
+        font-size: 14px;transition: color 0.25s, border-color 0.25s, background-color 0.25s;
+        width: fit-content;
+
+        &:hover {
+          border-color: var(--vp-button-alt-hover-border);
+          color: var(--vp-button-alt-hover-text);
+          background-color: var(--vp-button-alt-hover-bg);
+        }
+      }
     }
   }
   .home-grid > div.home-grid-40 {
