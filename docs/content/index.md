@@ -58,6 +58,9 @@ features:
 
 ## Anonymize your database from a simple yaml configuration
 
+Map each column of each table you want to anonymize with
+a specific anonymizer.
+
 ```yaml [YAML]
 account:
   fisrt_name: firstname
@@ -68,7 +71,7 @@ account:
   hashed_password: password
 ```
 
-[Learn more about anonymiztion](./anonymization/essentials)
+[Learn more about anonymization](./anonymization/essentials)
 
   </div>
 </div>
@@ -79,10 +82,14 @@ account:
 
 ## Enjoy full integration with Symfony & Laravel
 
+*DbToolsBundle* provides a bundle for Symfony and an
+experimental bridge for Laravel. These integrations let you use the
+library with zero configuration after you installed the package.
+
 ![](/symfony-laravel.svg)
 
 
-[Learn more about Symony integration](./getting-started/flavors#symfony)
+[Learn more about Symfony integration](./getting-started/flavors#symfony)
 [Learn more about Laravel integration](./getting-started/flavors#laravel)
 
   </div>
@@ -116,8 +123,29 @@ class Customer
     private ?string $hashedPassword = null;
 }
 ```
-```php [Laravel (Eloquent entity)]
+```php [Laravel]
+<?php
+// config/db-tools.php
 
+declare(strict_types=1);
+
+return [
+  // ...
+  'anonymization' => [
+    'first_name' => [
+      'anonymizer' => 'firstname'
+    ]
+    'last_name' => [
+      'anonymizer' => 'lastname'
+    ]
+    'email_address' => [
+      'anonymizer' => 'email'
+    ]
+    'hashed_password' => [
+      'anonymizer' => 'password'
+    ]
+  ],
+];
 ```
 :::
 
@@ -155,6 +183,9 @@ networks:
 
 ## Deploy an anonymization workflow on any CI/CD with our Docker image
 
+The Docker image unlocks the *DbToolsBundle* features for every DevOps teams.
+Simply add our image to your `docker-compose.yml`!
+
 ![](/docker.svg)
 
 [Learn more about Docker image](./getting-started/flavors#docker)
@@ -177,21 +208,24 @@ networks:
     }
   }
   .home-grid > div {
-    padding: 10px;
-
     &.img {
       margin-top: auto;
       margin-bottom: auto;
-      p:first-child {
+
+      img {
         border-radius: 12px;
         background: var(--vp-c-bg-soft);
         overflow: hidden;
+        height: 200px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       a {
         display: block;
         margin: 10px 0;
         text-decoration: none;
+        text-align: center;
         border-color: var(--vp-button-alt-border);
         color: var(--vp-button-alt-text);
         background-color: var(--vp-button-alt-bg);
@@ -199,7 +233,6 @@ networks:
         padding: 0 20px;
         line-height: 38px;
         font-size: 14px;transition: color 0.25s, border-color 0.25s, background-color 0.25s;
-        width: fit-content;
 
         &:hover {
           border-color: var(--vp-button-alt-hover-border);
@@ -209,10 +242,25 @@ networks:
       }
     }
   }
-  .home-grid > div.home-grid-40 {
-    width: 40%;
-  }
   .home-grid > div.home-grid-60 {
-    width: 60%;
+    order: 1;
+  }
+  @media (min-width: 960px) {
+    .home-grid > div.home-grid-40 {
+      width: 40%;
+    }
+    .home-grid > div.home-grid-60 {
+      width: 60%;
+      order: unset;
+    }
+    .home-grid > div:first-child {
+      padding-right: 20px;
+    }
+    .home-grid > div:last-child {
+      padding-left: 20px;
+    }
+    .home-grid > div.img img {
+      height: auto;
+    }
   }
 </style>
