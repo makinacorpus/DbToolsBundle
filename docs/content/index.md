@@ -56,7 +56,7 @@ features:
   </div>
   <div class="home-grid-40 img">
 
-## Anonymize your database from a simple yaml configuration
+## Anonymize your database from a simple YAML configuration
 
 Map each column of each table you want to anonymize with
 a specific anonymizer.
@@ -184,7 +184,7 @@ networks:
 ## Deploy an anonymization workflow on any CI/CD with our Docker image
 
 The Docker image unlocks the *DbToolsBundle* features for every DevOps teams.
-Simply add our image to your `docker-compose.yml`!
+Simply add our image to your `docker-compose.yaml`!
 
 ![](/docker.svg)
 
