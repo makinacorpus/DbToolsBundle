@@ -55,7 +55,7 @@ php bin/console db-tools:backup --connection other_connection_name
 ```
 @@@
 @@@ docker
-By default, the command will backup the database from the default connection.
+By default, the command will back up the database from the default connection.
 
 If you configured several ones, you can choose to back up a database from a specific
 connection with `--connection` option:
@@ -337,7 +337,7 @@ docker compose run dbtools restore --ignore-default-options
 As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
-All backups are stored in a directory. By default this directory is <span v-html="backupDir" />
+All backups are stored in a directory. By default this directory is  <span db-tools-flavor="standalone docker">`./var/db_tools` (relative to the yaml config file)</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
 but [you can choose the directory you want](./configuration/basics#storage-directory).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename

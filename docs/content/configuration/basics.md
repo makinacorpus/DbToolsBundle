@@ -174,7 +174,7 @@ This will allow the `restore` command to find your backups.
 There is as of now no way to implement a custom filename strategy when using
 *DbToolsBundle* as a standalone CLI tool or with the Docker image.
 
-If you need this feature, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
+If you need this feature, please let us know by [creating an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
 :::
 @@@
 
@@ -443,9 +443,9 @@ If the `check` command returns you some errors:
 
 @@@ docker
 :::tip
-With the Docker image, all binaries should be avaible as is.
+With the Docker image, all binaries should be available as is.
 
-If you encounter difficulties, please let us know by [filing an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
+If you encounter difficulties, please let us know by [creating an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
 :::
 @@@
 @@@ standalone symfony

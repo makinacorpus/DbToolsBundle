@@ -19,12 +19,12 @@ auto-configure by reading your Symfony site configuration.
 :::tip
 When configuring in Symfony you must add an extra `db_tools` top-level
 section in order to avoid conflicts with other bundles. When configuring
-for the standalone console tool or with docker image, this extra top-level section must be
+for the standalone console tool or for the Docker image, this extra top-level section must be
 omitted.
 :::
 
 :::warning
-When working with the standalone console tool or with Docker image, all relative path are
+When working with the standalone console tool or with the Docker image, all relative path are
 relative to the `workdir` option. If none provided, then path are
 relative to the configuration file directory the path is defined
 within.

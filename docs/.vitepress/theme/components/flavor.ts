@@ -33,20 +33,24 @@ export function useFlavor() {
       root.style.setProperty('--db-tools-' + f, f.includes(flavor) ? 'unset' : 'none')
     })
 
-    localStorage.setItem("flavor", flavor)
+    localStorage.setItem("db-tools-flavor", flavor)
   }, { immediate: true })
 
   onMounted(() => {
-    const storedFlavor = localStorage.getItem("flavor")
+    const storedFlavor = localStorage.getItem("db-tools-flavor")
     if (storedFlavor) {
       flavor.value = storedFlavor
     }
 
     // initialize style
+    // we display standalone flavor at start
     const style = document.createElement('style')
     style.innerHTML = ''
     flavorCombinationList.forEach(f => {
       style.innerHTML += `
+        :root {
+          --db-tools-${f}: ${f.includes('standalone') ? 'unset' : 'none'};
+        }
         .main [db-tools-flavor~='${f}'] {
           display: var(--db-tools-${f});
         }
