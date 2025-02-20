@@ -1,10 +1,12 @@
 import { defineConfig } from 'vitepress'
+import MarkdownItContainer from 'markdown-it-container'
+import { flavorList } from './theme/components/flavor'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en',
   title: 'DbToolsBundle',
-  description: 'A Symfony bundle to backup, restore and anonymize your data',
+  description: 'A PHP library to backup, restore and anonymize databases',
   srcDir: "content",
   base: "/",
   metaChunk: false,
@@ -26,31 +28,6 @@ export default defineConfig({
     },
     nav: [
       { text: 'Home', link: '/' },
-    ],
-    editLink: {
-      pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
-      text: 'Edit this page on Github'
-    },
-    docFooter: {
-      prev: 'Previous page',
-      next: 'Next page'
-    },
-    outlineTitle: 'On this page',
-    lastUpdated: {
-      text: 'Last updated',
-      formatOptions: {
-        dateStyle: 'short'
-      }
-    },
-    search: {
-      provider: 'local'
-    },
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
-    },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
     ],
     sidebar: [
       {
@@ -87,6 +64,8 @@ export default defineConfig({
           { text: 'Statistics', link: '/stats' },
           { text: 'Configuration basics', link: '/configuration/basics' },
           { text: 'Configuration reference', link: '/configuration/reference' },
+          { text: 'Changelog', link: '/changelog'},
+          { text: 'Upgrade guide', link: '/upgrade'},
         ]
       },
       {
@@ -96,8 +75,54 @@ export default defineConfig({
           { text: 'How to help ?', link: '/contribute/contribute' },
           { text: 'Development guide', link: '/contribute/guide' },
           { text: 'Creating a pack of anonymizers', link: '/contribute/pack' },
+          { text: 'Code of conduct', link: '/contribute/code-of-conduct' },
         ]
       },
-    ]
+    ],
+    editLink: {
+      pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
+      text: 'Edit this page on Github'
+    },
+    docFooter: {
+      prev: 'Previous page',
+      next: 'Next page'
+    },
+    outlineTitle: 'On this page',
+    lastUpdated: {
+      text: 'Last updated',
+      formatOptions: {
+        dateStyle: 'short'
+      }
+    },
+    search: {
+      provider: 'local'
+    },
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2023-present <a href="https://makina-corpus.com">Makina Corpus</a>'
+    },
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
+    ],
+  },
+  markdown: {
+    config: (md) => {
+      function render(tokens, idx) {
+        const m: string = tokens[idx].info.trim()
+
+        if (tokens[idx].nesting === 1) {
+          const flavors = m.split(' ').join('-')
+          // opening tag
+          return '<div db-tools-flavor="' + flavors + '" >\n'
+        } else {
+          // closing tag
+          return '</div>\n'
+        }
+      }
+
+      flavorList.forEach(f => {
+        md.use(MarkdownItContainer, f, { marker: '@', render })
+      })
+    }
   }
 })

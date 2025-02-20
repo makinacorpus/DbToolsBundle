@@ -4,7 +4,7 @@ Anonymize integers by:
 - randomly choosing an integer in a range delimited by 'min' and 'max' options
 - altering the initial value by adding it a random value picked in a range computed from the 'delta' or 'percent' options
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -35,8 +35,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -106,4 +106,4 @@ customer:
 ```
 :::
 
-</div>
+@@@

@@ -19,6 +19,8 @@
   --vp-makina-logo-text: var(--vp-c-brand-dark);
   --db-tools-standalone: unset;
   --db-tools-symfony: none;
+  --db-tools-laravel: none;
+  --db-tools-docker: none;
 }
 
 .dark {
@@ -36,12 +38,4 @@
 
 .main img {
   margin: auto;
-}
-
-.main .standalone {
-  display: var(--db-tools-standalone);
-}
-
-.main .symfony {
-  display: var(--db-tools-symfony);
 }

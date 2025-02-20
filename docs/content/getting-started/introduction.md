@@ -11,12 +11,14 @@
   <path d="m 159.98111,107.01098 a 2.5513778,2.5513778 0 0 0 -4.09496,-0.91849 l -12.85256,11.86071 -5.49503,-1.18001 -1.18001,-5.49503 11.86071,-12.852566 a 2.5513778,2.5513778 0 0 0 -0.91849,-4.094961 22.9624,22.9624 0 0 0 -31.57331,21.291247 23.070833,23.070833 0 0 0 1.91354,9.22961 l -19.202305,16.60309 c -0.04784,0.0383 -0.09249,0.0829 -0.137137,0.12438 a 10.206676,10.206676 0 0 0 14.434412,14.43442 c 0.0415,-0.0415 0.0861,-0.0893 0.12438,-0.13395 l 16.5999,-19.20868 a 22.9624,22.9624 0 0 0 32.19202,-21.04887 22.822074,22.822074 0 0 0 -1.67116,-8.6109 z m -21.29124,26.47055 a 17.904293,17.904293 0 0 1 -8.63323,-2.23246 2.5513778,2.5513778 0 0 0 -3.16371,0.56449 l -17.82775,20.64703 a 5.1027555,5.1027555 0 0 1 -7.21402,-7.21402 L 122.48224,127.422 a 2.5513778,2.5513778 0 0 0 0.56449,-3.16689 17.859644,17.859644 0 0 1 18.6123,-26.250493 l -9.95037,10.782763 a 2.5513778,2.5513778 0 0 0 -0.61871,2.26435 l 1.8051,8.39722 a 2.5513778,2.5513778 0 0 0 1.95818,1.95818 l 8.4036,1.8051 a 2.5513778,2.5513778 0 0 0 2.26435,-0.61871 l 10.78276,-9.95037 a 17.87878,17.87878 0 0 1 -17.61407,20.83838 z" style="fill:var(--vp-c-brand);stroke-width:0.319145;stroke-miterlimit:4;stroke-dasharray:none" />
 </svg>
 
-The idea behind this library is to make life easier for PHP developers to
+The idea behind this library is to make life easier for PHP developers* to
 perform frequent database related tasks: backup, restore, anonymize...
 
 * To learn more about what you can do with this bundle, jump to the [Basics](./basics) section.
 * To dive into anonymization, go to the [Anonymization > Essentials](../anonymization/essentials) section.
 * To share some of your anonymizers with the community, read the [Contribute](../contribute/pack) section.
+
+<small>*And now for Devops with our [Docker image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).</small>
 
 ---
 

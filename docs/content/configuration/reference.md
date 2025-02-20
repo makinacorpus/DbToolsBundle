@@ -9,7 +9,8 @@ Select below your target:
 This toolset can be run in various contextes:
 
   - as a Symfony bundle via the Symfony project console,
-  - as a standalone console tool.
+  - as a standalone console tool,
+  - with its Docker image.
 
 In all cases, it requires a configuration file. When running throught the
 Symfony project console, configuration file is not required since it will
@@ -18,12 +19,12 @@ auto-configure by reading your Symfony site configuration.
 :::tip
 When configuring in Symfony you must add an extra `db_tools` top-level
 section in order to avoid conflicts with other bundles. When configuring
-for the standalone console tool, this extra top-level section must be
+for the standalone console tool or for the Docker image, this extra top-level section must be
 omitted.
 :::
 
 :::warning
-When working with the standalone console tool, all relative path are
+When working with the standalone console tool or with the Docker image, all relative path are
 relative to the `workdir` option. If none provided, then path are
 relative to the configuration file directory the path is defined
 within.
@@ -53,8 +54,7 @@ Write the anonymization configuration directly in the main configuration file.
 Keys under the first dimension are connections names, then follows the structure
 expected in anonymization configuration files.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 # When you have a single connection, and a single file:
 db_tools:
@@ -76,10 +76,8 @@ db_tools:
 Connection names are Doctrine bundle connection names. If you have a single
 one with Symfony default configuration, its name is `default`.
 :::
-
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 anonymization:
     connection_one:
@@ -98,8 +96,7 @@ anonymization:
 :::tip
 Whenever you have a single unamed connection, its name will be `default`.
 :::
-
-</div>
+@@@
 
 :::tip
 For more information about anonymization structure, refer to the [Anonymization section](../anonymization/essentials).
@@ -109,8 +106,7 @@ For more information about anonymization structure, refer to the [Anonymization 
 
 Files that contains anonymization configuration.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 # When you have a single connection, and a single file:
 db_tools:
@@ -139,10 +135,8 @@ one with Symfony default configuration, its name is `default`.
 :::tip
 File paths must be absolute, use Symfony parameters to refer the project root.
 :::
-
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 # When you have a single connection, and a single file:
 anonymization_files: './anonymizations.yaml'
@@ -168,8 +162,7 @@ Whenever you have a single unamed connection, its name will be `default`.
 File paths can be relative, any relative path will be relative to this
 configuration file directory.
 :::
-
-</div>
+@@@
 
 :::tip
 For more information about anonymization and configuration file structure,
@@ -188,8 +181,7 @@ A recursive filesystem iterator will look in those folders for classes extending
 the `MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer`
 class and register them as anonymizers.
 
-<div class="symfony">
-
+@@@ symfony
 Be aware that DbToolsBundle will always take a look at the default folder
 dedicated to your custom anonymizers: `%kernel.project_dir%/src/Anonymizer`,
 so you don't have to repeat it.
@@ -203,10 +195,8 @@ db_tools:
 :::tip
 File paths must be absolute, use Symfony parameters to refer the project root.
 :::
-
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 anonymizer_paths:
     - './src/Anonymizer'
@@ -216,8 +206,7 @@ anonymizer_paths:
 File paths can be relative, any relative path will be relative to this
 configuration file directory.
 :::
-
-</div>
+@@@
 
 ## `backup_binary`
 
@@ -226,20 +215,17 @@ Path to backup command in filesystem.
 Defaults are the well known executable names without absolute file path, which
 should work in most Linux distributions.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     backup_binary: /usr/bin/pg_dump
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 backup_binary: /usr/bin/pg_dump
 ```
-
-</div>
+@@@
 
 :::warning
 This top level parameter applies to all connections per default.
@@ -257,20 +243,17 @@ Tables excluded from backup.
 
 Example:
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     backup_excluded_tables: ['table1', 'table2']
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 backup_excluded_tables: ['table1', 'table2']
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -288,20 +271,17 @@ It uses a relative date interval format as documented in https://www.php.net/man
 
 Example:
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     backup_expiration_age: '6 months ago'
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 backup_expiration_age: '6 months ago'
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -323,20 +303,17 @@ invoking the command, the following ones will be used according to the database 
 
 By specifying options, the default ones will be dropped.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     backup_options: '-Z 5 --lock-wait-timeout=120'
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 backup_options: '-Z 5 --lock-wait-timeout=120'
 ```
-
-</div>
+@@@
 
 :::warning
 This top level parameter applies to all connections per default.
@@ -357,8 +334,7 @@ or accepts a number of seconds as an integer value.
 
 Example:
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 # As a date interval string.
 db_tools:
@@ -368,9 +344,8 @@ db_tools:
 db_tools:
     backup_timeout: 67
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 # As a date interval string.
 backup_timeout: '2 minutes and 7 seconds'
@@ -378,8 +353,7 @@ backup_timeout: '2 minutes and 7 seconds'
 # As a number of seconds.
 backup_timeout: 67
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -398,8 +372,7 @@ When using a Symfony bundle, all connections from the Doctrine bundle using
 Doctrine DBAL will be automatically registered, you need this section only if
 you need to add connection specific options.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     connections:
@@ -416,9 +389,8 @@ db_tools:
             storage_directory: /path/to/storage
             storage_filename_strategy: datetime
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 # With connection specific options.
 connections:
@@ -456,8 +428,7 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 If you configure this parameter with a single URL string with no connection name,
 the connection name will be `default`.
 :::
-
-</div>
+@@@
 
 :::tip
 All parameters for each connection are exactly the same as the top-level parameters
@@ -474,20 +445,17 @@ If none set, the first one in list will be used instead.
 When using a Symfony bundle, the Doctrine bundle default connection is set to
 be the default if this option is not specified.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     default_connection: connection_one
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 default_connection: connection_one
 ```
-
-</div>
+@@@
 
 
 ## `restore_binary`
@@ -497,20 +465,17 @@ Path to restore command in filesystem.
 Defaults are the well known executable names without absolute file path, which should
 work in most Linux distributions.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     restore_binary: /usr/bin/pg_restore
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 restore_binary: /usr/bin/pg_restore
 ```
-
-</div>
+@@@
 
 :::warning
 This top level parameter applies to all connections per default.
@@ -533,20 +498,17 @@ invoking the command, the following ones will be used according to the database 
  - PostgreSQL: `-j 2 --clean --if-exists --disable-triggers`
  - SQLite: None
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     restore_options: '-j 2 --clean --if-exists --disable-triggers'
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 restore_options: '-j 2 --clean --if-exists --disable-triggers'
 ```
-
-</div>
+@@@
 
 :::warning
 This top level parameter applies to all connections per default.
@@ -567,8 +529,7 @@ or accepts a number of seconds as an integer value.
 
 Example:
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 # As a date interval string.
 db_tools:
@@ -578,9 +539,8 @@ db_tools:
 db_tools:
     restore_timeout: 67
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 # As a date interval string.
 restore_timeout: '2 minutes and 7 seconds'
@@ -588,8 +548,7 @@ restore_timeout: '2 minutes and 7 seconds'
 # As a number of seconds.
 restore_timeout: 67
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -603,20 +562,17 @@ per connection basis under the `connections.CONNECTION.restore_timeout` name.
 Root directory of the backup storage manager. Default filename strategy will
 always use this folder as a root path.
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 db_tools:
     storage_directory: "%kernel.root_dir%/var/db_tools"
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 storage_directory: "./var/db_tools"
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -641,8 +597,7 @@ See [filename strategies documentation](../backup_restore) for more information.
 
 Example:
 
-<div class="symfony">
-
+@@@ symfony
 ```yaml
 # Default value, `default` is an alias of `datetime`.
 db_tools:
@@ -660,9 +615,8 @@ db_tools:
 db_tools:
     storage_filename_strategy: App\DbTools\Storage\MyCustomFilenameStrategy
 ```
-</div>
-<div class="standalone">
-
+@@@
+@@@ standalone docker
 ```yaml
 # Default value, `default` is an alias of `datetime`.
 storage_filename_strategy: default
@@ -676,8 +630,7 @@ storage_filename_strategy: app.my_filename_strategy
 # Using a class name.
 storage_filename_strategy: App\DbTools\Storage\MyCustomFilenameStrategy
 ```
-
-</div>
+@@@
 
 :::tip
 This top level parameter applies to all connections per default.
@@ -693,13 +646,11 @@ path will be relative to.
 
 If none set, directory in which the configuration file is will be used instead.
 
-<div class="standalone">
-
+@@@ standalone docker
 ```yaml
 workdir: /some/project/path/config
 ```
-
-</div>
+@@@
 
 :::tip
 This options is specific for standalone usage.

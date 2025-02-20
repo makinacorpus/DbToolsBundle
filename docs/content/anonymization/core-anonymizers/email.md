@@ -10,7 +10,7 @@ where:
 
 For example `contact@makina-corpus.com` will give `826464d916e6052ad209037ca71ce324@example.com` after anonymization.
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -21,8 +21,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -55,11 +55,11 @@ customer:
 ```
 :::
 
-</div>
+@@@
 
 Or, with the domain option:
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -72,8 +72,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -107,7 +107,7 @@ customer:
 ```
 :::
 
-</div>
+@@@
 
 :::info
 Email value is salted prior to be hashed using md5 in order to prevent reverse hashing

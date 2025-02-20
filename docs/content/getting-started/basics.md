@@ -13,21 +13,21 @@ happen, that's why, ideally, you always backup your database before upgrading.
 
 Get this task done quickly with:
 
-
-<div class="standalone">
-
+@@@ standalone
 ```sh
 vendor/bin/db-tools backup
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:backup
 ```
-
-</div>
+@@@
+@@@ docker
+```sh
+docker compose run dbtools backup
+```
+@@@
 
 *DbToolsBundle* will call the right backup program (`pg_dump`, `mysqldump` or
 other) with the correct parameters. At the end of the process, it will give you
@@ -39,20 +39,21 @@ quickly, so you decide to rollback for now.
 
 Simply run:
 
-<div class="standalone">
-
+@@@ standalone
 ```sh
 vendor/bin/db-tools restore
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:restore
 ```
-
-</div>
+@@@
+@@@ docker
+```sh
+docker compose run dbtools restore
+```
+@@@
 
 This command will list you all backups available on your disk. Choose the one
 you want to restore!
@@ -66,10 +67,10 @@ and execute them with the correct options for you.
 *You need to retrieve data from your production environment, but you don't want to
 have sensitive data on your local environment.*
 
-Let's say you have launched a <span class="standalone">`vendor/bin/db-tools backup`</span><span class="symfony">`php bin/console db-tools:backup`</span> on your production environment
+Let's say you have launched a <span db-tools-flavor="standalone">`vendor/bin/db-tools backup`</span><span db-tools-flavor="symfony">`php bin/console db-tools:backup`</span><span db-tools-flavor="docker">`docker compose run dbtools backup`</span> on your production environment
 and downloaded the backup file on your machine.
 
-You could run the <span class="standalone">`vendor/bin/db-tools restore`</span><span class="symfony">`php bin/console db-tools:restore`</span> to populate your database from the
+You could run the <span db-tools-flavor="standalone">`vendor/bin/db-tools restore`</span><span db-tools-flavor="symfony">`php bin/console db-tools:restore`</span><span db-tools-flavor="docker">`docker compose run dbtools restore`</span> to populate your database from the
 freshly downloaded backup file. But in doing so, you will end up with sensitive
 data on your machine, which is not what you want:
 * First of all, because in most cases that's **illegal**
@@ -82,8 +83,7 @@ To avoid that, you need a proper **anonymization**.
 As it could be tricky and time-consuming to try to nicely anonymize data:
 *DbToolsBundle* get rid of that for you.
 
-<div class="standalone">
-
+@@@ standalone docker
 With DbToolsBundle, you can easily configure a complete anonymization for
 your sensitive data with a simple YAML file.
 
@@ -94,10 +94,8 @@ anonymization:
         user:
             email_address: email
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 With *DbToolsBundle*, by adding some PHP attributes on your Doctrine Entities,
 you can easily configure a complete anonymization for your sensitive data.
 
@@ -128,10 +126,9 @@ class User
     // ...
 }
 ```
+@@@
 
-</div>
-
-With the above configuration, after you used <span class="standalone">`vendor/bin/db-tools anonymize`</span><span class="symfony">`php bin/console db-tools:anonymize`</span> on a backup file,
+With the above configuration, after you used <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymize`</span> on a backup file,
 all the user email addresses it contains will be replaced with hashed ones.
 
 ::: tip
@@ -146,20 +143,21 @@ We should therefore, for example, perform this task on the preproduction environ
 [Learn more about a good GDPR-friendly workflow](../anonymization/workflow).
 :::
 
-<div class="standalone">
-
+@@@ standalone
 ```sh
 vendor/bin/db-tools anonymize path/to/my_backup.dump
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:anonymize path/to/my_backup.dump
 ```
-
-</div>
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/my_backup.dump
+```
+@@@
 
 Once the command has succeeded, `path/to/my_backup.dump` will be fully anonymized. You will be free
 to download and restore it on your local environment without any security concerns.
@@ -183,20 +181,21 @@ SQL queries in a shell prompt.
 If this sounds familiar to you, try to launch:
 
 
-<div class="standalone">
-
+@@@ standalone
 ```sh
 vendor/bin/db-tools stats
 ```
-
-</div>
-<div class="symfony">
-
+@@@
+@@@ symfony
 ```sh
 php bin/console db-tools:stats
 ```
-
-</div>
+@@@
+@@@ docker
+```sh
+docker compose run dbtools stats
+```
+@@@
 
 It will give you a bunch of nice stats about your database. And, honestly,
 this command alone could justify you install this bundle! :relaxed:

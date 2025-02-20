@@ -8,7 +8,7 @@ Options are :
 - `algorithm`: algorithm to use to hash the plain password. (Default is `auto`).
 - `password`: plain password that will be set for each row. (Default is `password`)
 
-<div class=standalone>
+@@@ standalone docker
 
 ```yaml [YAML]
 # db_tools.config.yaml
@@ -27,8 +27,8 @@ anonymization:
   #...
 ```
 
-</div>
-<div class="symfony">
+@@@
+@@@ symfony
 
 ::: code-group
 ```php [Attribute]
@@ -80,4 +80,4 @@ customer:
 ```
 :::
 
-</div>
+@@@
