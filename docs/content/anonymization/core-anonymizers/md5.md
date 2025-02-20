@@ -1,4 +1,4 @@
-## Md5Anonymizer
+## Md5 hash
 
 This *Anonymizer* will fill configured column with a md5 hash of the pre-anonymization value.
 

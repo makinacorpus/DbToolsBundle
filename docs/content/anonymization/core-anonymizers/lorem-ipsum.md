@@ -1,4 +1,4 @@
-## LoremIpsumAnonymizer
+## Lorem Ipsum
 
 Replace a text with some *lorem ipsum*.
 Default behavior is to generate a single paragraph.

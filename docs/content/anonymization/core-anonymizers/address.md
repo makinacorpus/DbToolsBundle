@@ -1,4 +1,4 @@
-## AddressAnonymizer
+## Address
 
 This *Anonymizer* is multicolumn. It let you anonymize, at once, mutiple columns on one table
 that represent different parts of a postal address.

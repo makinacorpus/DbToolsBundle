@@ -1,4 +1,4 @@
-## LastnameAnonymizer
+## Lastname
 
 Works like the StringAnonymizer, but with a provided sample of 1000 worldwide lastnames.
 

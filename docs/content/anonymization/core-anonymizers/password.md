@@ -1,4 +1,4 @@
-## PasswordAnonymizer
+## Password
 
 This *Anonymizer* give you a way to set the same password for each one of your users. It is based on
 the [Symfony PasswordHasher Component](https://symfony.com/doc/current/security/passwords.html).

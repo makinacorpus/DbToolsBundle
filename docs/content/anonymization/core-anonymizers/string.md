@@ -1,4 +1,4 @@
-## StringAnonymizer
+## String
 
 This *Anonymizer* will fill configured column with a random value from a given sample.
 
