@@ -196,6 +196,9 @@ Simply add our image to your `docker-compose.yml`!
 <MakinaCorpusHorizontal/>
 
 <style>
+  hr + .home-grid {
+    margin-top: 80px;
+  }
   .home-grid {
     display: flex;
     flex-wrap: wrap;
