@@ -30,12 +30,12 @@ A complete example of this file can be found in the library sources in:
 For detailed information about configuration options, please see the
 [configuration reference](../configuration/reference).
 
+@@@ symfony
 :::tip
 **Almost every configuration option can be configured at the connection level**.
 For example, the backup excluded tables can either be configured top-level (for
 all connections):
 
-@@@ symfony
 ```yml
 # config/packages/db_tools.yaml
 db_tools:
@@ -53,8 +53,18 @@ db_tools:
         connection_two:
             backup_excluded_tables: ['table3', 'table4']
 ```
+
+When working with multiple connections, any connection which does not specify
+the option will inherit from the default.
+:::
 @@@
+
 @@@ standalone docker
+:::tip
+**Almost every configuration option can be configured at the connection level**.
+For example, the backup excluded tables can either be configured top-level (for
+all connections):
+
 ```yml
 # db_tools.config.yaml
 backup_excluded_tables: ['table1', 'table2']
@@ -70,11 +80,11 @@ connections:
     connection_two:
         backup_excluded_tables: ['table3', 'table4']
 ```
-@@@
 
 When working with multiple connections, any connection which does not specify
 the option will inherit from the default.
 :::
+@@@
 
 ## Backup configuration
 
@@ -388,61 +398,30 @@ docker compose run dbtools database:check
 
 If the `check` command returns you some errors:
 
- * if your binaries are present on your system but *DbToolsBundle* can't find
-   them you will need to specify path for these binaries:
+If your binaries are present on your system but *DbToolsBundle* can't find
+them, then you will need to specify path for these binaries:
 
-  @@@ symfony
-  ```yml
-  # config/packages/db_tools.yaml
-  db_tools:
-      backup_binary: '/usr/local/bin/pg_dump'
-      restore_binary: '/usr/local/bin/pg_restore'
-  ```
-  @@@
-  @@@ standalone docker
-  ```yml
-  # db_tools.config.yaml
-  backup_binary: '/usr/local/bin/pg_dump'
-  restore_binary: '/usr/local/bin/pg_restore'
-  ```
-  @@@
+@@@ symfony
+```yml
+# config/packages/db_tools.yaml
+db_tools:
+    backup_binary: '/usr/local/bin/pg_dump'
+    restore_binary: '/usr/local/bin/pg_restore'
+```
+@@@
+@@@ standalone docker
+```yml
+# db_tools.config.yaml
+backup_binary: '/usr/local/bin/pg_dump'
+restore_binary: '/usr/local/bin/pg_restore'
+```
+@@@
 
-* Backup and restoration binaries, as well as command line arguments and
-  options, are configured on a per-connection basis. If you have more than
-  one connection, use the following syntax instead:
-
-  @@@ symfony
-  ```yml
-  # config/packages/db_tools.yaml
-  db_tools:
-      connections:
-          connection_one:
-              backup_binary: '/usr/local/bin/pg_dump'
-              restore_binary: '/usr/local/bin/pg_restore'
-          connection_two:
-              backup_binary: '/usr/local/bin/mysqldump'
-              restore_binary: '/usr/local/bin/mysql'
-  ```
-  @@@
-  @@@ standalone docker
-  ```yml
-  # db_tools.config.yaml
-  connections:
-      connection_one:
-          backup_binary: '/usr/local/bin/pg_dump'
-          restore_binary: '/usr/local/bin/pg_restore'
-      connection_two:
-          backup_binary: '/usr/local/bin/mysqldump'
-          restore_binary: '/usr/local/bin/mysql'
-  ```
-  @@@
-
-* Or, if your binaries are not present on your system: you will need to install
-  them.
-
+If your binaries are not present on your system: you will need to install
+them.
 
 @@@ docker
-:::tip
+:::info
 With the Docker image, all binaries should be available as is.
 
 If you encounter difficulties, please let us know by [creating an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
@@ -472,6 +451,36 @@ RUN apt-get update && \
 :::warning
 Dump and restore is not supported yet for SQL Server.
 :::
+
+Back up and restoration binaries, as well as command line arguments and
+options, are configured on a per-connection basis. If you have more than
+one connection, use the following syntax instead:
+
+@@@ symfony
+```yml
+# config/packages/db_tools.yaml
+db_tools:
+    connections:
+        connection_one:
+            backup_binary: '/usr/local/bin/pg_dump'
+            restore_binary: '/usr/local/bin/pg_restore'
+        connection_two:
+            backup_binary: '/usr/local/bin/mysqldump'
+            restore_binary: '/usr/local/bin/mysql'
+```
+@@@
+@@@ standalone docker
+```yml
+# db_tools.config.yaml
+connections:
+    connection_one:
+        backup_binary: '/usr/local/bin/pg_dump'
+        restore_binary: '/usr/local/bin/pg_restore'
+    connection_two:
+        backup_binary: '/usr/local/bin/mysqldump'
+        restore_binary: '/usr/local/bin/mysql'
+```
+@@@
 
 ### Default binary options
 

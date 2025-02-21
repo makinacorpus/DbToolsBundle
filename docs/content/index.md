@@ -3,14 +3,14 @@ layout: home
 
 hero:
   name: DbToolsBundle
-  text: Backup, restore and anonymize databases
+  text: Back up, restore and anonymize databases
 
 features:
   - icon:
       light: '/export.svg'
       dark: '/export-d.svg'
-    title: Backup
-    details: Backup your database and manage your dumps with a simple command.
+    title: Back up
+    details: Back up your database and manage your dumps with a simple command.
     link: /backup_restore.html#backup-command
   - icon:
       light: '/import.svg'
@@ -208,12 +208,15 @@ Simply add our image to your `docker-compose.yaml`!
       padding-top: 0;
       margin-top: 0;
       border: 0;
+      color: var(--vp-c-brand-2);
+      font-weight: 700;
+      font-size: 35px;
     }
   }
   .home-grid > div {
+    margin-top: auto;
+    margin-bottom: auto;
     &.img {
-      margin-top: auto;
-      margin-bottom: auto;
 
       img {
         border-radius: 12px;
@@ -246,7 +249,11 @@ Simply add our image to your `docker-compose.yaml`!
     }
   }
   .home-grid > div.home-grid-60 {
+    width: 100%;
     order: 1;
+  }
+  .home-grid > div.home-grid-40 {
+    width: 100%;
   }
   @media (min-width: 960px) {
     .home-grid > div.home-grid-40 {
@@ -257,10 +264,10 @@ Simply add our image to your `docker-compose.yaml`!
       order: unset;
     }
     .home-grid > div:first-child {
-      padding-right: 20px;
+      padding-right: 30px;
     }
     .home-grid > div:last-child {
-      padding-left: 20px;
+      padding-left: 30px;
     }
     .home-grid > div.img img {
       height: auto;

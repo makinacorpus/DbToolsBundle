@@ -4,15 +4,26 @@
 
 <FlavorSwitcher />
 
-Currently, you can either use this tool as a *standalone PHP library*, with its *Symfony bundle* or via its *Docker image*. An experimental
+Currently, you can either use this tool as a standalone PHP library, with its *Symfony* bundle or via its *Docker* image. An experimental
 integration is also available for *Laravel*.
 
-::: tip
-You can choose your favorite flavor from the menu in the top left-hand corner.
+---
+
+You can change the current flavor from the menu in the top left-hand corner.
 
 Most of the content (text and examples) presented on this documentation will change according
-to this selected flavor.
-:::
+to this selected flavor. Whenever this happens, a visual hint indicates it. For example:
+
+@@@ standalone symfony docker laravel
+Some specific explanation, illustrated with some code:
+
+```sh
+# a specific code example
+```
+@@@
+
+Or juste a specific <span db-tools-flavor="standalone-symfony-docker-laravel">`command line`</span> in a paragraph.
+
 
 ## Standalone
 
@@ -27,7 +38,7 @@ to find the database(s) you want to manage.
 
 ## Symfony
 
-*DbToolsBundle* was, in its first version, a tools for Symfony developers only. The library can still
+*DbToolsBundle* was, in its first version, a tools for *Symfony* developers only. The library can still
 be fully integrated into any Symfony project via its dedicated bridge.
 
 Right after you installed the bundle, and with zero configuration:
@@ -39,7 +50,7 @@ Right after you installed the bundle, and with zero configuration:
 
 ## Docker
 
-*DbToolsBundle* can be used in any CI/CD using its [Docker image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).
+*DbToolsBundle* can be used in any CI/CD using its [*Docker* image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).
 
 Every commands will be accessible with the `docker container run` utility.
 

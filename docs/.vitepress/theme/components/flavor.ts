@@ -45,10 +45,14 @@ export function useFlavor() {
     flavorCombinationList.forEach(f => {
       style.innerHTML += `
         :root {
-          --db-tools-${f}: ${f.includes('standalone') ? 'unset' : 'none'};
+          --db-tools-span-${f}: ${f.includes('standalone') ? 'inline' : 'none'};
+          --db-tools-div-${f}: ${f.includes('standalone') ? 'block' : 'none'};
         }
-        .main [db-tools-flavor~='${f}'] {
-          display: var(--db-tools-${f});
+        .main span[db-tools-flavor~='${f}'] {
+          display: var(--db-tools-span-${f});
+        }
+        .main div[db-tools-flavor~='${f}'] {
+          display: var(--db-tools-div-${f});
         }
       `
     })
@@ -58,8 +62,11 @@ export function useFlavor() {
   const onFlavorUpdate = () => {
     const root = document.documentElement
     flavorCombinationList.forEach(f => {
-      root.style.setProperty('--db-tools-' + f, f.includes(flavor.value) ? 'unset' : 'none')
+      root.style.setProperty('--db-tools-span-' + f, f.includes(flavor.value) ? 'inline' : 'none')
+      root.style.setProperty('--db-tools-div-' + f, f.includes(flavor.value) ? 'block' : 'none')
     })
+    root.style.setProperty('--db-tools-flavor-color', 'var(--db-tools-flavor-' + flavor.value + ')')
+    root.style.setProperty('--db-tools-flavor-logo-color', 'var(--db-tools-flavor-logo-' + flavor.value + ')')
 
     localStorage.setItem("db-tools-flavor", flavor.value)
   }

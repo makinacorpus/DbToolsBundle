@@ -337,13 +337,13 @@ docker compose run dbtools restore --ignore-default-options
 As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
-All backups are stored in a directory. By default this directory is  <span db-tools-flavor="standalone docker">`./var/db_tools` (relative to the yaml config file)</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
+All backups are stored in a directory. By default this directory is <span db-tools-flavor="standalone-docker">`./var/db_tools` (relative to the yaml config file)</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
 but [you can choose the directory you want](./configuration/basics#storage-directory).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
 is generated from the backup date and the DBAL connection name of the database.
 
 For a backup made the 2023-05-15 at 12:22:35 for the default connection, the filename will be :
-<span db-tools-flavor="standalone docker">`./var/db_tools/2023/05/default-20230515122235.sql`</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>.
+<span db-tools-flavor="standalone-docker">`./var/db_tools/2023/05/default-20230515122235.sql`</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>.
 
 Note that the file extension may vary depending on the database vendor.

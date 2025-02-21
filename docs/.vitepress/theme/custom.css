@@ -39,3 +39,7 @@
 .main img {
   margin: auto;
 }
+
+.vp-code-group .tabs label {
+  line-height: 28px;
+}
