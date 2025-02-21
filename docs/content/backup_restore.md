@@ -8,10 +8,10 @@ but also a tiny backups manager which handle backup files for you.
 The backup command will use the [predefined or configured binary](./configuration/basics#binaries) for your
 database vendor with correct parameters to dump your database.
 
-Each time you launch the backup command, [a backup file is stored in a directory](./configuration/basics#storage-directory) (See
+Each time you launch the backup command, [a backup file is stored in a directory](./configuration/basics#storage) (See
 [Storage section](#storage) below for more information on how backup files are stored).
 
-With time, this directory will grow, that's why a [backup expiration age](./configuration/basics#storage-directory#backup-expiration-age)
+With time, this directory will grow, that's why a [backup expiration age](./configuration/basics#backup-expiration-age)
 was added. Every time you launch the command, at the end, it will be asked if you want to remove obsolete
 backup files (i.e. files that have passed their expiration date).
 
@@ -337,13 +337,18 @@ docker compose run dbtools restore --ignore-default-options
 As mentioned earlier on this page, *DbToolsBundle* can list existing backup files
 when you want to restore a previous one with the restore command.
 
-All backups are stored in a directory. By default this directory is <span db-tools-flavor="standalone-docker">`./var/db_tools` (relative to the yaml config file)</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
-but [you can choose the directory you want](./configuration/basics#storage-directory).
+All backups are stored in a directory. By default this directory is
+<span db-tools-flavor="standalone">`./var/db_tools` (relative to the yaml config file)</span>
+<span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
+<span db-tools-flavor="docker">`/var/www/var/db_tools` (inside the docker container)</span>
+but [you can choose the directory you want](./configuration/basics#storage).
 
 In this directory, each backup is put in sub-directories depending on the backup date. The backup's filename
 is generated from the backup date and the DBAL connection name of the database.
 
 For a backup made the 2023-05-15 at 12:22:35 for the default connection, the filename will be :
-<span db-tools-flavor="standalone-docker">`./var/db_tools/2023/05/default-20230515122235.sql`</span><span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>.
+<span db-tools-flavor="standalone">`./var/db_tools/2023/05/default-20230515122235.sql`</span>
+<span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools/2023/05/default-20230515122235.sql`</span>
+<span db-tools-flavor="docker">`/var/www/var/db_tools/2023/05/default-20230515122235.sql`</span>.
 
 Note that the file extension may vary depending on the database vendor.

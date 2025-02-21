@@ -1,8 +1,6 @@
 # Installation
 
-Installation method will depend on which flavor you want to use.
-
-Select below your target:
+Installation method will depend on which flavor you want to use:
 
 <FlavorSwitcher />
 
@@ -32,11 +30,9 @@ Currently supported database vendors:
 - MariaDB 10.11 and above
 - MySQL 5.7, 8.0 and above
 - SQLite 3.0 and above
-- SQL Server 2019 and above
-  <br><small>(previous versions from 2015 are untested but should work)</small>
 
 ::: info
-The bundle could also work with other database vendors.
+The library could also work with other database vendors.
 Check out the [supported database vendors](../getting-started/database-vendors) page.
 :::
 
@@ -91,17 +87,14 @@ cp vendor/makinacorpus/db-tools-bundle/config/packages/db_tools.yaml config/pack
 Feel free to read this configuration file, it will learn you basics about this bundle.
 @@@
 @@@ docker
-You can, for example, add the [*DbToolsBundle* image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle) to your docker compose stack like this:
-
+You can add the [*DbToolsBundle* image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle) to your docker compose stack like in this example:
 
 ```yaml
 version: '3.8'
 
 services:
   postgres:
-    container_name: postgres
     image: postgres:15
-    restart: always
     environment:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: db
@@ -119,6 +112,7 @@ services:
       - site // [!code ++]
     volumes: // [!code ++]
       - ./db_tools.config.yaml:/var/www/db_tools.config.yaml // [!code ++]
+      - ./db_tools:/var/www/var/db_tools // [!code ++]
 
 networks:
   site:
@@ -135,15 +129,15 @@ cp vendor/makinacorpus/db-tools-bundle/config/db_tools.standalone.sample.yaml db
 ```
 
 Update this file to your needs. The only required parameter is `connections` in which you
-must provided a [URL connection string](../configuration/reference#connections).
+must provided a [connection string](../configuration/reference#connections).
 
 In our example, the connection string will be `pgsql://db:password@postgres:5432/db?version=15.0`.
 @@@
 
 **That's it, *DbToolsBundle* is now ready to be used.**
 
-But before starting to use it, check if it succeeds to find backup and
-restoration binaries for your Doctrine connection(s):
+But before starting to use it, check if it succeeds to find back up and
+restoration binaries for your database connection(s):
 
 @@@ standalone
 ```sh

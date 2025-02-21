@@ -90,18 +90,16 @@ the option will inherit from the default.
 
 Some options are available to customize how the `backup` command works.
 
-### Storage
+### Storage {#storage}
 
 #### Root directory
 
 The `storage_directory` parameter let you choose where to put the generated dumps.
 
-@@@ symfony
-Default value is `'%kernel.project_dir%/var/db_tools'`.
-@@@
-@@@ standalone docker
-Default value is `./var/db_tools'`.
-@@@
+Default value is
+<span db-tools-flavor="standalone">`./var/db_tools` (relative to the YAML config file)</span>
+<span db-tools-flavor="symfony">`%kernel.project_dir%/var/db_tools`</span>
+<span db-tools-flavor="docker">`/var/www/var/db_tools` (inside the docker container)</span>
 
 #### File and directory naming strategy
 
@@ -249,7 +247,7 @@ command using the `--exclude` option.
 
 See the [default binary options](#default-binary-options) section.
 
-### Backup expiration age
+### Backup expiration age {#backup-expiration-age}
 
 The `backup_expiration_age` parameter let you choose when a backup is considered
 as obsolete.
