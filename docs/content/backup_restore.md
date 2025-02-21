@@ -3,7 +3,7 @@
 *DbToolsBundle* comes with two commands to back up and restore your database
 but also a tiny backups manager which handle backup files for you.
 
-## Backup command
+## Backup command {#backup}
 
 The backup command will use the [predefined or configured binary](./configuration/basics#binaries) for your
 database vendor with correct parameters to dump your database.
@@ -172,7 +172,7 @@ docker compose run dbtools backup --ignore-default-options
 ```
 @@@
 
-## Restore command
+## Restore command {#restore}
 
 The restore command will use [predefined or configured binary](./configuration/basics#binaries) for your database vendor with correct parameters
 to restore your database from an existing backup files.

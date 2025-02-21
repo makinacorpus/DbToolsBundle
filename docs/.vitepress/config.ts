@@ -6,7 +6,7 @@ import { flavorList } from './theme/components/flavor'
 export default defineConfig({
   lang: 'en',
   title: 'DbToolsBundle',
-  description: 'A PHP library to backup, restore and anonymize databases',
+  description: 'A PHP library to back up, restore and anonymize databases',
   srcDir: "content",
   base: "/",
   metaChunk: false,

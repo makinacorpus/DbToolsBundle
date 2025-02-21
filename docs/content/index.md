@@ -11,13 +11,13 @@ features:
       dark: '/export-d.svg'
     title: Back up
     details: Back up your database and manage your dumps with a simple command.
-    link: /backup_restore.html#backup-command
+    link: /backup_restore.html#backup
   - icon:
       light: '/import.svg'
       dark: '/import-d.svg'
     title: Restore
     details: Easily restore a previous dump of your database.
-    link: /backup_restore.html#restore-command
+    link: /backup_restore.html#restore
   - icon:
       light: '/anonymize.svg'
       dark: '/anonymize-d.svg'
@@ -56,7 +56,7 @@ features:
   </div>
   <div class="home-grid-40 img">
 
-## Anonymize your database from a simple YAML configuration
+<h2>Anonymize your database from a simple YAML configuration</h2>
 
 Map each column of each table you want to anonymize with
 a specific anonymizer.
@@ -80,7 +80,7 @@ account:
 <div class="home-grid">
   <div class="home-grid-40 img">
 
-## Enjoy full integration with Symfony & Laravel
+<h2>Enjoy full integration with Symfony & Laravel</h2>
 
 *DbToolsBundle* provides a bundle for Symfony and an
 experimental package for Laravel. These integrations include
@@ -181,7 +181,7 @@ networks:
   </div>
   <div class="home-grid-40 img">
 
-## Deploy an anonymization workflow on any CI/CD with our Docker image
+<h2>Deploy an anonymization workflow on any CI/CD with our Docker image</h2>
 
 The Docker image unlocks the *DbToolsBundle* features for every DevOps teams.
 Simply add our image to your `docker-compose.yaml`!
@@ -199,7 +199,7 @@ Simply add our image to your `docker-compose.yaml`!
   hr + .home-grid {
     margin-top: 80px;
   }
-  .home-grid {
+  .vp-doc .home-grid {
     display: flex;
     flex-wrap: wrap;
     margin-top: 48px;
