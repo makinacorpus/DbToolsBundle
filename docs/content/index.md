@@ -100,26 +100,26 @@ autoconfiguration of database connection.
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
+use MakinaCorpus\DbToolsBundle\Attribute\Anonymize; // [!code ++]
 
 #[ORM\Entity()]
 #[ORM\Table(name: 'customer')]
 class Customer
 {
     #[ORM\Column(length: 255)]
-    #[Anonymize(type: 'firstname')]
+    #[Anonymize(type: 'firstname')] // [!code ++]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[Anonymize(type: 'lastname')]
+    #[Anonymize(type: 'lastname')] // [!code ++]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255)] // [!code ++]
     #[Anonymize(type: 'email')]
     private ?string $emailAddress = null;
 
     #[ORM\Column(length: 255)]
-    #[Anonymize(type: 'password')]
+    #[Anonymize(type: 'password')] // [!code ++]
     private ?string $hashedPassword = null;
 }
 ```
