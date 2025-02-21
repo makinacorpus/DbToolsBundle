@@ -56,7 +56,7 @@ features:
   </div>
   <div class="home-grid-40 img">
 
-<h2>Anonymize your database from a simple YAML configuration</h2>
+<h2>Anonymize from a simple YAML configuration</h2>
 
 Map each column of each table you want to anonymize with
 a specific anonymizer.
@@ -181,9 +181,10 @@ networks:
   </div>
   <div class="home-grid-40 img">
 
-<h2>Deploy an anonymization workflow on any CI/CD with our Docker image</h2>
+<h2>Set up an anonymization workflow on your CI/CD</h2>
+<!-- <h2>Deploy an anonymization workflow on any CI/CD with our Docker image</h2> -->
 
-The Docker image unlocks the *DbToolsBundle* features for every DevOps teams.
+Our Docker image unlocks the *DbToolsBundle* features for every DevOps teams.
 Simply add our image to your `docker-compose.yaml`!
 
 ![](/docker.svg)
@@ -196,13 +197,10 @@ Simply add our image to your `docker-compose.yaml`!
 <MakinaCorpusHorizontal/>
 
 <style>
-  hr + .home-grid {
-    margin-top: 80px;
-  }
   .vp-doc .home-grid {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 48px;
+    margin-top: 100px;
 
     h2 {
       padding-top: 0;
@@ -211,6 +209,7 @@ Simply add our image to your `docker-compose.yaml`!
       color: var(--vp-c-brand-2);
       font-weight: 700;
       font-size: 35px;
+      line-height: 36px;
     }
   }
   .home-grid > div {
@@ -264,10 +263,10 @@ Simply add our image to your `docker-compose.yaml`!
       order: unset;
     }
     .home-grid > div:first-child {
-      padding-right: 30px;
+      padding-right: 40px;
     }
     .home-grid > div:last-child {
-      padding-left: 30px;
+      padding-left: 40px;
     }
     .home-grid > div.img img {
       height: auto;
