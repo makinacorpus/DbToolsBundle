@@ -168,6 +168,7 @@ svg {
   svg {
     margin-top: -2rem;
     margin-bottom: -4rem;
+    transform: translateX(32px);
   }
 }
 </style>

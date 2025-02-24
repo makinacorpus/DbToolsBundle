@@ -177,13 +177,10 @@ small {
 }
 
 div[db-tools-flavor] {
-  margin: -15px;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  padding: 15px;
-  border-radius: 6px;
+  margin: 25px -24px;
+  padding: 12px 14px 12px 24px;
   position: relative;
-  background: color-mix(in oklab, var(--db-tools-flavor-color) 4%, transparent);
+  background: color-mix(in oklab, var(--db-tools-flavor-color) 5%, transparent);
 
   &::before {
     display: block;
@@ -196,10 +193,24 @@ div[db-tools-flavor] {
     background-size: 18px 18px;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 6px 0 6px 0;
+    border-radius: 0 0 6px 0;
     width: 22px;
     height: 22px;
   }
+
+  @media (min-width: 960px) {
+    margin: 40px -20px 40px -30px;
+    padding: 5px 20px 5px 30px;
+    border-radius: 6px;
+
+    &::before {
+      border-radius: 6px 0 6px 0;
+    }
+  }
+}
+
+.dark div[db-tools-flavor] {
+  border: solid 1px color-mix(in oklab, var(--db-tools-flavor-color) 20%, transparent);;
 }
 
 span[db-tools-flavor] code {
@@ -212,4 +223,8 @@ span[db-tools-flavor] code {
 .vp-doc div[db-tools-flavor] div[class*="language-"] {
   border: solid 1px var(--vp-c-border);
 }
+.dark .vp-doc div[db-tools-flavor] div[class*="language-"] {
+  border: none;
+}
+
 </style>

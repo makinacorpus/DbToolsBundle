@@ -52,10 +52,9 @@ Right after you installed the bundle, and with zero configuration:
 
 *DbToolsBundle* can be used in any CI/CD using its [*Docker* image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).
 
-Every commands will be accessible with the `docker container run` utility.
+This image is based on [FrankenPHP](https://frankenphp.dev/docs/docker/). Every *DbtoolsBundle* commands can be run with `docker container run` utility.
 
-All configuration can be set up mounting a config file (see [installation section](/getting-started/installation) for an example). This config file uses the exact same syntax as for the
-standalone flavor.
+All configuration can be set up mounting a config file (see [installation section](/getting-started/installation) for an example). This config file uses the exact same syntax as for the standalone flavor.
 
 ## Laravel (experimental) {#laravel}
 

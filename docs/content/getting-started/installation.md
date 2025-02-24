@@ -1,6 +1,6 @@
 # Installation
 
-Installation method will depend on which flavor you want to use:
+Installation method will depend on which [flavor](./flavors.md) you want to use:
 
 <FlavorSwitcher />
 

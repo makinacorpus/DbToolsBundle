@@ -1,6 +1,6 @@
 # DbToolsBundle
 
-**A PHP tool to backup, restore and anonymize databases**
+**A PHP tool to back up, restore and anonymize databases**
 
 <svg version="1.1" style="margin: auto;" viewBox="0 0 162.94769 160.29467" width="244.06895" height="240.08168" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
   <path d="m 64.176019,1.2999481 c -35.25899,0 -62.8806104,16.1131569 -62.8806104,36.6803579 v 62.880614 c 0,20.5672 27.6216204,36.68036 62.8806104,36.68036 35.258991,0 62.880601,-16.11316 62.880601,-36.68036 V 37.980306 c 0,-20.567201 -27.62161,-36.6803579 -62.880601,-36.6803579 z" style="fill:var(--vp-c-bg);fill-opacity:1;stroke:var(--vp-c-bg);stroke-width:2.5999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
@@ -19,6 +19,24 @@ perform frequent database related tasks: backup, restore, anonymize...
 * To share some of your anonymizers with the community, read the [Contribute](../contribute/pack) section.
 
 <small>*And now for Devops with our [Docker image](https://hub.docker.com/r/makinacorpus/dbtoolsbundle).</small>
+
+## A note about flavors
+
+This library can be used in different contexts:
+
+* as a standalone PHP library utlity
+* as a *Symfony* bundle
+* as a *Docker* image
+* as a *Laravel package* (expiremental)
+
+We call these context "*flavors*". You can change the current flavor from
+the menu in the top left-hand corner.
+
+Most of the content (text and examples) presented on this documentation will change according
+to this selected flavor. Whenever this happens, a visual hint indicates it.
+
+Learn more about *flavors* in the [dedicated section](./flavors.md)
+
 
 ---
 
