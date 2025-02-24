@@ -21,6 +21,7 @@
   --db-tools-symfony: none;
   --db-tools-laravel: none;
   --db-tools-docker: none;
+  --vp-code-color: var(--vp-c-text-1);
 }
 
 .dark {

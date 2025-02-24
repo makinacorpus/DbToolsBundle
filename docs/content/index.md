@@ -249,7 +249,7 @@ Simply add our image to your `docker-compose.yaml`!
   }
   .home-grid > div.home-grid-60 {
     width: 100%;
-    order: 1;
+    display: none;
   }
   .home-grid > div.home-grid-40 {
     width: 100%;
@@ -260,7 +260,7 @@ Simply add our image to your `docker-compose.yaml`!
     }
     .home-grid > div.home-grid-60 {
       width: 60%;
-      order: unset;
+      display: block;
     }
     .home-grid > div:first-child {
       padding-right: 40px;

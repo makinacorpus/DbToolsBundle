@@ -126,8 +126,8 @@ input[type="radio"]:hover:not(:checked) + label, .flavor-switch .button:hover {
 }
 input[type="radio"]:checked + label {
   color: var(--vp-c-brand-lighter);
-  background-color: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
+  background-color: var(--db-tools-flavor-standalone);
+  border-color: var(--db-tools-flavor-standalone);
 }
 input[type="radio"]:checked + label > svg {
   fill: var(--vp-c-brand-lighter);
@@ -135,6 +135,8 @@ input[type="radio"]:checked + label > svg {
 
 input[value="symfony"]:checked + label {
   color: #FFFFFF;
+  background-color: var(--db-tools-flavor-symfony);
+  border-color: var(--db-tools-flavor-symfony);
   background-color: #000000;
   border-color: #000000;
 }
@@ -144,8 +146,8 @@ input[value="symfony"]:checked + label > svg {
 html.dark {
   input[value="symfony"]:checked + label {
     color: #000000;
-    background-color: #FFFFFF;
-    border-color: #FFFFFF;
+    background-color: var(--db-tools-flavor-symfony);
+    border-color: var(--db-tools-flavor-symfony);
   }
   input[value="symfony"]:checked + label > svg {
     fill: #000000;
@@ -154,8 +156,8 @@ html.dark {
 
 input[value="laravel"]:checked + label {
   color: #FFFFFF;
-  background-color: #F5382E;
-  border-color: #F5382E;
+  background-color: var(--db-tools-flavor-laravel);
+  border-color: var(--db-tools-flavor-laravel);
 }
 input[value="laravel"]:checked + label > svg {
   fill: #FFFFFF;
@@ -166,8 +168,8 @@ input[value="laravel"]:checked + label > svg {
 }
 input[value="docker"]:checked + label {
   color: #FFFFFF;
-  background-color: #1D63ED;
-  border-color: #1D63ED;
+  background-color: var(--db-tools-flavor-docker);
+  border-color: var(--db-tools-flavor-docker);
 }
 input[value="docker"]:checked + label > svg {
   fill: #FFFFFF;
@@ -178,9 +180,9 @@ small {
 
 div[db-tools-flavor] {
   margin: 25px -24px;
-  padding: 12px 14px 12px 24px;
+  padding: 15px 24px 5px 24px;
   position: relative;
-  background: color-mix(in oklab, var(--db-tools-flavor-color) 5%, transparent);
+  background: color-mix(in oklch, var(--db-tools-flavor-color) 5%, transparent);
 
   &::before {
     display: block;
@@ -199,8 +201,8 @@ div[db-tools-flavor] {
   }
 
   @media (min-width: 960px) {
-    margin: 40px -20px 40px -30px;
-    padding: 5px 20px 5px 30px;
+    margin: 30px -20px 30px -30px;
+    padding: 1px 15px 1px 30px;
     border-radius: 6px;
 
     &::before {
@@ -210,14 +212,21 @@ div[db-tools-flavor] {
 }
 
 .dark div[db-tools-flavor] {
-  border: solid 1px color-mix(in oklab, var(--db-tools-flavor-color) 20%, transparent);;
+  border: solid 1px color-mix(in oklch, var(--db-tools-flavor-color) 40%, transparent);;
 }
 
 span[db-tools-flavor] code {
-  border-left: solid 2px var(--db-tools-flavor-color);
-  color: var(--vp-c-text-1);
-  background: color-mix(in oklab, var(--db-tools-flavor-color) 10%, transparent);
+  border-bottom: solid 2px var(--db-tools-flavor-color);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  /* border-left: solid 2px var(--db-tools-flavor-color);
+  border-right: solid 2px var(--db-tools-flavor-color); */
+  background: color-mix(in oklch, var(--db-tools-flavor-color) 10%, transparent);
   /* color: var(--db-tools-flavor-color); */
+  padding-bottom: 0;
+}
+.dark span[db-tools-flavor] code {
+  border: solid 1px color-mix(in oklch, var(--db-tools-flavor-color) 40%, transparent);;
 }
 
 .vp-doc div[db-tools-flavor] div[class*="language-"] {
