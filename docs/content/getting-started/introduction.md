@@ -24,16 +24,17 @@ perform frequent database related tasks: backup, restore, anonymize...
 
 This library can be used in different contexts:
 
-* as a standalone PHP library utlity
+* as a standalone PHP utility
 * as a *Symfony* bundle
 * as a *Docker* image
-* as a *Laravel package* (expiremental)
+* as a *Laravel* package (experimental)
 
-We call these context "*flavors*". You can change the current flavor from
-the menu in the top left-hand corner.
+We call these contexts *flavors*.
 
 Most of the content (text and examples) presented on this documentation will change according
 to this selected flavor. Whenever this happens, a visual hint indicates it.
+
+You can change the current flavor from the menu in the top left-hand corner.
 
 Learn more about *flavors* in the [dedicated section](./flavors.md)
 
