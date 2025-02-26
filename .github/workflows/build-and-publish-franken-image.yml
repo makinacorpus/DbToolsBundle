@@ -2,16 +2,8 @@ name: Build Docker FrankenPHP image
 
 on:
   push:
-    branches:
-      - "main"
     tags:
       - '*'
-    paths:
-      - .gitattributes
-      - .github/workflows/build-and-publish-franken-image.yml
-      - docker/franken-image/Dockerfile
-      - composer.*
-      - src/**
 
 env:
   IMAGE_NAME: db-tools-bundle
@@ -46,5 +38,5 @@ jobs:
         context: .
         file: docker/franken-image/Dockerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags == 'main' && 'unstable' || steps.meta.outputs.tags }}
+        tags: ${{ steps.meta.outputs.tags }}
         annotations: ${{ steps.meta.outputs.annotations }}
