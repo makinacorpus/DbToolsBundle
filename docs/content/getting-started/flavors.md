@@ -92,10 +92,11 @@ To get *DbToolsBundle* running:
   file `config/db-tools.php`,
 - configure the package to your needs.
 
-The configuration file is quite well self-documented, you should not be lost
-in configuring the package.
+The configuration file is quite well self-documented, you should not be
+lost in configuring the package. If necessary, get help from the *Symfony*
+documentation by following the YAML format examples.
 
-If necessary, get help from the *Symfony* documentation by following the YAML
-format examples.
+Keep in mind that `db-tools:check` command is available to validate that
+everything is operational.
 
 [1]: https://laravel.com/docs/12.x/packages#package-discovery
