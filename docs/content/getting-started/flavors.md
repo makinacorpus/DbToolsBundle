@@ -60,6 +60,14 @@ All configuration can be set up mounting a config file (see [installation sectio
 With the arrival of its version 2, *DbToolsBundle* opens up to the world of
 *Laravel*.
 
+As for *Symfony*, once installed:
+
+- all commands will be accessible via `artisan` (e.g. `php artisan db-tools:backup`),
+- connection to your database(s) will be autoconfigured thanks to the
+  *Illuminate* database manager,
+- anonymization can be configured through the package configuration file
+  `config/db-tools.php`.
+
 For now, the documentation does not include any specific example or precision
 related to *Laravel*. However, the configuration of *DbToolsBundle* in *Laravel*
 is very similar to its configuration in a *Symfony* project which would use YAML
@@ -75,9 +83,9 @@ To get *DbToolsBundle* running:
   *DbToolsBundle* service provider in your `bootstrap/providers.php` file:
   ```php
   return [
-    // ...
-    MakinaCorpus\DbToolsBundle\Bridge\Laravel\DbToolsServiceProvider::class,
-    // ...
+      // ...
+      MakinaCorpus\DbToolsBundle\Bridge\Laravel\DbToolsServiceProvider::class,
+      // ...
   ];
   ```
 - run the command `php artisan vendor:publish` to initialize the configuration
