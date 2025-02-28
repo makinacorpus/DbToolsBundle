@@ -62,7 +62,7 @@ With the arrival of its version 2, *DbToolsBundle* opens up to the world of
 
 As for *Symfony*, once installed:
 
-- all commands will be accessible via `artisan` (e.g. `php artisan db-tools:backup`),
+- all commands are accessible via `artisan` (e.g. `php artisan db-tools:backup`),
 - connection to your database(s) will be autoconfigured thanks to the
   *Illuminate* database manager,
 - anonymization can be configured through the package configuration file
