@@ -1,6 +1,6 @@
 # Upgrade guide
 
-## Next
+## 2.0.0
 
 ### Configuration file structure changes
 
@@ -13,8 +13,8 @@ set at the connection level, and we renamed those options to be more consistent
 and more explicit about what they do.
 
 Please read carefully the new sample configuration files:
- - For Symfony: [config/packages/db_tools.yaml](./config/packages/db_tools.yaml)
- - For standalone: [config/db_tools.standalone.yaml](./config/db_tools.standalone.yaml)
+ - For Symfony: [config/packages/db_tools.yaml](https://github.com/makinacorpus/DbToolsBundle/blob/main/config/packages/db_tools.yaml)
+ - For standalone: [config/db_tools.standalone.yaml](https://github.com/makinacorpus/DbToolsBundle/blob/main/config/db_tools.standalone.sample.yaml)
 
 And the [changelog](./changelog) file and fix your configuration accordingly.
 

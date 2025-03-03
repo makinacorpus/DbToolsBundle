@@ -1,13 +1,12 @@
 # Changelog
 
-## Next
+## 2.0.0
 
 * [feature] 🌟 PHP 8.4 support (#186).
 * [feature] 🌟 Add `bin/db-tools` CLI command allowing standalone usage (#153).
-* [feature] ⭐️ The CLI tool can run without configuration using only environment variables (#191).
+* [feature] 🌟 Add an experimental Laravel integration (#206).
 * [feature] ⭐️ All global options can now be configured on a per-connection basis in `connections.NAME.OPTION` (#191).
-* [feature] 🌟 In both CLI and Symfony, the `anonymyzation` configuration option may now directly hold the complete anonymization configuration without requiring an additional file. (#191).
-* [experimental] ⭐️ Add `bin/compile` CLI command for building a PHAR file (#154).
+* [feature] ⭐️ In both CLI and Symfony, the `anonymyzation` configuration option may now directly hold the complete anonymization configuration without requiring an additional file. (#191).
 * [deprecation] `anonymization.yaml` is replaced by `anonymization_files` (#191).
 * [deprecation] `excluded_tables` is replaced by either `backup_excluded_tables` or `connections.NAME.backup_excluded_tables` (#191).
 * [deprecation] `storage.filename_strategy` is replaced by either `storage_filename_strategy` or `connections.NAME.filename_strategy` (#191).

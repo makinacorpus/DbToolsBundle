@@ -35,11 +35,7 @@ WORKDIR /var/www
 RUN composer require \
     makinacorpus/db-tools-bundle:$TAG \
     symfony/password-hasher:* \
-    # TODO uncomment these lines when those packages
-    # will have a compatible version available
-    # on packagist
-    # db-tools-bundle/pack-fr-fr:$TAG \
-    # db-tools-bundle/pack-faker:$TAG \
+    db-tools-bundle/pack-fr-fr:* \
     $EXTRA_COMPOSER_REQUIREMENTS
 
 ENTRYPOINT ["/var/www/vendor/bin/db-tools"]
