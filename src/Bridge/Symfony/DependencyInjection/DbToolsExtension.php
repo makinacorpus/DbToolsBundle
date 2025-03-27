@@ -88,7 +88,7 @@ final class DbToolsExtension extends Extension
         $strategies = [
             $config['storage_filename_strategy'] ?? null,
             ...\array_map(
-                fn($connectionConfig) => $connectionConfig['storage_filename_strategy'] ?? null,
+                fn ($connectionConfig) => $connectionConfig['storage_filename_strategy'] ?? null,
                 $config['connections']
             )
         ];
