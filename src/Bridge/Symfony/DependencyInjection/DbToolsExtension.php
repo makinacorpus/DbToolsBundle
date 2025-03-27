@@ -85,27 +85,34 @@ final class DbToolsExtension extends Extension
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
 
         // Register filename strategies.
-        $strategies = [];
-        foreach (($config['storage']['filename_strategy'] ?? []) as $connectionName => $strategyId) {
+        $strategies = [
+            $config['storage_filename_strategy'] ?? null,
+            ...\array_map(
+                fn($connectionConfig) => $connectionConfig['storage_filename_strategy'] ?? null,
+                $config['connections']
+            )
+        ];
+        $strategiesServices = [];
+        foreach ($strategies as $connectionName => $strategyId) {
             // Default is handled directly by the storage service.
             if ($strategyId !== null && $strategyId !== 'default' && $strategyId !== 'datetime') {
                 if ($container->hasDefinition($strategyId)) {
-                    $strategies[$connectionName] = new Reference($strategyId);
+                    $strategiesServices[$connectionName] = new Reference($strategyId);
                 } elseif (\class_exists($strategyId)) {
                     if (!\is_subclass_of($strategyId, FilenameStrategyInterface::class)) {
                         throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class "%s" does not implement "%s"', $connectionName, $strategyId, FilenameStrategyInterface::class));
                     }
                     $serviceId = '.db_tools.filename_strategy.' . \sha1($strategyId);
                     $container->setDefinition($serviceId, (new Definition())->setClass($strategyId));
-                    $strategies[$connectionName] = new Reference($serviceId);
+                    $strategiesServices[$connectionName] = new Reference($serviceId);
                 } else {
                     throw new InvalidArgumentException(\sprintf('"db_tools.connections.%s.filename_strategy": class or service "%s" does not exist or is not registered in container', $connectionName, $strategyId));
                 }
                 break;
             }
         }
-        if ($strategies) {
-            $container->getDefinition('db_tools.storage')->setArgument(1, $strategies);
+        if ($strategiesServices) {
+            $container->getDefinition('db_tools.storage')->setArgument(1, $strategiesServices);
         }
     }
 

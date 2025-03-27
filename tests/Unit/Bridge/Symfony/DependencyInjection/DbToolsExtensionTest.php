@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Bridge\Symfony\DependencyInjection;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DependencyInjection\DbToolsExtension;
 use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
+use MakinaCorpus\DbToolsBundle\Tests\Resources\FilenameStrategy\CustomFilenameStrategy;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
 
 class DbToolsExtensionTest extends TestCase
@@ -31,10 +32,11 @@ class DbToolsExtensionTest extends TestCase
         return $container;
     }
 
-    private function testExtension(array $config): void
+    private function testExtension(array $config, ContainerBuilder $container = null): void
     {
+        $container ??= $this->getContainer();
         $extension = new DbToolsExtension();
-        $extension->load([$config], $container = $this->getContainer());
+        $extension->load([$config], $container);
 
         // No need to test them all, simply validate the config was loaded.
         self::assertTrue($container->hasDefinition('db_tools.storage'));
@@ -95,7 +97,9 @@ class DbToolsExtensionTest extends TestCase
         $this->setAllDbToolsEnv();
 
         $extension = new DbToolsExtension();
-        $extension->load([$config], $container = $this->getContainer());
+        $container = $this->getContainer();
+        $container->setDefinition('one_strategy', (new Definition())->setClass(CustomFilenameStrategy::class));
+        $extension->load([$config], $container);
         $container->getDefinition('db_tools.configuration.registry')->setPublic(true);
         $container->compile(true);
 
@@ -147,7 +151,9 @@ class DbToolsExtensionTest extends TestCase
         $this->setAllDbToolsEnv();
 
         $extension = new DbToolsExtension();
-        $extension->load([$config], $container = $this->getContainer());
+        $container = $this->getContainer();
+        $container->setDefinition('one_strategy', (new Definition())->setClass(CustomFilenameStrategy::class));
+        $extension->load([$config], $container);
         $container->getDefinition('db_tools.configuration.registry')->setPublic(true);
         $container->compile(true);
 
@@ -215,7 +221,9 @@ class DbToolsExtensionTest extends TestCase
     #[DependsExternal(DbToolsConfigurationTest::class, 'testConfigurationFull')]
     public function testExtensionWithFullConfig(array $config): void
     {
-        $this->testExtension($config);
+        $container = $this->getContainer();
+        $container->setDefinition('one_strategy', (new Definition())->setClass(CustomFilenameStrategy::class));
+        $this->testExtension($config, $container);
     }
 
     #[DependsExternal(DbToolsConfigurationTest::class, 'testConfigurationFull')]

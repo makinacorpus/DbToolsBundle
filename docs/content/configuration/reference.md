@@ -623,19 +623,12 @@ db_tools:
 ```
 @@@
 @@@ standalone docker
-```yaml
-# Default value, `default` is an alias of `datetime`.
-storage_filename_strategy: default
+:::warning
+There is as of now no way to implement a custom filename strategy when using
+*DbToolsBundle* as a standalone CLI tool or with the Docker image.
 
-# Explicit default.
-storage_filename_strategy: datetime
-
-# Using a service name.
-storage_filename_strategy: app.my_filename_strategy
-
-# Using a class name.
-storage_filename_strategy: App\DbTools\Storage\MyCustomFilenameStrategy
-```
+If you need this feature, please let us know by [creating an issue](https://github.com/makinacorpus/DbToolsBundle/issues).
+:::
 @@@
 
 :::tip
