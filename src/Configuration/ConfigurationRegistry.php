@@ -31,6 +31,9 @@ class ConfigurationRegistry
         return null;
     }
 
+    /**
+     * @return array<string,Configuration>
+     */
     public function getConnectionConfigAll(): array
     {
         return $this->connections;

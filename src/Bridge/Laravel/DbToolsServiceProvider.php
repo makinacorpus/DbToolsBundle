@@ -110,7 +110,7 @@ class DbToolsServiceProvider extends ServiceProvider
             foreach ($connections as $connectionName => $connection) {
                 $strategyId = $connection->getStorageFilenameStrategy();
 
-                if ($strategyId === null || $strategyId === 'default' || $strategyId === 'datetime') {
+                if ($strategyId === 'default' || $strategyId === 'datetime') {
                     $strategy = new DefaultFilenameStrategy();
                 } elseif ($app->bound($strategyId)) {
                     $strategy = $app->make($strategyId);
