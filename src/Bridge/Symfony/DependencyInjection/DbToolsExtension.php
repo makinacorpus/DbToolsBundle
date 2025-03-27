@@ -85,6 +85,13 @@ final class DbToolsExtension extends Extension
         $container->setParameter('db_tools.anonymization.anonymizer.paths', $anonymizerPaths);
 
         // Register filename strategies.
+        $strategies = [
+            $config['storage_filename_strategy'] ?? null,
+            ...\array_map(
+                fn($connectionConfig) => $connectionConfig['storage_filename_strategy'] ?? null,
+                $config['connections']
+            )
+        ];
         $strategyServices = [];
         foreach ($config['connections'] as $connectionName => $connectionConfig) {
             // Default is handled directly by the storage service.
