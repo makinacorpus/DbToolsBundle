@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+* [fix] Symfony - `storage_filename_strategy` configuration not evaluated (#216).
+
 ## 2.0.1
 
 * [fix] Symfony - `storage_filename_strategy` configuration not evaluated (#216).
