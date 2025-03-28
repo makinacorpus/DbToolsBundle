@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+* [fix] Symfony - `storage_filename_strategy` configuration not evaluated (#216).
+
 ## 2.0.0
 
 * [feature] 🌟 PHP 8.4 support (#186).
