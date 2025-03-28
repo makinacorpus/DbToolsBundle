@@ -88,7 +88,7 @@ final class DbToolsExtension extends Extension
         $strategyServices = [];
         foreach ($config['connections'] as $connectionName => $connectionConfig) {
             // Default is handled directly by the storage service.
-            $strategyId = $connectionConfig['storage_filename_strategy'] ?? null;
+            $strategyId = $connectionConfig['storage_filename_strategy'] ?? $config['storage_filename_strategy'] ?? null;
             if ($strategyId !== null && $strategyId !== 'default' && $strategyId !== 'datetime') {
                 if ($container->hasDefinition($strategyId)) {
                     $strategyServices[$connectionName] = new Reference($strategyId);
