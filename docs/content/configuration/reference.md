@@ -422,12 +422,12 @@ connections:
 
 # With all default options, only database DSN.
 connections:
-    connection_two: "mysql://username:password@hostname:port?version=8.1&other_option=..."
+    connection_two: "mysql://username:password@hostname:port/database?version=8.1&other_option=..."
     connection_two: #...
 
 # With a single connection.
 # Connection name will be "default".
-connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+connections: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
 ```
 
 :::warning
