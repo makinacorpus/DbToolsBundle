@@ -5,7 +5,7 @@
 # Connection name will be "default" when configured this way.
 # If you have multiple connections, please refer to the exhaustive
 # sample in 'db_tools.standalone.complete.sample.yaml'.
-connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+connections: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
 
 # Where to put generated backups.
 # Root directory of the backup storage manager. Default filename
