@@ -687,7 +687,7 @@ class Anonymizator implements LoggerAwareInterface
             } else {
                 $this->databaseSession->executeStatement(
                     <<<SQL
-                    CREATE FUNCTION IF NOT EXISTS ?::id() RETURNS BIGINT
+                    CREATE FUNCTION ?::id() RETURNS BIGINT
                     DETERMINISTIC
                     BEGIN
                         SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;
