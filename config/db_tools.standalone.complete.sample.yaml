@@ -53,13 +53,13 @@
 
 # If you have a single connection, you can use this syntax.
 # Connection name will be "default" when configured this way.
-connections: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+connections: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
 
 # Alternatively, you are allowed to have more than one connection, case
 # in which you might synthesize the configuration as this:
 #connections:
-#    connection_one: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
-#    connection_two: "mysql://username:password@hostname:port?version=8.1&other_option=..."
+#    connection_one: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
+#    connection_two: "mysql://username:password@hostname:port/database?version=8.1&other_option=..."
 
 # For advanced usage, you may also override any parameter for each connection.
 # Each key is a connection name, all parameters above are allowed for each
@@ -72,7 +72,7 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 #        # Any URL built for doctrine/dbal usage should work.
 #        # URL is the sole mandatory parameter.
 #        # Complete list of accepted parameters follows.
-#        url: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+#        url: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
 #        backup_binary: /usr/local/bin/vendor-one-dump
 #        backup_excluded_tables: ['table_one', 'table_two']
 #        backup_expiration_age: '1 month ago'
@@ -84,7 +84,7 @@ connections: "pgsql://username:password@hostname:port?version=16.0&other_option=
 #        storage_directory: /path/to/storage
 #        storage_filename_strategy: datetime
 #    connection_two:
-#        url: "mysql://username:password@hostname:port?version=8.1&other_option=..."
+#        url: "mysql://username:password@hostname:port/database?version=8.1&other_option=..."
 #        # ...
 
 # You can explicitly set which will be default connection in use when none

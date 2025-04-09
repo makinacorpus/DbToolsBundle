@@ -406,7 +406,7 @@ connections:
         # Any URL built for doctrine/dbal usage should work.
         # URL is the sole mandatory parameter.
         # Complete list of accepted parameters follows.
-        url: "pgsql://username:password@hostname:port?version=16.0&other_option=..."
+        url: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
         backup_binary: /usr/local/bin/vendor-one-dump
         backup_excluded_tables: ['table_one', 'table_two']
         backup_expiration_age: '1 month ago'
