@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -20,7 +21,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     You may also specify a 'precision' (default 2).
     TXT
 )]
-class FloatAnonymizer extends AbstractAnonymizer
+class FloatAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
@@ -63,30 +64,31 @@ class FloatAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $precision = $this->options->getInt('precision', 2);
         $precision = 10 ** $precision;
 
         if ($this->options->has('min') && $this->options->has('max')) {
-            $this->anonymizeWithMinAndMax(
+            return $this->anonymizeWithMinAndMax(
                 $update,
                 $precision,
                 $this->options->getFloat('min'),
                 $this->options->getFloat('max')
             );
         } elseif ($this->options->has('delta')) {
-            $this->anonymizeWithDelta(
+            return $this->anonymizeWithDelta(
                 $update,
                 $precision,
                 $this->options->getFloat('delta')
             );
         } elseif ($this->options->has('percent')) {
-            $this->anonymizeWithPercent($update, $this->options->getInt('percent'));
+            return $this->anonymizeWithPercent($update, $this->options->getInt('percent'));
         }
+        throw new \Exception("Unreacheable code.");
     }
 
-    private function anonymizeWithMinAndMax(Update $update, int $precision, float $max, float $min): void
+    private function anonymizeWithMinAndMax(Update $update, int $precision, float $max, float $min): Expression
     {
         $randomInt = $this->getRandomIntExpression(
             (int) \floor($max * $precision),
@@ -95,21 +97,18 @@ class FloatAnonymizer extends AbstractAnonymizer
 
         $expr = $update->expression();
 
-        $update->set(
-            $this->columnName,
-            $this->getSetIfNotNullExpression(
-                $expr->raw(
-                    '? / ?',
-                    [
-                        $expr->cast($randomInt, 'float'),
-                        $expr->cast($precision, 'float'),
-                    ]
-                )
-            ),
+        return $this->getSetIfNotNullExpression(
+            $expr->raw(
+                '? / ?',
+                [
+                    $expr->cast($randomInt, 'float'),
+                    $expr->cast($precision, 'float'),
+                ]
+            )
         );
     }
 
-    private function anonymizeWithDelta(Update $update, int $precision, float $delta): void
+    private function anonymizeWithDelta(Update $update, int $precision, float $delta): Expression
     {
         $randomInt = $this->getRandomIntExpression(
             (int) \floor(-$delta * $precision),
@@ -118,43 +117,37 @@ class FloatAnonymizer extends AbstractAnonymizer
 
         $expr = $update->expression();
 
-        $update->set(
-            $this->columnName,
-            $expr->raw(
-                '? + ?',
-                [
-                    $expr->column($this->columnName, $this->tableName),
-                    $expr->raw(
-                        '? / ?',
-                        [
-                            $expr->cast($randomInt, 'float'),
-                            $expr->cast($precision, 'float'),
-                        ]
-                    )
-                ]
-            )
+        return $expr->raw(
+            '? + ?',
+            [
+                $expr->column($this->columnName, $this->tableName),
+                $expr->raw(
+                    '? / ?',
+                    [
+                        $expr->cast($randomInt, 'float'),
+                        $expr->cast($precision, 'float'),
+                    ]
+                )
+            ]
         );
     }
 
-    private function anonymizeWithPercent(Update $update, int $percent): void
+    private function anonymizeWithPercent(Update $update, int $percent): Expression
     {
         $expr = $update->expression();
 
-        $update->set(
-            $this->columnName,
-            $expr->cast(
-                $expr->raw(
-                    '? * (?) / 100',
-                    [
-                        $expr->column($this->columnName, $this->tableName),
-                        $this->getRandomIntExpression(
-                            100 + $percent,
-                            100 - $percent,
-                        )
-                    ]
-                ),
-                'float'
-            )
+        return $expr->cast(
+            $expr->raw(
+                '? * (?) / 100',
+                [
+                    $expr->column($this->columnName, $this->tableName),
+                    $this->getRandomIntExpression(
+                        100 + $percent,
+                        100 - $percent,
+                    )
+                ]
+            ),
+            'float'
         );
     }
 }

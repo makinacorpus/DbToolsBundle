@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -17,10 +18,10 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     Using a salt prevents prevents reversing the hash of values using rainbow tables.
     TXT
 )]
-class Md5Anonymizer extends AbstractAnonymizer
+class Md5Anonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $expr = $update->expression();
         $columnExpr = $expr->column($this->columnName, $this->tableName);
@@ -28,16 +29,11 @@ class Md5Anonymizer extends AbstractAnonymizer
         if ($this->options->get('use_salt', true)) {
             $columnExpr = $expr->concat($columnExpr, $expr->value($this->getSalt()));
 
-            $update->set(
-                $this->columnName,
-                // Work around some RDBMS not seeing the NULL value anymore
-                // once we added the string concat.
-                $this->getSetIfNotNullExpression(
-                    $expr->md5($columnExpr)
-                ),
-            );
+            // Work around some RDBMS not seeing the NULL value anymore
+            // once we added the string concat.
+            return $this->getSetIfNotNullExpression($expr->md5($columnExpr));
         } else {
-            $update->set($this->columnName, $expr->md5($columnExpr));
+            return $expr->md5($columnExpr);
         }
     }
 }

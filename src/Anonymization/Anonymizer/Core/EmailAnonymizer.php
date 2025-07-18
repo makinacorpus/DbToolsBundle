@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
@@ -17,7 +18,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     Values are salted to prevent reversing the hash with option 'use_salt' (default: true).
     TXT
 )]
-class EmailAnonymizer extends AbstractAnonymizer
+class EmailAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
@@ -27,7 +28,7 @@ class EmailAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $expr = $update->expression();
 
@@ -43,16 +44,13 @@ class EmailAnonymizer extends AbstractAnonymizer
             $emailHashExpr = $expr->md5($userExpr);
         }
 
-        $update->set(
-            $this->columnName,
-            $this->getSetIfNotNullExpression(
-                $expr->concat(
-                    'anon-',
-                    $emailHashExpr,
-                    '@',
-                    $this->options->get('domain', 'example.com'),
-                ),
-            ),
+        return $this->getSetIfNotNullExpression(
+            $expr->concat(
+                'anon-',
+                $emailHashExpr,
+                '@',
+                $this->options->get('domain', 'example.com'),
+            )
         );
     }
 }

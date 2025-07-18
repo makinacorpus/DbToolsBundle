@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -18,7 +19,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
         - `type`: a SQL type for the given value (default is 'text')
     TXT
 )]
-class ConstantAnonymizer extends AbstractAnonymizer
+class ConstantAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
@@ -27,18 +28,15 @@ class ConstantAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $expr = $update->expression();
 
-        $update->set(
-            $this->columnName,
-            $this->getSetIfNotNullExpression(
-                $expr->cast(
-                    $this->options->get('value'),
-                    $this->options->get('type', 'text')
-                )
-            ),
+        return $this->getSetIfNotNullExpression(
+            $expr->cast(
+                $this->options->get('value'),
+                $this->options->get('type', 'text')
+            )
         );
     }
 }

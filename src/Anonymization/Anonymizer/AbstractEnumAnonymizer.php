@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Select;
 use MakinaCorpus\QueryBuilder\Query\Update;
@@ -12,7 +13,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
  * Can not be use alone, check FrFR/PrenomAnonymizer for an
  * example on how to extend this Anonymizer for your need.
  */
-abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
+abstract class AbstractEnumAnonymizer extends AbstractSingleColumnAnonymizer
 {
     private ?string $sampleTableName = null;
 
@@ -43,7 +44,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $expr = $update->expression();
 
@@ -86,7 +87,7 @@ abstract class AbstractEnumAnonymizer extends AbstractAnonymizer
             $joinAlias
         );
 
-        $update->set($this->columnName, $expr->column('value', $joinAlias));
+        return $expr->column('value', $joinAlias);
     }
 
     #[\Override]
