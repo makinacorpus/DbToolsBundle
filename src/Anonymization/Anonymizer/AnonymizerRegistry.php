@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
 use Composer\InstalledVersions;
+use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\DatabaseSession;
 
 class AnonymizerRegistry
 {
@@ -26,7 +29,10 @@ class AnonymizerRegistry
         Core\StringAnonymizer::class,
     ];
 
-    private ?array $anonymizers = null;
+    /** @var array<string, string> */
+    private ?array $classes = null;
+    /** @var array<string, AsAnonymizer> */
+    private ?array $metadata = null;
     private array $paths = [];
 
     public function __construct(?array $paths = null)
@@ -45,30 +51,57 @@ class AnonymizerRegistry
     /**
      * Get all registered anonymizers classe names.
      *
-     * @return array<string,string>
-     *   Keys are names, values are class names.
+     * @return array<string,AsAnonymizer>
      */
-    public function getAnonymizers(): array
+    public function getAllAnonymizerMetadata(): array
     {
         $this->initialize();
 
-        return $this->anonymizers;
+        return $this->metadata;
     }
 
     /**
-     * Get anonymizer class name.
-     *
-     * @param string $name
-     *   Anonymizer name.
-     *
-     * @return string
-     *   Anonymizer class name.
+     * Create anonymizer instance.
      */
-    public function get(string $name): string
+    public function createAnonymizer(
+        string $name,
+        AnonymizerConfig $config,
+        Options $options,
+        DatabaseSession $databaseSession,
+    ): AbstractAnonymizer {
+        $className = $this->getAnonymizerClass($name);
+
+        return new $className($config->table, $config->targetName, $databaseSession, $options);
+    }
+
+    /**
+     * Get anonymizer metadata.
+     */
+    public function getAnonymizerMetadata(string $name): AsAnonymizer
     {
         $this->initialize();
 
-        return $this->anonymizers[$name] ?? throw new \InvalidArgumentException(\sprintf("Can't find Anonymizer with name : %s, check your configuration.", $name));
+        return $this->metadata[$name] ?? $this->throwAnonymizerDoesNotExist($name);
+    }
+
+    /**
+     * @internal
+     *   For unit tests only, please do not use.
+     */
+    public function getAnonymizerClass(string $name): string
+    {
+        $this->initialize();
+
+        return $this->classes[$name] ?? $this->throwAnonymizerDoesNotExist($name);
+    }
+
+    private function getAnonymizatorClassMetadata(string $className): AsAnonymizer
+    {
+        if ($attributes = (new \ReflectionClass($className))->getAttributes(AsAnonymizer::class)) {
+            return $attributes[0]->newInstance();
+        }
+
+        throw new \LogicException(\sprintf("Class '%s' should have an '%s' attribute.", $className, AsAnonymizer::class));
     }
 
     /**
@@ -76,11 +109,12 @@ class AnonymizerRegistry
      */
     private function initialize(): void
     {
-        if (null !== $this->anonymizers) {
+        if (null !== $this->classes) {
             return;
         }
 
-        $this->anonymizers = [];
+        $this->classes = [];
+        $this->metadata = [];
 
         foreach (self::$coreAnonymizers as $className) {
             $this->addAnonymizer($className, true);
@@ -152,7 +186,11 @@ class AnonymizerRegistry
             return;
         }
 
-        $this->anonymizers[$className::id()] = $className;
+        $metadata = $this->getAnonymizatorClassMetadata($className);
+        $id = $metadata->id();
+
+        $this->classes[$id] = $className;
+        $this->metadata[$id] = $metadata;
     }
 
     /**
@@ -171,5 +209,10 @@ class AnonymizerRegistry
                 }
             }
         }
+    }
+
+    private function throwAnonymizerDoesNotExist(string $name): never
+    {
+        throw new \InvalidArgumentException(\sprintf("Can't find Anonymizer with name : %s, check your configuration.", $name));
     }
 }

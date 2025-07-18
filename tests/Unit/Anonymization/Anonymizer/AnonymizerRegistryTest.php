@@ -17,14 +17,17 @@ class AnonymizerRegistryTest extends UnitTestCase
 
             $anonymizerRegistry = new AnonymizerRegistry();
 
-            $anonymizers = $anonymizerRegistry->getAnonymizers();
+            $anonymizers = $anonymizerRegistry->getAllAnonymizerMetadata();
 
             self::assertNotEmpty($anonymizers);
             self::assertArrayHasKey('string', $anonymizers);
             self::assertArrayHasKey('test.my-anonymizer', $anonymizers);
 
-            self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
-            self::assertEquals('DbToolsBundle\PackTest\Anonymizer\MyAnonymizer', $anonymizerRegistry->get('test.my-anonymizer'));
+            self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->getAnonymizerClass('float'));
+            self::assertEquals('float', $anonymizerRegistry->getAnonymizerMetadata('float')->id());
+
+            self::assertEquals('DbToolsBundle\PackTest\Anonymizer\MyAnonymizer', $anonymizerRegistry->getAnonymizerClass('test.my-anonymizer'));
+            self::assertEquals('test.my-anonymizer', $anonymizerRegistry->getAnonymizerMetadata('test.my-anonymizer')->id());
         } finally {
             $this->composerProjectRemove();
         }
@@ -34,10 +37,10 @@ class AnonymizerRegistryTest extends UnitTestCase
     {
         $anonymizerRegistry = new AnonymizerRegistry();
 
-        self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->get('float'));
+        self::assertEquals('MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer', $anonymizerRegistry->getAnonymizerClass('float'));
 
         self::expectExceptionMessageMatches("@Can't find Anonymizer@");
-        $anonymizerRegistry->get('test.my_anonymizer');
+        $anonymizerRegistry->getAnonymizerClass('test.my_anonymizer');
     }
 
     private function composerProjectRemove(): void

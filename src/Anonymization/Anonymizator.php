@@ -86,14 +86,11 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function createAnonymizer(AnonymizerConfig $config): AbstractAnonymizer
     {
-        $className = $this->anonymizerRegistry->get($config->anonymizer);
-        \assert(\is_subclass_of($className, AbstractAnonymizer::class));
-
-        return new $className(
-            $config->table,
-            $config->targetName,
-            $this->databaseSession,
+        return $this->anonymizerRegistry->createAnonymizer(
+            $config->anonymizer,
+            $config,
             $config->options->with(['salt' => $this->getSalt()]),
+            $this->databaseSession
         );
     }
 
