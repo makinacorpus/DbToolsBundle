@@ -32,11 +32,10 @@ class AnonymizerListCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        $rawList = $this->anonymizerRegistry->getAnonymizers();
+        $rawList = $this->anonymizerRegistry->getAllAnonymizerMetadata();
 
         $list = [];
-        foreach ($rawList as $anonymizer) {
-            $metadata = $anonymizer::getMetadata();
+        foreach ($rawList as $metadata) {
             \assert($metadata instanceof AsAnonymizer);
 
             if (!\array_key_exists($metadata->pack, $list)) {

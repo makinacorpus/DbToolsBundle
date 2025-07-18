@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
@@ -26,20 +25,6 @@ abstract class AbstractAnonymizer
         protected Options $options,
     ) {
         $this->validateOptions();
-    }
-
-    final public static function id(): string
-    {
-        return self::getMetadata()->id();
-    }
-
-    final public static function getMetadata(): AsAnonymizer
-    {
-        if ($attributes = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
-            return $attributes[0]->newInstance();
-        }
-
-        throw new \LogicException(\sprintf("Class '%s' should have an '%s' attribute.", static::class, AsAnonymizer::class));
     }
 
     /**
