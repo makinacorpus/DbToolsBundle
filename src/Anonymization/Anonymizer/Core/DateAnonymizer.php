@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
@@ -21,7 +22,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
     can work with 'datetime' or 'date' formats.
     TXT
 )]
-class DateAnonymizer extends AbstractAnonymizer
+class DateAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
@@ -51,7 +52,7 @@ class DateAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $format = $this->options->get('format', 'datetime');
 
@@ -59,21 +60,17 @@ class DateAnonymizer extends AbstractAnonymizer
         $max = $this->options->getDate('max');
 
         if ($min && $max) {
-            $this->anonymizeWithDateRange($update, $format, $min, $max);
-
-            return;
+            return $this->anonymizeWithDateRange($update, $format, $min, $max);
         }
 
         if ($delta = $this->options->getInterval('delta')) {
-            $this->anonmizeWithDelta($update, $format, $delta);
-
-            return;
+            return $this->anonmizeWithDelta($update, $format, $delta);
         }
 
         throw new \InvalidArgumentException("Providing either the 'delta' option, or both 'min' and 'max' options is required.");
     }
 
-    private function anonymizeWithDateRange(Update $update, string $format, \DateTimeImmutable $min, \DateTimeImmutable $max): void
+    private function anonymizeWithDateRange(Update $update, string $format, \DateTimeImmutable $min, \DateTimeImmutable $max): Expression
     {
         $diff = $max->diff($min, true);
 
@@ -96,10 +93,10 @@ class DateAnonymizer extends AbstractAnonymizer
         $delta /= 2;
         $middleDate = $min->add(\DateInterval::createFromDateString(\sprintf("%d %s", $delta, $unit)));
 
-        $this->anonymizeWithDeltaAndReferenceDate($update, $format, $middleDate, $delta, $unit);
+        return $this->anonymizeWithDeltaAndReferenceDate($update, $format, $middleDate, $delta, $unit);
     }
 
-    private function anonmizeWithDelta(Update $update, string $format, \DateInterval $delta): void
+    private function anonmizeWithDelta(Update $update, string $format, \DateInterval $delta): Expression
     {
         // @todo I wish for a better alternative...
         // query-builder can deal with \DateInterval by- itself, but we are
@@ -137,43 +134,37 @@ class DateAnonymizer extends AbstractAnonymizer
         $expr = $update->expression();
         $columnExpr = $expr->column($this->columnName, $this->tableName);
 
-        $this->anonymizeWithDeltaAndReferenceDate($update, $format, $columnExpr, $delta, $unit);
+        return $this->anonymizeWithDeltaAndReferenceDate($update, $format, $columnExpr, $delta, $unit);
     }
 
-    private function anonymizeWithDeltaAndReferenceDate(Update $update, string $format, mixed $referenceDate, int $delta, string $unit): void
+    private function anonymizeWithDeltaAndReferenceDate(Update $update, string $format, mixed $referenceDate, int $delta, string $unit): Expression
     {
         $expr = $update->expression();
 
         $randomDeltaExpr = $this->getRandomIntExpression($delta, 0 - $delta);
 
         if ($this->databaseSession->vendorIs(Vendor::SQLITE)) {
-            $update->set(
-                $this->columnName,
-                $this->getSetIfNotNullExpression(
-                    $expr->dateAdd(
-                        $referenceDate,
-                        $expr->intervalUnit(
-                            // This additional cast is necessary for SQLite only because it
-                            // will mix up int addition and string concatenation, causing
-                            // the interval string to be malformed. For all other vendors,
-                            // it's a no-op.
-                            $expr->cast($randomDeltaExpr, 'varchar'),
-                            $unit
-                        ),
-                    ),
+            return $this->getSetIfNotNullExpression(
+                $expr->dateAdd(
+                    $referenceDate,
+                    $expr->intervalUnit(
+                        // This additional cast is necessary for SQLite only because it
+                        // will mix up int addition and string concatenation, causing
+                        // the interval string to be malformed. For all other vendors,
+                        // it's a no-op.
+                        $expr->cast($randomDeltaExpr, 'varchar'),
+                        $unit
+                    )
                 )
             );
         } else {
-            $update->set(
-                $this->columnName,
-                $this->getSetIfNotNullExpression(
-                    $expr->cast(
-                        $expr->dateAdd(
-                            $referenceDate,
-                            $expr->intervalUnit($randomDeltaExpr, $unit),
-                        ),
-                        'date' === $format ? 'date' : 'timestamp',
-                    )
+            return $this->getSetIfNotNullExpression(
+                $expr->cast(
+                    $expr->dateAdd(
+                        $referenceDate,
+                        $expr->intervalUnit($randomDeltaExpr, $unit),
+                    ),
+                    'date' === $format ? 'date' : 'timestamp',
                 )
             );
         }

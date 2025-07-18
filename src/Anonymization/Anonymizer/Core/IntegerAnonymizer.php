@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Query\Update;
 
 #[AsAnonymizer(
@@ -19,7 +20,7 @@ use MakinaCorpus\QueryBuilder\Query\Update;
           in a range computed from the 'delta' or 'percent' options
     TXT
 )]
-class IntegerAnonymizer extends AbstractAnonymizer
+class IntegerAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
@@ -57,66 +58,58 @@ class IntegerAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         if ($this->options->has('min') && $this->options->has('max')) {
-            $this->anonymizeWithMinAndMax(
+            return $this->anonymizeWithMinAndMax(
                 $update,
                 $this->options->getInt('min'),
                 $this->options->getInt('max')
             );
         } elseif ($this->options->has('delta')) {
-            $this->anonymizeWithDelta($update, $this->options->getInt('delta'));
+            return $this->anonymizeWithDelta($update, $this->options->getInt('delta'));
         } elseif ($this->options->has('percent')) {
-            $this->anonymizeWithPercent($update, $this->options->getInt('percent'));
+            return $this->anonymizeWithPercent($update, $this->options->getInt('percent'));
         }
+        throw new \Exception("Unreacheable code.");
     }
 
-    private function anonymizeWithMinAndMax(Update $update, int $max, int $min): void
+    private function anonymizeWithMinAndMax(Update $update, int $max, int $min): Expression
     {
-        $update->set(
-            $this->columnName,
-            $this->getSetIfNotNullExpression(
-                $this->getRandomIntExpression($max, $min),
-            ),
+        return $this->getSetIfNotNullExpression(
+            $this->getRandomIntExpression($max, $min),
         );
     }
 
-    private function anonymizeWithDelta(Update $update, int $delta): void
+    private function anonymizeWithDelta(Update $update, int $delta): Expression
     {
         $expr = $update->expression();
 
-        $update->set(
-            $this->columnName,
+        return $expr->raw(
+            '? + ?',
+            [
+                $expr->column($this->columnName, $this->tableName),
+                $this->getRandomIntExpression($delta, -$delta)
+            ]
+        );
+    }
+
+    private function anonymizeWithPercent(Update $update, int $percent): Expression
+    {
+        $expr = $update->expression();
+
+        return $expr->cast(
             $expr->raw(
-                '? + ?',
+                '? * (?) / 100',
                 [
                     $expr->column($this->columnName, $this->tableName),
-                    $this->getRandomIntExpression($delta, -$delta)
+                    $this->getRandomIntExpression(
+                        100 + $percent,
+                        100 - $percent,
+                    )
                 ]
-            )
-        );
-    }
-
-    private function anonymizeWithPercent(Update $update, int $percent): void
-    {
-        $expr = $update->expression();
-
-        $update->set(
-            $this->columnName,
-            $expr->cast(
-                $expr->raw(
-                    '? * (?) / 100',
-                    [
-                        $expr->column($this->columnName, $this->tableName),
-                        $this->getRandomIntExpression(
-                            100 + $percent,
-                            100 - $percent,
-                        )
-                    ]
-                ),
-                'integer'
-            )
+            ),
+            'integer'
         );
     }
 }
