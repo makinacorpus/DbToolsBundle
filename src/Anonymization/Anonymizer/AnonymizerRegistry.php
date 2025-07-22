@@ -27,6 +27,7 @@ class AnonymizerRegistry
         Core\NullAnonymizer::class,
         Core\PasswordAnonymizer::class,
         Core\StringAnonymizer::class,
+        Core\StringPatternAnonymizer::class,
     ];
 
     /** @var array<string, string> */
@@ -71,7 +72,14 @@ class AnonymizerRegistry
     ): AbstractAnonymizer {
         $className = $this->getAnonymizerClass($name);
 
-        return new $className($config->table, $config->targetName, $databaseSession, $options);
+        $ret = new $className($config->table, $config->targetName, $databaseSession, $options);
+        \assert($ret instanceof AbstractAnonymizer);
+
+        if ($ret instanceof WithAnonymizerRegistry) {
+            $ret->setAnonymizerRegistry($this);
+        }
+
+        return $ret;
     }
 
     /**
