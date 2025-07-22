@@ -2,6 +2,7 @@
 
 ## Next
 
+* [feature] 🌟 File enum anonymizer, inject samples in database from a plain text or CSV file.
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
 
 ## 2.0.3

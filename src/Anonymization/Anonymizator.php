@@ -43,12 +43,21 @@ class Anonymizator implements LoggerAwareInterface
 
     private OutputInterface $output;
 
+    private string $basePath;
+
     public function __construct(
         private DatabaseSession $databaseSession,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
+        /**
+         * @todo
+         *   This is not the right place to set this, but any other alternative
+         *   would require a deep refactor of anonymizer options.
+         */
+        ?string $basePath = null,
     ) {
+        $this->basePath = $basePath ?? \getcwd();
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
     }
@@ -89,7 +98,7 @@ class Anonymizator implements LoggerAwareInterface
         return $this->anonymizerRegistry->createAnonymizer(
             $config->anonymizer,
             $config,
-            $config->options->with(['salt' => $this->getSalt()]),
+            $config->options->with(['salt' => $this->getSalt(), 'base_path' => $this->basePath]),
             $this->databaseSession
         );
     }

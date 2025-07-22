@@ -234,7 +234,7 @@ class Bootstrap
         $databaseSessionRegistry = self::createDatabaseSessionRegistry($configRegistry);
 
         $anonymizerRegistry = self::createAnonymizerRegistry($config);
-        $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
+        $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger, $config['workdir']);
 
         foreach (($config['anonymization_files'] ?? []) as $connectionName => $file) {
             $anonymizatorFactory->addConfigurationLoader(new YamlLoader($file, $connectionName));
