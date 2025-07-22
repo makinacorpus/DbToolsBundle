@@ -2,6 +2,7 @@
 
 ## Next
 
+* [feature] 🌟 File enum anonymizer, inject samples in database from a plain text or CSV file.
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
 * [internal] introduce anonymizer context for carrying environment configuration to anonymizers (#235).
 * [bc] Salt in `AbstractAnonymizer::$option->get('salt')` in now in `AbstractAnonymizer::$context->salt` (#235).

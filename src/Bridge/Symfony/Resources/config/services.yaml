@@ -119,4 +119,5 @@ services:
             - '@db_tools.database_session.registry'
             - '@db_tools.anonymization.anonymizer.registry'
             - '@logger'
+            - "%kernel.project_dir%"
         tags: [{ name: monolog.logger, channel: db_tools_anonymization }]
