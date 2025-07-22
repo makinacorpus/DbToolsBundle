@@ -1,8 +1,12 @@
 # Changelog
 
+## Next
+
+* [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
+
 ## 2.0.3
 
-* [FIX] Fix anonymization for MySQL version >=8.0 but <8.0.29 (#220).
+* [fix] Fix anonymization for MySQL version >=8.0 but <8.0.29 (#220).
 * [doc] Fix connection string examples (#219).
 
 ## 2.0.2
