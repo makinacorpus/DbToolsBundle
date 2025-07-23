@@ -19,3 +19,4 @@ This page list all *Anonymizers* provided by *DbToolsBundle*.
 <!--@include: ./core-anonymizers/lorem-ipsum.md-->
 <!--@include: ./core-anonymizers/address.md-->
 <!--@include: ./core-anonymizers/iban-bic.md-->
+<!--@include: ./core-anonymizers/file-resolution.md-->
