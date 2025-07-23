@@ -6,21 +6,22 @@ namespace MakinaCorpus\DbToolsBundle\Test;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Driver\AbstractSQLiteDriver\Middleware\EnableForeignKeys;
 use Doctrine\DBAL\Driver\OCI8\Middleware\InitializeSession;
-use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DoctrineDatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
 use Psr\Log\AbstractLogger;
 
@@ -249,6 +250,27 @@ abstract class FunctionalTestCase extends UnitTestCase
         foreach ($anonymizerConfig as $userConfig) {
             $config->add($userConfig);
         }
+
+        return new Anonymizator(
+            $this->getDatabaseSession(),
+            new AnonymizerRegistry(),
+            $config
+        );
+    }
+
+    /**
+     * For anonymizers unit test, creates an anonymizator with the given
+     * configuration, which should register all anonymizers required for
+     * the test.
+     */
+    protected function createAnonymizatorArbitrary(
+        string $table,
+        string $targetName,
+        string $anonymizer,
+        ?Options $options = null,
+    ): Anonymizator {
+        $config = new AnonymizationConfig();
+        $config->add(new AnonymizerConfig($table, $targetName, $anonymizer, $options ?? new Options(), __DIR__));
 
         return new Anonymizator(
             $this->getDatabaseSession(),

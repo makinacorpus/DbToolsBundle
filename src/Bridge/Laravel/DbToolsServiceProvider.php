@@ -144,6 +144,8 @@ class DbToolsServiceProvider extends ServiceProvider
                 /** @var Repository $config */
                 $config = $app->make('config');
 
+                $workdir = $config->get('db-tools.workdir', $app->basePath());
+
                 foreach ($config->get('db-tools.anonymization_files', []) as $connectionName => $file) {
                     // 0 is not a good index for extension, this fails for false and 0.
                     if (!($pos = \strrpos($file, '.'))) {
@@ -155,8 +157,8 @@ class DbToolsServiceProvider extends ServiceProvider
 
                     $ext = \substr($file, $pos + 1);
                     $loader = match ($ext) {
-                        'php' => new PhpFileLoader($file, $connectionName),
-                        'yml', 'yaml' => new YamlLoader($file, $connectionName),
+                        'php' => new PhpFileLoader($file, $connectionName, $workdir),
+                        'yml', 'yaml' => new YamlLoader($file, $connectionName, $workdir),
                         default => throw new ConfigurationException(\sprintf(
                             "File extension \"%s\" is unsupported (given path: \"%s\").",
                             $ext,
@@ -168,7 +170,7 @@ class DbToolsServiceProvider extends ServiceProvider
                 }
 
                 foreach ($config->get('db-tools.anonymization', []) as $connectionName => $array) {
-                    $factory->addConfigurationLoader(new ArrayLoader($array, $connectionName));
+                    $factory->addConfigurationLoader(new ArrayLoader($array, $connectionName, $workdir));
                 }
             }
         );

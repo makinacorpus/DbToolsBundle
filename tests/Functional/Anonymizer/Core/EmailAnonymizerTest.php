@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class EmailAnonymizerTest extends FunctionalTestCase
@@ -41,12 +40,12 @@ class EmailAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'email',
             new Options()
-        ));
+        );
 
         $this->assertSame(
             "toto1@example.com",
@@ -71,12 +70,12 @@ class EmailAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDomain(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'email',
             new Options(['domain' => 'custom_domain.tld'])
-        ));
+        );
 
         $this->assertSame(
             "toto1@example.com",

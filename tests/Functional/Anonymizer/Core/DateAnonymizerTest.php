@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class DateAnonymizerTest extends FunctionalTestCase
@@ -47,7 +46,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithRangeAsDate(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date1',
             'date',
@@ -56,7 +55,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'max' => '2010-08-31',
                 'format' => 'datetime',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
@@ -84,7 +83,7 @@ class DateAnonymizerTest extends FunctionalTestCase
      */
     public function testAnonymizeWithRangeAsDateHuge(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date1',
             'date',
@@ -93,7 +92,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'max' => '2560-03-31',
                 'format' => 'date',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
@@ -118,7 +117,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithRangeAsDateTime(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date1',
             'date',
@@ -127,7 +126,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'max' => '2010-08-31 18:25:00',
                 'format' => 'datetime',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
@@ -155,7 +154,7 @@ class DateAnonymizerTest extends FunctionalTestCase
      */
     public function testAnonymizeWithRangeAsDateTimeHuge(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date1',
             'date',
@@ -164,7 +163,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'max' => '2100-12-31',
                 'format' => 'datetime',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",
@@ -189,7 +188,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDeltaAsDate(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date2',
             'date',
@@ -197,7 +196,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'delta' => '1 month 6 days 4 hour',
                 'format' => 'date',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22",
@@ -222,7 +221,7 @@ class DateAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDeltaAsDateTime(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'date1',
             'date',
@@ -230,7 +229,7 @@ class DateAnonymizerTest extends FunctionalTestCase
                 'delta' => '1 month 6 days 4 hour',
                 'format' => 'datetime',
             ])
-        ));
+        );
 
         $this->assertStringStartsWith(
             "1983-03-22 08:25:00",

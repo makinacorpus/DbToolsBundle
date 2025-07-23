@@ -192,7 +192,13 @@ class StringPatternAnonymizer extends AbstractSingleColumnAnonymizer implements 
             return $ret;
         }
 
-        $config = new AnonymizerConfig($this->tableName, $this->columnName, $anonymizer, new Options());
+        $config = new AnonymizerConfig(
+            $this->tableName,
+            $this->columnName,
+            $anonymizer,
+            new Options(),
+            __DIR__, // @todo FIXME
+        );
 
         return $this->childAnonymizers[$key] = $this
             ->getAnonymizerRegistry()
@@ -200,7 +206,7 @@ class StringPatternAnonymizer extends AbstractSingleColumnAnonymizer implements 
                 $anonymizer,
                 $config,
                 $options ?? new Options(),
-                $this->databaseSession
+                $this->databaseSession,
             )
         ;
     }

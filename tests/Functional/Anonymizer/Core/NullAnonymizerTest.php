@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class NullAnonymizerTest extends FunctionalTestCase
@@ -41,12 +39,11 @@ class NullAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'null',
-            new Options()
-        ));
+        );
 
         $this->assertSame(
             "toto1@example.com",

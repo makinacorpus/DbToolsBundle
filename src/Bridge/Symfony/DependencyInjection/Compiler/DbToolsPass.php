@@ -12,6 +12,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Reference;
 
 class DbToolsPass implements CompilerPassInterface
@@ -49,7 +50,7 @@ class DbToolsPass implements CompilerPassInterface
     {
         $definition = new Definition();
         $definition->setClass(ArrayLoader::class);
-        $definition->setArguments([$data, $connectionName]);
+        $definition->setArguments([$data, $connectionName, new Parameter('kernel.project_dir')]);
 
         $loaderId = 'db_tools.anonymization.loader.array.' . $connectionName;
         $container->setDefinition($loaderId, $definition);
@@ -61,7 +62,7 @@ class DbToolsPass implements CompilerPassInterface
     {
         $definition = new Definition();
         $definition->setClass(YamlLoader::class);
-        $definition->setArguments([$file, $connectionName]);
+        $definition->setArguments([$file, $connectionName, new Parameter('kernel.project_dir')]);
 
         $loaderId = 'db_tools.anonymization.loader.yaml.' . $connectionName;
         $container->setDefinition($loaderId, $definition);
@@ -73,7 +74,7 @@ class DbToolsPass implements CompilerPassInterface
     {
         $definition = new Definition();
         $definition->setClass(AttributesLoader::class);
-        $definition->setArguments([new Reference('doctrine.orm.command.entity_manager_provider')]);
+        $definition->setArguments([new Reference('doctrine.orm.command.entity_manager_provider'), new Parameter('kernel.project_dir')]);
 
         $loaderId = 'db_tools.anonymization.loader.attributes';
         $container->setDefinition($loaderId, $definition);

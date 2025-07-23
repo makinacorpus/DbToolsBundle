@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class StringPatternAnonymizerTest extends FunctionalTestCase
@@ -41,13 +40,11 @@ class StringPatternAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(
-            new AnonymizerConfig(
-                'table_test',
-                'data',
-                'pattern',
-                new Options(['pattern' => "Range [1-1000] for {email} and {address:locality} in {address:country}"])
-            ),
+        $anonymizator = $this->createAnonymizatorArbitrary(
+            'table_test',
+            'data',
+            'pattern',
+            new Options(['pattern' => "Range [1-1000] for {email} and {address:locality} in {address:country}"]),
         );
 
         self::assertSame(

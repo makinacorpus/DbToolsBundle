@@ -15,6 +15,11 @@ class AttributesLoader implements LoaderInterface
 {
     public function __construct(
         private EntityManagerProvider $entityManagerProvider,
+        /**
+         * Root directory from which the configuration was loaded. It allows
+         * later file loading (for example, when sources are CSV or TXT files).
+         */
+        private readonly string $basePath,
     ) {}
 
     #[\Override]
@@ -62,6 +67,7 @@ class AttributesLoader implements LoaderInterface
                         $anonymization->type . '_' . $key,
                         $anonymization->type,
                         new Options($anonymization->options),
+                        $this->basePath,
                     ));
                 }
             }
@@ -78,6 +84,7 @@ class AttributesLoader implements LoaderInterface
                                 $metadata->getColumnName($fieldName),
                                 $propertyConfig->type,
                                 new Options($propertyConfig->options),
+                                $this->basePath,
                             ));
                         }
                     }
@@ -109,6 +116,7 @@ class AttributesLoader implements LoaderInterface
                         $columnName,
                         $anonymization->type,
                         new Options($anonymization->options),
+                        $this->basePath,
                     ));
                 }
             }

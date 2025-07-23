@@ -14,7 +14,12 @@ class ArrayLoader implements LoaderInterface
 {
     public function __construct(
         private array $data,
-        private string $connectionName = 'default',
+        private string $connectionName,
+        /**
+         * Root directory from which the configuration was loaded. It allows
+         * later file loading (for example, when sources are CSV or TXT files).
+         */
+        private readonly string $basePath,
     ) {}
 
     #[\Override]
@@ -51,6 +56,7 @@ class ArrayLoader implements LoaderInterface
                     $target,
                     $targetConfig['anonymizer'],
                     new Options($targetConfig['options']),
+                    $this->basePath,
                 ));
             }
         }

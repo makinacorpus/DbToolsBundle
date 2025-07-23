@@ -237,10 +237,10 @@ class Bootstrap
         $anonymizatorFactory = new AnonymizatorFactory($databaseSessionRegistry, $anonymizerRegistry, $logger);
 
         foreach (($config['anonymization_files'] ?? []) as $connectionName => $file) {
-            $anonymizatorFactory->addConfigurationLoader(new YamlLoader($file, $connectionName));
+            $anonymizatorFactory->addConfigurationLoader(new YamlLoader($file, $connectionName, $config['workdir']));
         }
         foreach (($config['anonymization'] ?? []) as $connectionName => $array) {
-            $anonymizatorFactory->addConfigurationLoader(new ArrayLoader($array, $connectionName));
+            $anonymizatorFactory->addConfigurationLoader(new ArrayLoader($array, $connectionName, $config['workdir']));
         }
 
         $backupperFactory = new BackupperFactory($databaseSessionRegistry, $configRegistry, $logger);

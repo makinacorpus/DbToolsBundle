@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class LoremIpsumAnonymizerTest extends FunctionalTestCase
@@ -41,12 +40,11 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDefaultOptions(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'lorem',
-            new Options()
-        ));
+        );
 
         $this->assertSame(
             'test1',
@@ -83,7 +81,7 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithParagraphsAndTag(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'lorem',
@@ -91,7 +89,7 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
                 'paragraphs' => 5,
                 'html' => true
             ])
-        ));
+        );
 
         $this->assertSame(
             'test1',
@@ -125,12 +123,12 @@ class LoremIpsumAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithWords(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'lorem',
             new Options(['words' => 5])
-        ));
+        );
 
         $this->assertSame(
             'test1',

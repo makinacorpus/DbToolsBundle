@@ -40,7 +40,7 @@ class AttributeLoaderTest extends UnitTestCase
 
         // We try to load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
-        (new AttributesLoader($entityManagerProvider))->load($config);
+        (new AttributesLoader($entityManagerProvider, __DIR__))->load($config);
 
         // Then we validate what's in it:
         $testTableConfig = $config->getTableConfig('test');
@@ -89,7 +89,7 @@ class AttributeLoaderTest extends UnitTestCase
 
         // We load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
-        (new AttributesLoader($entityManagerProvider))->load($config);
+        (new AttributesLoader($entityManagerProvider, __DIR__))->load($config);
 
         // Then we validate what's in it:
         $testTableConfig = $config->getTableConfig('test_joined_child');
@@ -126,7 +126,7 @@ class AttributeLoaderTest extends UnitTestCase
 
         // We load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
-        (new AttributesLoader($entityManagerProvider))->load($config);
+        (new AttributesLoader($entityManagerProvider, __DIR__))->load($config);
 
         // Then we validate what's in it:
         $testTableConfig = $config->getTableConfig('test_with_embedded');

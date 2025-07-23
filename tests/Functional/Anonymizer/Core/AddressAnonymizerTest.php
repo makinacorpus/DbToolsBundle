@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DbToolsBundle\PackFrFR\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class AddressAnonymizerTest extends FunctionalTestCase
@@ -52,7 +51,7 @@ class AddressAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymize(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'address',
@@ -64,7 +63,7 @@ class AddressAnonymizerTest extends FunctionalTestCase
                 'region' => 'my_region',
                 'country' => 'my_country',
             ])
-        ));
+        );
 
         $this->assertSame(
             "Rue Aristide Briand",

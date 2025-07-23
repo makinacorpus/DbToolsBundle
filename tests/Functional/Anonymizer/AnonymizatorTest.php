@@ -55,6 +55,7 @@ class AnonymizatorTest extends FunctionalTestCase
             new Options([
                 'sample' => ['foo', 'bar', 'baz'],
             ]),
+            __DIR__,
         ));
         $config->add(new AnonymizerConfig(
             'table_test',
@@ -64,6 +65,7 @@ class AnonymizatorTest extends FunctionalTestCase
                 'iban' => 'my_iban',
                 'bic' => 'my_bic',
             ]),
+            __DIR__,
         ));
 
         $anonymizator = new Anonymizator($this->getDatabaseSession(), new AnonymizerRegistry(), $config);

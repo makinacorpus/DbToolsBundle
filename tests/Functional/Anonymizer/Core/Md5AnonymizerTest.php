@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 use MakinaCorpus\QueryBuilder\Vendor;
 
@@ -46,12 +45,12 @@ class Md5AnonymizerTest extends FunctionalTestCase
 
         $sample = ['sample1', 'sample2', 'sample3', 'sample4', 'sample5'];
 
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'md5',
             new Options(['sample' => $sample])
-        ));
+        );
 
         $this->assertSame(
             'test1',

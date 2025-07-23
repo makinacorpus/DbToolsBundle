@@ -63,13 +63,15 @@ class AnonymizatorFactoryTest extends UnitTestCase
                 'table_test',
                 'target_test',
                 'anonymizer_test',
-                new Options()
+                new Options(),
+                __DIR__,
             ),
             new AnonymizerConfig(
                 'table_test',
                 'target_test2',
                 'anonymizer_test2',
-                new Options(['option1' => 'value1'])
+                new Options(['option1' => 'value1']),
+                __DIR__,
             )
         ]));
 

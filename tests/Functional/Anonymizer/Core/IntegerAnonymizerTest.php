@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\Anonymizer\Core;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
-use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Test\FunctionalTestCase;
 
 class IntegerAnonymizerTest extends FunctionalTestCase
@@ -41,12 +40,12 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithMinAndMax(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'integer',
             new Options(['min' => 200, 'max' => 10000])
-        ));
+        );
 
         $this->assertSame(
             10,
@@ -82,12 +81,12 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithDelta(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'integer',
             new Options(['delta' => 10])
-        ));
+        );
 
         $this->assertSame(
             10,
@@ -124,12 +123,12 @@ class IntegerAnonymizerTest extends FunctionalTestCase
 
     public function testAnonymizeWithPercent(): void
     {
-        $anonymizator = $this->createAnonymizatorWithConfig(new AnonymizerConfig(
+        $anonymizator = $this->createAnonymizatorArbitrary(
             'table_test',
             'data',
             'integer',
             new Options(['percent' => 50])
-        ));
+        );
 
         $this->assertSame(
             10,
