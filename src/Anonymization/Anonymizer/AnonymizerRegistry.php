@@ -6,6 +6,14 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
 use Composer\InstalledVersions;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackEnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackEnumGeneratedAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackFileEnumAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackFileMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackMultipleColumnGeneratedAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Pack\PackRegistry;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 
@@ -32,15 +40,33 @@ class AnonymizerRegistry
         Core\StringPatternAnonymizer::class,
     ];
 
+    private PackRegistry $packRegistry;
+
     /** @var array<string, string> */
     private ?array $classes = null;
+
     /** @var array<string, AsAnonymizer> */
     private ?array $metadata = null;
+
+    /**
+     * Paths where to lookup for custom anonymizers.
+     *
+     * @var array<string>
+     */
     private array $paths = [];
 
-    public function __construct(?array $paths = null)
+    /**
+     * Pack filenames where to lookup for PHP-less packs.
+     *
+     * @var array<string>
+     */
+    private array $packs = [];
+
+    public function __construct(?array $paths = null, ?array $packs = null)
     {
         $this->addPath($paths ?? []);
+        $this->addPack($packs ?? []);
+        $this->packRegistry = new PackRegistry();
     }
 
     /**
@@ -49,6 +75,14 @@ class AnonymizerRegistry
     public function addPath(array $paths): void
     {
         $this->paths = \array_unique(\array_merge($this->paths, $paths));
+    }
+
+    /**
+     * Add PHP-less configuration file pack.
+     */
+    public function addPack(array $packs): void
+    {
+        $this->packs = \array_unique(\array_merge($this->packs, $packs));
     }
 
     /**
@@ -72,16 +106,107 @@ class AnonymizerRegistry
         Context $context,
         DatabaseSession $databaseSession,
     ): AbstractAnonymizer {
-        $className = $this->getAnonymizerClass($name);
+        if ($this->packRegistry->hasPack($name)) {
+            $ret = $this->createAnonymizerFromPack(
+                $this->packRegistry->getPackAnonymizer($name),
+                $config,
+                $context,
+                $databaseSession,
+            );
+        } else {
+            $className = $this->getAnonymizerClass($name);
 
-        $ret = new $className($config->table, $config->targetName, $databaseSession, $context, $config->options);
-        \assert($ret instanceof AbstractAnonymizer);
+            $ret = new $className($config->table, $config->targetName, $databaseSession, $context, $config->options);
+            \assert($ret instanceof AbstractAnonymizer);
+        }
 
         if ($ret instanceof WithAnonymizerRegistry) {
             $ret->setAnonymizerRegistry($this);
         }
 
         return $ret;
+    }
+
+    /**
+     * Create anonymizer instance from pack.
+     */
+    private function createAnonymizerFromPack(
+        PackAnonymizer $packAnonymizer,
+        AnonymizerConfig $config,
+        Context $context,
+        DatabaseSession $databaseSession
+    ): AbstractAnonymizer {
+        // Merge incomming user options with options from the pack.
+        // Pack given options will override the user one.
+        $options = $config->options->with($packAnonymizer->options->all());
+
+        // Anonymizer from pack factory. Hardcoded for now.
+        if ($packAnonymizer instanceof PackEnumAnonymizer) {
+            return new Core\StringAnonymizer(
+                $config->table,
+                $config->targetName,
+                $databaseSession,
+                $context,
+                // @todo Convert data to an array if an iterable was
+                //   here. Later, change getSample() signature of
+                //   AbstractEnumAnonymizer to accept any iterable.
+                $options->with([
+                    'sample' => \is_array($packAnonymizer->data) ? $packAnonymizer->data : \iterator_to_array($packAnonymizer->data),
+                ]),
+            );
+        }
+
+        if ($packAnonymizer instanceof PackMultipleColumnAnonymizer) {
+            // @todo
+            throw new \LogicException("Not implemented yet: missing arbitrary multiple column anonymizer.");
+        }
+
+        if ($packAnonymizer instanceof PackEnumGeneratedAnonymizer) {
+            if (1 !== \count($packAnonymizer->pattern)) {
+                // @todo
+                throw new \LogicException("Not implemented yet: pattern anonymizer does not support multiple patterns yet.");
+            }
+
+            return new Core\StringPatternAnonymizer(
+                $config->table,
+                $config->targetName,
+                $databaseSession,
+                $context,
+                $options->with([
+                    'pattern' => $packAnonymizer->pattern[0],
+                ]),
+            );
+        }
+
+        if ($packAnonymizer instanceof PackMultipleColumnGeneratedAnonymizer) {
+            // @todo
+            throw new \LogicException("Not implemented yet: missing arbitrary column generator anonymizer.");
+        }
+
+        if ($packAnonymizer instanceof PackFileEnumAnonymizer) {
+            return new Core\FileEnumAnonymizer(
+                $config->table,
+                $config->targetName,
+                $databaseSession,
+                $context,
+                $options->with(['source' => $packAnonymizer->filename]),
+            );
+        }
+
+        if ($packAnonymizer instanceof PackFileMultipleColumnAnonymizer) {
+            return new Core\FileMultipleColumnAnonymizer(
+                $config->table,
+                $config->targetName,
+                $databaseSession,
+                $context,
+                $options->with([
+                    'columns' => $packAnonymizer->columns,
+                    'source' => $packAnonymizer->filename,
+                ]),
+            );
+        }
+
+        throw new \LogicException(\sprintf("Pack anonymizer with class '%s' is not implement yet.", \get_class($packAnonymizer)));
     }
 
     /**
@@ -173,6 +298,12 @@ class AnonymizerRegistry
                 }
             }
         }
+
+        if ($this->packs) {
+            foreach ($this->packs as $filename) {
+                $this->packRegistry->addPack($filename);
+            }
+        }
     }
 
     /**
@@ -214,8 +345,10 @@ class AnonymizerRegistry
                 $path = $directory . '/src/Anonymizer/';
                 if (\is_dir($path)) {
                     $this->addPath([$path]);
+                } elseif (\file_exists($path . '/db_tools.pack.yaml')) {
+                    $this->addPack([$path . '/db_tools.pack.yaml']);
                 } else {
-                    \trigger_error(\sprintf("Anonymizers pack '%s' in '%s' as no 'src/Anonymizer/' directory and is thus not usable.", $package, $directory), \E_USER_ERROR);
+                    \trigger_error(\sprintf("Anonymizers pack '%s' in '%s' as no 'src/Anonymizer/' directory nor 'db_tools.pack.yaml' file and is thus not usable.", $package, $directory), \E_USER_ERROR);
                 }
             }
         }

@@ -1,0 +1,90 @@
+name: fr-fr
+data:
+    # Arbitrary data list. Whenever you use the "data" property name, it means
+    # that raw data you wrote will end up as a sample.
+    # Any null or empty string, or whitespace-only string will be ignored.
+    address_street_prefix:
+        data: [rue, avenue, impasse, voie, chemin, route]
+
+    # When "data" is a string, it is processed as a filename, relative to the
+    # directory this file is into.
+    address_street_name:
+        data: ./resources/address_street_names.txt
+
+    # You can use "pattern" instead of data, this will use the string pattern
+    # anonymizer instead. You can read documentation in the "String pattern"
+    # section under the "Core anonymizers" documentation page. 
+    address_street:
+        pattern: "[0-2000] {street_prefix} {street_name}"
+
+    # If "pattern" is an array with multiple values, then one in the list
+    # will be randomly selected for each anonymized row.
+    address_secondary:
+        pattern:
+            - "Apt. [0-500]"
+            - "[0-9] étage"
+
+    # Abitrary multiple column data list. Using the "columns" property sets
+    # the column names.
+    # Using the "data" property name allows you to directly write the raw data
+    # in this YAML file.
+    # When "data" is a string, it is processed as a filename, relative to the
+    # directory this file is into.
+    # File can only be a CSV file for now. Values in each line must match the
+    # same count and order than the "columns" property.
+    address_hexasmal:
+        # If you need to ignore a column in the original data file, you can
+        # set null as a column name: it will explicitely drop the column in
+        # the sample data.
+        # We are here using the "HexaSmal.csv" open data file from french
+        # public services (containing all official french locality names).
+        # This is why we are ignoring a useless (for us) column.
+        columns: [code_insee, locality, postal_code, null, dependent_locality]
+        data: ./resources/address/hexasmal.csv
+        # When reading a CSV file, you can use the following options.
+        # Following values are the default, setting it is optional.
+        file_csv_enclosure: '"'
+        file_csv_escape: '\\'
+        file_csv_separator: ','
+        # When reading any file, this will skip the first row.
+        file_skip_header: false
+
+    # Generated multiple column data list. Using "pattern" instead of of "data"
+    # when "columns" is specified means that complete sample rows are being
+    # generated using string patterns.
+    # You can give only one alternative here.
+    address:
+        columns: [country, locality, region, postal_code, street_address, secondary_address]
+        pattern:
+            # String sans rien, alors cette string (par défaut un pattern, mais sans tokens dedans)
+            - FRANCE
+            # On peut référencer une valeur dans une colonne d'un autre sample
+            # Ici feinte, un coalesce (dependent_locality, locality)
+            - "{address_hexasmal.dependant_locality|address_hexasmal.locality}"
+            - REGION TODO
+            # Si on référence de nouveau une valeur d'un autre sample, ça prend
+            # une valeur dans le même row que précédemment (on conserve la cohérence).
+            # en SQL pur, ça peut se traduire par un JOIN bien écrit.
+            - "{address_hexasmal.postal_code}"
+            # Valeur dans une single data list
+            - "{address_street}"
+            - "{address_secondary}"
+
+# @todo
+#   - description des packs et des anonymizers
+#   - options documentation? probablement pas, vu que toutes les options seront les mêmes
+#   - change Anonymizer::anonymize() and move into a createExpression() method
+#      - anonymize() become $update->set($this->columnName, $this->createExpression())
+#      - this allows using createExpression() out of SET clause
+
+# data: table de sample
+# pattern:
+#    conversion en concat
+#       data depuis arbitraire:
+#           join
+#       data depuis généré:
+#           join sur table expression qui réplique l'élement généré
+#       random int:
+#           code de generation random int
+#       "|" (or)
+#           conversion en coalesce
