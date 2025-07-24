@@ -17,6 +17,8 @@ class AnonymizerRegistry
         Core\ConstantAnonymizer::class,
         Core\DateAnonymizer::class,
         Core\EmailAnonymizer::class,
+        Core\FileEnumAnonymizer::class,
+        Core\FileMultipleColumnAnonymizer::class,
         Core\FirstNameAnonymizer::class,
         Core\FloatAnonymizer::class,
         Core\IbanBicAnonymizer::class,

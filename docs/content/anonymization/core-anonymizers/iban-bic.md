@@ -74,4 +74,10 @@ customer:
 ```
 :::
 
+:::warning
+This anonymizer works at the *table level* which means that the PHP attribute
+cannot target object properties: you must specify table column names and not
+PHP class property names.
+:::
+
 @@@
