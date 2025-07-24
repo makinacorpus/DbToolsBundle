@@ -58,13 +58,13 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
 
         // We only validate column options here.
         // Other ones will be validated by each implementation.
-        $options = \array_filter(
+        $columnOptions = \array_filter(
             $this->options->all(),
             fn ($key) => \in_array($key, $this->getColumnNames()),
             ARRAY_FILTER_USE_KEY
         );
 
-        if (\count(\array_unique($options)) < \count($options)) {
+        if (\count(\array_unique($columnOptions)) < \count($columnOptions)) {
             throw new \InvalidArgumentException("The same column has been mapped twice.");
         }
     }
