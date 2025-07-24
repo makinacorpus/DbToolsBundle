@@ -18,12 +18,30 @@ abstract class AbstractAnonymizer
     public const JOIN_TABLE = '_target_table';
     public const TEMP_TABLE_PREFIX = '_db_tools_sample_';
 
+    /**
+     * @todo in 3.0 move this as a constructor-promoted property.
+     */
+    protected readonly Context $context;
+    protected readonly Options $options;
+
     final public function __construct(
         protected string $tableName,
         protected string $columnName,
         protected DatabaseSession $databaseSession,
-        protected Options $options,
+        /**
+         * @todo In 3.0, Options will be replaced with Context instead.
+         */
+        Options $options,
     ) {
+        if ($options instanceof Context) {
+            $this->context = $options;
+            $this->options = $options->options;
+        } else {
+            \trigger_deprecation('makinacorpus/db-tools-bundle', '2.1.0', \sprintf("%s::__construct() 'Options \$options' will be changed to 'Context \$context' in 3.0", static::class));
+            $this->options = $options;
+            $this->context = new Context($options);
+        }
+
         $this->validateOptions();
     }
 
