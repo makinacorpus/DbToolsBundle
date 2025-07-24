@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
@@ -48,6 +49,7 @@ class Anonymizator implements LoggerAwareInterface
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
         private ?string $salt = null,
+        private readonly Context $defaultContext = new Context(),
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
@@ -84,12 +86,13 @@ class Anonymizator implements LoggerAwareInterface
     /**
      * Create anonymizer instance.
      */
-    protected function createAnonymizer(AnonymizerConfig $config): AbstractAnonymizer
+    protected function createAnonymizer(AnonymizerConfig $config, Context $context): AbstractAnonymizer
     {
         return $this->anonymizerRegistry->createAnonymizer(
             $config->anonymizer,
             $config,
-            $config->options->with(['salt' => $this->getSalt()]),
+            // @todo "salt" should belong to context instead.
+            $context->withOptions($config->options->with(['salt' => $this->getSalt()])),
             $this->databaseSession
         );
     }
@@ -127,6 +130,7 @@ class Anonymizator implements LoggerAwareInterface
         }
 
         $plan = [];
+        $context = clone $this->defaultContext;
 
         if ($onlyTargets) {
             foreach ($onlyTargets as $targetString) {
@@ -160,7 +164,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($plan as $table => $targets) {
             $anonymizers[$table] = [];
             foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
-                $anonymizers[$table][] = $this->createAnonymizer($config);
+                $anonymizers[$table][] = $this->createAnonymizer($config, $context);
             }
         }
 
@@ -910,7 +914,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($this->anonymizationConfig->all() as $table => $tableConfig) {
             foreach ($tableConfig as $config) {
                 try {
-                    $this->createAnonymizer($config);
+                    $this->createAnonymizer($config, $this->defaultContext);
                 } catch (\Exception $e) {
                     if (!\key_exists($table, $errors)) {
                         $errors[$table] = [];
