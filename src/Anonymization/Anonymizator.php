@@ -43,16 +43,17 @@ class Anonymizator implements LoggerAwareInterface
     ];
 
     private OutputInterface $output;
+    private readonly Context $defaultContext;
 
     public function __construct(
         private DatabaseSession $databaseSession,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
-        private ?string $salt = null,
-        private readonly Context $defaultContext = new Context(),
+        ?Context $defaultContext = null,
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
+        $this->defaultContext = $defaultContext ?? new Context();
     }
 
     /**
@@ -73,14 +74,10 @@ class Anonymizator implements LoggerAwareInterface
         return $this;
     }
 
+    #[\Deprecated(message: "Will be removed in 3.0, use Context::generateRandomSalt() instead.", since: "2.1.0")]
     public static function generateRandomSalt(): string
     {
-        return \base64_encode(\random_bytes(12));
-    }
-
-    protected function getSalt(): string
-    {
-        return $this->salt ??= self::generateRandomSalt();
+        return Context::generateRandomSalt();
     }
 
     /**
@@ -91,8 +88,7 @@ class Anonymizator implements LoggerAwareInterface
         return $this->anonymizerRegistry->createAnonymizer(
             $config->anonymizer,
             $config,
-            // @todo "salt" should belong to context instead.
-            $context->withOptions($config->options->with(['salt' => $this->getSalt()])),
+            $context,
             $this->databaseSession
         );
     }

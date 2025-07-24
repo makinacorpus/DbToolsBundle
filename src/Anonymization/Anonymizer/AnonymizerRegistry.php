@@ -67,12 +67,12 @@ class AnonymizerRegistry
     public function createAnonymizer(
         string $name,
         AnonymizerConfig $config,
-        Options $options,
+        Context $context,
         DatabaseSession $databaseSession,
     ): AbstractAnonymizer {
         $className = $this->getAnonymizerClass($name);
 
-        $ret = new $className($config->table, $config->targetName, $databaseSession, $options);
+        $ret = new $className($config->table, $config->targetName, $databaseSession, $context, $config->options);
         \assert($ret instanceof AbstractAnonymizer);
 
         if ($ret instanceof WithAnonymizerRegistry) {
