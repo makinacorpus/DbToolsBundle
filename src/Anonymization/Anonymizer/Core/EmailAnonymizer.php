@@ -38,7 +38,7 @@ class EmailAnonymizer extends AbstractSingleColumnAnonymizer
             $userExpr = $expr->column($this->columnName, $this->tableName);
 
             if ($this->options->getBool('use_salt', true)) {
-                $userExpr = $expr->concat($userExpr, $expr->value($this->getSalt()));
+                $userExpr = $expr->concat($userExpr, $expr->value($this->context->salt));
             }
 
             $emailHashExpr = $expr->md5($userExpr);

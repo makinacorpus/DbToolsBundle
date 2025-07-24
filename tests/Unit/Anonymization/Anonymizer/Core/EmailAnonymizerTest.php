@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\EmailAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class EmailAnonymizerTest extends UnitTestCase
@@ -86,9 +87,9 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
-            new Options([
-                'salt' => 'my_salt',
-            ])
+            new Context(
+                salt: 'my_salt',
+            ),
         );
 
         $instance->anonymize($update);
@@ -121,10 +122,12 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
-            new Options([
-                'domain' => 'makina-corpus.com',
-                'salt' => 'my_salt',
-            ]),
+            new Context(
+                salt: 'my_salt',
+                options: new Options([
+                    'domain' => 'makina-corpus.com',
+                ]),
+            ),
         );
 
         $instance->anonymize($update);
