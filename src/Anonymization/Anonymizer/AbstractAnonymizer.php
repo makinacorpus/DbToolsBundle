@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
@@ -18,30 +17,13 @@ abstract class AbstractAnonymizer
     public const JOIN_TABLE = '_target_table';
     public const TEMP_TABLE_PREFIX = '_db_tools_sample_';
 
-    /**
-     * @todo in 3.0 move this as a constructor-promoted property.
-     */
-    protected readonly Context $context;
-    protected readonly Options $options;
-
     final public function __construct(
         protected string $tableName,
         protected string $columnName,
         protected DatabaseSession $databaseSession,
-        /**
-         * @todo In 3.0, Options will be replaced with Context instead.
-         */
-        Options $options,
+        protected readonly Context $context,
+        protected readonly Options $options,
     ) {
-        if ($options instanceof Context) {
-            $this->context = $options;
-            $this->options = $options->options;
-        } else {
-            \trigger_deprecation('makinacorpus/db-tools-bundle', '2.1.0', \sprintf("%s::__construct() 'Options \$options' will be changed to 'Context \$context' in 3.0", static::class));
-            $this->options = $options;
-            $this->context = new Context($options);
-        }
-
         $this->validateOptions();
     }
 
@@ -90,14 +72,6 @@ abstract class AbstractAnonymizer
     protected function getJoinColumn(): Expression
     {
         return ExpressionFactory::column($this->getJoinId(), self::JOIN_TABLE);
-    }
-
-    /**
-     * Get a random, global salt for anonymizing hashed values.
-     */
-    protected function getSalt(): string
-    {
-        return $this->options->get('salt') ?? Anonymizator::generateRandomSalt();
     }
 
     /**

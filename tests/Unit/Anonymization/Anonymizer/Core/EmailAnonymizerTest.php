@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\EmailAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class EmailAnonymizerTest extends UnitTestCase
@@ -16,7 +17,8 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
-            new Options([]),
+            new Context(),
+            new Options(),
         );
 
         self::expectNotToPerformAssertions();
@@ -28,6 +30,7 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'domain' => 'makina-corpus.com',
             ]),
@@ -44,6 +47,7 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'domain' => ['ttt', 'ttt'],
             ]),
@@ -56,6 +60,7 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'use_salt' => true,
             ]),
@@ -72,6 +77,7 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'use_salt' => ['true'],
             ]),
@@ -86,9 +92,10 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
-            new Options([
-                'salt' => 'my_salt',
-            ])
+            new Context(
+                salt: 'my_salt',
+            ),
+            new Options(),
         );
 
         $instance->anonymize($update);
@@ -121,9 +128,11 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(
+                salt: 'my_salt',
+            ),
             new Options([
                 'domain' => 'makina-corpus.com',
-                'salt' => 'my_salt',
             ]),
         );
 
@@ -157,6 +166,7 @@ class EmailAnonymizerTest extends UnitTestCase
             'some_table',
             'email',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'use_salt' => false,
             ]),
