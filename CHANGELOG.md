@@ -2,6 +2,7 @@
 
 ## Next
 
+* [feature] 🌟 File multi-column anonymizer, inject sample rows in database from a CSV file.
 * [feature] 🌟 File enum anonymizer, inject samples in database from a plain text or CSV file.
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
 * [internal] introduce anonymizer context for carrying environment configuration to anonymizers (#235).
