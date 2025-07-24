@@ -43,16 +43,22 @@ class Anonymizator implements LoggerAwareInterface
     ];
 
     private OutputInterface $output;
+    private readonly Context $defaultContext;
 
     public function __construct(
         private DatabaseSession $databaseSession,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
-        private ?string $salt = null,
-        private readonly Context $defaultContext = new Context(),
+        ?string $salt = null,
+        ?Context $defaultContext = null,
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
+
+        if ($salt) {
+            \trigger_deprecation('makinacorpus/db-tools-bundle', '2.1.0', \sprintf("%s::__construct() '\$salt' will be removed in 3.0, use %s class to pass a salt.", static::class, Context::class));
+        }
+        $this->defaultContext = $defaultContext ?? new Context($salt);
     }
 
     /**
@@ -73,14 +79,10 @@ class Anonymizator implements LoggerAwareInterface
         return $this;
     }
 
+    #[\Deprecated(message: "Will be removed in 3.0, use Context::generateRandomSalt() instead.", since: "2.1.0")]
     public static function generateRandomSalt(): string
     {
-        return \base64_encode(\random_bytes(12));
-    }
-
-    protected function getSalt(): string
-    {
-        return $this->salt ??= self::generateRandomSalt();
+        return Context::generateRandomSalt();
     }
 
     /**
@@ -92,7 +94,7 @@ class Anonymizator implements LoggerAwareInterface
             $config->anonymizer,
             $config,
             // @todo "salt" should belong to context instead.
-            $context->withOptions($config->options->with(['salt' => $this->getSalt()])),
+            $context->withOptions($config->options),
             $this->databaseSession
         );
     }

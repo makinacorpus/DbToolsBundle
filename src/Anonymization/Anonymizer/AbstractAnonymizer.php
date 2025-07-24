@@ -35,11 +35,11 @@ abstract class AbstractAnonymizer
     ) {
         if ($options instanceof Context) {
             $this->context = $options;
-            $this->options = $options->options;
+            $this->options = $options->options->with(['salt' => $options->salt]);
         } else {
             \trigger_deprecation('makinacorpus/db-tools-bundle', '2.1.0', \sprintf("%s::__construct() 'Options \$options' will be changed to 'Context \$context' in 3.0", static::class));
             $this->options = $options;
-            $this->context = new Context($options);
+            $this->context = new Context(salt: $options->getString('salt'));
         }
 
         $this->validateOptions();
@@ -95,9 +95,10 @@ abstract class AbstractAnonymizer
     /**
      * Get a random, global salt for anonymizing hashed values.
      */
+    #[\Deprecated(message: "Will be removed in 3.0, use \$this->context->salt instead.", since: "2.1.0")]
     protected function getSalt(): string
     {
-        return $this->options->get('salt') ?? Anonymizator::generateRandomSalt();
+        return $this->context->salt;
     }
 
     /**

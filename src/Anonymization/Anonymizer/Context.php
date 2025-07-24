@@ -10,13 +10,26 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
  */
 class Context extends Options
 {
+    public readonly string $salt;
+
     public function __construct(
+        ?string $salt = null,
+        /**
+         * @todo Remove this in 3.0.
+         */
         public Options $options = new Options(),
-    ) {}
+    ) {
+        $this->salt = $salt ?? self::generateRandomSalt();
+    }
+
+    public static function generateRandomSalt(): string
+    {
+        return \base64_encode(\random_bytes(12));
+    }
 
     public function withOptions(Options $options): Context
     {
-        return new self($options);
+        return new self($this->salt, $options);
     }
 
     #[\Deprecated(message: "Only exists for class signature backward compatibility.", since: "2.1.0")]
