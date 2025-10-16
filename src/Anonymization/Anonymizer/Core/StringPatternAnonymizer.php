@@ -110,12 +110,10 @@ class StringPatternAnonymizer extends AbstractSingleColumnAnonymizer implements 
                 // so we need to create as many instances as we have ranges.
                 $childAnonymizer = $this->getAnonymizer(
                     'integer',
-                    new Options(
-                        [
+                    new Options([
                         'min' => $part->start,
                         'max' => $part->stop,
-                    ],
-                    )
+                    ]),
                 );
                 \assert($childAnonymizer instanceof AbstractSingleColumnAnonymizer);
 

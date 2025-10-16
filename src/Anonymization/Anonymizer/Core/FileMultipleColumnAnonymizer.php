@@ -29,6 +29,8 @@ use MakinaCorpus\DbToolsBundle\Helper\FileReader;
         character (default is ',').
       - 'file_skip_header': when reading any file, set this to true to skip
         the first line (default is false).
+    All other options are key-value pairs, keys are column names as defined in the
+    'columns' option, values are targetted database column names to anonymize.
     TXT
 )]
 class FileMultipleColumnAnonymizer extends AbstractMultipleColumnAnonymizer

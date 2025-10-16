@@ -157,8 +157,18 @@ class AnonymizerRegistry
         }
 
         if ($packAnonymizer instanceof PackMultipleColumnAnonymizer) {
-            // @todo
-            throw new \LogicException("Not implemented yet: missing arbitrary multiple column anonymizer.");
+            return new Core\MultipleColumnAnonymizer(
+                $config->table,
+                $config->targetName,
+                $databaseSession,
+                // @todo Convert data to an array if an iterable was
+                //   here. Later, change getSample() signature of
+                //   AbstractEnumAnonymizer to accept any iterable.
+                $options->with([
+                    'columns' => $packAnonymizer->columns,
+                    'sample' => \is_array($packAnonymizer->data) ? $packAnonymizer->data : \iterator_to_array($packAnonymizer->data),
+                ]),
+            );
         }
 
         if ($packAnonymizer instanceof PackEnumGeneratedAnonymizer) {
