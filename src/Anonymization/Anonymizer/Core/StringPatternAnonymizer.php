@@ -155,7 +155,9 @@ class StringPatternAnonymizer extends AbstractSingleColumnAnonymizer implements 
             }
         }
 
-        return $expr->concat(...$expressions);
+        return $this->getSetIfNotNullExpression(
+            $expr->concat(...$expressions),
+        );
     }
 
     #[\Override]
