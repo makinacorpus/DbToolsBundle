@@ -4,8 +4,24 @@ parameters:
         - src
         - tests
     excludePaths:
-        - src/DependencyInjection/DbToolsConfiguration.php
+        - src/DependencyInjection/DbToolsConfiguration.php (?)
     checkMissingOverrideMethodAttribute: true
+    treatPhpDocTypesAsCertain: false
     ignoreErrors:
         - '#Instantiated class Seld\\PharUtils\\Timestamps not found.#'
         - '#on an unknown class Seld\\PharUtils\\Timestamps.#'
+        #- '#Call to method PHPUnit\\Framework\\Assert::assertNotNull\(\) with array<string, mixed> will always evaluate to true.#'
+        - '#Call to static method PHPUnit\\Framework\\Assert::assertNotNull\(\) with string will always evaluate to true.#'
+        - '#Call to method PHPUnit\\Framework\\Assert::assertNotNull\(\) with int will always evaluate to true.#'
+        - '#Call to method PHPUnit\\Framework\\Assert::assertNotNull\(\) with float will always evaluate to true.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestJoinedChild::\$url \(string\|null\) is never assigned string so it can be removed from the property type.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestJoinedChild::\$thumbnail_url \(string\|null\) is never assigned string so it can be removed from the property type.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestEntity::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
+        - '#Call to function assert\(\) with true will always evaluate to true.#'
+        - '#Strict comparison using !== between Symfony\\Component\\Finder\\SplFileInfo and string\|null will always evaluate to true.#'
+        - '#Instanceof between MakinaCorpus\\DbToolsBundle\\Backupper\\MariadbBackupper\|MakinaCorpus\\DbToolsBundle\\Backupper\\MysqlBackupper\|MakinaCorpus\\DbToolsBundle\\Backupper\\PgsqlBackupper\|MakinaCorpus\\DbToolsBundle\\Backupper\\SqliteBackupper and MakinaCorpus\\DbToolsBundle\\Backupper\\AbstractBackupper will always evaluate to true.#'
+        - '#Instanceof between MakinaCorpus\\DbToolsBundle\\Restorer\\MariadbRestorer\|MakinaCorpus\\DbToolsBundle\\Restorer\\MysqlRestorer\|MakinaCorpus\\DbToolsBundle\\Restorer\\PgsqlRestorer\|MakinaCorpus\\DbToolsBundle\\Restorer\\SqliteRestorer and MakinaCorpus\\DbToolsBundle\\Restorer\\AbstractRestorer will always evaluate to true.#'
+        - '#Method MakinaCorpus\\DbToolsBundle\\Bridge\\Symfony\\DependencyInjection\\DbToolsExtension::getConfiguration\(\) never returns null so it can be removed from the return type.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestEntityWithEmbedded::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestJoinedParent::\$id \(int\|null\) is never assigned int so it can be removed from the property type.#'
+        - '#Property MakinaCorpus\\DbToolsBundle\\Tests\\Resources\\Loader\\TestJoinedParent::\$email \(string\|null\) is never assigned string so it can be removed from the property type.#'
