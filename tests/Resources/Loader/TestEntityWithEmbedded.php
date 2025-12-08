@@ -14,7 +14,7 @@ class TestEntityWithEmbedded
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
-    private ?int $id = null;
+    private int|null $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Anonymize(type:'email', options: ['domain' => 'toto.com'])]
@@ -33,9 +33,16 @@ class TestEntityWithEmbedded
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
 
         return $this;
     }

@@ -287,7 +287,7 @@ class LoremIpsum
             $commas = $this->gauss($mean, $std_dev);
 
             for ($i = 1; $i <= $commas; $i++) {
-                $word = \round($i * $word_count / ($commas + 1));
+                $word = (int) \round($i * $word_count / ($commas + 1));
 
                 if ($word < ($word_count - 1) && $word > 0) {
                     $words[$word] .= ',';

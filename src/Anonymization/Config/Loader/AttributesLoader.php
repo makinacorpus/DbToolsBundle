@@ -32,7 +32,7 @@ class AttributesLoader implements LoaderInterface
         $metadatas = $metadataFactory->getAllMetadata();
 
         foreach ($metadatas as $metadata) {
-            \assert($metadata instanceof ClassMetadata);
+            /** @var ClassMetadata $metadata */
             if ($metadata->isMappedSuperclass || $metadata->isEmbeddedClass) {
                 continue;
             }
@@ -96,7 +96,7 @@ class AttributesLoader implements LoaderInterface
                         $ownerClass = $fieldMapping->inherited;
                     }
                     $parentMetadata = $metadataFactory->getMetadataFor($ownerClass);
-                    \assert($parentMetadata instanceof ClassMetadata);
+                    /** @var ClassMetadata $parentMetadata */
                     $tableName = $parentMetadata->getTableName();
                 } else {
                     $tableName = $metadata->getTableName();

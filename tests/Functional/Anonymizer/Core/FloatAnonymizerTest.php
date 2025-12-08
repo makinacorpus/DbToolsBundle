@@ -59,7 +59,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (float) $datas[0];
-        $this->assertNotNull($data);
         $this->assertNotSame(10.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
@@ -67,7 +66,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
-        $this->assertNotNull($data);
         $this->assertNotSame(20.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
@@ -75,7 +73,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
-        $this->assertNotNull($data);
         $this->assertNotSame(30.5, $data);
         $this->assertGreaterThanOrEqual(2, $data);
         $this->assertLessThanOrEqual(5.5, $data);
@@ -106,7 +103,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (float) $datas[0];
-        $this->assertNotNull($data);
         // Initial value is 10.5, we added a value in [-5.2, 5.2]
         // so current value should be in [10.5-5.2, 10.5+5.2]
         $this->assertGreaterThanOrEqual(5.3, $data);
@@ -115,7 +111,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[1];
-        $this->assertNotNull($data);
         // Initial value is 20.5, we added a value in [-5.2, 5.2]
         // so current value should be in [20.5-5.2, 20.5+5.2]
         $this->assertGreaterThanOrEqual(15.3, $data);
@@ -124,7 +119,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertSame(\number_format($data, 6), \number_format(\round($data, 6), 6));
 
         $data = (float) $datas[2];
-        $this->assertNotNull($data);
         // Initial value is 30.5, we added a value in [-5.2, 5.2]
         // so current value should be in [30.5-5.2, 30.5+5.2]
         $this->assertGreaterThanOrEqual(25.3, $data);
@@ -157,7 +151,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (float) $datas[0];
-        $this->assertNotNull($data);
         // Initial value is 10.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [10.5*0.95, 10.5*1.05]
@@ -165,7 +158,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(11.025, \round($data, 3));
 
         $data = (float) $datas[1];
-        $this->assertNotNull($data);
         // Initial value is 20.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [20.5*0.95, 20.5*1.05]
@@ -173,7 +165,6 @@ class FloatAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(21.525, \round($data, 3));
 
         $data = (float) $datas[2];
-        $this->assertNotNull($data);
         // Initial value is 30.5, we added a random percent of
         // this value in [-5%, 5%],
         // so current value should be in [30.5*0.95, 30.5*1.05]

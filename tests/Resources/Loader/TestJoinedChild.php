@@ -13,11 +13,11 @@ class TestJoinedChild extends TestJoinedParent
 {
     #[Anonymize(type: 'constant', options: ['value' => 'https://fr.wikipedia.org/wiki/Wikip%C3%A9dia:Accueil_principal#/media/Fichier:Myotis_crypticus_-_Manuel_Ruedi.jpg'])]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $url = null;
+    private string|null $url = null;
 
     #[Anonymize(type: 'constant', options: ['value' => 'https://fr.wikipedia.org/wiki/Wikip%C3%A9dia:Accueil_principal#/media/Fichier:Myotis_crypticus_-_Manuel_Ruedi.jpg'])]
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $thumbnail_url = null;
+    private string|null $thumbnail_url = null;
 
     public function getUrl(): ?string
     {
@@ -27,5 +27,19 @@ class TestJoinedChild extends TestJoinedParent
     public function getThumbnailUrl(): ?string
     {
         return $this->thumbnail_url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function setThumbnailUrl(?string $thumbnailUrl): static
+    {
+        $this->thumbnail_url = $thumbnailUrl;
+
+        return $this;
     }
 }

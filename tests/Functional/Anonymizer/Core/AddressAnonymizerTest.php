@@ -74,13 +74,11 @@ class AddressAnonymizerTest extends FunctionalTestCase
         $anonymizator->anonymize();
 
         $datas = $this->getDatabaseSession()->executeQuery('select * from table_test order by id asc')->fetchAllAssociative();
-        $this->assertNotNull($datas[0]);
         $this->assertNotSame('Rue Aristide Briand', $datas[0]['my_street_address']);
         $this->assertNotSame('La maison aux volets bleus', $datas[0]['my_secondary_address']);
         $this->assertNotSame('44400', $datas[0]['my_postal_code']);
         $this->assertNotSame('REZE', $datas[0]['my_locality']);
         $this->assertNotSame('Pays de loire', $datas[0]['my_region']);
-        $this->assertNotNull($datas[1]);
         $this->assertNotSame('Rue Jean Jaures', $datas[1]['my_street_address']);
         $this->assertNotSame('Au dernier étage', $datas[1]['my_secondary_address']);
         $this->assertNotSame('44000', $datas[1]['my_postal_code']);
