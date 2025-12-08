@@ -1,5 +1,9 @@
 name: "Continuous Integration"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     paths:
@@ -64,6 +68,7 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "pgsql pdo_pgsql"
+          cache: composer
           ini-values: "zend.assertions=1"
 
       - name: "Install dependencies with Composer"
