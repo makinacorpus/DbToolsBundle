@@ -186,24 +186,24 @@ class AttributeLoaderTest extends UnitTestCase
         $intValue = 123;
         $stringValue = 'test@example.com';
         $nullValue = null;
-        
+
         // Test that we can create entities (this ensures the classes are analyzed)
         $entity = new TestEntity();
         $embeddedEntity = new TestEntityWithEmbedded();
         $childEntity = new TestJoinedChild();
         $parentEntity = new TestJoinedParent();
-        
+
         // Verify instances were created successfully
         self::assertInstanceOf(TestEntity::class, $entity);
         self::assertInstanceOf(TestEntityWithEmbedded::class, $embeddedEntity);
         self::assertInstanceOf(TestJoinedChild::class, $childEntity);
         self::assertInstanceOf(TestJoinedParent::class, $parentEntity);
-        
+
         // Use the typed variables to ensure PHPStan sees the types are used
         self::assertIsInt($intValue);
         self::assertIsString($stringValue);
         self::assertNull($nullValue);
-        
+
         // Simulate property assignments that would happen in real usage
         // (We can't actually assign to private properties, but this shows the types are used)
         if (false) { // This code never runs but PHPStan analyzes it
@@ -221,12 +221,12 @@ class AttributeLoaderTest extends UnitTestCase
             $entity->setCity($nullValue);
             $entity->setCountry($stringValue);
             $entity->setCountry($nullValue);
-            
+
             $embeddedEntity->setId($intValue);
             $embeddedEntity->setEmail($stringValue);
             $embeddedEntity->setId($nullValue);
             $embeddedEntity->setEmail($nullValue);
-            
+
             $childEntity->setId($intValue);
             $childEntity->setEmail($stringValue);
             $childEntity->setUrl($stringValue);
@@ -235,7 +235,7 @@ class AttributeLoaderTest extends UnitTestCase
             $childEntity->setEmail($nullValue);
             $childEntity->setUrl($nullValue);
             $childEntity->setThumbnailUrl($nullValue);
-            
+
             $parentEntity->setId($intValue);
             $parentEntity->setEmail($stringValue);
             $parentEntity->setId($nullValue);
