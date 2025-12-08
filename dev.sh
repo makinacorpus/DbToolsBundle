@@ -5,7 +5,9 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # PHP version.
-PHPVER="8-2"
+# For now, we keep PHP 8.3 as default version,
+# mainly because phpstan can't run with PHP 8.4
+PHPVER="8-3"
 # Extra parameters passed to all docker command lines.
 EXTRA_DOCKER_ENV=""
 
@@ -24,11 +26,19 @@ while getopts ":xp:l" opt; do
                 "8.1")
                     PHPVER="8-1"
                     ;;
+                "8.2")
+                    PHPVER="8-2"
+                    ;;
                 "8.3")
                     PHPVER="8-3"
                     ;;
+                "8.4")
+                    PHPVER="8-4"
+                    ;;
                 *)
-                    PHPVER="8-2"
+                    # For now, we keep PHP 8.3 as default version,
+                    # mainly because phpstan can't run with PHP 8.4
+                    PHPVER="8-3"
                     ;;
             esac
             ;;
@@ -69,6 +79,12 @@ do_up() {
 do_down() {
     section_title "Down containers"
     do_docker_compose down
+}
+
+# Clean all containers, images and volumes
+do_clean() {
+    section_title "Cleanup containers and images"
+    do_docker_compose down --rmi all --volumes --remove-orphans
 }
 
 do_composer_update() {
@@ -325,12 +341,13 @@ do_notice() {
     printf "\n              ${GREEN}./dev.sh test_all --filter AnonymizatorFactoryTest${NC}"
     printf "\n  - ${GREEN}test${NC}: Run PHPUnit tests for a specific database vendors or version"
     printf "\n  - ${GREEN}unittest${NC}: Run PHPUnit tests without any database vendor"
+    printf "\n  - ${GREEN}clean${NC}: Cleanup containers and images"
     printf "\n  - ${GREEN}notice${NC}: Display this help"
     printf "\n"
     printf "\nAvailable options:"
     printf "\n  ${GREEN}-l${NC}: run ${GREEN}composer update${NC} with ${GREEN}--prefer-lowest${NC} option"
     printf "\n  ${GREEN}-x${NC}: trigger ${GREEN}xdebug${NC} when running test suites (ignored otherwise)"
-    printf "\n  ${GREEN}-p 8.3${NC}: choose PHP version to run, ${GREEN}8.2${NC} or ${GREEN}8.3${NC}"
+    printf "\n  ${GREEN}-p 8.3${NC}: choose PHP version to run, ${GREEN}8.2${NC} or ${GREEN}8.4${NC}"
     printf "\n"
     printf "\n\n"
 }
@@ -341,6 +358,6 @@ action=${1-}
 if [[ -n $@ ]];then shift;fi
 
 case $action in
-    build|up|down|ps|checks|test_all|unittest|test|composer_update|notice) do_$action "$@";;
+    build|up|down|ps|checks|test_all|unittest|test|composer_update|notice|clean) do_$action "$@";;
     *) do_notice;;
 esac

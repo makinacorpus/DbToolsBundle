@@ -20,21 +20,18 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RestoreCommand extends Command
 {
     private SymfonyStyle $io;
-    private string $connectionName;
     private AbstractRestorer $restorer;
     private ?string $backupFilename = null;
     private ?string $extraOptions = null;
     private bool $ignoreDefaultOptions = false;
-    private $force = false;
+    private bool $force = false;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private RestorerFactory $restorerFactory,
         private Storage $storage,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
     }
 
     #[\Override]
@@ -203,6 +200,7 @@ class RestoreCommand extends Command
     private function listBackups(): int
     {
         $this->io->section('Backups list');
+        $this->restorer = $this->restorerFactory->create($this->connectionName);
 
         $backupLists = $this->storage->listBackups(
             $this->connectionName,

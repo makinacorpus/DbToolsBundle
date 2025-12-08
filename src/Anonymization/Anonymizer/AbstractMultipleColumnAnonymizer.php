@@ -15,6 +15,7 @@ use MakinaCorpus\QueryBuilder\Vendor;
 abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
 {
     private ?string $sampleTableName = null;
+    private ?string $joinAlias = null;
 
     /**
      * Get column names.
@@ -49,6 +50,8 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     #[\Override]
     protected function validateOptions(): void
     {
+        parent::validateOptions();
+
         if (0 === \count($this->options->all())) {
             throw new \InvalidArgumentException("You must provide at least one option.");
         }
@@ -79,16 +82,30 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
     #[\Override]
     public function anonymize(Update $update): void
     {
-        $columns = $this->getColumnNames();
+        $columnOptions = $this->getColumnOptions();
 
-        if (0 >= $this->options->count()) {
-            throw new \InvalidArgumentException(\sprintf(
-                "Options are empty. You should at least give one of those: %s",
-                \implode(', ', $columns)
-            ));
+        $expr = $update->expression();
+
+        $joinAlias = $this->addJoinToQuery($update);
+
+        foreach ($columnOptions as $column) {
+            $update->set(
+                $this->options->get($column),
+                $expr->column($column, $joinAlias)
+            );
+        }
+    }
+
+    /**
+     * Add sample table join to query and return its alias.
+     */
+    public function addJoinToQuery(Update $update): string
+    {
+        if ($this->joinAlias) {
+            return $this->joinAlias;
         }
 
-        $columnOptions = \array_filter($columns, fn ($column) => $this->options->has($column));
+        $columnOptions = $this->getColumnOptions();
 
         $expr = $update->expression();
 
@@ -128,12 +145,22 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
             $joinAlias
         );
 
-        foreach ($columnOptions as $column) {
-            $update->set(
-                $this->options->get($column),
-                $expr->column($column, $joinAlias)
-            );
+        return $this->joinAlias = $joinAlias;
+    }
+
+    /** @return array<string> */
+    private function getColumnOptions(): array
+    {
+        $columns = $this->getColumnNames();
+
+        if (0 >= $this->options->count()) {
+            throw new \InvalidArgumentException(\sprintf(
+                "Options are empty. You should at least give one of those: %s",
+                \implode(', ', $columns)
+            ));
         }
+
+        return \array_filter($columns, fn ($column) => $this->options->has($column));
     }
 
     #[\Override]
@@ -147,6 +174,7 @@ abstract class AbstractMultipleColumnAnonymizer extends AbstractTableAnonymizer
                 ->dropTable($this->sampleTableName)
                 ->commit()
             ;
+            $this->sampleTableName = $this->joinAlias = null;
         }
     }
 }

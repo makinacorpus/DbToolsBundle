@@ -9,9 +9,21 @@ outline:
 Considering your anonymization has been configured, you can
 now anonymize a backup file by running:
 
+@@@ standalone
 ```sh
-console db-tools:anonymize path/to/your/backup/to/anonymized
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized
 ```
+@@@
+@@@ symfony
+```sh
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized
+```
+@@@
 
 This command will successively:
 
@@ -22,7 +34,7 @@ This command will successively:
 5. Restore your database to its original state from the backup produced at step 1.
 
 ::: warning
-The `db-tools:anonymize` command alone is not enough to ensure you follow GDPR best practices.
+The <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymize`</span> command alone is not enough to ensure you follow GDPR best practices.
 It depends on:
 
 * How you correctly configured your anonymization (obviously),
@@ -35,52 +47,108 @@ Learn more about a proper workflow in the [dedicated section](./workflow).
 
 ## Options
 
-You can specify the behavior of the  `db-tools:anonymize`command with some options detailed below.
+You can specify the behavior of the <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymize`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymize`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymize`</span> command with some options detailed below.
 
 ### Anonymizing local database
 
 The main purpose of this command is to provide a way to anonymize a backup file. But
 it could also be used to anonymize local database with `--local-database`.
 
+@@@ standalone
 ```sh
-console db-tools:anonymize --local-database
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --local-database
 ```
+@@@
+@@@ symfony
+```sh
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --local-database
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized --local-database
+```
+@@@
 
 ### Do not restore initial state after anonymization
 
 You can choose to not restore initial database with the `--no-restore` option.
 With this option, steps 1 and 5 will be skipped during execution.
 
+@@@ standalone
 ```sh
-console db-tools:anonymize --no-restore
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --no-restore
 ```
+@@@
+@@@ symfony
+```sh
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --no-restore
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized --no-restore
+```
+@@@
 
 ### Only anonymize specific targets
 
 Use this option if you want to anonymize only some specific targets during the process.
 
+@@@ standalone
 ```sh
-console db-tools:anonymize --target target_1 --taget target_2
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --target target_1 --taget target_2
 # or
-console db-tools:anonymize -t target_1 -t target_2
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized -t target_1 -t target_2
 ```
+@@@
+@@@ symfony
+```sh
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --target target_1 --taget target_2
+# or
+php bin/console db-tools:anonymize -t target_1 -t target_2
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized --target target_1 --taget target_2
+
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized -t target_1 -t target_2
+```
+@@@
 
 ::: tip
-To know all your available targets, launch `db-tools:anonymization:dump-config`
+To know all your available targets, launch <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymization:dump-config`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymization:dump-config`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymization:dump-config`</span>
 :::
 
 ### Exclude targets from anonymization
 
 Use this option if you want to exclude some specific targets from anonymization.
 
+@@@ standalone
 ```sh
-console db-tools:anonymize --exclude target_1 --exclude target_2
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized --exclude target_1 --exclude target_2
 # or
-console db-tools:anonymize -x target_1 -x target_2
+vendor/bin/db-tools anonymize path/to/your/backup/to/anonymized -x target_1 -x target_2
 ```
+@@@
+@@@ symfony
+```sh
+php bin/console db-tools:anonymize path/to/your/backup/to/anonymized --exclude target_1 --exclude target_2
+# or
+php bin/console db-tools:anonymize -x target_1 -x target_2
+```
+@@@
+@@@ docker
+```sh
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized --exclude target_1 --exclude target_2
+
+docker compose run dbtools anonymize path/to/your/backup/to/anonymized -x target_1 -x target_2
+```
+@@@
 
 ::: tip
-To know all your available targets, launch `db-tools:anonymization:dump-config`
+To know all your available targets, launch <span db-tools-flavor="standalone">`vendor/bin/db-tools anonymization:dump-config`</span><span db-tools-flavor="symfony">`php bin/console db-tools:anonymization:dump-config`</span><span db-tools-flavor="docker">`docker compose run dbtools anonymization:dump-config`</span>
 :::
 
 ### Split update queries

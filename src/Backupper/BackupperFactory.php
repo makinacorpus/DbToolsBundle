@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Backupper;
 
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
 use MakinaCorpus\QueryBuilder\Vendor;
@@ -11,62 +12,11 @@ use Psr\Log\LoggerInterface;
 
 class BackupperFactory
 {
-    /**
-     * Constructor.
-     *
-     * @param array<string, string> $backupperBinaries
-     * @param array<string, string> $backupperOptions
-     * @param array<string, string[]> $excludedTables
-     */
     public function __construct(
         private DatabaseSessionRegistry $registry,
-        private array $backupperBinaries,
-        private array $backupperOptions = [],
-        private array $excludedTables = [],
+        private ConfigurationRegistry $configRegistry = new ConfigurationRegistry(),
         private ?LoggerInterface $logger = null,
-    ) {
-        $connectionNames = $this->registry->getConnectionNames();
-
-        // Normalize vendor names otherwise automatic creation might fail.
-        foreach ($this->backupperBinaries as $vendorName => $binary) {
-            $this->backupperBinaries[Vendor::vendorNameNormalize($vendorName)] = $binary;
-        }
-
-        foreach ($this->backupperOptions as $connectionName => $options) {
-            if (!\in_array($connectionName, $connectionNames)) {
-                throw new \DomainException(\sprintf(
-                    "'%s' is not a valid connection name.",
-                    $connectionName
-                ));
-            }
-            if (!\is_string($options)) {
-                throw new \InvalidArgumentException(
-                    "Each value of the \$backupperOptions argument must be a string."
-                );
-            }
-        }
-
-        foreach ($this->excludedTables as $connectionName => $tableNames) {
-            if (!\in_array($connectionName, $connectionNames)) {
-                throw new \DomainException(\sprintf(
-                    "'%s' is not a valid connection name.",
-                    $connectionName
-                ));
-            }
-            if (!\is_array($tableNames)) {
-                throw new \InvalidArgumentException(
-                    "Each value of the \$excludedTables argument must be an array of table names (strings)."
-                );
-            }
-            foreach ($tableNames as $tableName) {
-                if (!\is_string($tableName)) {
-                    throw new \InvalidArgumentException(
-                        "Each table name given through the \$excludedTables argument must be a string."
-                    );
-                }
-            }
-        }
-    }
+    ) {}
 
     /**
      * Get a Backupper for the given connection.
@@ -92,10 +42,9 @@ class BackupperFactory
         };
 
         $backupper = new $backupper(
-            $this->backupperBinaries[$vendorName],
             $this->registry->getDatabaseSession($connectionName),
             $dsn,
-            $this->backupperOptions[$connectionName] ?? null
+            $this->configRegistry->getConnectionConfig($connectionName),
         );
 
         \assert($backupper instanceof AbstractBackupper);

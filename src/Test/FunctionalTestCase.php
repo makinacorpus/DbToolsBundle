@@ -17,8 +17,8 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
+use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DoctrineDatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
-use MakinaCorpus\DbToolsBundle\Database\DoctrineDatabaseSessionRegistry;
 use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
@@ -64,7 +64,7 @@ abstract class FunctionalTestCase extends UnitTestCase
         $privConnection = $this->createPrivConnection();
         try {
             $privConnection->createSchemaManager()->createDatabase('test_db');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
 
         } finally {
             $privConnection->close();

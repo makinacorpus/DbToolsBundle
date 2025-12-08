@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
-use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
@@ -26,20 +25,6 @@ abstract class AbstractAnonymizer
         protected Options $options,
     ) {
         $this->validateOptions();
-    }
-
-    final public static function id(): string
-    {
-        return self::getMetadata()->id();
-    }
-
-    final public static function getMetadata(): AsAnonymizer
-    {
-        if ($attributes = (new \ReflectionClass(static::class))->getAttributes(AsAnonymizer::class)) {
-            return $attributes[0]->newInstance();
-        }
-
-        throw new \LogicException("Each anonymizer should add a AsAnonymizer attribute.");
     }
 
     /**
@@ -110,7 +95,41 @@ abstract class AbstractAnonymizer
      *
      * @throws \Exception if any option is invalid.
      */
-    protected function validateOptions(): void {}
+    protected function validateOptions(): void
+    {
+        if ($this->hasSampleSizeOption()) {
+            if ($this->options->has('sample_size')) {
+                $value = $this->options->getInt('sample_size');
+                if ($value <= 0) {
+                    throw new \InvalidArgumentException("'sample_size' option must be a positive integer.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Does this anonymizer has a "sample size" option.
+     */
+    protected function hasSampleSizeOption(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Default sample size, goes along the "sample size" option set to true.
+     */
+    protected function getDefaultSampleSize(): int
+    {
+        return 500;
+    }
+
+    /**
+     * Default sample size, goes along the "sample size" option set to true.
+     */
+    protected function getSampleSize(): int
+    {
+        return $this->options->getInt('sample_size', $this->getDefaultSampleSize());
+    }
 
     /**
      * Initialize your anonymizer.
@@ -189,9 +208,26 @@ abstract class AbstractAnonymizer
             ->columns($columns)
         ;
 
+        // SQL Server supports a maximum of 2100 parameters per query.
+        // This limit probably also exists with other RDBMSs, to avoid
+        // errors, we insert rows each 2000 parameters.
+        $parametersCount = 0;
         foreach ($values as $key => $value) {
             // Allow single raw value when there is only one column.
             $value = (array) $value;
+            $parametersCount += \count($value);
+
+            if ($parametersCount >= 2000) {
+                $insert->executeStatement();
+
+                $insert = $this
+                    ->databaseSession
+                    ->insert($tableName)
+                    ->columns($columns)
+                ;
+                $parametersCount = 0;
+            }
+
             if ($columnCount !== \count($value)) {
                 throw new \InvalidArgumentException(\sprintf(
                     "Row %s in sample list column count (%d) mismatch with table column count (%d)",

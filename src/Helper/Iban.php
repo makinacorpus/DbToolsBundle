@@ -69,6 +69,26 @@ class Iban
         return $countryCode . $checksum . $result;
     }
 
+    public static function bic(): string
+    {
+        $result = '';
+
+        $letterMin = \ord('A');
+        $letterMax = \ord('Z');
+
+        // BIC format can be 8 or 11 characters long.
+        // Format is: LLLL LL XX (XXX)
+        // Where L means letter, and X can be either a letter or a number.
+        for ($i = 0; $i < 6; ++$i) {
+            $result .= \chr(\rand($letterMin, $letterMax));
+        }
+        for ($i = 0; $i < 2; ++$i) {
+            $result .= \rand(0, 1) ? \rand(0, 9) : \chr(\rand($letterMin, $letterMax));
+        }
+
+        return $result;
+    }
+
     /**
      * @see https://github.com/FakerPHP/Faker
      */
@@ -101,9 +121,9 @@ class Iban
         $parts = \str_split($number, 7);
         $rest = 0;
         foreach ($parts as $part) {
-        $rest = \intval($rest . $part) % 97;
+            $rest = \intval($rest . $part) % 97;
         }
-        return $rest;
+        return (int)$rest;
     }
 
     /**

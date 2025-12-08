@@ -1,10 +1,12 @@
 import { defineConfig } from 'vitepress'
+import MarkdownItContainer from 'markdown-it-container'
+import { flavorList } from './theme/components/flavor'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en',
   title: 'DbToolsBundle',
-  description: 'A Symfony bundle to backup, restore and anonymize your data',
+  description: 'A PHP library to back up, restore and anonymize databases',
   srcDir: "content",
   base: "/",
   metaChunk: false,
@@ -26,6 +28,56 @@ export default defineConfig({
     },
     nav: [
       { text: 'Home', link: '/' },
+    ],
+    sidebar: [
+      {
+        text: 'Getting Started',
+        collapsed: false,
+        items: [
+          { text: 'Introduction', link: '/getting-started/introduction' },
+          { text: 'Installation', link: '/getting-started/installation' },
+          { text: 'Basics', link: '/getting-started/basics' },
+          { text: 'Flavors', link: '/getting-started/flavors' },
+          { text: 'Supported databases', link: '/getting-started/database-vendors' },
+        ]
+      },
+      {
+        text: 'Anonymization',
+        collapsed: false,
+        items: [
+          { text: 'Essentials', link: '/anonymization/essentials' },
+          { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
+          { text: 'Extra packs', link: '/anonymization/packs' },
+          { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
+          { text: 'Anonymization command', link: '/anonymization/command' },
+          { text: 'GDPR-friendly workflow', link: '/anonymization/workflow' },
+          { text: 'Doctrine and inheritance', link: '/anonymization/doctrine-inheritance' },
+          { text: 'Performance', link: '/anonymization/performance' },
+          { text: 'Internals', link: '/anonymization/internals' },
+        ]
+      },
+      {
+        text: 'Going further',
+        collapsed: false,
+        items: [
+          { text: 'Backup & Restore', link: '/backup_restore' },
+          { text: 'Statistics', link: '/stats' },
+          { text: 'Configuration basics', link: '/configuration/basics' },
+          { text: 'Configuration reference', link: '/configuration/reference' },
+          { text: 'Changelog', link: '/changelog'},
+          { text: 'Upgrade guide', link: '/upgrade'},
+        ]
+      },
+      {
+        text: 'Contribute',
+        collapsed: false,
+        items: [
+          { text: 'How to help ?', link: '/contribute/contribute' },
+          { text: 'Development guide', link: '/contribute/guide' },
+          { text: 'Creating a pack of anonymizers', link: '/contribute/pack' },
+          { text: 'Code of conduct', link: '/contribute/code-of-conduct' },
+        ]
+      },
     ],
     editLink: {
       pattern: 'https://github.com/makinacorpus/DbToolsBundle/blob/main/docs/content/:path',
@@ -52,49 +104,25 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/makinacorpus/DbToolsBundle' }
     ],
-    sidebar: [
-      {
-        text: 'Getting Started',
-        collapsed: false,
-        items: [
-          { text: 'Introduction', link: '/getting-started/introduction' },
-          { text: 'Installation', link: '/getting-started/installation' },
-          { text: 'Basics', link: '/getting-started/basics' },
-          { text: 'Supported databases', link: '/getting-started/database-vendors' },
-        ]
-      },
-      {
-        text: 'Anonymization',
-        collapsed: false,
-        items: [
-          { text: 'Essentials', link: '/anonymization/essentials' },
-          { text: 'Core Anonymizers', link: '/anonymization/core-anonymizers' },
-          { text: 'Extra packs', link: '/anonymization/packs' },
-          { text: 'Custom Anonymizers', link: '/anonymization/custom-anonymizers' },
-          { text: 'Anonymization command', link: '/anonymization/command' },
-          { text: 'GDPR-friendly workflow', link: '/anonymization/workflow' },
-          { text: 'Performance', link: '/anonymization/performance' },
-          { text: 'Internals', link: '/anonymization/internals' },
-        ]
-      },
-      {
-        text: 'Going further',
-        collapsed: false,
-        items: [
-          { text: 'Backup & Restore', link: '/backup_restore' },
-          { text: 'Statistics', link: '/stats' },
-          { text: 'Bundle configuration', link: '/configuration' },
-        ]
-      },
-      {
-        text: 'Contribute',
-        collapsed: false,
-        items: [
-          { text: 'How to help ?', link: '/contribute/contribute' },
-          { text: 'Development guide', link: '/contribute/guide' },
-          { text: 'Creating a pack of anonymizers', link: '/contribute/pack' },
-        ]
-      },
-    ]
+  },
+  markdown: {
+    config: (md) => {
+      function render(tokens, idx) {
+        const m: string = tokens[idx].info.trim()
+
+        if (tokens[idx].nesting === 1) {
+          const flavors = m.split(' ').join('-')
+          // opening tag
+          return '<div db-tools-flavor="' + flavors + '" >\n'
+        } else {
+          // closing tag
+          return '</div>\n'
+        }
+      }
+
+      flavorList.forEach(f => {
+        md.use(MarkdownItContainer, f, { marker: '@', render })
+      })
+    }
   }
 })

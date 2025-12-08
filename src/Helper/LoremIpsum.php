@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Lorem Ipsum Generator
  *

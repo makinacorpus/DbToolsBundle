@@ -1,10 +1,10 @@
 # Development guide
 
-You want to add some code to the *DbToolsBundle*, here is some help !
+You want to add some code to *DbToolsBundle*, here is some help !
 
 ## Getting sources
 
-The most convient way to develop on this bundle is to do it from an existing project.
+The most convient way to develop on this library is to do it from an existing project.
 
 1. Reinstall the bundle keeping Git metadata:
     `composer install --prefer-source`
@@ -17,7 +17,7 @@ The most convient way to develop on this bundle is to do it from an existing pro
 ## Devs tools
 
 Before submitting a PR, always ensure that Coding Standards are respected and run the Static Analysis.
-The *DbToolsBundle* helps you doing that with the `dev.sh` script.
+*DbToolsBundle* helps you doing that with the `dev.sh` script.
 
 This tool comes with a complete docker stack to help you developing, to start to use it:
 
@@ -45,6 +45,12 @@ When you finish to develop, stop the stack with:
 
 ```sh
 ./dev.sh down
+```
+
+If you need to clean up everything (containers, images and volumes), you can use:
+
+```sh
+./dev.sh clean
 ```
 
 To learn more about `dev.sh` script, launch:

@@ -4,9 +4,11 @@
   --vp-c-brand-2: #561fa8;
   --vp-c-green-light: #a279e0;
   --vp-c-brand-light: #a279e0;
-  --vp-c-brand-lighter: #a279e0;
+  --vp-c-brand-lighter: #f5f3ff;
   --vp-c-brand-dark: #221157;
   --vp-c-brand-darker: #221157;
+  --vp-button-brand-bg: var(--vp-c-brand);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-dark);
   --vp-c-text-code: #221157;
   --vp-button-brand-border: transparent;
   --vp-button-brand-hover-border: transparent;
@@ -15,21 +17,30 @@
   --vp-button-alt-hover-border: transparent;
   --vp-button-alt-active-border: transparent;
   --vp-makina-logo-text: var(--vp-c-brand-dark);
+  --db-tools-standalone: unset;
+  --db-tools-symfony: none;
+  --db-tools-laravel: none;
+  --db-tools-docker: none;
+  --vp-code-color: var(--vp-c-text-1);
 }
 
 .dark {
-  --vp-c-brand: #bec931;
-  --vp-c-brand-1: #bec931;
-  --vp-c-brand-2: #bec931;
-  --vp-c-green-light: #ced65c;
-  --vp-c-brand-light: #ced65c;
-  --vp-c-brand-lighter: #ced65c;
-  --vp-c-brand-dark: #D0DD2A;
-  --vp-c-brand-darker: #D0DD2A;
-  --vp-c-text-code: #bec931;
+  --vp-c-brand: #50AF55;
+  --vp-c-brand-1: #50AF55;
+  --vp-c-brand-2: #50AF55;
+  --vp-c-green-light: #9fd6a2;
+  --vp-c-brand-light: #9fd6a2;
+  --vp-c-brand-lighter: #e4f4e4;
+  --vp-c-brand-dark: #2e6731;
+  --vp-c-brand-darker: #234426;
+  --vp-c-text-code: #50AF55;
   --vp-makina-logo-text: white;
 }
 
 .main img {
   margin: auto;
+}
+
+.vp-code-group .tabs label {
+  line-height: 28px;
 }

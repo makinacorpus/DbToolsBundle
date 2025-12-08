@@ -1,0 +1,127 @@
+# This configuration file is an example for standalone usage.
+# Only required parameter is the connection URL.
+
+# Working directory is the path to which all relative file references will
+# be relative to. If none set, the path will be this file directory instead.
+# In most cases, you will not need it.
+#workdir: .
+
+# Where to put generated backups.
+# Root directory of the backup storage manager. Default filename
+# strategy will always use this folder as root path.
+#storage_directory: ./var/db_tools
+
+# Default filename strategy. You may specify one strategy for each doctrine
+# connection.
+# If you created and registered a custom one into the container as a
+# service, you may simply set the service identifier. If no service
+# exists, and your implementation does not require parameters, simply
+# set the class name.
+# Allowed values are:
+#  - "default": alias of "datetime".
+#  - "datetime": implementation is "%db_tools.storage_directory%/YYYY/MM/<connection-name>-<datestamp>.<ext>".
+#  - CLASS_NAME: a class name to use that implements a strategy.
+#storage_filename_strategy: default
+
+# When old backups are considered obsolete.
+# (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+#backup_expiration_age: '6 months ago' # default '3 months ago'
+
+# Default timeout for backup process.
+#backup_timeout: 1200 # default 600
+
+# Default timeout for restore process.
+#restore_timeout: 2400 # default 1800
+
+# List here tables you don't want in your backups.
+# If you have more than one connection, it is strongly advised to configure
+# this for each connection instead.
+#backup_excluded_tables: ['table1', 'table2']
+
+# Specify here paths to backup and restoration binaries and command line
+# options.
+# Warning: this will apply to all connections disregarding their database
+# vendor. If you have more than one connection and if they use different
+# database vendors or versions, please configure those for each connection
+# instead.
+# Default values depends upon vendor and are documented at
+# https://dbtoolsbundle.readthedocs.io/en/stable/configuration.html
+#backup_binary: '/usr/bin/pg_dump'
+#backup_options: '-Z 5 --lock-wait-timeout=120'
+#restore_binary: '/usr/bin/pg_restore'
+#restore_options: '-j 2 --clean --if-exists --disable-triggers'
+
+# If you have a single connection, you can use this syntax.
+# Connection name will be "default" when configured this way.
+connections: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
+
+# Alternatively, you are allowed to have more than one connection, case
+# in which you might synthesize the configuration as this:
+#connections:
+#    connection_one: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
+#    connection_two: "mysql://username:password@hostname:port/database?version=8.1&other_option=..."
+
+# For advanced usage, you may also override any parameter for each connection.
+# Each key is a connection name, all parameters above are allowed for each
+# unique connection.
+#connections:
+#    connection_one:
+#        # Connection URL for connecting.
+#        # Please refer to makinacorpus/db-query-builder or documentation for
+#        # more information.
+#        # Any URL built for doctrine/dbal usage should work.
+#        # URL is the sole mandatory parameter.
+#        # Complete list of accepted parameters follows.
+#        url: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
+#        backup_binary: /usr/local/bin/vendor-one-dump
+#        backup_excluded_tables: ['table_one', 'table_two']
+#        backup_expiration_age: '1 month ago'
+#        backup_options: --no-table-lock
+#        backup_timeout: 2000
+#        restore_binary: /usr/local/bin/vendor-one-restore
+#        restore_options: --disable-triggers --other-option
+#        restore_timeout: 5000
+#        storage_directory: /path/to/storage
+#        storage_filename_strategy: datetime
+#    connection_two:
+#        url: "mysql://username:password@hostname:port/database?version=8.1&other_option=..."
+#        # ...
+
+# You can explicitly set which will be default connection in use when none
+# is provided in the command line options. If you omit this configuration
+# value, then the first one in the list will be used.
+#default_connection: connection_one
+
+# Update this configuration if you want to look for anonymizers in a custom
+# folder.
+#anonymizer_paths:
+#    - ./src/Anonymizer
+
+# For simple needs, you may simply write the anonymization configuration here.
+# Keys are connection names, values are structures which are identical to what
+# you may find in the "anonymizations.sample.yaml" example.
+anonymization:
+    connection_one:
+        table1:
+            column1:
+                anonymizer: anonymizer_name
+                # ... anonymizer specific options...
+            column2:
+                # ...
+        table2:
+            # ...
+    connection_two:
+        # ...
+
+# You can for organisation purpose delegate anonymization config into extra
+# YAML configuration files, and simply reference them here.
+# Paths can be either relative or absolute. Relative paths are relative to
+# the workdir option if specified, or from this configuration file directory
+# otherwise.
+# See the "anonymizations.sample.yaml" in this folder for an example.
+anonymization_files:
+    connection_one: './anonymization/connection_one.yaml'
+    connection_two: './anonymization/connection_two.yaml'
+
+# If you have only one connection, you can adopt the following syntax.
+#anonymization_files: '%kernel.project_dir%/config/anonymizations.yaml'

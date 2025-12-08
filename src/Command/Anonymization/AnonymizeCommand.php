@@ -20,14 +20,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'db-tools:anonymization:run',
-    description: 'Anonymize given backup file or the local database.',
+    description: 'Anonymize given backup file or the local database',
     aliases: ['db-tools:anonymize']
 )]
 class AnonymizeCommand extends Command
 {
     private SymfonyStyle $io;
-
-    private string $connectionName;
 
     private ?string $backupFilename = null;
     private ?string $initialBackupFilename = null;
@@ -43,15 +41,13 @@ class AnonymizeCommand extends Command
     private bool $atOnce = true;
 
     public function __construct(
-        string $defaultConnectionName,
+        private string $connectionName,
         private RestorerFactory $restorerFactory,
         private BackupperFactory $backupperFactory,
         private AnonymizatorFactory $anonymizatorFactory,
         private Storage $storage,
     ) {
         parent::__construct();
-
-        $this->connectionName = $defaultConnectionName;
     }
 
     #[\Override]

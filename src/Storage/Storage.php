@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Storage;
 
+use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -14,12 +15,9 @@ use Symfony\Component\Finder\Finder;
 class Storage
 {
     public function __construct(
-        private string $storagePath,
-        private string $expirationAge,
+        private ConfigurationRegistry $configReg,
         private ?array $filenameStrategies = null,
-    ) {
-        $this->storagePath = \rtrim($storagePath, '/');
-    }
+    ) {}
 
     public function listBackups(
         string $connectionName = 'default',
@@ -27,11 +25,14 @@ class Storage
         bool $onlyExpired = false,
         ?string $preserveFile = null
     ): array {
+        $config = $this->configReg->getConnectionConfig($connectionName);
+        $storagePath = \rtrim($config->getStorageDirectory(), '/');
+
         // In order to avoid listing dumps from other connections, we must
         // filter files using the connection name infix. When a custom strategy
         // is provided, there is no way to reproduce this filtering, it's up to
         // the user to give a restricted folder name.
-        $rootDir = $this->getFilenameStrategy($connectionName)->getRootDir($this->storagePath, $connectionName);
+        $rootDir = $this->getFilenameStrategy($connectionName)->getRootDir($storagePath, $connectionName);
 
         if (!(new Filesystem())->exists($rootDir)) {
             return [];
@@ -45,7 +46,7 @@ class Storage
             ->sortByName()
         ;
 
-        $expirationDate = new \Datetime($this->expirationAge);
+        $expirationDate = new \Datetime($config->getBackupExpirationAge());
         $list = [];
 
         foreach ($finder as $file) {
@@ -64,8 +65,11 @@ class Storage
 
     public function generateFilename(string $connectionName = 'default', string $extension = 'sql', bool $anonymized = false): string
     {
+        $config = $this->configReg->getConnectionConfig($connectionName);
+        $storagePath = \rtrim($config->getStorageDirectory(), '/');
+
         $strategy = $this->getFilenameStrategy($connectionName);
-        $rootDir = $strategy->getRootDir($this->storagePath, $connectionName);
+        $rootDir = $strategy->getRootDir($storagePath, $connectionName);
 
         $filename = \rtrim($rootDir, '/') . '/' . $strategy->generateFilename($connectionName, $extension, $anonymized);
 
@@ -76,11 +80,11 @@ class Storage
 
     public function getStoragePath(): string
     {
-        return $this->storagePath;
+        return $this->configReg->getDefaultConfig()->getStorageDirectory();
     }
 
     protected function getFilenameStrategy(string $connectionName): FilenameStrategyInterface
     {
-        return $this->filenameStrategies[$connectionName] ?? new DefaultFilenameStrategy();
+        return $this->filenameStrategies[$connectionName] ?? $this->filenameStrategies['default'] ?? new DefaultFilenameStrategy();
     }
 }

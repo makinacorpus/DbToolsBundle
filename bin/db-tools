@@ -1,0 +1,8 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace MakinaCorpus\DbToolsBundle;
+
+require __DIR__ . '/db-tools.php';

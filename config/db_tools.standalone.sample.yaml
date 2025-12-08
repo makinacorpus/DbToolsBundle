@@ -1,0 +1,68 @@
+# This configuration file is an example for standalone usage.
+# The only required parameter is the connection URL.
+
+# If you have a single connection, you can use this syntax.
+# Connection name will be "default" when configured this way.
+# If you have multiple connections, please refer to the exhaustive
+# sample in 'db_tools.standalone.complete.sample.yaml'.
+connections: "pgsql://username:password@hostname:port/database?version=16.0&other_option=..."
+
+# Where to put generated backups.
+# Root directory of the backup storage manager. Default filename
+# strategy will always use this folder as root path.
+#storage_directory: ./var/db_tools
+
+# Default filename strategy. You may specify one strategy for each connection.
+# If you created and registered a custom one into the container as a
+# service, you may simply set the service identifier. If no service
+# exists, and your implementation does not require parameters, simply
+# set the class name.
+# Allowed values are:
+#  - "default": alias of "datetime".
+#  - "datetime": implementation is "%db_tools.storage_directory%/YYYY/MM/<connection-name>-<datestamp>.<ext>".
+#  - CLASS_NAME: a class name to use that implements a strategy.
+#storage_filename_strategy: default
+
+# When old backups are considered obsolete.
+# (Use relative date/time formats : https://www.php.net/manual/en/datetime.formats.relative.php)
+#backup_expiration_age: '6 months ago' # default '3 months ago'
+
+# List here tables you don't want in your backups.
+# If you have more than one connection, it is strongly advised to configure
+# this for each connection instead.
+#backup_excluded_tables: ['table1', 'table2']
+
+# Update this configuration if you want to look for anonymizers in a custom
+# folder.
+#anonymizer_paths:
+#    - ./src/Anonymizer'
+
+# Write the anonymization configuration here.
+# You may also write anonymization configuration in extra files instead, please
+# see the 'db_tools.standalone.complete.sample.yaml' for more documentation.
+#anonymization:
+#    # Keys are connection names, values are structures which are identical to
+#    # what you may find in the "anonymizations.sample.yaml" example.
+#    # If you only specified one URL in the "connections" parameter above, the
+#    # connection name is "default".
+#    default:
+#        # Keys here are table names, followed by column names, column values
+#        # are either an anonymizer name string, or an object with options.
+#        user:
+#            # Some Anonymizer does not require any option, you can use them like this
+#            prenom: fr-fr.firstname
+#            nom: fr-fr.lastname
+#            # Some do require options, specify them like this:
+#            age:
+#                anonymizer: integer
+#                options: {min: 0, max: 99}
+#            # Some others have optionnal options, you can specify those:
+#            email:
+#                anonymizer: email
+#                options: {domain: 'toto.com'}
+#            # Or leave it with defaults:
+#            email: email
+#            level:
+#                anonymizer: string
+#                options: {sample: ['none', 'bad', 'good', 'expert']}
+#        # ... other tables...

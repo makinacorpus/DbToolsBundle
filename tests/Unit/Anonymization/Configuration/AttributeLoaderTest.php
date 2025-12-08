@@ -12,10 +12,10 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\AttributesLoader;
-use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
-use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEmbeddableEntity;
+use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntityWithEmbedded;
+use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestJoinedChild;
 
 class AttributeLoaderTest extends UnitTestCase
 {
@@ -68,6 +68,43 @@ class AttributeLoaderTest extends UnitTestCase
         self::assertSame('country', $testTableConfig['address_0']->options->get('country'));
     }
 
+    public function testLoadWithJoinedInheritance(): void
+    {
+        $classMetadataFactory = $this->getClassMetadataFactory();
+        $classMetadataFactory->getMetadataFor(TestJoinedChild::class);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->expects($this->exactly(1))
+            ->method('getMetadataFactory')
+            ->willReturn($classMetadataFactory)
+        ;
+
+        $entityManagerProvider = $this->createMock(EntityManagerProvider::class);
+        $entityManagerProvider
+            ->expects($this->exactly(1))
+            ->method('getManager')
+            ->willReturn($entityManager)
+        ;
+
+        // We load configuration for the 'default' connection.
+        $config = new AnonymizationConfig('default');
+        (new AttributesLoader($entityManagerProvider))->load($config);
+
+        // Then we validate what's in it:
+        $testTableConfig = $config->getTableConfig('test_joined_child');
+        self::assertCount(2, $testTableConfig);
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['url']);
+        self::assertSame('constant', $testTableConfig['url']->anonymizer);
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['thumbnail_url']);
+        self::assertSame('constant', $testTableConfig['thumbnail_url']->anonymizer);
+
+        $testTableConfig = $config->getTableConfig('test_joined_parent');
+        self::assertCount(1, $testTableConfig);
+        self::assertInstanceOf(AnonymizerConfig::class, $testTableConfig['email']);
+        self::assertSame('email', $testTableConfig['email']->anonymizer);
+    }
+
     public function testLoadWithEmbeddedOk(): void
     {
         $classMetadataFactory = $this->getClassMetadataFactory();
@@ -87,7 +124,7 @@ class AttributeLoaderTest extends UnitTestCase
             ->willReturn($entityManager)
         ;
 
-        // We try to load configuration for the 'default' connection.
+        // We load configuration for the 'default' connection.
         $config = new AnonymizationConfig('default');
         (new AttributesLoader($entityManagerProvider))->load($config);
 

@@ -37,6 +37,12 @@ class SqliteBackupper extends AbstractBackupper
     }
 
     #[\Override]
+    protected function getDefaultBinary(): string
+    {
+        return 'sqlite3';
+    }
+
+    #[\Override]
     protected function getBuiltinDefaultOptions(): string
     {
         return '-bail';
@@ -54,7 +60,7 @@ class SqliteBackupper extends AbstractBackupper
 
         $tables = [];
         foreach ($query->executeQuery() as $table) {
-            if(!\in_array($table['name'], $this->excludedTables)) {
+            if (!\in_array($table['name'], $this->excludedTables)) {
                 $tables[] = $table['name'];
             }
         }

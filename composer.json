@@ -13,25 +13,39 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
-        "doctrine/doctrine-bundle": "^2.10.0",
-        "makinacorpus/query-builder": "^1.6.1",
+        "makinacorpus/query-builder": "^1.6.2",
+        "psr/log": "^3.0",
         "symfony/config": "^6.0|^7.0",
         "symfony/console": "^6.0|^7.0",
-        "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/filesystem": "^6.0|^7.0",
         "symfony/finder": "^6.0|^7.0",
         "symfony/options-resolver": "^6.0|^7.0",
-        "symfony/password-hasher": "^6.0|^7.0",
         "symfony/process": "^6.0|^7.0",
         "symfony/yaml": "^6.0|^7.0"
     },
     "require-dev": {
+        "doctrine/doctrine-bundle": "^2.10.0",
         "doctrine/orm": "^2.15|^3.0",
         "friendsofphp/php-cs-fixer": "^3.34",
+        "laravel/framework": "^10.0|^11.0",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.4",
+        "symfony/dependency-injection": "^6.0|^7.0",
         "symfony/framework-bundle": "^6.0|^7.0",
+        "symfony/password-hasher": "^6.0|^7.0",
         "symfony/validator": "^6.3|^7.0"
+    },
+    "suggest": {
+        "db-tools-bundle/pack-faker": "FakerPHP/Faker bridge anonyzer pack",
+        "db-tools-bundle/pack-fr-fr": "French anonymizers pack",
+        "symfony/password-hasher": "In order to use the password hash anonymizer"
+    },
+    "conflict": {
+        "composer/pcre": "<3.1|>=4.0",
+        "doctrine/dbal": "<3.0|>=5.0",
+        "doctrine/orm": "<2.15|>=4.0",
+        "seld/phar-utils": "<1.2|>=2.0",
+        "symfony/password-hasher": "<6.0|>=8.0"
     },
     "autoload": {
         "psr-4": {
@@ -46,6 +60,7 @@
     "config": {
         "sort-packages": true
     },
+    "bin": ["bin/db-tools"],
     "scripts": {
         "phpcs": "./vendor/bin/php-cs-fixer fix --verbose --allow-risky=yes",
         "phpstan": "./vendor/bin/phpstan --memory-limit=1G",
@@ -57,5 +72,12 @@
             "@phpcs --dry-run",
             "@phpstan"
         ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MakinaCorpus\\DbToolsBundle\\Bridge\\Laravel\\DbToolsServiceProvider"
+            ]
+        }
     }
 }

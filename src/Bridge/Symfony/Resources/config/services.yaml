@@ -1,0 +1,122 @@
+parameters:
+    # All allowed environment variables.
+    # When conflicting with options in the Symfony configuration, the Symfony
+    # configuration will override the environment variables.
+    env(DBTOOLS_BACKUP_BINARY): ~
+    env(DBTOOLS_BACKUP_EXCLUDED_TABLES): ~
+    env(DBTOOLS_BACKUP_EXPIRATION_AGE): ~
+    env(DBTOOLS_BACKUP_OPTIONS): ~
+    env(DBTOOLS_BACKUP_TIMEOUT): ~
+    env(DBTOOLS_DEFAULT_CONNECTION): ~
+    env(DBTOOLS_RESTORE_BINARY): ~
+    env(DBTOOLS_RESTORE_OPTIONS): ~
+    env(DBTOOLS_RESTORE_TIMEOUT): ~
+    env(DBTOOLS_STORAGE_FILENAME_STRATEGY): ~
+    env(DBTOOLS_STORAGE_DIRECTORY): "%kernel.project_dir%/var/db_tools"
+
+    # Will be rewritten by the container extension.
+    db_tools.anonymization.anonymizer.paths: []
+
+services:
+    # Commands
+    db_tools.command.anonymization.run:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizeCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.restorer.factory'
+            - '@db_tools.backupper.factory'
+            - '@db_tools.anonymization.anonymizator.factory'
+            - '@db_tools.storage'
+        tags: ['console.command']
+    db_tools.command.anonymization.list:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\AnonymizerListCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizer.registry'
+        tags: ['console.command']
+    db_tools.command.clean:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\CleanCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.factory'
+            - '%doctrine.default_connection%'
+        tags: ['console.command']
+    db_tools.command.anonymization.dump:
+        class: MakinaCorpus\DbToolsBundle\Command\Anonymization\ConfigDumpCommand
+        arguments:
+            - '@db_tools.anonymization.anonymizator.factory'
+        tags: ['console.command']
+    db_tools.command.backup:
+        class: MakinaCorpus\DbToolsBundle\Command\BackupCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.backupper.factory'
+            - '@db_tools.storage'
+        tags: ['console.command']
+    db_tools.command.check:
+        class: MakinaCorpus\DbToolsBundle\Command\CheckCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.backupper.factory'
+            - '@db_tools.restorer.factory'
+        tags: ['console.command']
+    db_tools.command.restore:
+        class: MakinaCorpus\DbToolsBundle\Command\RestoreCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.restorer.factory'
+            - '@db_tools.storage'
+        tags: ['console.command']
+    db_tools.command.stats:
+        class: MakinaCorpus\DbToolsBundle\Command\StatsCommand
+        arguments:
+            - '%doctrine.default_connection%'
+            - '@db_tools.stats_provider.factory'
+        tags: ['console.command']
+
+    # Configuration, arguments are populated using the extension.
+    db_tools.configuration.registry:
+        class: MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry
+
+    # Database registry.
+    db_tools.database_session.registry:
+        class: MakinaCorpus\DbToolsBundle\Bridge\Symfony\DoctrineDatabaseSessionRegistry
+        arguments: ['@doctrine']
+
+    # Utilities
+    db_tools.storage:
+        class: MakinaCorpus\DbToolsBundle\Storage\Storage
+        arguments: ['@db_tools.configuration.registry', []]
+
+    # Backuppers
+    db_tools.backupper.factory:
+        class: MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory
+        arguments:
+            - '@db_tools.database_session.registry'
+            - '@db_tools.configuration.registry'
+            - '@logger'
+        tags: [{ name: 'monolog.logger', channel: 'db_tools_backup' }]
+
+    # Restorers
+    db_tools.restorer.factory:
+        class: MakinaCorpus\DbToolsBundle\Restorer\RestorerFactory
+        arguments:
+            - '@db_tools.database_session.registry'
+            - '@db_tools.configuration.registry'
+            - '@logger'
+        tags: [{ name: monolog.logger, channel: db_tools_restoration }]
+
+    # Stats providers
+    db_tools.stats_provider.factory:
+        class: MakinaCorpus\DbToolsBundle\Stats\StatsProviderFactory
+        arguments: ['@db_tools.database_session.registry']
+
+    # Anonymization
+    db_tools.anonymization.anonymizer.registry:
+        class: MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry
+        arguments: ['%db_tools.anonymization.anonymizer.paths%']
+    db_tools.anonymization.anonymizator.factory:
+        class: MakinaCorpus\DbToolsBundle\Anonymization\AnonymizatorFactory
+        arguments:
+            - '@db_tools.database_session.registry'
+            - '@db_tools.anonymization.anonymizer.registry'
+            - '@logger'
+        tags: [{ name: monolog.logger, channel: db_tools_anonymization }]

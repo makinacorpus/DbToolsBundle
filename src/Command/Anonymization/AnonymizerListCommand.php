@@ -32,19 +32,22 @@ class AnonymizerListCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        $rawList = $this->anonymizerRegistry->getAnonymizers();
+        $rawList = $this->anonymizerRegistry->getAllAnonymizerMetadata();
 
         $list = [];
-        foreach ($rawList as $anonymizer) {
-            $metadata = $anonymizer::getMetadata();
+        foreach ($rawList as $metadata) {
             \assert($metadata instanceof AsAnonymizer);
 
             if (!\array_key_exists($metadata->pack, $list)) {
                 $list[$metadata->pack] = [];
             }
 
+            $description = $metadata->description;
+            if ($metadata->missingRequirements()) {
+                $description .= "\n" . \sprintf('<error>Dependencies are missing: "%s"</error>', \implode('", "', $metadata->dependencies));
+            }
 
-            $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $metadata->description;
+            $list[$metadata->pack]['<info>' . $metadata->id() . '</info>'] = $description;
         }
 
         \array_walk($list, fn (array &$anonymizers) => \ksort($anonymizers, SORT_STRING));

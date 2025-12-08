@@ -60,6 +60,7 @@ class AnonymizationConfig
 
         return $config;
     }
+
     /**
      * Count tables.
      */

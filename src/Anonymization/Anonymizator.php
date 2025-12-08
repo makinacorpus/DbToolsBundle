@@ -12,13 +12,12 @@ use MakinaCorpus\DbToolsBundle\Helper\Format;
 use MakinaCorpus\DbToolsBundle\Helper\Output\NullOutput;
 use MakinaCorpus\DbToolsBundle\Helper\Output\OutputInterface;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
+use MakinaCorpus\QueryBuilder\Vendor;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
 use MakinaCorpus\QueryBuilder\Query\Update;
 use MakinaCorpus\QueryBuilder\Schema\Read\Column;
 use MakinaCorpus\QueryBuilder\Schema\Read\Index;
-use MakinaCorpus\QueryBuilder\Schema\Read\Table;
 use MakinaCorpus\QueryBuilder\Type\Type;
-use MakinaCorpus\QueryBuilder\Vendor;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -26,6 +25,21 @@ use Psr\Log\NullLogger;
 class Anonymizator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    /**
+     * Used for the garbage collection/cleanup procedure, removes tables with older names.
+     */
+    protected const DEPRECATED_JOIN_ID = [
+        '_anonymize_id', // @todo Remove in 3.0
+        '_anonymizer_id', // @todo Remove in 3.0
+    ];
+
+    /**
+     * Used for the garbage collection/cleanup procedure, removes tables with older names.
+     */
+    protected const DEPRECATED_TEMP_TABLE_PREFIX = [
+        'anonymizer_sample_', // @todo Remove in 3.0
+    ];
 
     private OutputInterface $output;
 
@@ -72,14 +86,11 @@ class Anonymizator implements LoggerAwareInterface
      */
     protected function createAnonymizer(AnonymizerConfig $config): AbstractAnonymizer
     {
-        $className = $this->anonymizerRegistry->get($config->anonymizer);
-        \assert(\is_subclass_of($className, AbstractAnonymizer::class));
-
-        return new $className(
-            $config->table,
-            $config->targetName,
-            $this->databaseSession,
+        return $this->anonymizerRegistry->createAnonymizer(
+            $config->anonymizer,
+            $config,
             $config->options->with(['salt' => $this->getSalt()]),
+            $this->databaseSession
         );
     }
 
@@ -268,7 +279,6 @@ class Anonymizator implements LoggerAwareInterface
     }
 
     /**
-     *
      * @return array<array<string, string>>
      *   Each item is an array structured as such:
      *   [
@@ -282,10 +292,24 @@ class Anonymizator implements LoggerAwareInterface
         $schemaManager = $this->databaseSession->getSchemaManager();
         $garbage = [];
 
+        $prefixes = [AbstractAnonymizer::TEMP_TABLE_PREFIX];
+        // For backward compatibilty, removes legacy table names as well.
+        foreach (self::DEPRECATED_TEMP_TABLE_PREFIX as $prefix) {
+            $prefixes[] = $prefix;
+        }
+
         foreach ($schemaManager->listTables() as $tableName) {
-            if (\str_starts_with($tableName, AbstractAnonymizer::TEMP_TABLE_PREFIX)) {
-                $garbage[] = ['type' => 'table', 'name' => $tableName];
-            } else {
+            $found = false;
+            foreach ($prefixes as $prefix) {
+                if (\str_starts_with($tableName, $prefix)) {
+                    $garbage[] = ['type' => 'table', 'name' => $tableName];
+                    $found = true;
+                    break;
+                }
+            }
+
+            // If table is not marked for deletion, lookup for added columns.
+            if (!$found) {
                 $garbage = \array_merge($garbage, $this->collectGarbageInto($tableName));
             }
         }
@@ -320,15 +344,24 @@ class Anonymizator implements LoggerAwareInterface
             }
         }
 
+        $names = [AbstractAnonymizer::JOIN_ID];
+        // For backward compatibilty, removes legacy column names as well.
+        foreach (self::DEPRECATED_JOIN_ID as $name) {
+            $names[] = $name;
+        }
+
         foreach ($table->getColumns() as $column) {
             \assert($column instanceof Column);
 
-            if (AbstractAnonymizer::JOIN_ID === $column->getName()) {
-                $garbage[] = [
-                    'type' => 'column',
-                    'name' => $column->getName(),
-                    'table' => $table->getName(),
-                ];
+            foreach ($names as $name) {
+                if ($name === $column->getName()) {
+                    $garbage[] = [
+                        'type' => 'column',
+                        'name' => $column->getName(),
+                        'table' => $table->getName(),
+                    ];
+                    break;
+                }
             }
         }
 
@@ -651,7 +684,7 @@ class Anonymizator implements LoggerAwareInterface
             } else {
                 $this->databaseSession->executeStatement(
                     <<<SQL
-                    CREATE FUNCTION IF NOT EXISTS ?::id() RETURNS BIGINT
+                    CREATE FUNCTION ?::id() RETURNS BIGINT
                     DETERMINISTIC
                     BEGIN
                         SELECT `value` + 1 INTO @value FROM ?::table LIMIT 1;

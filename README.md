@@ -2,7 +2,7 @@
 
 
 # DbToolsBundle
-A set of Symfony Console Commands to interact with your database
+A PHP tool to back up, restore and anonymize databases
 
 <p align="center" style="margin: auto">
     <a href="https://dbtoolsbundle.readthedocs.io/" target="_blank">
@@ -10,14 +10,15 @@ A set of Symfony Console Commands to interact with your database
     </a>
 </p>
 
-* **[Backup](https://dbtoolsbundle.readthedocs.io/en/stable/backup_restore.html#backup-command)**: Backup your database and manage your dumps with a simple command.
+* **[Back up](https://dbtoolsbundle.readthedocs.io/en/stable/backup_restore.html#backup-command)**: Back up your database and manage your dumps with a simple command.
 * **[Restore](https://dbtoolsbundle.readthedocs.io/en/stable/backup_restore.html#restore-command)**: Easily restore a previous dump of your database.
-* **[Anonymize](https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/essentials.html)**: Set up database anonymization with PHP attributes on Doctrine Entities or with a YAML configuration file.
+* **[Anonymize](https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/essentials.html)**: Set up database anonymization with a simple YAML configuration file.
 * [Set up a **GDPR-friendly** workflow](https://dbtoolsbundle.readthedocs.io/en/stable/anonymization/workflow.html): Make it easier to follow GDPR best practices when importing production dump to other environments.
+* Easily use it with Symfony: autoconfiguration and anonymization with PHP attributes on Doctrine Entities
 
 ## Installation
 
-DbToolsBundle requires PHP 8.1 or higher and Symfony 6.0 or higher. Run the following command to install it in your application:
+DbToolsBundle requires PHP 8.1 or higher. Run the following command to install it in your PHP application:
 
 ```sh
 composer require makinacorpus/db-tools-bundle

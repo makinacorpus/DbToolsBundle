@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'db-tools:anonymization:dump-config',
-    description: 'Dump anonymization configuration.'
+    description: 'Dump anonymization configuration'
 )]
 class ConfigDumpCommand extends Command
 {
@@ -54,7 +54,7 @@ class ConfigDumpCommand extends Command
                             $config->options->toDisplayString() .
                             (
                                 \key_exists($config->targetName, $tableErrors) ?
-                                \PHP_EOL . '<error>' . $tableErrors[$config->targetName] . '</>'
+                                '<error>' . $tableErrors[$config->targetName] . '</>'
                                 : ''
                             ),
                         ],

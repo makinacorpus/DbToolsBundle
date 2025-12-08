@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractSingleColumnAnonymizer;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
+use MakinaCorpus\DbToolsBundle\Error\MissingDependencyException;
+use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\Query\Update;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 
@@ -17,11 +19,13 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
     Options are 'algorithm' (default 'auto') and 'password' (default 'password').
     TXT
 )]
-class PasswordAnonymizer extends AbstractAnonymizer
+class PasswordAnonymizer extends AbstractSingleColumnAnonymizer
 {
     #[\Override]
     protected function validateOptions(): void
     {
+        MissingDependencyException::check('symfony/password-hasher', PasswordHasherFactory::class);
+
         $algorithm = $this->options->getString('algorithm', 'auto');
         $this->options->getString('password', 'password');
 
@@ -42,7 +46,7 @@ class PasswordAnonymizer extends AbstractAnonymizer
     }
 
     #[\Override]
-    public function anonymize(Update $update): void
+    public function createAnonymizeExpression(Update $update): Expression
     {
         $algorithm = $this->options->getString('algorithm', 'auto');
         $password = $this->options->getString('password', 'password');
@@ -53,11 +57,6 @@ class PasswordAnonymizer extends AbstractAnonymizer
         $passwordHasher = $passwordHasherFactory->getPasswordHasher($algorithm);
         $hashedPassword = $passwordHasher->hash($password);
 
-        $update->set(
-            $this->columnName,
-            $this->getSetIfNotNullExpression(
-                $hashedPassword
-            )
-        );
+        return $this->getSetIfNotNullExpression($hashedPassword);
     }
 }

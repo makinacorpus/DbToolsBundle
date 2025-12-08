@@ -6,3 +6,6 @@ parameters:
     excludePaths:
         - src/DependencyInjection/DbToolsConfiguration.php
     checkMissingOverrideMethodAttribute: true
+    ignoreErrors:
+        - '#Instantiated class Seld\\PharUtils\\Timestamps not found.#'
+        - '#on an unknown class Seld\\PharUtils\\Timestamps.#'
