@@ -111,7 +111,7 @@ final class DbToolsExtension extends Extension
     }
 
     #[\Override]
-    public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
+    public function getConfiguration(array $configs, ?ContainerBuilder $container = null): ?ConfigurationInterface
     {
         return new DbToolsConfiguration(true, false);
     }
