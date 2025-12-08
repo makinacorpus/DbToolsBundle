@@ -95,7 +95,10 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+          - "8.5"
         postgres-version:
           - "10"
           - "15"
@@ -158,7 +161,10 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+          - "8.5"
         mariadb-version:
           - "10.11.6" # LTS (Feb 2028)
           - "11.4.5" # LTS (May 2029)
@@ -166,7 +172,16 @@ jobs:
         extension:
           - "mysqli"
         include:
-          - php-version: "8.1"
+          - php-version: "8.2"
+            mariadb-version: "11.4.5"
+            extension: "pdo_mysql"
+          - php-version: "8.3"
+            mariadb-version: "11.4.5"
+            extension: "pdo_mysql"
+          - php-version: "8.4"
+            mariadb-version: "11.4.5"
+            extension: "pdo_mysql"
+          - php-version: "8.5"
             mariadb-version: "11.4.5"
             extension: "pdo_mysql"
 
@@ -224,7 +239,10 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.1"
+          - "8.2"
+          - "8.3"
+          - "8.4"
+          - "8.5"
         mysql-version:
           - "5.7"
           - "8.0"
