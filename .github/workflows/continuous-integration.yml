@@ -307,7 +307,7 @@ jobs:
   #   strategy:
   #     matrix:
   #       php-version:
-  #         - "8.1"
+  #         - "8.2"
   #       mssql-version:
   #         - "2019"
   #         - "2022"
@@ -372,7 +372,7 @@ jobs:
         os:
           - "ubuntu-22.04"
         php-version:
-          - "8.1"
+          - "8.2"
         extension:
           - "pdo_sqlite"
           - "sqlite3"
@@ -393,6 +393,7 @@ jobs:
       - name: "Install dependencies with Composer"
         uses: "ramsey/composer-install@v3"
         with:
+          dependency-versions: 'locked'
           composer-options: "--ignore-platform-req=php+"
 
       - name: "Run PHPUnit"
