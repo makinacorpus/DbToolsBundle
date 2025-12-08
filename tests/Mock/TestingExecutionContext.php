@@ -43,7 +43,7 @@ class TestingExecutionContext implements ExecutionContextInterface
             null,
             new class () implements TranslatorInterface {
                 #[\Override]
-                public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+                public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
                 {
                     return $id;
                 }
@@ -71,7 +71,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     }
 
     #[\Override]
-    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath): void {}
+    public function setNode(mixed $value, ?object $object, ?MetadataInterface $metadata = null, ?string $propertyPath = null): void {}
 
     #[\Override]
     public function setGroup(?string $group): void {}

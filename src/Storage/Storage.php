@@ -25,7 +25,7 @@ class Storage
         string $connectionName = 'default',
         string $extension = 'sql',
         bool $onlyExpired = false,
-        string $preserveFile = null
+        ?string $preserveFile = null
     ): array {
         // In order to avoid listing dumps from other connections, we must
         // filter files using the connection name infix. When a custom strategy
