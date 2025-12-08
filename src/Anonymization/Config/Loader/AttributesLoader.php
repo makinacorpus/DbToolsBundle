@@ -87,7 +87,6 @@ class AttributesLoader implements LoaderInterface
                 $columnName = $metadata->getColumnName($fieldName);
                 if ($metadata->isInheritedField($fieldName)) {
                     $fieldMapping = $metadata->getFieldMapping($fieldName);
-                    // @phpstan-ignore-next-line
                     if (\is_array($fieldMapping)) {
                         // Code for doctrine/orm:^2.0.
                         $ownerClass = $fieldMapping['inherited'];
