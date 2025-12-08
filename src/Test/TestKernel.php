@@ -42,7 +42,7 @@ class TestKernel extends Kernel implements CompilerPassInterface
         ];
     }
 
-    protected function configureContainer(ContainerBuilder $containerBuilder, LoaderInterface $loader)
+    protected function configureContainer(ContainerBuilder $containerBuilder, LoaderInterface $loader): void
     {
         $containerBuilder->loadFromExtension('framework', [
             'secret' => 123,
@@ -69,5 +69,5 @@ class TestKernel extends Kernel implements CompilerPassInterface
     }
 
     #[\Override]
-    public function process(ContainerBuilder $container) {}
+    public function process(ContainerBuilder $container): void {}
 }
