@@ -56,6 +56,26 @@ class StandaloneDatabaseSessionRegistry implements DatabaseSessionRegistry
 
     protected function getConnectionUri(string $name): string
     {
-        return $this->connections[$name] ?? throw new ConfigurationException(\sprintf("'%s': connection does not exist.", $name));
+        $value = $this->connections[$name] ?? throw new ConfigurationException(\sprintf("'%s': connection does not exist.", $name));
+
+        $callable = null;
+
+        if (\is_callable($value)) {
+            $callable = \Closure::fromCallable($value);
+        } elseif (\class_exists($value)) {
+            $object = new $value();
+
+            if (\is_callable($object)) {
+                // Class implements __invoke().
+                $callable = $object;
+            } else {
+                if (!$object instanceof ConnectionProvider) {
+                    throw new ConfigurationException(\sprintf("'%s': connection provider object must either implement %s or the __invoke() method.", $name, ConnectionProvider::class));
+                }
+                $callable = $object->createConnectionDsn(...);
+            }
+        }
+
+        return $callable ? $callable($name) : $value;
     }
 }

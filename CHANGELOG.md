@@ -2,6 +2,7 @@
 
 ## Next
 
+* [feature] 🌟 Experimental `ConnectionProvider` for standalone usage where fetching the database connection DSN is delegated to user custom code (#245).
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
 * [bc] Officially drop support for MySQL 5.7 - code is still there and working but automated unit testing has been disabled.
 * [internal] Add automated testing for MariaDB 12.
