@@ -166,7 +166,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 #[ORM\Table(name: 'customer')]
 #[Anonymize(type: 'address', options: [ // [!code ++]
     'street_address' => 'street', // [!code ++]
-    'secondary_address': 'street_second_line' // [!code ++]
+    'secondary_address' => 'street_second_line' // [!code ++]
     'postal_code' => 'zip_code', // [!code ++]
     'locality' => 'city', // [!code ++]
     'region' => 'region' // [!code ++]
