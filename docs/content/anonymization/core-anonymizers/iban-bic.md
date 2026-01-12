@@ -45,7 +45,7 @@ use MakinaCorpus\DbToolsBundle\Attribute\Anonymize;
 #[ORM\Table(name: 'customer')]
 #[Anonymize(type: 'iban-bic', options: [ // [!code ++]
     'iban' => 'account_iban', // [!code ++]
-    'bic': 'account_bic' // [!code ++]
+    'bic' => 'account_bic' // [!code ++]
 ])] // [!code ++]
 class Customer
 {
