@@ -35,7 +35,7 @@ abstract class AbstractRestorer implements LoggerAwareInterface
         protected readonly Configuration $config,
     ) {
         $this->binary = $config->getRestoreBinary() ?? $this->getDefaultBinary();
-        $this->defaultOptions = $config->getRestoreBinary() ?? $this->getBuiltinDefaultOptions();
+        $this->defaultOptions = $config->getRestoreOptions() ?? $this->getBuiltinDefaultOptions();
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
         $this->timeout = $config->getRestoreTimeout();
