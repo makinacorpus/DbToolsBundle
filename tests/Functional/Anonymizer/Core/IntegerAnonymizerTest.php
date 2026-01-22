@@ -58,19 +58,16 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
-        $this->assertNotNull($data);
         $this->assertNotSame(10, $data);
         $this->assertGreaterThanOrEqual(200, $data);
         $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[1];
-        $this->assertNotNull($data);
         $this->assertNotSame(20, $data);
         $this->assertGreaterThanOrEqual(200, $data);
         $this->assertLessThanOrEqual(10000, $data);
 
         $data = (int) $datas[2];
-        $this->assertNotNull($data);
         $this->assertNotSame(30, $data);
         $this->assertGreaterThanOrEqual(200, $data);
         $this->assertLessThanOrEqual(10000, $data);
@@ -99,21 +96,18 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
-        $this->assertNotNull($data);
         // Initial value is 10, we added a value in [-10, 10]
         // so current value should be in [10-10, 10+10]
         $this->assertGreaterThanOrEqual(0, $data);
         $this->assertLessThanOrEqual(20, $data);
 
         $data = (int) $datas[1];
-        $this->assertNotNull($data);
         // Initial value is 20, we added a value in [-10, 10]
         // so current value should be in [20-10, 20+10]
         $this->assertGreaterThanOrEqual(10, $data);
         $this->assertLessThanOrEqual(30, $data);
 
         $data = (int) $datas[2];
-        $this->assertNotNull($data);
         // Initial value is 30, we added a value in [-10, 10]
         // so current value should be in [30-10, 30+10]
         $this->assertGreaterThanOrEqual(20, $data);
@@ -141,7 +135,6 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $datas = $this->getDatabaseSession()->executeQuery('select data from table_test order by id asc')->fetchFirstColumn();
 
         $data = (int) $datas[0];
-        $this->assertNotNull($data);
         // Initial value is 10, we added a random percent of
         // this value in [-50%, 50%],
         // so current value should be in [10*0.5, 10*1.5]
@@ -149,7 +142,6 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(15, $data);
 
         $data = (int) $datas[1];
-        $this->assertNotNull($data);
         // Initial value is 20, we added a random percent of
         // this value in [-50%, 50%],
         // so current value should be in [20*0.5, 20*1.5]
@@ -157,7 +149,6 @@ class IntegerAnonymizerTest extends FunctionalTestCase
         $this->assertLessThanOrEqual(30, $data);
 
         $data = (int) $datas[2];
-        $this->assertNotNull($data);
         // Initial value is 30, we added a random percent of
         // this value in [-50%, 50%],
         // so current value should be in [30*0.5, 30*1.5]

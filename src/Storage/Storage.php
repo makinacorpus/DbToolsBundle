@@ -54,7 +54,7 @@ class Storage
             $age = $lastModified->diff(new \DateTimeImmutable(''));
 
             if (!$onlyExpired || ($lastModified < $expirationDate)) {
-                if ($file !== $preserveFile) {
+                if ($preserveFile === null || $file->getFilename() !== $preserveFile) {
                     $list[] = [$age->format('%a days'), $file];
                 }
             }

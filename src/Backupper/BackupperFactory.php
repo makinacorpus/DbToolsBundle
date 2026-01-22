@@ -47,8 +47,6 @@ class BackupperFactory
             $this->configRegistry->getConnectionConfig($connectionName),
         );
 
-        \assert($backupper instanceof AbstractBackupper);
-
         if (isset($this->excludedTables[$connectionName])) {
             $backupper->setExcludedTables($this->excludedTables[$connectionName]);
         }

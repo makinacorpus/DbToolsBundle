@@ -16,6 +16,7 @@ use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntity;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestEntityWithEmbedded;
 use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestJoinedChild;
+use MakinaCorpus\DbToolsBundle\Tests\Resources\Loader\TestJoinedParent;
 
 class AttributeLoaderTest extends UnitTestCase
 {

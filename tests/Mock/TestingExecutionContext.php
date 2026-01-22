@@ -71,7 +71,7 @@ class TestingExecutionContext implements ExecutionContextInterface
     }
 
     #[\Override]
-    public function setNode(mixed $value, ?object $object, ?MetadataInterface $metadata, string $propertyPath): void {}
+    public function setNode(mixed $value, ?object $object, ?MetadataInterface $metadata = null, ?string $propertyPath = null): void {}
 
     #[\Override]
     public function setGroup(?string $group): void {}

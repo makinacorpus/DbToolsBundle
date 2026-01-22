@@ -38,7 +38,6 @@ class DateAnonymizer extends AbstractSingleColumnAnonymizer
             throw new \InvalidArgumentException("You must specify both 'min' and 'max' boundaries.");
         }
 
-        // @phpstan-ignore-next-line False positive detected.
         if ($min && $max) {
             if ($max <= $min) {
                 throw new \InvalidArgumentException("'min' value must be less than 'max' value.");

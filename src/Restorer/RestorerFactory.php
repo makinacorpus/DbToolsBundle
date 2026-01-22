@@ -47,8 +47,6 @@ class RestorerFactory
             $this->configRegistry->getConnectionConfig($connectionName),
         );
 
-        \assert($restorer instanceof AbstractRestorer);
-
         if ($this->logger) {
             $restorer->setLogger($this->logger);
         }

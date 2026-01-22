@@ -22,7 +22,7 @@ class TestEntity
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
-    private ?int $id = null;
+    private int|null $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Anonymize(type:'email', options: ['domain' => 'toto.com'])]
@@ -49,12 +49,19 @@ class TestEntity
         return $this->id;
     }
 
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(?string $email): static
     {
         $this->email = $email;
 
@@ -66,7 +73,7 @@ class TestEntity
         return $this->age;
     }
 
-    public function setAge(int $age): static
+    public function setAge(?int $age): static
     {
         $this->age = $age;
 
@@ -78,7 +85,7 @@ class TestEntity
         return $this->street;
     }
 
-    public function setStreet(string $street): static
+    public function setStreet(?string $street): static
     {
         $this->street = $street;
 
@@ -90,7 +97,7 @@ class TestEntity
         return $this->zipCode;
     }
 
-    public function setZipCode(string $zipCode): static
+    public function setZipCode(?string $zipCode): static
     {
         $this->zipCode = $zipCode;
 
@@ -102,7 +109,7 @@ class TestEntity
         return $this->city;
     }
 
-    public function setCity(string $city): static
+    public function setCity(?string $city): static
     {
         $this->city = $city;
 
@@ -114,7 +121,7 @@ class TestEntity
         return $this->country;
     }
 
-    public function setCountry(string $country): static
+    public function setCountry(?string $country): static
     {
         $this->country = $country;
 

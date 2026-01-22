@@ -62,17 +62,14 @@ class StringPatternAnonymizerTest extends FunctionalTestCase
         $checkRegex = '/^Range \d+ for [a-z0-9-]+@example\.com and .+ in [\sa-z-]+$/i';
 
         $data = (string) $datas[0];
-        self::assertNotNull($data);
         self::assertNotSame("Foo value", $data);
         self::assertMatchesRegularExpression($checkRegex, $data);
 
         $data = (string) $datas[1];
-        self::assertNotNull($data);
         self::assertNotSame("Baz value", $data);
         self::assertMatchesRegularExpression($checkRegex, $data);
 
         $data = (string) $datas[2];
-        self::assertNotNull($data);
         self::assertNotSame("Fizz value", $data);
         self::assertMatchesRegularExpression($checkRegex, $data);
 

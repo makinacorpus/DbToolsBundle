@@ -19,11 +19,11 @@ class TestJoinedParent
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
-    private ?int $id = null;
+    private int|null $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Anonymize(type:'email', options: ['domain' => 'toto.com'])]
-    private ?string $email = null;
+    private string|null $email = null;
 
     public function getId(): ?int
     {
@@ -33,5 +33,19 @@ class TestJoinedParent
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function setEmail(?string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }
