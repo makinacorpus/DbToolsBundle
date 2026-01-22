@@ -87,7 +87,6 @@ class DbToolsConfiguration implements ConfigurationInterface
         // For PHPStan.
         \assert($rootNode instanceof ArrayNodeDefinition);
 
-        // @phpstan-ignore-next-line
         $rootNode
             ->children()
                 ->arrayNode('anonymization')
@@ -112,7 +111,6 @@ class DbToolsConfiguration implements ConfigurationInterface
         $this->addConnectionConfigTreeBuilder($rootNode);
 
         // Add "connections" children definition.
-        // @phpstan-ignore-next-line
         $connectionsNode = $rootNode
             ->children()
                 ->arrayNode('connections')
@@ -132,7 +130,6 @@ class DbToolsConfiguration implements ConfigurationInterface
 
         if ($this->standalone) {
             // Add extra options for standalone CLI app.
-            // @phpstan-ignore-next-line
             $rootNode
                 ->children()
                     ->scalarNode('workdir')
@@ -149,7 +146,6 @@ class DbToolsConfiguration implements ConfigurationInterface
 
         if ($this->withDeprecated) {
             // Add deprecated options.
-            // @phpstan-ignore-next-line
             $rootNode
                 ->children()
                     ->arrayNode('storage')
@@ -190,7 +186,6 @@ class DbToolsConfiguration implements ConfigurationInterface
     {
         $intervalToInt = $this->getIntervalToInt();
 
-        // @phpstan-ignore-next-line
         $node
             ->children()
                 ->scalarNode('backup_binary')
