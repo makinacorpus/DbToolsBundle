@@ -47,6 +47,18 @@ services:
             XDEBUG_MODE: "${XDEBUG_MODE:-debug}"
         extra_hosts:
             - "host.docker.internal:host-gateway"
+    phpunit-8-5:
+        build: ./docker/php-8.5
+        networks:
+            - db-tools-test
+        volumes:
+            - ./:/var/www
+        environment:
+            PHP_IDE_CONFIG: ${PHP_IDE_CONFIG:-serverName=dbtoolsbundle}
+            XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9000 log=/tmp/xdebug/xdebug.log output_dir=/tmp/xdebug start_with_request=trigger"
+            XDEBUG_MODE: "${XDEBUG_MODE:-debug}"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
     mysql57:
         image: mysql:5.7
         restart: 'no'
