@@ -7,6 +7,7 @@ namespace MakinaCorpus\DbToolsBundle\Bridge\Standalone;
 use Composer\Pcre\Preg;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
+use Seld\PharUtils\Timestamps;
 
 /**
  * The Compiler class compiles composer into a phar.
@@ -156,11 +157,10 @@ class PharCompiler
         unset($phar);
 
         // re-sign the phar with reproducible timestamp / signature
-        if (\class_exists('Seld\\PharUtils\\Timestamps')) {
-            $util = new \Seld\PharUtils\Timestamps($pharFile);
-            $util->updateTimestamps($this->versionDate);
-            $util->save($pharFile, \Phar::SHA512);
-        }
+
+        $util = new Timestamps($pharFile);
+        $util->updateTimestamps($this->versionDate);
+        $util->save($pharFile, \Phar::SHA512);
     }
 
     private function getRelativeFilePath(\SplFileInfo $file): string
