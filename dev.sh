@@ -5,9 +5,7 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # PHP version.
-# For now, we keep PHP 8.3 as default version,
-# mainly because phpstan can't run with PHP 8.4
-PHPVER="8-3"
+PHPVER="8-5"
 # Extra parameters passed to all docker command lines.
 EXTRA_DOCKER_ENV=""
 
@@ -35,10 +33,11 @@ while getopts ":xp:l" opt; do
                 "8.4")
                     PHPVER="8-4"
                     ;;
+                "8.5")
+                    PHPVER="8-5"
+                    ;;
                 *)
-                    # For now, we keep PHP 8.3 as default version,
-                    # mainly because phpstan can't run with PHP 8.4
-                    PHPVER="8-3"
+                    PHPVER="8-5"
                     ;;
             esac
             ;;

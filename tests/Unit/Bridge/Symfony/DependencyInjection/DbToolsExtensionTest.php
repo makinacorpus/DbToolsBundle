@@ -32,7 +32,7 @@ class DbToolsExtensionTest extends TestCase
         return $container;
     }
 
-    private function testExtension(array $config, ContainerBuilder $container = null): void
+    private function testExtension(array $config, ?ContainerBuilder $container = null): void
     {
         $container ??= $this->getContainer();
         $extension = new DbToolsExtension();
