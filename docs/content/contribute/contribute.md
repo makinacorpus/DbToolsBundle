@@ -27,12 +27,12 @@ _Each wild PR that does not comply with this rule won't be read_
 
 Note that we accept PR which are not relative to an existing issue (as long as it complies with the previous rule).
 
-But we encourage you not do it. Proposing a PR without discussing the problem/the feature with maintainers can
+But we encourage you not do it. Proposing a PR without discussing the problem/feature with maintainers can
 lead to useless work.
 
 ### Split your contributions
 
-It is much easier for mainteners to review small PRs that solve one and only one issue.
+It is much easier for maintainers to review small PRs that solve one and only one issue.
 
 - Do not correct multiple issues in the same ticket (unless discussed and approved in advance).
 - Do not make changes that are too invasive or too large (unless discussed and approved in advance).
@@ -52,11 +52,11 @@ This file already contains a lot of content, you should quickly understand the e
 
 If you encounter problem while contributing, we encourage you to ask us for help.
 
-Don't hesitate to push draft PRs and to ping mainteners!
+Don't hesitate to push draft PRs and to ping maintainers!
 
 ### Ok for AI, but in good intelligence
 
-While we are no big fan of AI, we accept our contributor to use it.
+While we are no big fans of AI, we accept our contributors to use it.
 
 **But**
 
