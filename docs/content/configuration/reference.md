@@ -434,6 +434,13 @@ connections: "pgsql://username:password@hostname:port/database?version=16.0&othe
 If you configure this parameter with a single URL string with no connection name,
 the connection name will be `default`.
 :::
+
+:::tip
+If you cannot write a static database connection URL, the standalone configuration
+file allows you to delegate the connection URL creation to a PHP function.
+
+See [standalone connection provider documentation](./connection_provider) for more information.
+:::
 @@@
 
 :::tip
