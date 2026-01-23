@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           fetch-depth: 2
 
@@ -75,14 +75,6 @@ jobs:
 
       - name: "Run PHPUnit"
         env:
-          DBAL_DRIVER: "${{ matrix.extension }}"
-          DBAL_DBNAME: "test_db"
-          DBAL_HOST: "postgres"
-          DBAL_PASSWORD: "postgres"
-          DBAL_PORT: "5432"
-          DBAL_ROOT_PASSWORD: "postgres"
-          DBAL_ROOT_USER: "postgres"
-          DBAL_USER: "postgres"
           DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
         run: "vendor/bin/phpunit"
 
@@ -96,7 +88,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.4"
+          - "8.5"
         postgres-version:
           - "10"
           - "15"
@@ -119,7 +111,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           fetch-depth: 2
 
@@ -138,14 +130,6 @@ jobs:
 
       - name: "Run PHPUnit"
         env:
-          DBAL_DRIVER: "${{ matrix.extension }}"
-          DBAL_DBNAME: "test_db"
-          DBAL_HOST: "postgres"
-          DBAL_PASSWORD: "postgres"
-          DBAL_PORT: "5432"
-          DBAL_ROOT_PASSWORD: "postgres"
-          DBAL_ROOT_USER: "postgres"
-          DBAL_USER: "postgres"
           DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/test_db?serverVersion=${{ matrix.postgres-version }}&charset=utf8"
         run: "vendor/bin/phpunit"
 
@@ -159,7 +143,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.4"
+          - "8.5"
         mariadb-version:
           - "10.11.6" # LTS (Feb 2028)
           - "11.4.5" # LTS (May 2029)
@@ -167,7 +151,7 @@ jobs:
         extension:
           - "mysqli"
         include:
-          - php-version: "8.4"
+          - php-version: "8.5"
             mariadb-version: "11.4.5"
             extension: "pdo_mysql"
 
@@ -186,7 +170,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           fetch-depth: 2
 
@@ -204,14 +188,6 @@ jobs:
 
       - name: "Run PHPUnit"
         env:
-          DBAL_DRIVER: "${{ matrix.extension }}"
-          DBAL_DBNAME: "test_db"
-          DBAL_HOST: "mariadb"
-          DBAL_PASSWORD: "password"
-          DBAL_PORT: "3306"
-          DBAL_ROOT_PASSWORD: "password"
-          DBAL_ROOT_USER: "root"
-          DBAL_USER: "root"
           DATABASE_URL: "mysql://root:password@mariadb:3306/test_db?serverVersion=mariadb-${{ matrix.mariadb-version }}"
         run: "vendor/bin/phpunit"
 
@@ -225,12 +201,12 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.4"
+          - "8.5"
         mysql-version:
-          - "5.7"
           - "8.0"
           - "8.2"
           - "8.3"
+          - "8.4"
         extension:
           - "mysqli"
           - "pdo_mysql"
@@ -249,7 +225,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           fetch-depth: 2
 
@@ -267,14 +243,6 @@ jobs:
 
       - name: "Run PHPUnit"
         env:
-          DBAL_DRIVER: "${{ matrix.extension }}"
-          DBAL_DBNAME: "test_db"
-          DBAL_HOST: "mysql"
-          DBAL_PASSWORD: "password"
-          DBAL_PORT: "3306"
-          DBAL_ROOT_PASSWORD: "password"
-          DBAL_ROOT_USER: "root"
-          DBAL_USER: "root"
           DATABASE_URL: "mysql://root:password@mysql:3306/test_db"
         run: "vendor/bin/phpunit"
 
@@ -290,7 +258,7 @@ jobs:
   #   strategy:
   #     matrix:
   #       php-version:
-  #         - "8.4"
+  #         - "8.5"
   #       mssql-version:
   #         - "2019"
   #         - "2022"
@@ -313,7 +281,7 @@ jobs:
 
   #   steps:
   #     - name: "Checkout"
-  #       uses: "actions/checkout@v4"
+  #       uses: "actions/checkout@v6"
   #       with:
   #         fetch-depth: 2
 
@@ -331,14 +299,7 @@ jobs:
 
   #     - name: "Run PHPUnit"
   #       env:
-  #         DBAL_DRIVER: "${{ matrix.extension }}"
-  #         DBAL_DBNAME: "test_db"
-  #         DBAL_HOST: "mssql"
-  #         DBAL_PASSWORD: "P@ssword123"
-  #         DBAL_PORT: "1433"
-  #         DBAL_ROOT_PASSWORD: "P@ssword123"
-  #         DBAL_ROOT_USER: "sa"
-  #         DBAL_USER: "sa"
+  #         DATABASE_DRIVER: "${{ matrix.extension }}"
   #         DATABASE_URL: "mssql://sa:P%40ssword123@mssql:1433/test_db?serverVersion=2019&driverOptions[TrustServerCertificate]=true"
 
   #       run: "vendor/bin/phpunit"
@@ -355,14 +316,14 @@ jobs:
         os:
           - "ubuntu-22.04"
         php-version:
-          - "8.4"
+          - "8.5"
         extension:
           - "pdo_sqlite"
           - "sqlite3"
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           fetch-depth: 2
 
@@ -380,9 +341,5 @@ jobs:
 
       - name: "Run PHPUnit"
         env:
-          DBAL_DRIVER: "${{ matrix.extension }}"
-          DBAL_DBNAME: "test_db"
-          DBAL_HOST: "127.0.0.1"
-          DBAL_PATH: "test_db.sqlite"
           DATABASE_URL: "sqlite:///test_db.sqlite"
         run: "vendor/bin/phpunit"

@@ -423,7 +423,7 @@ class Bootstrap
     /**
      * Get config variables from environment variables.
      */
-    private static function configGetEnv(array $config): array
+    public static function configGetEnv(array $config): array
     {
         if (!isset($config['connections'])) {
             $config['connections'] = ['default' => self::getEnv('DBTOOLS_CONNECTION')];

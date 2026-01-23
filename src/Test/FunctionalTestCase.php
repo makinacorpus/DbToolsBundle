@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Test;
 
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\AbstractSQLiteDriver\Middleware\EnableForeignKeys;
-use Doctrine\DBAL\Driver\OCI8\Middleware\InitializeSession;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\DBAL\Schema\Column;
-use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
@@ -19,22 +12,17 @@ use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Bridge\Symfony\DoctrineDatabaseSessionRegistry;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
-use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineQueryBuilder;
-use MakinaCorpus\QueryBuilder\DatabaseSession;
+use MakinaCorpus\QueryBuilder\Bridge\Bridge;
+use MakinaCorpus\QueryBuilder\Bridge\Doctrine\DoctrineBridge;
+use MakinaCorpus\QueryBuilder\BridgeFactory;
+use MakinaCorpus\QueryBuilder\Dsn;
 use MakinaCorpus\QueryBuilder\Error\Server\DatabaseObjectDoesNotExistError;
-use Psr\Log\AbstractLogger;
 
 abstract class FunctionalTestCase extends UnitTestCase
 {
-    private bool $initialized = false;
-    /**
-     * @deprecated
-     *   Remove when hard dependency on doctrine/dbal will be gone.
-     */
-    private ?Connection $connection = null;
-    /**
-     * @var string[]
-     */
+    private ?Bridge $connection = null;
+    private ?Bridge $privConnection = null;
+    /** @var string[] */
     private array $createdTables = [];
 
     /** @after */
@@ -48,53 +36,48 @@ abstract class FunctionalTestCase extends UnitTestCase
             $this->createdTables = [];
         }
 
-        if ($this->connection) {
-            while ($this->connection->isTransactionActive()) {
-                $this->connection->rollBack();
-            }
-            unset($this->connection);
+        if (null !== $this->connection) {
+            $this->connection->close();
+            $this->connection = null;
+        }
+
+        if (null !== $this->privConnection) {
+            $this->privConnection->close();
+            $this->privConnection = null;
         }
     }
 
     /**
      * Initialize database.
      */
-    protected function initializeDatabase(): void
+    protected function initializeDatabase(string $dbName): void
     {
-        $privConnection = $this->createPrivConnection();
+        $privConnection = $this->getDatabaseSessionWithPrivileges();
         try {
-            $privConnection->createSchemaManager()->createDatabase('test_db');
-        } catch (\Exception $e) {
-
-        } finally {
-            $privConnection->close();
+            $privConnection->executeStatement("CREATE DATABASE ?::id", [$dbName]);
+        } catch (\Throwable $e) {
+            // Check database already exists or not.
+            if (!\str_contains($e->getMessage(), 'exist')) {
+                throw $e;
+            }
         }
     }
 
     /**
-     * Get testing connection object.
-     *
-     * @deprecated
-     *   Remove when hard dependency on doctrine/dbal will is gone.
-     */
-    protected function getDoctrineConnection(): Connection
-    {
-        if (!$this->initialized) {
-            $this->initializeDatabase();
-
-            $this->initialized = true;
-        }
-
-        return $this->connection ??= $this->createDoctrineConnection();
-    }
-
-    /**
-     * Get database session.
+     * Create query builder.
      */
     #[\Override]
-    protected function getDatabaseSession(): DatabaseSession
+    protected function getDatabaseSession(): Bridge
     {
-        return new DoctrineQueryBuilder($this->getDoctrineConnection());
+        return $this->connection ??= $this->createBridge();
+    }
+
+    /**
+     * Create priviledged query builder.
+     */
+    protected function getDatabaseSessionWithPrivileges(): Bridge
+    {
+        return $this->privConnection ??= $this->createPriviledgeBridge();
     }
 
     /**
@@ -102,7 +85,13 @@ abstract class FunctionalTestCase extends UnitTestCase
      */
     protected function getDatabaseSessionRegistry(): DatabaseSessionRegistry
     {
-        $doctrineConnection = $this->getDoctrineConnection();
+        $bridge = $this->getDatabaseSession();
+
+        if (!$bridge instanceof DoctrineBridge) {
+            throw new \Exception("Connection is not a Doctrine bridge.");
+        }
+
+        $doctrineConnection = $bridge->getConnection();
 
         $doctrineRegistry = $this->createMock(ManagerRegistry::class);
         $doctrineRegistry
@@ -258,114 +247,91 @@ abstract class FunctionalTestCase extends UnitTestCase
     }
 
     /**
-     * Create database connection.
-     *
-     * Default will use a mock object.
-     *
-     * @deprecated
-     *   Remove when hard dependency on doctrine/dbal will be gone.
+     * Create connection.
      */
-    private function createDoctrineConnection(): Connection
+    private function createBridge(): Bridge
     {
         $params = $this->getConnectionParameters();
 
-        return DriverManager::getConnection(
-            $params,
-            self::createConfiguration($params['driver']),
-        );
+        if (!\str_contains($params['driver'], 'sqlite')) {
+            if ($params['dbname']) {
+                $this->initializeDatabase($params['dbname']);
+            }
+        }
+
+        return BridgeFactory::createDoctrine($params);
     }
 
     /**
-     * Get connection parameters from environment.
+     * Create priviledged query builder.
      */
-    private function getConnectionParameters(): array
+    private function createPriviledgeBridge(): Bridge
     {
-        if (!$driver = \getenv('DBAL_DRIVER')) {
-            self::markTestSkipped("Missing 'DBAL_DRIVER' environment variable.");
+        return BridgeFactory::createDoctrine($this->getPriviledgedConnectionParameters());
+    }
+
+    /**
+     * Get connection parameters for user with privileges connection.
+     *
+     * This connection serves the purpose of initializing database.
+     */
+    private function getPriviledgedConnectionParameters(): array
+    {
+        if (!$dsnString = \getenv('DATABASE_URL')) {
+            self::markTestSkipped("Missing 'DATABASE_URL' environment variable.");
+        }
+        $dsn = Dsn::fromString($dsnString);
+
+        $driver = \getenv('DATABASE_DRIVER') ?: $dsn->getDriver();
+        if ($driver === Dsn::DRIVER_ANY) {
+            $driver = BridgeFactory::guessDoctrineDriver($dsn->getVendor(), $driver);
         }
 
         $driverOptions = [];
         if (\str_contains($driver, 'sqlsrv')) {
             // https://stackoverflow.com/questions/71688125/odbc-driver-18-for-sql-serverssl-provider-error1416f086
             $driverOptions['TrustServerCertificate'] = "true";
+            $driverOptions['MultipleActiveResultSets'] = "false";
         }
 
-        $params = \array_filter([
-            'dbname' => \getenv('DBAL_DBNAME'),
+        return \array_filter([
             'driver' => $driver,
-            'driverOptions' => $driverOptions,
-            'host' => \getenv('DBAL_HOST'),
-            'password' => \getenv('DBAL_PASSWORD'),
-            'port' => ($port = \getenv('DBAL_PORT')) ? ((int) $port) : null,
-            'user' => \getenv('DBAL_USER'),
-            'path' => \getenv('DBAL_PATH'),
-        ]);
-
-        return $params;
+            'host' => $dsn->getHost(),
+            'password' => \getenv('DATABASE_ROOT_PASSWORD') ?: $dsn->getPassword(),
+            'port' => $dsn->getPort(),
+            'user' => \getenv('DATABASE_ROOT_USER') ?: $dsn->getUser(),
+        ]) + $driverOptions;
     }
 
     /**
-     * Connexion with administration rights, for database setup.
+     * Get connection parameters for test user.
      */
-    private function createPrivConnection(): Connection
+    private function getConnectionParameters(): array
     {
-        $params = $this->getConnectionParameters();
-
-        if ($value = \getenv('DBAL_ROOT_USER')) {
-            $params['user'] = $value;
+        if (!$dsnString = \getenv('DATABASE_URL')) {
+            self::markTestSkipped("Missing 'DATABASE_URL' environment variable.");
         }
-        if ($value = \getenv('DBAL_ROOT_PASSWORD')) {
-            $params['password'] = $value;
-        }
-        // Avoid error upon connection when database does not exit.
-        unset($params['dbname']);
+        $dsn = Dsn::fromString($dsnString);
 
-        return DriverManager::getConnection(
-            $params,
-            self::createConfiguration($params['driver']),
-        );
-    }
-
-    /**
-     * Code copied and adapted from doctrine/dbal package.
-     *
-     * @see \Doctrine\DBAL\Tests\FunctionalTestCase
-     */
-    private static function createConfiguration(string $driver): Configuration
-    {
-        $configuration = new Configuration();
-        $middlewares = [];
-
-        // @todo Option
-        /* @phpstan-ignore-next-line */
-        if (false) {
-            $middlewares[] = new Middleware(
-                new class () extends AbstractLogger {
-                    #[\Override]
-                    public function log($level, string|\Stringable $message, array $context = []): void
-                    {
-                        if (\str_contains($message, 'Executing statement')) {
-                            echo $message, \print_r($context, true), "\n";
-                        }
-                    }
-                },
-            );
+        $driver = \getenv('DATABASE_DRIVER') ?: $dsn->getDriver();
+        if (Dsn::DRIVER_ANY === $driver) {
+            $driver = BridgeFactory::guessDoctrineDriver($dsn->getVendor(), $driver);
         }
 
-        switch ($driver) {
-            case 'pdo_oci':
-            case 'oci8':
-                $middlewares[] = new InitializeSession();
-                break;
-            case 'pdo_sqlite':
-            case 'sqlite3':
-                $middlewares[] = new EnableForeignKeys();
-                break;
+        $driverOptions = [];
+        if (\str_contains($driver, 'sqlsrv')) {
+            // https://stackoverflow.com/questions/71688125/odbc-driver-18-for-sql-serverssl-provider-error1416f086
+            $driverOptions['TrustServerCertificate'] = "true";
+            $driverOptions['MultipleActiveResultSets'] = "false";
         }
 
-        $configuration->setMiddlewares($middlewares);
-        $configuration->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
-
-        return $configuration;
+        return \array_filter([
+            'dbname' => 'test_db',
+            'driver' => $driver,
+            'host' => $dsn->getHost(),
+            'password' => $dsn->getPassword(),
+            'port' => $dsn->getPort(),
+            'user' => $dsn->getUser(),
+        ] + $driverOptions);
     }
 }
