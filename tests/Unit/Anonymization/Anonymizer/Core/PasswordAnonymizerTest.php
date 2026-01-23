@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\PasswordAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
@@ -16,7 +17,8 @@ class PasswordAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
-            new Options([]),
+            new Context(),
+            new Options(),
         );
 
         self::expectNotToPerformAssertions();
@@ -28,6 +30,7 @@ class PasswordAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'password' => 'test',
             ]),
@@ -42,6 +45,7 @@ class PasswordAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'algorithm' => 'bcrypt',
             ]),
@@ -58,6 +62,7 @@ class PasswordAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'algorithm' => 'toto',
             ]),

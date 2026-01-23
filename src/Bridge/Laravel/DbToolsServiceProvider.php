@@ -141,6 +141,8 @@ class DbToolsServiceProvider extends ServiceProvider
         $this->app->resolving(
             AnonymizatorFactory::class,
             function (AnonymizatorFactory $factory, Application $app): void {
+                $factory->setBasePath($app->basePath());
+
                 /** @var Repository $config */
                 $config = $app->make('config');
 

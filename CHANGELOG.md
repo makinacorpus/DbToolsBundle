@@ -2,7 +2,13 @@
 
 ## Next
 
+* [feature] 🌟 File enum anonymizer, inject samples in database from a plain text or CSV file.
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
+* [internal] introduce anonymizer context for carrying environment configuration to anonymizers (#235).
+* [bc] Salt in `AbstractAnonymizer::$option->get('salt')` in now in `AbstractAnonymizer::$context->salt` (#235).
+* [bc] `AbstractAnonymizer::__construct()` now expects an additional `$context` parameter (#235).
+* [bc] `Anonymizator::__construct()` `$salt` parameter was removed (#235).
+* [fix] Some minor PHP 8.4 deprecations.
 
 ## 2.0.3
 

@@ -17,6 +17,7 @@ class AnonymizerRegistry
         Core\ConstantAnonymizer::class,
         Core\DateAnonymizer::class,
         Core\EmailAnonymizer::class,
+        Core\FileEnumAnonymizer::class,
         Core\FirstNameAnonymizer::class,
         Core\FloatAnonymizer::class,
         Core\IbanBicAnonymizer::class,
@@ -67,12 +68,12 @@ class AnonymizerRegistry
     public function createAnonymizer(
         string $name,
         AnonymizerConfig $config,
-        Options $options,
+        Context $context,
         DatabaseSession $databaseSession,
     ): AbstractAnonymizer {
         $className = $this->getAnonymizerClass($name);
 
-        $ret = new $className($config->table, $config->targetName, $databaseSession, $options);
+        $ret = new $className($config->table, $config->targetName, $databaseSession, $context, $config->options);
         \assert($ret instanceof AbstractAnonymizer);
 
         if ($ret instanceof WithAnonymizerRegistry) {

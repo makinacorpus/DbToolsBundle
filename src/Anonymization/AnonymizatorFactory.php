@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\Loader\LoaderInterface;
 use MakinaCorpus\DbToolsBundle\Database\DatabaseSessionRegistry;
@@ -21,7 +22,23 @@ class AnonymizatorFactory
         private DatabaseSessionRegistry $registry,
         private AnonymizerRegistry $anonymizerRegistry,
         private ?LoggerInterface $logger = null,
+        /**
+         * @todo
+         *   This is not the right place to set this, but any other alternative
+         *   would require a deep refactor of anonymizer options.
+         */
+        private ?string $basePath = null,
     ) {}
+
+    /**
+     * @internal
+     *   For Laravel dependency injection only.
+     *   This can change anytime.
+     */
+    public function setBasePath(?string $basePath): void
+    {
+        $this->basePath = $basePath;
+    }
 
     /**
      * Add configuration loader.
@@ -49,7 +66,8 @@ class AnonymizatorFactory
         $anonymizator = new Anonymizator(
             $this->registry->getDatabaseSession($connectionName),
             $this->anonymizerRegistry,
-            $config
+            $config,
+            new Context(basePath: $this->basePath),
         );
 
         if ($this->logger) {
