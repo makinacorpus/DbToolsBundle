@@ -2,8 +2,8 @@
 
 You want to help to build and improve *DbToolsBundle*? Here is want you can do:
 
-* Talk about it: share this bundle to make it more visible
-* Help us with this documentation, you have seen a typo? something is missing? [Issues](https://github.com/makinacorpus/DbToolsBundle/issues) & PRs are welcome (but before, please, take look at our contribution rules below)
+* Talk about it: share this bundle to make it more visible.
+* Help us with this documentation, you have seen a typo? something is missing? [Issues](https://github.com/makinacorpus/DbToolsBundle/issues) & PRs are welcome (but before, please, take look at our contribution rules below).
 * Report bugs you find: [Reporting issues](https://github.com/makinacorpus/DbToolsBundle/issues) is essential to help us improve this tool.
   Feel confident enough to correct it? PRs are welcome!
 * Want to add more Anonymizers? [Why not distribute your own pack](./pack)?
@@ -34,8 +34,8 @@ lead to useless work.
 
 It is much easier for mainteners to review small PRs that solve one and only one issue.
 
-- Do not correct multiple issues in the same ticket (unless discussed and approved in advance)
-- Do not make changes that are too invasive or too large (unless discussed and approved in advance)
+- Do not correct multiple issues in the same ticket (unless discussed and approved in advance).
+- Do not make changes that are too invasive or too large (unless discussed and approved in advance).
 
 ### Mind the documentation
 
@@ -44,7 +44,7 @@ We care a lot about documentation and changelog.
 We consider that a feature which is not documented does not exist. So if you add a new
 feature, document it in the correct section of our documentation.
 
-Whether you are fixing a bug or developing a new feature : mention it in the `CHANGELOG.md` file.
+Whether you are fixing a bug or developing a new feature: mention it in the `CHANGELOG.md` file.
 
 This file already contains a lot of content, you should quickly understand the expected syntax.
 
@@ -65,5 +65,5 @@ the produced code complies with all the previous rules.
 
 This being said:
 
-- We won't accept completely vide-coded PRs
-- A PR that does not appear to have been properly reviewed by its own author after using AI will be closed
+- We won't accept completely vide-coded PRs.
+- A PR that does not appear to have been properly reviewed by its own author after using AI will be closed.
