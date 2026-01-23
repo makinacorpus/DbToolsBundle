@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizator;
 use MakinaCorpus\QueryBuilder\DatabaseSession;
 use MakinaCorpus\QueryBuilder\Expression;
 use MakinaCorpus\QueryBuilder\ExpressionFactory;
@@ -22,7 +21,8 @@ abstract class AbstractAnonymizer
         protected string $tableName,
         protected string $columnName,
         protected DatabaseSession $databaseSession,
-        protected Options $options,
+        protected readonly Context $context,
+        protected readonly Options $options,
     ) {
         $this->validateOptions();
     }
@@ -77,9 +77,10 @@ abstract class AbstractAnonymizer
     /**
      * Get a random, global salt for anonymizing hashed values.
      */
+    #[\Deprecated(message: "Will be removed in 3.0, use \$this->context->salt instead.", since: "2.1.0")]
     protected function getSalt(): string
     {
-        return $this->options->get('salt') ?? Anonymizator::generateRandomSalt();
+        return $this->context->salt;
     }
 
     /**

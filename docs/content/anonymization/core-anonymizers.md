@@ -14,8 +14,11 @@ This page list all *Anonymizers* provided by *DbToolsBundle*.
 <!--@include: ./core-anonymizers/md5.md-->
 <!--@include: ./core-anonymizers/string.md-->
 <!--@include: ./core-anonymizers/pattern.md-->
+<!--@include: ./core-anonymizers/file-enum.md-->
+<!--@include: ./core-anonymizers/file-column.md-->
 <!--@include: ./core-anonymizers/lastname.md-->
 <!--@include: ./core-anonymizers/firstname.md-->
 <!--@include: ./core-anonymizers/lorem-ipsum.md-->
 <!--@include: ./core-anonymizers/address.md-->
 <!--@include: ./core-anonymizers/iban-bic.md-->
+<!--@include: ./core-anonymizers/file-resolution.md-->

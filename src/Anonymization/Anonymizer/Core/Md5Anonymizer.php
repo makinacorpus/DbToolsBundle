@@ -27,7 +27,7 @@ class Md5Anonymizer extends AbstractSingleColumnAnonymizer
         $columnExpr = $expr->column($this->columnName, $this->tableName);
 
         if ($this->options->get('use_salt', true)) {
-            $columnExpr = $expr->concat($columnExpr, $expr->value($this->getSalt()));
+            $columnExpr = $expr->concat($columnExpr, $expr->value($this->context->salt));
 
             // Work around some RDBMS not seeing the NULL value anymore
             // once we added the string concat.
