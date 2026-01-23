@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Functional\BackupperRestorer;
 
 use MakinaCorpus\DbToolsBundle\Backupper\BackupperFactory;
+use MakinaCorpus\DbToolsBundle\Bridge\Standalone\Bootstrap;
 use MakinaCorpus\DbToolsBundle\Configuration\Configuration;
 use MakinaCorpus\DbToolsBundle\Configuration\ConfigurationRegistry;
 use MakinaCorpus\DbToolsBundle\Error\NotImplementedException;
@@ -71,14 +72,35 @@ class BackupperRestorerTest extends FunctionalTestCase
         );
     }
 
+    private function createConfigurationRegistry(): ConfigurationRegistry
+    {
+        // We require ENV vars to be read, so we need this.
+        $config = Bootstrap::configGetEnv([]);
+
+        $default = new Configuration(
+            backupBinary: $config['backup_binary'] ?? null,
+            backupExcludedTables: $config['backup_excluded_tables'] ?? null,
+            backupExpirationAge: $config['backup_expiration_age'] ?? null,
+            backupOptions: $config['backup_options'] ?? null,
+            backupTimeout: $config['backup_timeout'] ?? null,
+            restoreBinary: $config['restore_binary'] ?? null,
+            restoreOptions: $config['restore_options'] ?? null,
+            restoreTimeout: $config['restore_timeout'] ?? null,
+            storageDirectory: $config['storage_directory'] ?? null,
+            storageFilenameStrategy: $config['storage_filename_strategy'] ?? null,
+        );
+
+        return new ConfigurationRegistry($default);
+    }
+
     private function getBackupperFactory(): BackupperFactory
     {
-        return new BackupperFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
+        return new BackupperFactory($this->getDatabaseSessionRegistry(), $this->createConfigurationRegistry());
     }
 
     private function getRestorerFactory(): RestorerFactory
     {
-        return new RestorerFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
+        return new RestorerFactory($this->getDatabaseSessionRegistry(), $this->createConfigurationRegistry());
     }
 
     public function testBackupper(): void
@@ -167,9 +189,10 @@ class BackupperRestorerTest extends FunctionalTestCase
         $backupper
             ->setDestination($backupFilename)
             ->setExtraOptions(
+                // --skip-ssl is added due to local docker testing environment. Do NOT remove this option.
                 match ($this->getDatabaseSession()->getVendorName()) {
-                    Vendor::MARIADB => '-v --no-tablespaces --add-drop-table --skip-quote-names',
-                    Vendor::MYSQL => '-v --no-tablespaces --add-drop-table --skip-quote-names',
+                    Vendor::MARIADB => '-v --no-tablespaces --skip-ssl --add-drop-table --skip-quote-names',
+                    Vendor::MYSQL => '-v --no-tablespaces --skip-ssl --add-drop-table --skip-quote-names',
                     Vendor::POSTGRESQL => '-v --no-owner -Z 5 --lock-wait-timeout=120',
                     Vendor::SQLITE => '-bail -readonly', // No interesting options for SQLite.
                     default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
@@ -215,9 +238,10 @@ class BackupperRestorerTest extends FunctionalTestCase
         $restorer
             ->setBackupFilename($this->prepareBackupFilename($restorer->getExtension()))
             ->setExtraOptions(
+                // --skip-ssl is added due to local docker testing environment. Do NOT remove this option.
                 match ($databaseSession->getVendorName()) {
-                    Vendor::MARIADB => '-v --no-auto-rehash --skip-progress-reports',
-                    Vendor::MYSQL => '-v --no-auto-rehash',
+                    Vendor::MARIADB => '-v --skip-ssl --no-auto-rehash --skip-progress-reports',
+                    Vendor::MYSQL => '-v --skip-ssl --no-auto-rehash',
                     Vendor::POSTGRESQL => '-v -j 2 --disable-triggers --clean --if-exists',
                     Vendor::SQLITE => '-bail', // No interesting options for SQLite.
                     default => $this->markTestSkipped('Driver unsupported: ' . \getenv('DBAL_DRIVER')),
@@ -246,7 +270,7 @@ class BackupperRestorerTest extends FunctionalTestCase
     {
         $this->skipIfDatabase(Vendor::SQLSERVER);
 
-        $backupperFactory = new BackupperFactory($this->getDatabaseSessionRegistry(), new ConfigurationRegistry());
+        $backupperFactory = new BackupperFactory($this->getDatabaseSessionRegistry(), $this->createConfigurationRegistry());
 
         $backupper = $backupperFactory->create();
 

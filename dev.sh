@@ -13,7 +13,7 @@ EXTRA_DOCKER_ENV=""
 while getopts ":xp:l" opt; do
     case "${opt}" in
         x)
-            EXTRA_DOCKER_ENV="${EXTRA_DOCKER_ENV} -e XDEBUG_TRIGGER=1"
+            EXTRA_DOCKER_ENV="${EXTRA_DOCKER_ENV} -e XDEBUG_MODE=debug -e XDEBUG_TRIGGER=1"
             ;;
         l)
             LOWEST=1
@@ -115,101 +115,68 @@ do_ps() {
     do_docker_compose ps
 }
 
-do_test_mysql57() {
-    section_title "Running tests with MySQL 5.7"
-    do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_mysql \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=mysql57 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=3306 \
-        -e DBAL_ROOT_PASSWORD=password \
-        -e DBAL_ROOT_USER="root" \
-        -e DBAL_USER=root \
-        -e DATABASE_URL=mysql://root:password@mysql57:3306/test_db?serverVersion=5.7 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
-}
-
 do_test_mysql80() {
     section_title "Running tests with MySQL 8.0"
+    # --skip-ssl for MariaDB client, --ssl-mode=disabled for MySQL client
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=mysqli \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=mysql80 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=3306 \
-        -e DBAL_ROOT_PASSWORD=password \
-        -e DBAL_ROOT_USER=root \
-        -e DBAL_USER=root \
-        -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8 \
+        -e DBTOOLS_BACKUP_OPTIONS="--no-tablespaces --skip-ssl" \
+        -e DBTOOLS_RESTORE_OPTIONS="--skip-ssl" \
+        -e DATABASE_URL=mysql://root:password@mysql80:3306/test_db?serverVersion=8.0 \
         "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
-do_test_mysql83() {
-    section_title "Running tests with MySQL 8.3"
+do_test_mysql84() {
+    section_title "Running tests with MySQL 8.4"
+    # --skip-ssl for MariaDB client, --ssl-mode=disabled for MySQL client
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_mysql \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=mysql83 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=3306 \
-        -e DBAL_ROOT_PASSWORD=password \
-        -e DBAL_ROOT_USER=root \
-        -e DBAL_USER=root \
-        -e DATABASE_URL=mysql://root:password@mysql83:3306/test_db?serverVersion=8 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        -e DBTOOLS_BACKUP_OPTIONS="--no-tablespaces --skip-ssl" \
+        -e DBTOOLS_RESTORE_OPTIONS="--skip-ssl" \
+        -e DATABASE_URL=mysql://root:password@mysql84:3306/test_db?serverVersion=8.4 \
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
+}
+
+do_test_mysql() {
+    do_test_mysql80 "$@"
+    do_test_mysql84 "$@"
 }
 
 do_test_mariadb11() {
     section_title "Running tests with MariaDB 11"
+    # --skip-ssl for MariaDB client, --ssl-mode=disabled for MySQL client
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_mysql \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=mariadb11 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=3306 \
-        -e DBAL_ROOT_PASSWORD="password" \
-        -e DBAL_ROOT_USER="root" \
-        -e DBAL_USER=root \
+        -e DBTOOLS_BACKUP_OPTIONS="--no-tablespaces --skip-ssl" \
+        -e DBTOOLS_RESTORE_OPTIONS="--skip-ssl" \
         -e DATABASE_URL=mysql://root:password@mariadb11:3306/test_db?serverVersion=mariadb-11.1.3 \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
-do_test_mysql() {
-    do_test_mysql57 "$@"
-    do_test_mysql80 "$@"
-    do_test_mysql83 "$@"
+do_test_mariadb12() {
+    section_title "Running tests with MariaDB 12"
+    # --skip-ssl for MariaDB client, --ssl-mode=disabled for MySQL client
+    do_docker_compose exec $EXTRA_DOCKER_ENV \
+        -e DBTOOLS_BACKUP_OPTIONS="--no-tablespaces --skip-ssl" \
+        -e DBTOOLS_RESTORE_OPTIONS="--skip-ssl" \
+        -e DATABASE_URL=mysql://root:password@mariadb12:3306/test_db?serverVersion=mariadb-12.1.2 \
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
+}
+
+do_test_mariadb() {
     do_test_mariadb11 "$@"
+    do_test_mariadb12 "$@"
 }
 
 do_test_postgresql10() {
     section_title "Running tests with PostgreSQL 10"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_pgsql \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=postgresql10 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=5432 \
-        -e DBAL_ROOT_PASSWORD=password \
-        -e DBAL_ROOT_USER=postgres \
-        -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql10:5432/test_db?serverVersion=10&charset=utf8" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 do_test_postgresql16() {
     section_title "Running tests with PostgreSQL 16"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_pgsql \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=postgresql16 \
-        -e DBAL_PASSWORD=password \
-        -e DBAL_PORT=5432 \
-        -e DBAL_ROOT_PASSWORD=password \
-        -e DBAL_ROOT_USER=postgres \
-        -e DBAL_USER=postgres \
         -e DATABASE_URL="postgresql://postgres:password@postgresql16:5432/test_db?serverVersion=16&charset=utf8" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 do_test_postgresql() {
@@ -220,31 +187,15 @@ do_test_postgresql() {
 do_test_sqlsrv2019() {
     section_title "Running tests with SQL Server 2019"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_sqlsrv \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=sqlsrv2019 \
-        -e DBAL_PASSWORD=P@ssword123 \
-        -e DBAL_PORT=1433 \
-        -e DBAL_ROOT_PASSWORD=P@ssword123 \
-        -e DBAL_ROOT_USER=sa \
-        -e DBAL_USER=sa \
-        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        -e DATABASE_URL="sqlsrv://sa:P%40ssword123@sqlsrv2019:1433/test_db?serverVersion=2019&charset=utf8&driverOptions[TrustServerCertificate]=true" \
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 do_test_sqlsrv2022() {
     section_title "Running tests with SQL Server 2022"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_sqlsrv \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=sqlsrv2022 \
-        -e DBAL_PASSWORD=P@ssword123 \
-        -e DBAL_PORT=1433 \
-        -e DBAL_ROOT_PASSWORD=P@ssword123 \
-        -e DBAL_ROOT_USER=sa \
-        -e DBAL_USER=sa \
-        -e DATABASE_URL="pdo-sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2022&charset=utf8&driverOptions[TrustServerCertificate]=true" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        -e DATABASE_URL="sqlsrv://sa:P%40ssword123@sqlsrv2022:1433/test_db?serverVersion=2022&charset=utf8&driverOptions[TrustServerCertificate]=true" \
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 do_test_sqlsrv() {
@@ -257,24 +208,21 @@ do_test_sqlsrv() {
 do_test_sqlite() {
     section_title "Running tests with SQLite"
     do_docker_compose exec $EXTRA_DOCKER_ENV \
-        -e DBAL_DRIVER=pdo_sqlite \
-        -e DBAL_DBNAME=test_db \
-        -e DBAL_HOST=127.0.0.1 \
-        -e DBAL_PATH="test_db.sqlite" \
-        -e DATABASE_URL="pdo-sqlite:///test_db.sqlite" \
-        $PHPUNIT_CONTAINER vendor/bin/phpunit "$@"
+        -e DATABASE_URL="sqlite:///test_db.sqlite" \
+        "$PHPUNIT_CONTAINER" vendor/bin/phpunit "$@"
 }
 
 # Run PHPunit tests for all database vendors
 do_test_all() {
     do_composer_update
 
-    do_test_mysql57 "$@"
     do_test_mysql80 "$@"
-    do_test_mysql83 "$@"
+    do_test_mysql84 "$@"
     do_test_mariadb11 "$@"
+    do_test_mariadb12 "$@"
     do_test_postgresql10 "$@"
     do_test_postgresql16 "$@"
+    do_test_postgresql18 "$@"
     do_test_sqlsrv2019 "$@"
     do_test_sqlsrv2022 "$@"
     do_test_sqlite "$@"
@@ -286,15 +234,16 @@ do_test_notice() {
     printf "\n"
     printf "\nLaunch this action with one of these available options:"
     printf "\n"
-    printf "\n  - ${GREEN}mysql${NC}: Launch test for MySQL 5.7, 8.0, 8.3 & MariaDB 11"
-    printf "\n  - ${GREEN}mysql57${NC}: Launch test for MySQL 5.7"
+    printf "\n  - ${GREEN}mysql${NC}: Launch test for all MySQL versions"
     printf "\n  - ${GREEN}mysql80${NC}: Launch test for MySQL 8.0"
-    printf "\n  - ${GREEN}mysql83${NC}: Launch test for MySQL 8.3"
+    printf "\n  - ${GREEN}mysql84${NC}: Launch test for MySQL 8.4"
+    printf "\n  - ${GREEN}mariadb${NC}: Launch test for all MariaDB versions"
     printf "\n  - ${GREEN}mariadb11${NC}: Launch test for MariaDB 11"
-    printf "\n  - ${GREEN}postgresql${NC}: Launch test for PostgreSQL 10 & 16"
+    printf "\n  - ${GREEN}mariadb12${NC}: Launch test for MariaDB 12"
+    printf "\n  - ${GREEN}postgresql${NC}: Launch test for all PostgreSQL versions"
     printf "\n  - ${GREEN}postgresql10${NC}: Launch test for PostgreSQL 10"
     printf "\n  - ${GREEN}postgresql16${NC}: Launch test for PostgreSQL 16"
-    printf "\n  - ${GREEN}sqlsrv${NC}: Launch test for SQL Server 2019 & 2022"
+    printf "\n  - ${GREEN}sqlsrv${NC}: Launch test for all SQL Server versions"
     printf "\n  - ${GREEN}sqlsrv2019${NC}: Launch test for SQL Server 2019"
     printf "\n  - ${GREEN}sqlsrv2022${NC}: Launch test for SQL Server 2022"
     printf "\n  - ${GREEN}sqlite${NC}: Launch test for SQLite"
@@ -309,7 +258,7 @@ do_test() {
     if [[ -n $@ ]];then shift;fi
 
     case $suit in
-        mysql57|mysql80|mysql83|mariadb11|mysql|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv2022|sqlsrv|sqlite) do_composer_update && do_test_$suit "$@";;
+        mysql80|mysql84|mysql|mariadb11|mariadb12|mariadb|postgresql10|postgresql16|postgresql|sqlsrv2019|sqlsrv2022|sqlsrv|sqlite) do_composer_update && do_test_$suit "$@";;
         *) do_test_notice;;
     esac
 }
@@ -346,7 +295,7 @@ do_notice() {
     printf "\nAvailable options:"
     printf "\n  ${GREEN}-l${NC}: run ${GREEN}composer update${NC} with ${GREEN}--prefer-lowest${NC} option"
     printf "\n  ${GREEN}-x${NC}: trigger ${GREEN}xdebug${NC} when running test suites (ignored otherwise)"
-    printf "\n  ${GREEN}-p 8.3${NC}: choose PHP version to run, ${GREEN}8.2${NC} or ${GREEN}8.4${NC}"
+    printf "\n  ${GREEN}-p 8.3${NC}: choose PHP version to run from ${GREEN}8.1${NC} to ${GREEN}8.5${NC}"
     printf "\n"
     printf "\n\n"
 }
