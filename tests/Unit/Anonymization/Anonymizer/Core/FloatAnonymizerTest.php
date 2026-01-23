@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\FloatAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
@@ -16,6 +17,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'min' => 12.5,
                 'max' => 14.5,
@@ -33,6 +35,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'min' => 15.5,
                 'max' => 14.5,
@@ -46,6 +49,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'delta' => 12.5,
             ]),
@@ -62,6 +66,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'delta' => -12.5,
             ]),
@@ -74,6 +79,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'percent' => 12,
             ]),
@@ -90,6 +96,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'percent' => -12,
             ]),
@@ -104,6 +111,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'min' => 12.5,
                 'max' => 14.5,
@@ -117,6 +125,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'min' => 12.5,
                 'max' => 14.5,
@@ -130,6 +139,7 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'delta' => 14.5,
                 'percent' => 14.5,
@@ -145,7 +155,8 @@ class FloatAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
-            new Options([]),
+            new Context(),
+            new Options(),
         );
     }
 }

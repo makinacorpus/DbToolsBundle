@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\IbanBicAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class IbanBicAnonymizerTest extends UnitTestCase
@@ -16,6 +17,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -31,6 +33,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -50,6 +53,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -66,6 +70,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -82,6 +87,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -98,6 +104,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
@@ -114,6 +121,7 @@ class IbanBicAnonymizerTest extends UnitTestCase
             'some_table',
             'iban',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'iban' => 'foo_iban',
                 'bic' => 'foo_bic',
