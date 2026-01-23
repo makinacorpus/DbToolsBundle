@@ -21,11 +21,11 @@ We ask our contributors to follow these simple rules:
 Each issue and PR must be introduced with a clear description that expose the problem it solves or the feature
 it implements.
 
-_Each wild PR that does not comply with this rule won't be read_
+_Each wild PR that does not comply with this rule won't be read._
 
 ### PR without associated issue
 
-Note that we accept PR which are not relative to an existing issue (as long as it complies with the previous rule).
+Note that we accept PRs which are not relative to an existing issue (as long as it complies with the previous rule).
 
 But we encourage you not do it. Proposing a PR without discussing the problem/feature with maintainers can
 lead to useless work.
@@ -65,5 +65,5 @@ the produced code complies with all the previous rules.
 
 This being said:
 
-- We won't accept completely vide-coded PRs.
-- A PR that does not appear to have been properly reviewed by its own author after using AI will be closed.
+- We won't accept completely vibe-coded PRs.
+- A PR that does not appear to have been properly reviewed by its _own_ author after using AI will be closed.
