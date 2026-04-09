@@ -1,8 +1,15 @@
 # Changelog
 
+## 2.1.0
+
+* [feature] 🌟 PHP 8.5 support
+* [fix] use restoreOptions instead of restoreBinary for defaultOptions
+* [doc] various fixes
+* [doc] update contributing section
+
 ## 2.0.3
 
-* [FIX] Fix anonymization for MySQL version >=8.0 but <8.0.29 (#220).
+* [fix] Fix anonymization for MySQL version >=8.0 but <8.0.29 (#220).
 * [doc] Fix connection string examples (#219).
 
 ## 2.0.2
