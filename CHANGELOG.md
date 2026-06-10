@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+* [feature] 🌟 Symfony 8 support
+
 ## 2.1.0
 
 * [feature] 🌟 PHP 8.5 support
