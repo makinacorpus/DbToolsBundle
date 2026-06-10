@@ -7,6 +7,17 @@
 * [internal] Add automated testing for MariaDB 12.
 * [internal] Rewrote `dev.sh` local unit testing script to be simpler, reorganized the local unit testing Docker stack.
 
+## 2.2.0
+
+* [feature] 🌟 Symfony 8 support
+
+## 2.1.0
+
+* [feature] 🌟 PHP 8.5 support
+* [fix] use restoreOptions instead of restoreBinary for defaultOptions
+* [doc] various fixes
+* [doc] update contributing section
+
 ## 2.0.3
 
 * [fix] Fix anonymization for MySQL version >=8.0 but <8.0.29 (#220).
