@@ -58,7 +58,14 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+         "policy": {
+            "advisories": {
+                "ignore": {
+                    "laravel/framework": "This is a dev dependency, no risk."
+                }
+            }
+        }
     },
     "bin": ["bin/db-tools"],
     "scripts": {
