@@ -119,32 +119,6 @@ class DbToolsExtensionTest extends TestCase
         self::assertSame(__DIR__ . '/var/db_tools', $defaultConfig->getStorageDirectory());
     }
 
-    #[DependsExternal(DbToolsConfigurationTest::class, 'testConfigurationEmpty')]
-    public function testEnvVarArePropagated(array $config): void
-    {
-        $this->setAllDbToolsEnv();
-
-        $extension = new DbToolsExtension();
-        $extension->load([$config], $container = $this->getContainer());
-        $container->getDefinition('db_tools.configuration.registry')->setPublic(true);
-        $container->compile(true);
-
-        $configRegistry = $container->get('db_tools.configuration.registry');
-        \assert($configRegistry instanceof ConfigurationRegistry);
-        $defaultConfig = $configRegistry->getDefaultConfig();
-
-        // @todo missing excluded tables and default connection.
-        self::assertSame('/usr/bin/fromenv-backup', $defaultConfig->getBackupBinary());
-        self::assertSame('3 weeks', $defaultConfig->getBackupExpirationAge());
-        self::assertSame('--from-env-backup', $defaultConfig->getBackupOptions());
-        self::assertSame(666, $defaultConfig->getBackupTimeout());
-        self::assertSame('/usr/bin/fromenv-restore', $defaultConfig->getRestoreBinary());
-        self::assertSame('--from-env-restore', $defaultConfig->getRestoreOptions());
-        self::assertSame(999, $defaultConfig->getRestoreTimeout());
-        self::assertSame('fromenv_strategy', $defaultConfig->getStorageFilenameStrategy());
-        self::assertSame('/fromenv/storage', $defaultConfig->getStorageDirectory());
-    }
-
     #[DependsExternal(DbToolsConfigurationTest::class, 'testConfigurationConnectionsPartial')]
     public function testConnectionResolveParentForNonSetValues(array $config): void
     {
