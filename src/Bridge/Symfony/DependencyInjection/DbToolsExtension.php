@@ -30,17 +30,17 @@ final class DbToolsExtension extends Extension
         $configDef = new Definition();
         $configDef->setClass(Configuration::class);
         $configDef->setArguments([
-            '$backupBinary' => $config['backup_binary'] ?? '%env(resolve:DBTOOLS_BACKUP_BINARY)%',
-            '$backupExcludedTables' => $config['backup_excluded_tables'] ?? null, // new Parameter('env(resolve:array:DBTOOLS_BACKUP_EXCLUDED_TABLES)'), // @todo
-            '$backupExpirationAge' => $config['backup_expiration_age'] ?? '%env(resolve:string:DBTOOLS_BACKUP_EXPIRATION_AGE)%',
-            '$backupOptions' => $config['backup_options'] ?? '%env(resolve:DBTOOLS_BACKUP_OPTIONS)%',
-            '$backupTimeout' => $config['backup_timeout'] ?? '%env(int:DBTOOLS_BACKUP_TIMEOUT)%',
+            '$backupBinary' => $config['backup_binary'] ?? null,
+            '$backupExcludedTables' => $config['backup_excluded_tables'] ?? null,
+            '$backupExpirationAge' => $config['backup_expiration_age'] ?? null,
+            '$backupOptions' => $config['backup_options'] ?? null,
+            '$backupTimeout' => $config['backup_timeout'] ?? null,
             '$parent' => null, // For Symfony 6.x.
-            '$restoreBinary' => $config['restore_binary'] ?? '%env(resolve:DBTOOLS_RESTORE_BINARY)%',
-            '$restoreOptions' => $config['restore_options'] ?? '%env(resolve:DBTOOLS_RESTORE_OPTIONS)%',
-            '$restoreTimeout' => $config['restore_timeout'] ?? '%env(int:DBTOOLS_RESTORE_TIMEOUT)%',
-            '$storageDirectory' => $config['storage_directory'] ?? '%env(resolve:DBTOOLS_STORAGE_DIRECTORY)%',
-            '$storageFilenameStrategy' => $config['storage_filename_strategy'] ?? '%env(resolve:DBTOOLS_STORAGE_FILENAME_STRATEGY)%',
+            '$restoreBinary' => $config['restore_binary'] ?? null,
+            '$restoreOptions' => $config['restore_options'] ?? null,
+            '$restoreTimeout' => $config['restore_timeout'] ?? null,
+            '$storageDirectory' => $config['storage_directory'] ?? null,
+            '$storageFilenameStrategy' => $config['storage_filename_strategy'] ?? null,
         ]);
         $container->setDefinition('db_tools.configuration.default', $configDef);
 
