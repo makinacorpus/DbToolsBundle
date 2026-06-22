@@ -6,6 +6,7 @@ namespace MakinaCorpus\DbToolsBundle\Anonymization;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractAnonymizer;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AnonymizerRegistry;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizationConfig;
 use MakinaCorpus\DbToolsBundle\Anonymization\Config\AnonymizerConfig;
 use MakinaCorpus\DbToolsBundle\Helper\Format;
@@ -42,15 +43,16 @@ class Anonymizator implements LoggerAwareInterface
     ];
 
     private OutputInterface $output;
+    private readonly Context $defaultContext;
 
     public function __construct(
         private DatabaseSession $databaseSession,
         private AnonymizerRegistry $anonymizerRegistry,
         private AnonymizationConfig $anonymizationConfig,
-        private ?string $salt = null,
     ) {
         $this->logger = new NullLogger();
         $this->output = new NullOutput();
+        $this->defaultContext = new Context();
     }
 
     /**
@@ -71,25 +73,21 @@ class Anonymizator implements LoggerAwareInterface
         return $this;
     }
 
+    #[\Deprecated(message: "Will be removed in 3.0, use Context::generateRandomSalt() instead.", since: "2.1.0")]
     public static function generateRandomSalt(): string
     {
-        return \base64_encode(\random_bytes(12));
-    }
-
-    protected function getSalt(): string
-    {
-        return $this->salt ??= self::generateRandomSalt();
+        return Context::generateRandomSalt();
     }
 
     /**
      * Create anonymizer instance.
      */
-    protected function createAnonymizer(AnonymizerConfig $config): AbstractAnonymizer
+    protected function createAnonymizer(AnonymizerConfig $config, Context $context): AbstractAnonymizer
     {
         return $this->anonymizerRegistry->createAnonymizer(
             $config->anonymizer,
             $config,
-            $config->options->with(['salt' => $this->getSalt()]),
+            $context,
             $this->databaseSession
         );
     }
@@ -127,6 +125,7 @@ class Anonymizator implements LoggerAwareInterface
         }
 
         $plan = [];
+        $context = clone $this->defaultContext;
 
         if ($onlyTargets) {
             foreach ($onlyTargets as $targetString) {
@@ -160,7 +159,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($plan as $table => $targets) {
             $anonymizers[$table] = [];
             foreach ($this->anonymizationConfig->getTableConfig($table, $targets) as $target => $config) {
-                $anonymizers[$table][] = $this->createAnonymizer($config);
+                $anonymizers[$table][] = $this->createAnonymizer($config, $context);
             }
         }
 
@@ -910,7 +909,7 @@ class Anonymizator implements LoggerAwareInterface
         foreach ($this->anonymizationConfig->all() as $table => $tableConfig) {
             foreach ($tableConfig as $config) {
                 try {
-                    $this->createAnonymizer($config);
+                    $this->createAnonymizer($config, $this->defaultContext);
                 } catch (\Exception $e) {
                     if (!\key_exists($table, $errors)) {
                         $errors[$table] = [];

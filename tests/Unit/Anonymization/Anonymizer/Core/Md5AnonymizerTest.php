@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer\Core;
 
-use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Core\Md5Anonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
 
 class Md5AnonymizerTest extends UnitTestCase
@@ -18,9 +19,8 @@ class Md5AnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
-            new Options([
-                'salt' => 'my_salt',
-            ])
+            new Context(salt: 'my_salt'),
+            new Options(),
         );
 
         $instance->anonymize($update);
@@ -54,6 +54,7 @@ class Md5AnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'use_salt' => false,
             ])

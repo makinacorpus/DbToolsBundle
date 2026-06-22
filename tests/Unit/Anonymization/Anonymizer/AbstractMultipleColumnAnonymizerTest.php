@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakinaCorpus\DbToolsBundle\Tests\Unit\Anonymization\Anonymizer;
 
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\AbstractMultipleColumnAnonymizer;
+use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Context;
 use MakinaCorpus\DbToolsBundle\Anonymization\Anonymizer\Options;
 use MakinaCorpus\DbToolsBundle\Attribute\AsAnonymizer;
 use MakinaCorpus\DbToolsBundle\Test\UnitTestCase;
@@ -17,6 +18,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'column_1' => 'actual_column_1',
                 'column_2' => 'actual_column_2',
@@ -32,6 +34,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'column_2' => 'actual_column_2',
             ]),
@@ -48,7 +51,8 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
-            new Options([]),
+            new Context(),
+            new Options(),
         );
     }
 
@@ -60,6 +64,7 @@ class AbstractMultipleColumnAnonymizerTest extends UnitTestCase
             'some_table',
             'some_column',
             $this->getDatabaseSession(),
+            new Context(),
             new Options([
                 'column_1' => 'actual_column_1',
                 'column_2' => 'actual_column_1',

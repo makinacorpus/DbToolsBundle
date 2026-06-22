@@ -3,7 +3,12 @@
 ## Next
 
 * [feature] 🌟 String pattern anonymizer, build complex strings by fetching values from other anonymizers.
+* [fix] Some minor PHP 8.4 deprecations.
+* [bc] Salt in `AbstractAnonymizer::$option->get('salt')` in now in `AbstractAnonymizer::$context->salt` (#235).
+* [bc] `AbstractAnonymizer::__construct()` now expects an additional `$context` parameter (#235).
+* [bc] `Anonymizator::__construct()` `$salt` parameter was removed (#235).
 * [bc] Officially drop support for MySQL 5.7 - code is still there and working but automated unit testing has been disabled.
+* [internal] introduce anonymizer context for carrying environment configuration to anonymizers (#235).
 * [internal] Add automated testing for MariaDB 12.
 * [internal] Rewrote `dev.sh` local unit testing script to be simpler, reorganized the local unit testing Docker stack.
 
